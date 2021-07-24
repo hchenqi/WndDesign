@@ -39,5 +39,38 @@
     <ClInclude Include="common\uncopyable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="system\d2d_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\directx_resource.cpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\dxgi_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\dcomp_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\directx_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\directx_hwnd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\d3d_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\dwrite_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\wic_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\directx_resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\d2d_bitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
