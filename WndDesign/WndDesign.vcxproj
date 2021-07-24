@@ -155,6 +155,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="common\core.h" />
+    <ClInclude Include="common\uncopyable.h" />
+    <ClInclude Include="figure\color.h" />
+    <ClInclude Include="geometry\geometry.h" />
+    <ClInclude Include="geometry\point.h" />
+    <ClInclude Include="geometry\rect.h" />
+    <ClInclude Include="geometry\size.h" />
+    <ClInclude Include="geometry\vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
