@@ -29,6 +29,15 @@ struct HResultWrapper {
 inline static const HResultWrapper hr;
 
 
+template<class Interface>
+inline void SafeRelease(Interface** ppInterfaceToRelease) {
+	if (*ppInterfaceToRelease != nullptr) {
+		(*ppInterfaceToRelease)->Release();
+		(*ppInterfaceToRelease) = nullptr;
+	}
+}
+
+
 struct RenderTarget : public ID2D1DeviceContext {};  // alias for ID2D1DeviceContext
 
 struct TextLayout : IDWriteTextLayout3 {};  // alias for IDWriteTextLayout3

@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="common\core.h" />
+    <ClInclude Include="common\reversion_wrapper.h" />
     <ClInclude Include="common\uncopyable.h" />
     <ClInclude Include="figure\color.h" />
     <ClInclude Include="geometry\geometry.h" />
@@ -164,16 +165,29 @@
     <ClInclude Include="geometry\size.h" />
     <ClInclude Include="geometry\vector.h" />
     <ClInclude Include="system\d2d_api.h" />
-    <ClInclude Include="system\d2d_bitmap.h" />
+    <ClInclude Include="system\d2d_target.h" />
     <ClInclude Include="system\d3d_api.h" />
     <ClInclude Include="system\dcomp_api.h" />
     <ClInclude Include="system\directx_helper.h" />
-    <ClInclude Include="system\directx_hwnd.h" />
+    <ClInclude Include="system\d2d_hwnd.h" />
     <ClInclude Include="system\directx_resource.cpp" />
     <ClInclude Include="system\directx_resource.h" />
     <ClInclude Include="system\dwrite_api.h" />
     <ClInclude Include="system\dxgi_api.h" />
     <ClInclude Include="system\wic_api.h" />
+    <ClInclude Include="window\Desktop.h" />
+    <ClInclude Include="window\FlowLayout.h" />
+    <ClInclude Include="window\ListLayout.h" />
+    <ClInclude Include="window\scheduler.h" />
+    <ClInclude Include="window\TextBox.h" />
+    <ClInclude Include="window\WndFrame.h" />
+    <ClInclude Include="window\WndObject.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="system\d2d_hwnd.cpp" />
+    <ClCompile Include="system\d2d_target.cpp" />
+    <ClCompile Include="window\Desktop.cpp" />
+    <ClCompile Include="window\scheduler.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

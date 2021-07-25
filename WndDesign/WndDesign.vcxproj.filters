@@ -54,7 +54,7 @@
     <ClInclude Include="system\directx_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\directx_hwnd.h">
+    <ClInclude Include="system\d2d_hwnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\d3d_api.h">
@@ -69,8 +69,46 @@
     <ClInclude Include="system\directx_resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\d2d_bitmap.h">
+    <ClInclude Include="system\d2d_target.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="window\WndObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\WndFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\ListLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\FlowLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\TextBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\scheduler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\Desktop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\reversion_wrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="window\scheduler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\d2d_hwnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\d2d_target.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="window\Desktop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

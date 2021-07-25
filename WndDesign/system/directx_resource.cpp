@@ -46,14 +46,14 @@ public:
 	static DirectXResource& Get() { return directx_resource; }
 
 public:
-	void CreateDeviceIndependentResources();
-	void DiscardDeviceIndependentResources();
-	void CreateDeviceDependentResources();
-	void DiscardDeviceDependentResources();
+	void CreateDeviceIndependentResource();
+	void DiscardDeviceIndependentResource();
+	void CreateDeviceDependentResource();
+	void DiscardDeviceDependentResource();
 };
 
 
-void DirectXResource::CreateDeviceIndependentResources() {
+void DirectXResource::CreateDeviceIndependentResource() {
 	// Create D2D factory.
 	hr << D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), &d2d_factory);
 
@@ -64,14 +64,14 @@ void DirectXResource::CreateDeviceIndependentResources() {
 	hr << CoCreateInstance(CLSID_WICImagingFactory2, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&wic_factory));
 }
 
-void DirectXResource::DiscardDeviceIndependentResources() {
+void DirectXResource::DiscardDeviceIndependentResource() {
 	d2d_factory.Reset();
 	dwrite_factory.Reset();
 	wic_factory.Reset();
 }
 
-void DirectXResource::CreateDeviceDependentResources() {
-	// Create D3D resources.
+void DirectXResource::CreateDeviceDependentResource() {
+	// Create D3D device.
 	D3D_FEATURE_LEVEL featureLevels[] = {
 	D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0,
 	D3D_FEATURE_LEVEL_9_3, D3D_FEATURE_LEVEL_9_2, D3D_FEATURE_LEVEL_9_1
@@ -108,7 +108,7 @@ void DirectXResource::CreateDeviceDependentResources() {
 	hr << d2d_device_context->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &d2d_solid_color_brush);
 }
 
-void DirectXResource::DiscardDeviceDependentResources() {
+void DirectXResource::DiscardDeviceDependentResource() {
 	d2d_solid_color_brush.Reset();
 	d2d_device_context.Reset();
 
@@ -129,18 +129,19 @@ void DirectXResource::DiscardDeviceDependentResources() {
 
 void DirectXInitialize() {
 	hr << CoInitialize(nullptr);
-	DirectXResource::Get().CreateDeviceIndependentResources();
-	DirectXResource::Get().CreateDeviceDependentResources();
+	DirectXResource::Get().CreateDeviceIndependentResource();
+	DirectXResource::Get().CreateDeviceDependentResource();
 }
 
 void DirectXUninitialize() {
-	DirectXResource::Get().DiscardDeviceDependentResources();
-	DirectXResource::Get().DiscardDeviceIndependentResources();
+	DirectXResource::Get().DiscardDeviceDependentResource();
+	DirectXResource::Get().DiscardDeviceIndependentResource();
 	CoUninitialize();
 }
 
 void DirectXRecreate() {
-	DirectXResource::Get().DiscardDeviceDependentResources();
+	DirectXResource::Get().DiscardDeviceDependentResource();
+	DirectXResource::Get().CreateDeviceDependentResource();
 }
 
 
