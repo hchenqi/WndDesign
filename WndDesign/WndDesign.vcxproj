@@ -159,6 +159,9 @@
     <ClInclude Include="common\reversion_wrapper.h" />
     <ClInclude Include="common\uncopyable.h" />
     <ClInclude Include="figure\color.h" />
+    <ClInclude Include="figure\figure.h" />
+    <ClInclude Include="figure\image.h" />
+    <ClInclude Include="figure\shape.h" />
     <ClInclude Include="geometry\geometry.h" />
     <ClInclude Include="geometry\point.h" />
     <ClInclude Include="geometry\rect.h" />
@@ -184,6 +187,8 @@
     <ClInclude Include="window\WndObject.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="figure\image.cpp" />
+    <ClCompile Include="figure\shape.cpp" />
     <ClCompile Include="system\d2d_hwnd.cpp" />
     <ClCompile Include="system\d2d_target.cpp" />
     <ClCompile Include="window\Desktop.cpp" />

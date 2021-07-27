@@ -8,76 +8,68 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 class WndObject : Uncopyable {
-
 protected:
-	WndObject() {
-
+	WndObject() {}
+	virtual ~WndObject() {
+		if (layout_invalid) { GetReflowQueue().RemoveWnd(*this); }
+		if (region_invalid) { GetRedrawQueue().RemoveWnd(*this); }
 	}
-	~WndObject() {
-
-	}
 
 
+	// parent window
 private:
 	ref_ptr<WndObject> parent = nullptr;
+private:
+	bool HasParent() const { return parent != nullptr; }
+	WndObject& GetParent() const { assert(HasParent()); return *parent; }
+	bool IsMyAncestor(WndObject& wnd) const {
+		for (ref_ptr<WndObject> ancestor = parent; ancestor != nullptr; ancestor = ancestor->parent) {
+			if (&wnd == ancestor) { return true; }
+		}
+		return false;
+	}
 
+	// child window
+private:
+	void VerifyChild(WndObject& child) const { if (child.parent != this) { throw std::invalid_argument("window is not a child"); } }
+protected:
+	void AddChild(WndObject& child) {
+		if (child.HasParent()) { throw std::invalid_argument("window already has a parent"); }
+		if (IsMyAncestor(child)) { throw std::invalid_argument("window is an ancestor"); }
+		child.parent = this;
+	}
+public:
+	void RemoveChild(WndObject& child) { VerifyChild(child); OnChildDetach(child); child.parent = nullptr; }
+private:
+	virtual void OnChildDetach(WndObject& child) {}
+
+	// data used by parent window
 private:
 	uint64 parent_specific_data = 0;
-
-	GetChildData(WndObject& child);
-
-	bool HasParent() const { return parent != nullptr; }
-
-	WndObject& GetParent() const { 
-		if (!HasParent()) { throw std::invalid_argument("window has no parent"); } 
-		return *parent; 
+protected:
+	template<class T> void SetChildData(WndObject& child, T data) const {
+		static_assert(sizeof(T) <= sizeof(uint64)); VerifyChild(child);
+		memcpy(&child.parent_specific_data, &data, sizeof(T));
 	}
-
-private:
-	Size size = size_empty;
-
-public:
-	const Size GetSize() const { return size; }
-
-private:
-	void SetSize(Size size) { this->size = size; }
-
-private:
-	bool size_invalid = false;
-	bool layout_invalid = false;
-
-	void InvalidateSize() {}
-	void InvalidateLayout() {}
-
-public:
-	bool IsSizeInvalid() const { return size_invalid; }
-	bool IsLayoutInvalid() const { return layout_invalid; }
-
-	bool IsSizeAuto() const {}
-	bool IsSizeRelative() const {}
-	bool IsLayoutRelative() const {}
-	bool IsLayoutAuto() const {}
-	bool IsLayoutStrict() const {}
-
-	friend class ReflowQueue;
-	friend class RedrawQueue;
-
-
-	const Size UpdateSize(Size size) {
-		size = UpdateLayout(size);
-		SetSize(size);
-		size_invalid = false;
-		layout_invalid = false;
-		return size;
+	template<class T> T GetChildData(WndObject& child) const {
+		static_assert(sizeof(T) <= sizeof(uint64)); VerifyChild(child);
+		T data; memcpy(&data, &child.parent_specific_data, sizeof(T)); return data;
 	}
 
 
-	virtual const Size UpdateLayout(Size size);
+	// layout
+private:
+	bool layout_invalid;
+protected:
+	void InvalidateLayout() { if (!layout_invalid) { layout_invalid = true; GetReflowQueue().AddWnd(*this); } }
+	void InvalidateSize() { if (HasParent()) { GetParent().InvalidateChildSize(*this); } }
+ private:
+	virtual void InvalidateChildSize(WndObject& child) {}
+	virtual const Size UpdateLayout(Size size) { return size; }
 
 
-	virtual void InvalidateChildLayout(WndObject& child);
 
-
+	// painting
 private:
 	bool region_invalid = false;
 	Rect invalid_region = region_empty;
@@ -102,11 +94,12 @@ public:
 		}
 	}
 
-	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region);
+	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) {}
 
 
+	// message
 private:
-	virtual void Handler();
+	virtual void Handler(Msg msg, Para para) {}
 };
 
 
