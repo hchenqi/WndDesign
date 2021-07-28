@@ -2,6 +2,7 @@
 
 #include "../common/uncopyable.h"
 #include "../geometry/geometry.h"
+#include "../geometry/region.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -22,8 +23,8 @@ private:
 private:
 	bool HasParent() const { return parent != nullptr; }
 	WndObject& GetParent() const { assert(HasParent()); return *parent; }
-	bool IsMyAncestor(WndObject& wnd) const {
-		for (ref_ptr<WndObject> ancestor = parent; ancestor != nullptr; ancestor = ancestor->parent) {
+	bool IsMyAncestor(const WndObject& wnd) const {
+		for (ref_ptr<const WndObject> ancestor = parent; ancestor != nullptr; ancestor = ancestor->parent) {
 			if (&wnd == ancestor) { return true; }
 		}
 		return false;
@@ -31,7 +32,9 @@ private:
 
 	// child window
 private:
-	void VerifyChild(WndObject& child) const { if (child.parent != this) { throw std::invalid_argument("window is not a child"); } }
+	void VerifyChild(const WndObject& child) const { 
+		if (child.parent != this) { throw std::invalid_argument("window is not a child"); } 
+	}
 protected:
 	void AddChild(WndObject& child) {
 		if (child.HasParent()) { throw std::invalid_argument("window already has a parent"); }
@@ -39,7 +42,9 @@ protected:
 		child.parent = this;
 	}
 public:
-	void RemoveChild(WndObject& child) { VerifyChild(child); OnChildDetach(child); child.parent = nullptr; }
+	void RemoveChild(WndObject& child) { 
+		VerifyChild(child); OnChildDetach(child); child.parent = nullptr; 
+	}
 private:
 	virtual void OnChildDetach(WndObject& child) {}
 
@@ -51,7 +56,7 @@ protected:
 		static_assert(sizeof(T) <= sizeof(uint64)); VerifyChild(child);
 		memcpy(&child.parent_specific_data, &data, sizeof(T));
 	}
-	template<class T> T GetChildData(WndObject& child) const {
+	template<class T> T GetChildData(const WndObject& child) const {
 		static_assert(sizeof(T) <= sizeof(uint64)); VerifyChild(child);
 		T data; memcpy(&data, &child.parent_specific_data, sizeof(T)); return data;
 	}
@@ -59,42 +64,37 @@ protected:
 
 	// layout
 private:
-	bool layout_invalid;
+	bool pending_reflow = false;
+private:
+	friend class ReflowQueue;
+	void CommitReflow() {
+		assert(pending_reflow == true); pending_reflow = false;
+		UpdateLayout(size_empty);
+	}
 protected:
-	void InvalidateLayout() { if (!layout_invalid) { layout_invalid = true; GetReflowQueue().AddWnd(*this); } }
+	void JoinReflowQueue() { if (!pending_reflow) { pending_reflow = true; GetReflowQueue().AddWnd(*this); } }
 	void InvalidateSize() { if (HasParent()) { GetParent().InvalidateChildSize(*this); } }
- private:
-	virtual void InvalidateChildSize(WndObject& child) {}
+private:
+	virtual void InvalidateChildSize(const WndObject& child) {}
 	virtual const Size UpdateLayout(Size size) { return size; }
-
-
 
 	// painting
 private:
-	bool region_invalid = false;
-	Rect invalid_region = region_empty;
-
-
+	Region invalid_region;
 public:
-	bool HasInvalidRegion() const { return invalid_region != region_empty; }
-	const Rect GetInvalidRegion() const { return invalid_region; }
-
-	void InvalidateChildRegion(WndObject& child) {
-		Rect child_region = GetChildRegion(child);
-		InvalidateRegion(child_region.Intersect(child.GetInvalidRegion() + (child_region.point - point_zero)));
-	}
-
-	virtual const Rect GetChildRegion(WndObject& child) { return region_empty; }
-
 	void InvalidateRegion(Rect invalid_region) {
-		this->invalid_region = this->invalid_region.Union(invalid_region);
-		if (!region_invalid) {
-			region_invalid = true;
-			GetRedrawQueue().AddWnd(*this);
-		}
+		if (this->invalid_region.Contains(invalid_region)) { return; }
+		this->invalid_region.Union(invalid_region);
+		if (HasParent()) { GetParent().InvalidateChildRegion(*this, this->invalid_region); }
 	}
-
-	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) {}
+protected:
+	void PaintChildRegion(WndObject& child, FigureQueue& figure_queue, Rect invalid_region) const {
+		VerifyChild(child); child.OnPaint(figure_queue, invalid_region); 
+		child.invalid_region = child.invalid_region.Sub(invalid_region);
+	}
+private:
+	virtual void InvalidateChildRegion(const WndObject& child, Rect child_invalid_region) {}
+	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) const {}
 
 
 	// message

@@ -87,9 +87,6 @@
     <ClInclude Include="window\TextBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="window\scheduler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="window\Desktop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -105,11 +102,17 @@
     <ClInclude Include="figure\image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="window\reflow_queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\redraw_queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\region.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="window\scheduler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="system\d2d_hwnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,6 +126,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="figure\image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="geometry\region.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="window\redraw_queue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="window\reflow_queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

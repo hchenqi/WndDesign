@@ -33,19 +33,17 @@ struct Rect {
 	bool Contains(const Rect& rect) const { return rect.point >= point && rect.RightBottom() <= RightBottom(); }
 
 	const Rect Intersect(const Rect& rect) const {
-		Point posl1 = point, posh1 = RightBottom(),
-			posl2 = rect.point, posh2 = rect.RightBottom();
-		Point posl = Point(max(posl1.x, posl2.x), max(posl1.y, posl2.y)),
-			posh = Point(min(posh1.x, posh2.x), min(posh1.y, posh2.y));
-		return posh > posl ? Rect(posl, Size((uint)(posh.x - posl.x), (uint)(posh.y - posl.y))) : Rect(posl, Size(0, 0));
+		Point posl1 = point, posl2 = rect.point, posh1 = RightBottom(), posh2 = rect.RightBottom();
+		Point posl = Point(max(posl1.x, posl2.x), max(posl1.y, posl2.y));
+		Point posh = Point(min(posh1.x, posh2.x), min(posh1.y, posh2.y));
+		return posh > posl ? Rect(posl, Size((uint)(posh.x - posl.x), (uint)(posh.y - posl.y))) : Rect(posl, size_empty);
 	}
 
 	const Rect Union(const Rect& rect) const {
-		if (IsEmpty() || rect.IsEmpty()) { return Rect(); }
-		Point posl1 = point, posh1 = RightBottom(),
-			posl2 = rect.point, posh2 = rect.RightBottom();
-		Point posl = Point(min(posl1.x, posl2.x), min(posl1.y, posl2.y)),
-			posh = Point(max(posh1.x, posh2.x), max(posh1.y, posh2.y));
+		if (IsEmpty()) { return rect; } if (rect.IsEmpty()) { return *this; }
+		Point posl1 = point, posl2 = rect.point, posh1 = RightBottom(), posh2 = rect.RightBottom();
+		Point posl = Point(min(posl1.x, posl2.x), min(posl1.y, posl2.y));
+		Point posh = Point(max(posh1.x, posh2.x), max(posh1.y, posh2.y));
 		return Rect(posl, Size(uint(posh.x - posl.x), uint(posh.y - posl.y)));
 	}
 };
