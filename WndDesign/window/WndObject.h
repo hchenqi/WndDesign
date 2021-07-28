@@ -11,11 +11,7 @@ BEGIN_NAMESPACE(WndDesign)
 class WndObject : Uncopyable {
 protected:
 	WndObject() {}
-	virtual ~WndObject() {
-		if (layout_invalid) { GetReflowQueue().RemoveWnd(*this); }
-		if (region_invalid) { GetRedrawQueue().RemoveWnd(*this); }
-	}
-
+	virtual ~WndObject() {}
 
 	// parent window
 private:
@@ -61,41 +57,27 @@ protected:
 		T data; memcpy(&data, &child.parent_specific_data, sizeof(T)); return data;
 	}
 
-
 	// layout
-private:
-	bool pending_reflow = false;
-private:
-	friend class ReflowQueue;
-	void CommitReflow() {
-		assert(pending_reflow == true); pending_reflow = false;
-		UpdateLayout(size_empty);
-	}
 protected:
-	void JoinReflowQueue() { if (!pending_reflow) { pending_reflow = true; GetReflowQueue().AddWnd(*this); } }
 	void InvalidateSize() { if (HasParent()) { GetParent().InvalidateChildSize(*this); } }
+protected:
+	void UpdateChildLayout(WndObject& child, Size size) const {
+		VerifyChild(child); child.UpdateLayout(size);
+	}
 private:
 	virtual void InvalidateChildSize(const WndObject& child) {}
 	virtual const Size UpdateLayout(Size size) { return size; }
 
-	// painting
-private:
-	Region invalid_region;
-public:
-	void InvalidateRegion(Rect invalid_region) {
-		if (this->invalid_region.Contains(invalid_region)) { return; }
-		this->invalid_region.Union(invalid_region);
-		if (HasParent()) { GetParent().InvalidateChildRegion(*this, this->invalid_region); }
-	}
+	// paint
+protected:
+	void InvalidateRegion(Rect invalid_region) { if (HasParent()) { GetParent().InvalidateChildRegion(*this, invalid_region); } }
 protected:
 	void PaintChildRegion(WndObject& child, FigureQueue& figure_queue, Rect invalid_region) const {
 		VerifyChild(child); child.OnPaint(figure_queue, invalid_region); 
-		child.invalid_region = child.invalid_region.Sub(invalid_region);
 	}
 private:
 	virtual void InvalidateChildRegion(const WndObject& child, Rect child_invalid_region) {}
 	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) const {}
-
 
 	// message
 private:
