@@ -11,7 +11,9 @@ BEGIN_NAMESPACE(WndDesign)
 class WndObject : Uncopyable {
 protected:
 	WndObject() {}
-	virtual ~WndObject() {}
+	virtual ~WndObject() {
+		if (HasParent()) { GetParent().OnChildDetach(*this); parent = nullptr; }
+	}
 
 	// parent window
 private:
@@ -20,7 +22,7 @@ private:
 	bool HasParent() const { return parent != nullptr; }
 	WndObject& GetParent() const { assert(HasParent()); return *parent; }
 	bool IsMyAncestor(const WndObject& wnd) const {
-		for (ref_ptr<const WndObject> ancestor = parent; ancestor != nullptr; ancestor = ancestor->parent) {
+		for (ref_ptr<const WndObject> ancestor = this; ancestor != nullptr; ancestor = ancestor->parent) {
 			if (&wnd == ancestor) { return true; }
 		}
 		return false;
@@ -48,24 +50,21 @@ private:
 private:
 	uint64 parent_specific_data = 0;
 protected:
-	template<class T> void SetChildData(WndObject& child, T data) const {
-		static_assert(sizeof(T) <= sizeof(uint64)); VerifyChild(child);
-		memcpy(&child.parent_specific_data, &data, sizeof(T));
+	template<class T, class = std::enable_if_t<sizeof(T) <= sizeof(uint64)>>
+	void SetChildData(WndObject& child, T data) const {
+		VerifyChild(child); memcpy(&child.parent_specific_data, &data, sizeof(T));
 	}
-	template<class T> T GetChildData(const WndObject& child) const {
-		static_assert(sizeof(T) <= sizeof(uint64)); VerifyChild(child);
-		T data; memcpy(&data, &child.parent_specific_data, sizeof(T)); return data;
+	template<class T, class = std::enable_if_t<sizeof(T) <= sizeof(uint64)>>
+	T GetChildData(const WndObject& child) const {
+		VerifyChild(child); T data; memcpy(&data, &child.parent_specific_data, sizeof(T)); return data;
 	}
 
 	// layout
 protected:
-	void InvalidateSize() { if (HasParent()) { GetParent().InvalidateChildSize(*this); } }
-protected:
-	void UpdateChildLayout(WndObject& child, Size size) const {
-		VerifyChild(child); child.UpdateLayout(size);
+	const Size UpdateChildLayout(WndObject& child, Size size) const { 
+		VerifyChild(child); return child.UpdateLayout(size); 
 	}
 private:
-	virtual void InvalidateChildSize(const WndObject& child) {}
 	virtual const Size UpdateLayout(Size size) { return size; }
 
 	// paint
