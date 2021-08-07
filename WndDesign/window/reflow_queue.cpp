@@ -1,4 +1,5 @@
 #include "reflow_queue.h"
+#include "WndObject.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -11,20 +12,10 @@ ReflowQueue& ReflowQueue::Get() {
 
 
 void ReflowQueue::Commit() {
-	for (auto wnd : reflow_queue) {
-		wnd->
+	for (auto wnd : queue) {
+		wnd->UpdateLayout();
 	}
-
-
-	while (!reflow_queue.empty()) {
-		WndObject& wnd = *reflow_queue.front(); reflow_queue.pop_front();
-		if (wnd.IsLayoutInvalid() && wnd.IsSizeAuto()) {
-
-		}
-		if (wnd.IsSizeInvalid() && wnd.HasParent()) {
-			wnd.GetParent().InvalidateChildSize(wnd);
-		}
-	}
+	queue.clear();
 }
 
 

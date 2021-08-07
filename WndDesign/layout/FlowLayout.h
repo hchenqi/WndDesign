@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WndObject.h"
+#include "../window/WndObject.h"
 
 
 BEGIN_NAMESPACE(WndDesign)

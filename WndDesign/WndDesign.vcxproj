@@ -158,10 +158,15 @@
     <ClInclude Include="common\core.h" />
     <ClInclude Include="common\reversion_wrapper.h" />
     <ClInclude Include="common\uncopyable.h" />
+    <ClInclude Include="control\Button.h" />
+    <ClInclude Include="control\EditBox.h" />
+    <ClInclude Include="control\ImageBox.h" />
     <ClInclude Include="figure\color.h" />
     <ClInclude Include="figure\figure.h" />
     <ClInclude Include="figure\image.h" />
     <ClInclude Include="figure\shape.h" />
+    <ClInclude Include="frame\DesktopWndFrame.h" />
+    <ClInclude Include="frame\OverlapWndFrame.h" />
     <ClInclude Include="geometry\geometry.h" />
     <ClInclude Include="geometry\point.h" />
     <ClInclude Include="geometry\rect.h" />
@@ -180,12 +185,13 @@
     <ClInclude Include="system\dxgi_api.h" />
     <ClInclude Include="system\wic_api.h" />
     <ClInclude Include="window\Desktop.h" />
-    <ClInclude Include="window\FlowLayout.h" />
+    <ClInclude Include="layout\FlowLayout.h" />
+    <ClInclude Include="layout\OverlapLayout.h" />
     <ClInclude Include="window\redraw_queue.h" />
     <ClInclude Include="window\reflow_queue.h" />
-    <ClInclude Include="window\ListLayout.h" />
-    <ClInclude Include="window\TextBox.h" />
-    <ClInclude Include="window\WndFrame.h" />
+    <ClInclude Include="layout\ListLayout.h" />
+    <ClInclude Include="control\TextBox.h" />
+    <ClInclude Include="frame\WndFrame.h" />
     <ClInclude Include="window\WndObject.h" />
   </ItemGroup>
   <ItemGroup>

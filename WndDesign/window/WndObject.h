@@ -11,9 +11,11 @@ BEGIN_NAMESPACE(WndDesign)
 class WndObject : Uncopyable {
 protected:
 	WndObject() {}
+
 	virtual ~WndObject() {
 		if (HasParent()) { GetParent().OnChildDetach(*this); parent = nullptr; }
 	}
+
 
 	// parent window
 private:
@@ -27,6 +29,7 @@ private:
 		}
 		return false;
 	}
+
 
 	// child window
 private:
@@ -46,6 +49,7 @@ public:
 private:
 	virtual void OnChildDetach(WndObject& child) {}
 
+
 	// data used by parent window
 private:
 	uint64 parent_specific_data = 0;
@@ -59,13 +63,17 @@ protected:
 		VerifyChild(child); T data; memcpy(&data, &child.parent_specific_data, sizeof(T)); return data;
 	}
 
+
 	// layout
 protected:
 	const Size UpdateChildLayout(WndObject& child, Size size) const { 
-		VerifyChild(child); return child.UpdateLayout(size); 
+
+		VerifyChild(child); 
+		return child.UpdateLayout(size); 
 	}
 private:
 	virtual const Size UpdateLayout(Size size) { return size; }
+
 
 	// paint
 protected:
@@ -77,6 +85,7 @@ protected:
 private:
 	virtual void InvalidateChildRegion(const WndObject& child, Rect child_invalid_region) {}
 	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) const {}
+
 
 	// message
 private:

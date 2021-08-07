@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WndObject.h"
+#include "../window/WndObject.h"
 
 #include <vector>
 
@@ -22,11 +22,18 @@ private:
 
 
 private:
+	virtual const Size UpdateLayout() {
+
+	}
+
+
 	virtual void InvalidateChildSize(WndObject& child) {
 
 
 		InvalidateLayout();
 	}
+
+
 
 	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) override {
 

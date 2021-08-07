@@ -75,16 +75,16 @@
     <ClInclude Include="window\WndObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="window\WndFrame.h">
+    <ClInclude Include="frame\WndFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="window\ListLayout.h">
+    <ClInclude Include="layout\ListLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="window\FlowLayout.h">
+    <ClInclude Include="layout\FlowLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="window\TextBox.h">
+    <ClInclude Include="control\TextBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="window\Desktop.h">
@@ -109,6 +109,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="geometry\region.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="layout\OverlapLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame\OverlapWndFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame\DesktopWndFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="control\EditBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="control\Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="control\ImageBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
