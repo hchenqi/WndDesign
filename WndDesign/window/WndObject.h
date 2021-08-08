@@ -34,7 +34,7 @@ private:
 	// child window
 private:
 	void VerifyChild(const WndObject& child) const { 
-		if (child.parent != this) { throw std::invalid_argument("window is not a child"); } 
+		if (child.parent != this) { throw std::invalid_argument("invalid child window"); } 
 	}
 protected:
 	void AddChild(WndObject& child) {
@@ -66,13 +66,15 @@ protected:
 
 	// layout
 protected:
-	const Size UpdateChildLayout(WndObject& child, Size size) const { 
-
-		VerifyChild(child); 
-		return child.UpdateLayout(size); 
+	const Size SetChildSizeRef(WndObject& child, Size size_ref) {
+		VerifyChild(child); return child.OnSizeRefChange(size_ref);
+	}
+	void SizeChanged(Size size) {
+		if (HasParent()) { GetParent().OnChildSizeChange(*this, size); }
 	}
 private:
-	virtual const Size UpdateLayout(Size size) { return size; }
+	virtual const Size OnSizeRefChange(Size size_ref) {}
+	virtual void OnChildSizeChange(WndObject& child, Size child_size) {}
 
 
 	// paint

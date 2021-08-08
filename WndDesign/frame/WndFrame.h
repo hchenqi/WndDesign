@@ -36,6 +36,14 @@ private:
 
 
 private:
+	virtual const Size OnSizeRefChange(Size size_ref) {
+	
+
+	}
+
+	virtual void OnChildSizeChange(WndObject& child, Size child_size) {
+	
+	}
 
 
 

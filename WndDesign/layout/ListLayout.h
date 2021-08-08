@@ -7,41 +7,70 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-using std::vector;
-
 
 class ListLayoutVertical : public WndObject {
+
+
+
 private:
-	struct ItemInfo {
-		int y;
+	struct ChildInfo {
+		ref_ptr<WndObject> child;
+		uint y;
 		uint height;
-
-
 	};
-	vector<ItemInfo> items;
+	std::vector<ChildInfo> child_list;
 
 
 private:
-	virtual const Size UpdateLayout() {
-
+	void SetChildData(WndObject& child, uint64 index) {
+		WndObject::SetChildData<uint64>(child, index);
+	}
+	uint64 GetChildData(WndObject& child) {
+		return WndObject::GetChildData<uint64>(child);
 	}
 
 
-	virtual void InvalidateChildSize(WndObject& child) {
-
-
-		InvalidateLayout();
+public:
+	void AppendChild(WndObject& child) {
+		AddChild(child);
+		SetChildData(child, child_list.size());
+		ChildInfo& info = child_list.emplace_back(&child, 0, 0);
+		info.y = size.height;
+		info.height = SetChildSizeRef(child, Size(size.width, length_min)).height;
+		size.height += info.height;
+		SizeChanged(size);
 	}
 
 
-
-	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) override {
-
-
+private:
+	Size size;
 
 
+	virtual const Size OnSizeRefChange(Size size_ref) override {
+		if (size.width != size_ref.width) {
+			size.width = size_ref.width;
+			size.height = 0;
+			for (auto& info : child_list) {
+				info.y = size.height;
+				info.height = SetChildSizeRef(*info.child, Size(size.width, length_min)).height;
+				size.height += info.height;
+			}
+		}
+		return size;
 	}
 
+	virtual void OnChildSizeChange(WndObject& child, Size child_size) {
+		uint64 index = GetChildData(child); assert(index < child_list.size());
+		if (child_list[index].height != child_size.height) {
+			child_list[index].height = child_size.height;
+			size.height = child_list[index].y;
+			for (; index < child_list.size(); index++) {
+				child_list[index].y = size.height;
+				size.height += child_list[index].height;
+			}
+			SizeChanged(size);
+		}
+	}
 };
 
 

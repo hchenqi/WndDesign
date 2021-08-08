@@ -1,22 +1,18 @@
 #pragma once
 
-#include "WndObject.h"
+#include "../window/WndObject.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class TextBoxHorizontal : public WndObject {
+class TextBoxLeftRightTopBottom : public WndObject {
 
 
 
-private:
-	virtual const Size UpdateLayout(Size size) override {
-		return layout.AutoResize(Size(size.width, length_max));
-	}
-
-	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) override {
-		figure_queue.append(point_zero, new TextLayoutFigure(layout));
+private:	
+	virtual const Size OnSizeRefChange(Size size_ref) {
+		return layout.AutoResize(Size(size_ref.width, length_max));
 	}
 };
 

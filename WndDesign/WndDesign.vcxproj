@@ -159,6 +159,7 @@
     <ClInclude Include="common\reversion_wrapper.h" />
     <ClInclude Include="common\uncopyable.h" />
     <ClInclude Include="control\Button.h" />
+    <ClInclude Include="control\CheckBox.h" />
     <ClInclude Include="control\EditBox.h" />
     <ClInclude Include="control\ImageBox.h" />
     <ClInclude Include="figure\color.h" />
@@ -187,8 +188,6 @@
     <ClInclude Include="window\Desktop.h" />
     <ClInclude Include="layout\FlowLayout.h" />
     <ClInclude Include="layout\OverlapLayout.h" />
-    <ClInclude Include="window\redraw_queue.h" />
-    <ClInclude Include="window\reflow_queue.h" />
     <ClInclude Include="layout\ListLayout.h" />
     <ClInclude Include="control\TextBox.h" />
     <ClInclude Include="frame\WndFrame.h" />
@@ -201,8 +200,6 @@
     <ClCompile Include="system\d2d_hwnd.cpp" />
     <ClCompile Include="system\d2d_target.cpp" />
     <ClCompile Include="window\Desktop.cpp" />
-    <ClCompile Include="window\redraw_queue.cpp" />
-    <ClCompile Include="window\reflow_queue.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

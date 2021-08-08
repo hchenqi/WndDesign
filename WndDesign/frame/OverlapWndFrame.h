@@ -6,18 +6,18 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class OverlapWndFrame : public WndFrame {
+class OverlapWndFrame : private WndFrame {
+private:
+	friend class OverlapLayout;
+
+
 	struct Style : public WndFrame::Style {
 		struct MarginStyle {
 
 		} margin;
 	};
 
-
-private:
-	friend class OverlapLayout;
-
-	const Rect UpdateLayoutRegion(Size size) {
+	const Point GetPosition() const {
 
 	}
 };
