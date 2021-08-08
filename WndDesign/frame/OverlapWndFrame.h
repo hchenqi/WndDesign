@@ -15,6 +15,12 @@ private:
 		struct MarginStyle {
 
 		} margin;
+
+
+
+		struct CompositeStyle {
+
+		} composite;
 	};
 
 	const Point GetPosition() const {
