@@ -162,6 +162,7 @@
     <ClInclude Include="control\CheckBox.h" />
     <ClInclude Include="control\EditBox.h" />
     <ClInclude Include="control\ImageBox.h" />
+    <ClInclude Include="control\Placeholder.h" />
     <ClInclude Include="figure\color.h" />
     <ClInclude Include="figure\figure.h" />
     <ClInclude Include="figure\figure_queue.h" />
@@ -170,11 +171,13 @@
     <ClInclude Include="frame\DesktopWndFrame.h" />
     <ClInclude Include="frame\OverlapWndFrame.h" />
     <ClInclude Include="geometry\geometry.h" />
+    <ClInclude Include="geometry\margin.h" />
     <ClInclude Include="geometry\point.h" />
     <ClInclude Include="geometry\rect.h" />
     <ClInclude Include="geometry\region.h" />
     <ClInclude Include="geometry\size.h" />
     <ClInclude Include="geometry\vector.h" />
+    <ClInclude Include="style\frame_style.h" />
     <ClInclude Include="system\d2d_api.h" />
     <ClInclude Include="system\d2d_target.h" />
     <ClInclude Include="system\d3d_api.h" />

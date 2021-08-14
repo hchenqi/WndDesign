@@ -129,6 +129,15 @@
     <ClInclude Include="figure\figure_queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="geometry\margin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="style\frame_style.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="control\Placeholder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system\d2d_hwnd.cpp">

@@ -31,16 +31,31 @@ private:
 	}
 
 
+	using child_wnd = std::unique_ptr<WndObject>;
+
+
 	// child window
+protected:
+	struct ChildWnd {
+	private:
+		friend class WndObject;
+		ref_ptr<WndObject> child;
+		ChildWnd(WndObject& child) : child(&child) {}
+	public:
+		ChildWnd(ChildWnd&& right) { child = right.child; right.child = nullptr; }
+		void operator=(ChildWnd&& right) { child = right.child; right.child = nullptr; }
+		~ChildWnd() { if (child != nullptr) { child->parent = nullptr; } }
+		operator WndObject& () const { return *child; }
+	};
 private:
 	void VerifyChild(const WndObject& child) const { 
 		if (child.parent != this) { throw std::invalid_argument("invalid child window"); } 
 	}
-protected:
-	void AddChild(WndObject& child) {
+private:
+	ChildWnd AddChild(WndObject& child) {
 		if (child.HasParent()) { throw std::invalid_argument("window already has a parent"); }
 		if (IsMyAncestor(child)) { throw std::invalid_argument("window is an ancestor"); }
-		child.parent = this;
+		child.parent = this; return ChildWnd(child);
 	}
 public:
 	void RemoveChild(WndObject& child) { 
@@ -65,15 +80,22 @@ protected:
 
 
 	// layout
+private:
+	bool is_size_ref_updating;
 protected:
 	const Size SetChildSizeRef(WndObject& child, Size size_ref) {
-		VerifyChild(child); return child.OnSizeRefChange(size_ref);
+		VerifyChild(child); 
+		child.is_size_ref_updating = true;
+		Size child_size = child.OnSizeRefChange(size_ref);
+		child.is_size_ref_updating = false;
+		return child_size;
 	}
 	void SizeChanged(Size size) {
+		if (is_size_ref_updating) { throw std::invalid_argument("size should be passed as return value"); }
 		if (HasParent()) { GetParent().OnChildSizeChange(*this, size); }
 	}
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) {}
+	virtual const Size OnSizeRefChange(Size size_ref) { return size_ref; }
 	virtual void OnChildSizeChange(WndObject& child, Size child_size) {}
 
 
@@ -86,7 +108,7 @@ protected:
 	}
 private:
 	virtual void InvalidateChildRegion(const WndObject& child, Rect child_invalid_region) {}
-	virtual void OnPaint(FigureQueue& figure_queue, Rect invalid_region) const {}
+	virtual void OnPaint(FigureQueue& figure_queue, Rect redraw_region) const {}
 
 
 	// message
