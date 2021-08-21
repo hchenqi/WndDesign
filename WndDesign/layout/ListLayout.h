@@ -9,12 +9,14 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 class ListLayoutVertical : public WndObject {
+public:
+	ListLayoutVertical() {}
 
 private:
 	struct ChildInfo {
-		ChildWnd child;
-		uint y;
-		uint height;
+		child_ptr child;
+		uint y = 0;
+		uint height = 0;
 	};
 	std::vector<ChildInfo> child_list;
 
@@ -29,16 +31,18 @@ private:
 
 
 public:
-	void AppendChild(WndObject& child) {
-		ChildInfo& info = child_list.emplace_back(&child, 0, 0);
+	void AppendChild(child_ptr child) {
+		RegisterChild(child);
+		ChildInfo& info = child_list.emplace_back(std::move(child));
 		info.y = size.height;
-		info.height = SetChildSizeRef(child, Size(size.width, length_min)).height;
+		info.height = SetChildSizeRef(info.child, Size(size.width, length_min)).height;
 		size.height += info.height;
 		SizeChanged(size);
 	}
-
 	void RemoveChild(uint64 index) {
-		if(index >= child_list.size()) {}
+		if (index >= child_list.size()) { throw std::out_of_range("invalid child index"); }
+
+
 	}
 
 
@@ -74,7 +78,7 @@ private:
 };
 
 
-class ListLayoutVerticalMax : public WndObject {
+class ListLayoutVerticalWidthMax : public WndObject {
 private:
 	struct ChildInfo {
 		ref_ptr<WndObject> child;
@@ -158,6 +162,22 @@ private:
 		if (size_changed) {
 			SizeChanged(size);
 		}
+	}
+};
+
+
+template<uint row_height>
+class ListLayoutVerticalWidthActualRowHeightFixed : public WndObject {
+	struct ChildInfo {
+		ref_ptr<WndObject> child;
+	};
+	std::vector<ChildInfo> child_list;
+
+private:
+	uint width;
+
+	virtual const Size GetSize() const override {
+		return Size(width, row_height);
 	}
 };
 

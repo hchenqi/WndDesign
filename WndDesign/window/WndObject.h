@@ -4,6 +4,8 @@
 #include "../geometry/geometry.h"
 #include "../figure/figure_queue.h"
 
+#include <memory>
+
 
 BEGIN_NAMESPACE(WndDesign)
 
@@ -11,10 +13,7 @@ BEGIN_NAMESPACE(WndDesign)
 class WndObject : Uncopyable {
 protected:
 	WndObject() {}
-
-	virtual ~WndObject() {
-		if (HasParent()) { GetParent().OnChildDetach(*this); parent = nullptr; }
-	}
+	virtual ~WndObject() {}
 
 
 	// parent window
@@ -31,38 +30,27 @@ private:
 	}
 
 
-	using child_wnd = std::unique_ptr<WndObject>;
-
-
 	// child window
-protected:
-	struct ChildWnd {
-	private:
-		friend class WndObject;
-		ref_ptr<WndObject> child;
-		ChildWnd(WndObject& child) : child(&child) {}
-	public:
-		ChildWnd(ChildWnd&& right) { child = right.child; right.child = nullptr; }
-		void operator=(ChildWnd&& right) { child = right.child; right.child = nullptr; }
-		~ChildWnd() { if (child != nullptr) { child->parent = nullptr; } }
-		operator WndObject& () const { return *child; }
-	};
 private:
-	void VerifyChild(const WndObject& child) const { 
+	void VerifyChild(const WndObject& child) const {
 		if (child.parent != this) { throw std::invalid_argument("invalid child window"); } 
 	}
-private:
-	ChildWnd AddChild(WndObject& child) {
+public:
+	struct child_ptr : public std::unique_ptr<WndObject> {
+		child_ptr(std::unique_ptr<WndObject> ptr) : std::unique_ptr<WndObject>(std::move(ptr)) { VerifyNonNull(); }
+		operator WndObject& () const { VerifyNonNull(); return **this; }
+	private:
+		void VerifyNonNull() const { if (*this == nullptr) { throw std::invalid_argument("invalid child pointer"); } }
+	};
+protected:
+	void RegisterChild(WndObject& child) {
 		if (child.HasParent()) { throw std::invalid_argument("window already has a parent"); }
 		if (IsMyAncestor(child)) { throw std::invalid_argument("window is an ancestor"); }
-		child.parent = this; return ChildWnd(child);
+		child.parent = this;
 	}
-public:
-	void RemoveChild(WndObject& child) { 
-		VerifyChild(child); OnChildDetach(child); child.parent = nullptr; 
+	void UnregisterChild(WndObject& child) {
+		VerifyChild(child); child.parent = nullptr;
 	}
-private:
-	virtual void OnChildDetach(WndObject& child) {}
 
 
 	// data used by parent window
@@ -91,7 +79,7 @@ protected:
 		return child_size;
 	}
 	void SizeChanged(Size size) {
-		if (is_size_ref_updating) { throw std::invalid_argument("size should be passed as return value"); }
+		if (is_size_ref_updating) { throw std::logic_error("size should be passed as return value"); }
 		if (HasParent()) { GetParent().OnChildSizeChange(*this, size); }
 	}
 private:

@@ -169,6 +169,7 @@
     <ClInclude Include="figure\image.h" />
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="frame\DesktopWndFrame.h" />
+    <ClInclude Include="frame\MultiViewFrame.h" />
     <ClInclude Include="frame\OverlapWndFrame.h" />
     <ClInclude Include="geometry\geometry.h" />
     <ClInclude Include="geometry\margin.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="geometry\region.h" />
     <ClInclude Include="geometry\size.h" />
     <ClInclude Include="geometry\vector.h" />
+    <ClInclude Include="layout\BarLayout.h" />
     <ClInclude Include="style\frame_style.h" />
     <ClInclude Include="system\d2d_api.h" />
     <ClInclude Include="system\d2d_target.h" />

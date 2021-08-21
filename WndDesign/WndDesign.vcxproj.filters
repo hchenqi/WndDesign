@@ -138,6 +138,12 @@
     <ClInclude Include="control\Placeholder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="layout\BarLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame\MultiViewFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system\d2d_hwnd.cpp">

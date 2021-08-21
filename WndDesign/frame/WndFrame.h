@@ -6,18 +6,19 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class WndFrameEmpty : public WndObject {
-
+class WndFrame : public WndObject {
+public:
+	WndFrame(child_ptr child) : child(std::move(child)) {
+		RegisterChild(this->child);
+	}
 
 private:
-	WndObject& child;
-
+	child_ptr child;
 
 private:
 	virtual const Size OnSizeRefChange(Size size_ref) {
 		return SetChildSizeRef(child, size_ref);
 	}
-
 	virtual void OnChildSizeChange(WndObject& child, Size child_size) {
 		SizeChanged(child_size);
 	}
