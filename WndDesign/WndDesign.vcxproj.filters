@@ -144,6 +144,12 @@
     <ClInclude Include="frame\MultiViewFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="layout\SplitLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\wnd_traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system\d2d_hwnd.cpp">

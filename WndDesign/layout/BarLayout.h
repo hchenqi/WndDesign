@@ -9,9 +9,9 @@ BEGIN_NAMESPACE(WndDesign)
 class BarLayoutHorizontal : public WndObject {
 
 private:
-	ref_ptr<WndObject> child_left;
-	ref_ptr<WndObject> child_right;
-	ref_ptr<WndObject> child_center;
+	child_ptr child_left;
+	child_ptr child_right;
+	child_ptr child_center;
 
 private:
 	virtual const Size OnSizeRefChange(Size size_ref) override {

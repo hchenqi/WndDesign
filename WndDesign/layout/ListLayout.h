@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../window/WndObject.h"
+#include "../window/wnd_traits.h"
 
 #include <vector>
 
@@ -8,9 +8,14 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class ListLayoutVertical : public WndObject {
+template<class Direction>
+class ListLayout;
+
+
+template<>
+class ListLayout<Vertical> : public WndType<Fixed, Auto> {
 public:
-	ListLayoutVertical() {}
+	ListLayout() {}
 
 private:
 	struct ChildInfo {

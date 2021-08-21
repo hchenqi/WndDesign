@@ -4,8 +4,6 @@
 #include "../geometry/geometry.h"
 #include "../figure/figure_queue.h"
 
-#include <memory>
-
 
 BEGIN_NAMESPACE(WndDesign)
 
@@ -35,13 +33,6 @@ private:
 	void VerifyChild(const WndObject& child) const {
 		if (child.parent != this) { throw std::invalid_argument("invalid child window"); } 
 	}
-public:
-	struct child_ptr : public std::unique_ptr<WndObject> {
-		child_ptr(std::unique_ptr<WndObject> ptr) : std::unique_ptr<WndObject>(std::move(ptr)) { VerifyNonNull(); }
-		operator WndObject& () const { VerifyNonNull(); return **this; }
-	private:
-		void VerifyNonNull() const { if (*this == nullptr) { throw std::invalid_argument("invalid child pointer"); } }
-	};
 protected:
 	void RegisterChild(WndObject& child) {
 		if (child.HasParent()) { throw std::invalid_argument("window already has a parent"); }
