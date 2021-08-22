@@ -34,16 +34,16 @@ private:
 	int GetRightPosition() const { return (int)size.width - (int)width_right; }
 	int GetCenterPosition() const { return ((int)size.width - (int)width_center) / 2; }
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) override {
+	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) {
 			size.height = size_ref.height;
-			width_left = SetChildSizeRef(left, Size(length_min, size.height)).width;
-			width_right = SetChildSizeRef(right, Size(length_min, size.height)).width;
-			width_center = SetChildSizeRef(center, Size(length_min, size.height)).width;
+			width_left = UpdateChildSizeRef(left, Size(length_min, size.height)).width;
+			width_right = UpdateChildSizeRef(right, Size(length_min, size.height)).width;
+			width_center = UpdateChildSizeRef(center, Size(length_min, size.height)).width;
 		}
 		return size;
 	}
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) {
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (&child == center.get()) {
 			if (width_center != child_size.width) {
 				width_center = child_size.width;

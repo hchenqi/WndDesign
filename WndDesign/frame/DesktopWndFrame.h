@@ -41,7 +41,7 @@ public:
 private:
 	void GetMinMaxSize() {}
 
-	virtual const Size OnSizeRefChange(Size size_ref) {
+	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 
 	}
 

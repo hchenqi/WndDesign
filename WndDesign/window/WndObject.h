@@ -49,11 +49,11 @@ protected:
 
 	// layout
 protected:
-	const Size SetChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefChange(size_ref); }
-	void SizeChanged(Size size) { if (HasParent()) { GetParent().OnChildSizeChange(*this, size); } }
+	const Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
+	void SizeUpdated(Size size) { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) { return size_ref; }
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) {}
+	virtual const Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
 
 	// paint
 protected:

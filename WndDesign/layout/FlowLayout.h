@@ -18,13 +18,13 @@ public:
 	using child_ptr = child_ptr<Auto, Relative>;
 public:
 	FlowLayout(uint row_height, uint column_gap, uint row_gap) :
-		row_height(row_height), column_gap(column_gap), row_gap(row_gap) {
+		row_height(row_height), column_gap(column_gap), row_gap(row_gap), row_list({0}) {
 	}
 
 private:
 	struct ChildInfo {
 		child_ptr child;
-		uint row_offset;
+		uint column_offset;
 		uint width;
 	};
 	std::vector<ChildInfo> child_list;
@@ -54,52 +54,59 @@ private:
 public:
 	void AppendChild(child_ptr child) {
 		RegisterChild(child);
-		SetChildData(child, child_list.size());
-		ChildInfo& info = child_list.emplace_back(std::move(child));
-
-		info.y = size.height;
-		info.height = SetChildSizeRef(info.child, Size(size.width, length_min)).height;
-		size.height += info.height;
-
-		SizeChanged(size);
+		if (child_list.empty()) {
+			assert(row_list.size() == 1);
+			row_list.push_back(1);
+			ChildInfo & info = child_list.emplace_back(std::move(child));
+			info.column_offset = 0;
+			info.width = UpdateChildSizeRef(info.child, Size(length_min, row_height)).width;
+			SetChildData(info.child, { 0, 0 });
+		} else {
+			ChildInfo& info_back = child_list.back();
+			auto [row_index, column_index] = GetChildData(info_back.child);
+			uint column_offset = info_back.column_offset + info_back.width + column_gap;
+			child_list.emplace_back(std::move(child));
+			UpdateLayout(row_index, column_index + 1, column_gap);
+		}
+		SizeUpdated(size);
 	}
 
 private:
 	Size size;
 private:
-	void UpdateLayout(row_index row_index, column_index column_index, uint row_offset, child_index child_index) {
-
+	void UpdateLayout(row_index row_index, column_index column_index, uint column_offset) {
+		for (child_index child_index = row_list[row_index] + column_index; child_index < child_list.size(); ++child_index) {
+			ChildInfo& info = child_list[child_index];
+			if (column_offset > 0 && column_offset + info.width > size.width) {
+				row_list[row_index++] = child_index;
+				column_offset = 0; column_index = 0;
+			}
+			info.column_offset = column_offset;
+			SetChildData(info.child, { row_index, column_index });
+			column_offset += info.width + column_gap; column_index++;
+		}
+#error unchecked
+		row_list.erase(row_list.begin() + row_index, row_list.end());
+		row_list.push_back(child_list.size());
+		size.height = child_list.empty() ? 0 : row_index * (row_height + row_gap) + row_height;
 	}
 
-	virtual const Size OnSizeRefChange(Size size_ref) override {
+	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) {
 			size.width = size_ref.width;
 			size.height = 0;
-			uint row_index = 0, column_index = 0;
-			uint row_offset = 0;
-			row_list.clear();
-			for (child_index child_index = 0; child_index < child_list.size(); ++child_index) {
-				ChildInfo& info = child_list[child_index];
-				if (row_offset > 0 && row_offset + info.width > size.width) {
-					row_list.push_back(child_index); row_index++;
-					row_offset = 0; column_index = 0;
-				}
-				info.row_offset = row_offset;
-				SetChildData(info.child, { row_index, column_index });
-				row_offset += info.width + column_gap; column_index++;
-			}
-			row_list.push_back(child_list.size());
-			size.height = child_list.empty() ? 0 : row_index * (row_height + row_gap) + row_height;
+			UpdateLayout(0, 0, 0);
 		}
 		return size;
 	}
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		auto [row_index, column_index] = GetChildData(child);
 		child_index child_index = row_list[row_index] + column_index;
-		if (child_list[child_index].width != child_size.width) {
-			child_list[child_index].width = child_size.width;
-
-
+		ChildInfo& info = child_list[child_index];
+		if (info.width != child_size.width) {
+			info.width = child_size.width;
+			UpdateLayout(row_index, column_index, info.column_offset);
+			SizeUpdated(size);
 		}
 	}
 };

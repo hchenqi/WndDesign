@@ -15,11 +15,11 @@ public:
 private:
 	child_ptr child;
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) override {
-		return SetChildSizeRef(child, size_ref);
+	virtual const Size OnSizeRefUpdate(Size size_ref) override {
+		return UpdateChildSizeRef(child, size_ref);
 	}
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) override {
-		SizeChanged(child_size);
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+		SizeUpdated(child_size);
 	}
 };
 
@@ -35,17 +35,17 @@ private:
 public:
 	void SetChild(child_ptr child) {
 		this->child = std::move(child);
-		SizeChanged(SetChildSizeRef(child, size_ref));
+		SizeUpdated(UpdateChildSizeRef(child, size_ref));
 	}
 private:
 	Size size_ref;
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) override {
+	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 		this->size_ref = size_ref;
-		return SetChildSizeRef(child, size_ref);
+		return UpdateChildSizeRef(child, size_ref);
 	}
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) override {
-		SizeChanged(child_size);
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+		SizeUpdated(child_size);
 	}
 };
 

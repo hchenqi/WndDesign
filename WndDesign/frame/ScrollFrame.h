@@ -21,13 +21,13 @@ private:
 private:
 	Size size;
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) override {
+	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 
 
-		return SetChildSizeRef(child, size_ref);
+		return UpdateChildSizeRef(child, size_ref);
 	}
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) override {
-		SizeChanged(child_size);
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+		SizeUpdated(child_size);
 	}
 };
 

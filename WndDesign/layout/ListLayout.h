@@ -41,29 +41,29 @@ public:
 		SetChildData(child, child_list.size());
 		ChildInfo& info = child_list.emplace_back(std::move(child));
 		info.y = size.height;
-		info.height = SetChildSizeRef(info.child, Size(size.width, length_min)).height;
+		info.height = UpdateChildSizeRef(info.child, Size(size.width, length_min)).height;
 		size.height += info.height;
-		SizeChanged(size);
+		SizeUpdated(size);
 	}
 
 private:
 	Size size;
 	uint row_gap;
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) override {
+	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) {
 			size.width = size_ref.width;
 			size.height = 0;
 			for (auto& info : child_list) {
 				info.y = size.height;
-				info.height = SetChildSizeRef(*info.child, Size(size.width, length_min)).height;
+				info.height = UpdateChildSizeRef(*info.child, Size(size.width, length_min)).height;
 				size.height += info.height + row_gap;
 			}
 			size.height -= child_list.empty() ? 0 : row_gap;
 		}
 		return size;
 	}
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		uint64 index = GetChildData(child); assert(index < child_list.size());
 		if (child_list[index].height != child_size.height) {
 			child_list[index].height = child_size.height;
@@ -73,7 +73,7 @@ private:
 				child_list[index].y = size.height;
 				size.height += child_list[index].height;
 			}
-			SizeChanged(size);
+			SizeUpdated(size);
 		}
 	}
 };

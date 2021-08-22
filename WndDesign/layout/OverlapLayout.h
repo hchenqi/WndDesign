@@ -49,18 +49,18 @@ private:
 	Size size;
 
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) {
+	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			size = size_ref;
 			for (auto& info : child_list) {
-				info.region.size = info.child.OnSizeRefChange(size);
+				info.region.size = info.child.OnSizeRefUpdate(size);
 				info.region.point = info.child.GetPosition();
 			}
 		}
 		return size;
 	}
 
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) {
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		ChildInfo& info = GetChildData(child);
 		info.region.size = child_size;
 		info.region.point = info.child.GetPosition();
