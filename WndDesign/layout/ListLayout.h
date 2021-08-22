@@ -17,7 +17,7 @@ class ListLayout<Vertical> : public WndType<Relative, Auto> {
 public:
 	using child_ptr = child_ptr<Relative, Auto>;
 public:
-	ListLayout() {}
+	ListLayout(uint row_gap) : row_gap(row_gap) {}
 
 private:
 	struct ChildInfo {
@@ -48,6 +48,7 @@ public:
 
 private:
 	Size size;
+	uint row_gap;
 private:
 	virtual const Size OnSizeRefChange(Size size_ref) override {
 		if (size.width != size_ref.width) {
@@ -56,17 +57,19 @@ private:
 			for (auto& info : child_list) {
 				info.y = size.height;
 				info.height = SetChildSizeRef(*info.child, Size(size.width, length_min)).height;
-				size.height += info.height;
+				size.height += info.height + row_gap;
 			}
+			size.height -= child_list.empty() ? 0 : row_gap;
 		}
 		return size;
 	}
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) {
+	virtual void OnChildSizeChange(WndObject& child, Size child_size) override {
 		uint64 index = GetChildData(child); assert(index < child_list.size());
 		if (child_list[index].height != child_size.height) {
 			child_list[index].height = child_size.height;
-			size.height = child_list[index].y;
-			for (; index < child_list.size(); index++) {
+			size.height = child_list[index].y + child_list[index].height;
+			for (index++; index < child_list.size(); index++) {
+				size.height += row_gap;
 				child_list[index].y = size.height;
 				size.height += child_list[index].height;
 			}

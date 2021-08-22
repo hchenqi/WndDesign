@@ -36,7 +36,7 @@ struct Rect {
 		Point posl1 = point, posl2 = rect.point, posh1 = RightBottom(), posh2 = rect.RightBottom();
 		Point posl = Point(max(posl1.x, posl2.x), max(posl1.y, posl2.y));
 		Point posh = Point(min(posh1.x, posh2.x), min(posh1.y, posh2.y));
-		return posh > posl ? Rect(posl, Size((uint)(posh.x - posl.x), (uint)(posh.y - posl.y))) : Rect(posl, size_empty);
+		return posh > posl ? Rect(posl, Size((uint)(posh.x - posl.x), (uint)(posh.y - posl.y))) : Rect();
 	}
 
 	const Rect Union(const Rect& rect) const {

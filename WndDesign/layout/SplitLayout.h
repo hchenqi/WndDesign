@@ -29,7 +29,7 @@ private:
 private:
 	const Size GetSize() const { return Size(width, height_first + height_second); }
 private:
-	virtual const Size OnSizeRefChange(Size size_ref) {
+	virtual const Size OnSizeRefChange(Size size_ref) override {
 		if (width != size_ref.width) {
 			width = size_ref.width;
 			height_first = SetChildSizeRef(first, Size(width, length_min)).height;
@@ -37,7 +37,7 @@ private:
 		}
 		return GetSize();
 	}
-	virtual void OnChildSizeChange(WndObject& child, Size child_size) {
+	virtual void OnChildSizeChange(WndObject& child, Size child_size) override {
 		if (&child == first.get()) {
 			if (height_first != child_size.height) {
 				height_first = child_size.height;
