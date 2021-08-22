@@ -135,7 +135,7 @@
     <ClInclude Include="style\frame_style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="control\Placeholder.h">
+    <ClInclude Include="window\Placeholder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="layout\BarLayout.h">

@@ -162,7 +162,7 @@
     <ClInclude Include="control\CheckBox.h" />
     <ClInclude Include="control\EditBox.h" />
     <ClInclude Include="control\ImageBox.h" />
-    <ClInclude Include="control\Placeholder.h" />
+    <ClInclude Include="window\Placeholder.h" />
     <ClInclude Include="figure\color.h" />
     <ClInclude Include="figure\figure.h" />
     <ClInclude Include="figure\figure_queue.h" />
