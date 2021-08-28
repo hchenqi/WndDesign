@@ -40,7 +40,7 @@ private:
 	void SetChildData(WndObject& child, ChildData data) {
 		WndObject::SetChildData<ChildData>(child, data);
 	}
-	ChildData GetChildData(WndObject& child) {
+	ChildData GetChildData(const WndObject& child) {
 		return WndObject::GetChildData<ChildData>(child);
 	}
 
@@ -99,7 +99,7 @@ private:
 		}
 		return size;
 	}
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
 		auto [row_index, column_index] = GetChildData(child);
 		child_index child_index = row_list[row_index] + column_index;
 		ChildInfo& info = child_list[child_index];

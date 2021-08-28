@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OverlapWndFrame.h"
+#include "../window/wnd_traits.h"
 
 #include <memory>
 
@@ -8,7 +8,13 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class DesktopWndFrame : private OverlapWndFrame {
+class DesktopWndFrame : private WndObject {
+public:
+	using child_ptr = child_ptr<Relative, Relative>;
+public:
+	DesktopWndFrame(child_ptr wnd) {
+
+	}
 
 	struct {
 
@@ -25,11 +31,6 @@ private:
 
 	HANDLE hwnd;
 	std::unique_ptr<HWNDTarget> target;
-
-public:
-	DesktopWndFrame(WndObject& wnd) {
-
-	}
 
 
 public:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../window/WndObject.h"
+#include "../window/wnd_traits.h"
 
 #include <vector>
 
@@ -10,7 +10,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 class MultiViewFrame;
 
-class MultiViewPort : public WndObject {
+class ViewPort : public WndType<Auto, Auto> {
 	MultiViewFrame& frame;
 
 
@@ -18,13 +18,20 @@ class MultiViewPort : public WndObject {
 };
 
 
-class MultiViewFrame {
-
+class MultiViewFrame : private WndObject {
+public:
+	using child_ptr = child_ptr<Auto, Auto>;
+public:
+	MultiViewFrame(child_ptr child) : child(std::move(child)) { RegisterChild(this->child); }
 
 private:
-	WndObject::child_ptr child;
+	child_ptr child;
 
-	std::vector<ref_ptr<MultiViewPort>> viewports;
+	std::vector<ref_ptr<ViewPort>> viewports;
+
+	std::unique_ptr<ViewPort> CreateViewPort() {
+
+	}
 };
 
 

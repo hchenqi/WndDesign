@@ -135,7 +135,7 @@
     <ClInclude Include="style\frame_style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="window\Placeholder.h">
+    <ClInclude Include="control\Placeholder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="layout\BarLayout.h">
@@ -151,6 +151,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="frame\ScrollFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame\LayerFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="message\message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="message\mouse_msg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="message\key_msg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="message\notify_msg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="message\ime_msg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

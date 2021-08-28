@@ -25,7 +25,7 @@ private:
 	void SetChildData(WndObject& child, ChildInfo& info) {
 		WndObject::SetChildData<ChildInfo*>(child, &info);
 	}
-	ChildInfo& GetChildData(WndObject& child) {
+	ChildInfo& GetChildData(const WndObject& child) {
 		return *WndObject::GetChildData<ChildInfo*>(child);
 	}
 
@@ -60,7 +60,7 @@ private:
 		return size;
 	}
 
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
 		ChildInfo& info = GetChildData(child);
 		info.region.size = child_size;
 		info.region.point = info.child.GetPosition();

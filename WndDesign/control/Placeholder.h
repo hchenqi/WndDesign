@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wnd_traits.h"
+#include "../window/wnd_traits.h"
 
 
 BEGIN_NAMESPACE(WndDesign)

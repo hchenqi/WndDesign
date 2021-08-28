@@ -21,7 +21,7 @@ template<class WidthType, class HeightType>
 class child_ptr : public std::unique_ptr<WndObject> {
 	void VerifyNonNull() const { if (*this == nullptr) { throw std::invalid_argument("invalid child pointer"); } }
 public:
-	child_ptr(std::unique_ptr<WndType<WidthType, HeightType>> ptr) : std::unique_ptr<WndObject>(std::move(ptr)) { VerifyNonNull(); }
+	child_ptr(std::unique_ptr<WndType<WidthType, HeightType>>&& ptr) : std::unique_ptr<WndObject>(std::move(ptr)) { VerifyNonNull(); }
 	operator WndObject& () const { VerifyNonNull(); return **this; }
 };
 

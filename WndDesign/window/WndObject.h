@@ -3,6 +3,7 @@
 #include "../common/uncopyable.h"
 #include "../geometry/geometry.h"
 #include "../figure/figure_queue.h"
+#include "../message/message.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -13,7 +14,7 @@ protected:
 	WndObject() {}
 	virtual ~WndObject() {}
 
-	// parent window
+	// parent window 
 private:
 	ref_ptr<WndObject> parent = nullptr;
 private:
@@ -49,27 +50,34 @@ protected:
 
 	// layout
 protected:
-	const Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
-	void SizeUpdated(Size size) { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
+	const Size UpdateChildSizeRef(WndObject& child, Size size_ref) const { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
+	void SizeUpdated(Size size) const { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
 private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
+	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) {}
 
 	// paint
 protected:
-	void InvalidateRegion(Rect invalid_region) { if (HasParent()) { GetParent().InvalidateChildRegion(*this, invalid_region); } }
-protected:
-	void PaintChildRegion(WndObject& child, FigureQueue& figure_queue, Rect invalid_region) const {
-		VerifyChild(child); child.OnPaint(figure_queue, invalid_region); 
+	void Redraw(Rect redraw_region) const { if (HasParent()) { GetParent().OnChildRedraw(*this, redraw_region); } }
+	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) const {
+		VerifyChild(child); Vector offset = child_offset - point_zero;
+		figure_queue.PushOffset(offset); child.OnDraw(figure_queue, draw_region + offset); figure_queue.PopOffset(offset);
 	}
 private:
-	virtual void InvalidateChildRegion(const WndObject& child, Rect child_invalid_region) {}
-	virtual void OnPaint(FigureQueue& figure_queue, Rect redraw_region) const {}
-
+	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) {}
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const {}
 
 	// message
 private:
-	virtual void Handler(Msg msg, Para para) {}
+	void SetCapture() const {}
+	void ReleaseCapture() const {}
+	void SetFocus() const {}
+protected:
+	void SendChildMouseMsg(WndObject& child, MouseMsg& msg) const { VerifyChild(child); child.OnMouseMsg(msg); }
+private:
+	virtual void OnMouseMsg(MouseMsg& msg) {}
+	virtual void OnKeyMsg(KeyMsg msg) {}
+	virtual void OnNotifyMsg(NotifyMsg msg) {}
 };
 
 

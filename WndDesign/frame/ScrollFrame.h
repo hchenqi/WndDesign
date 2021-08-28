@@ -26,8 +26,13 @@ private:
 
 		return UpdateChildSizeRef(child, size_ref);
 	}
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
 		SizeUpdated(child_size);
+	}
+
+private:
+	virtual void OnMouseMsg(MouseMsg msg) {
+		SendChildMouseMsg(child, msg);
 	}
 };
 

@@ -28,6 +28,9 @@ private:
 	uint height_second;
 private:
 	const Size GetSize() const { return Size(width, height_first + height_second); }
+	const Rect GetRegionFirst() const { return Rect(point_zero, Size(width, height_first)); }
+	const Rect GetRegionSecond() const { return Rect(Point(0, (int)height_first), Size(width, height_second)); }
+	const Rect GetChildRegion(const WndObject& child) const { return &child == first.get() ? GetRegionFirst() : GetRegionSecond(); }
 private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 		if (width != size_ref.width) {
@@ -37,7 +40,7 @@ private:
 		}
 		return GetSize();
 	}
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
 		if (&child == first.get()) {
 			if (height_first != child_size.height) {
 				height_first = child_size.height;
@@ -49,6 +52,25 @@ private:
 				SizeUpdated(GetSize());
 			}
 		}
+	}
+private:
+	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) override {
+		Rect child_region = GetChildRegion(child);
+		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
+		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
+	}
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const override {
+		using pair = std::pair<WndObject&, Rect>;
+		for (auto [child, child_region] : { pair{first, GetRegionFirst()}, pair{second, GetRegionSecond()} }) {
+			Rect draw_region_child = child_region.Intersect(draw_region);
+			if (!draw_region_child.IsEmpty()) { DrawChild(first, child_region.point, figure_queue, draw_region_child); }
+		}
+	}
+private:
+	virtual void OnMouseMsg(MouseMsg& msg) override {
+		if ((uint)msg.point.y < height_first) { return SendChildMouseMsg(first, msg); }
+		msg.point.y -= height_first;
+		if ((uint)msg.point.y < height_second) { return SendChildMouseMsg(second, msg); }
 	}
 };
 

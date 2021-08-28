@@ -31,7 +31,7 @@ private:
 	void SetChildData(WndObject& child, uint64 index) {
 		WndObject::SetChildData<uint64>(child, index);
 	}
-	uint64 GetChildData(WndObject& child) {
+	uint64 GetChildData(const WndObject& child) {
 		return WndObject::GetChildData<uint64>(child);
 	}
 
@@ -63,7 +63,7 @@ private:
 		}
 		return size;
 	}
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
 		uint64 index = GetChildData(child); assert(index < child_list.size());
 		if (child_list[index].height != child_size.height) {
 			child_list[index].height = child_size.height;

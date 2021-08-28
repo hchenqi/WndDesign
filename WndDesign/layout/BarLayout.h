@@ -31,8 +31,9 @@ private:
 	uint width_right;
 	uint width_center;
 private:
-	int GetRightPosition() const { return (int)size.width - (int)width_right; }
-	int GetCenterPosition() const { return ((int)size.width - (int)width_center) / 2; }
+	const Rect GetRegionLeft() const { return Rect(Point(0, 0), Size(width_left, size.height)); }
+	const Rect GetRegionRight() const { return Rect(Point((int)size.width - (int)width_right, 0), Size(width_right, size.height)); }
+	const Rect GetRegionCenter() const { return Rect(Point(((int)size.width - (int)width_center) / 2, 0), Size(width_center, size.height)); }
 private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) {
@@ -43,19 +44,13 @@ private:
 		}
 		return size;
 	}
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
 		if (&child == center.get()) {
-			if (width_center != child_size.width) {
-				width_center = child_size.width;
-			}
+			if (width_center != child_size.width) { width_center = child_size.width; }
 		} else if (&child == right.get()) {
-			if (width_right != child_size.width) {
-				width_right = child_size.width;
-			}
+			if (width_right != child_size.width) { width_right = child_size.width; }
 		} else {
-			if (width_left != child_size.width) {
-				width_left = child_size.width;
-			}
+			if (width_left != child_size.width) { width_left = child_size.width; }
 		}
 	}
 };

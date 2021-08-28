@@ -16,6 +16,8 @@ struct Vector {
 	bool operator==(const Vector& vector) const { return x == vector.x && y == vector.y; }
 	bool operator!=(const Vector& vector) const { return x != vector.x || y != vector.y; }
 
+	const Vector operator-() const { return Vector(-x, -y); }
+
 	const Vector operator+(const Vector& vector) const { return Vector(x + vector.x, y + vector.y); }
 	const Vector operator-(const Vector& vector) const { return Vector(x - vector.x, y - vector.y); }
 	Vector& operator+=(const Vector& vector) { return (*this) = (*this) + vector; }

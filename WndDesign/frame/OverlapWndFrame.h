@@ -1,12 +1,12 @@
 #pragma once
 
-#include "WndFrame.h"
+#include "../window/wnd_traits.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class OverlapWndFrame : private WndFrame {
+class OverlapWndFrame : private WndObject {
 private:
 	friend class OverlapLayout;
 
