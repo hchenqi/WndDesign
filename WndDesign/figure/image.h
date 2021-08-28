@@ -31,7 +31,6 @@ struct ImageFigure : Figure {
 
 	ImageFigure(const Image& image, uchar opacity = 0xFF) :image(image), opacity(opacity) {}
 
-	virtual const Rect GetRegion() const override { return Rect(point_zero, image.GetSize()); }
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };
 

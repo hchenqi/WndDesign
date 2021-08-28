@@ -12,16 +12,8 @@ struct Line : Figure {
 	Color color;
 	float width;
 
-	Line(Vector end, Color color, float width) :
-		end(end), color(color), width(width) {
-	}
+	Line(Vector end, Color color, float width) : end(end), color(color), width(width) {}
 
-	virtual const Rect GetRegion() const override {
-		int x, y; uint w, h;
-		if (end.x < 0) { x = end.x; w = (uint)-end.x; } else { x = 0; w = (uint)end.x; }
-		if (end.y < 0) { y = end.y; h = (uint)-end.y; } else { y = 0; h = (uint)end.y; }
-		return Rect(x, y, w, h);
-	}
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };
 
@@ -42,7 +34,6 @@ struct Rectangle : Figure {
 		Rectangle(size, color_transparent, border_width, border_color) {
 	}
 
-	virtual const Rect GetRegion() const override { return Rect(point_zero, size); }
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };
 
@@ -64,7 +55,6 @@ struct RoundedRectangle : Figure {
 		RoundedRectangle(size, radius, color_transparent, border_width, border_color) {
 	}
 
-	virtual const Rect GetRegion() const override { return Rect(point_zero, size); }
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };
 
@@ -86,7 +76,6 @@ struct Ellipse : Figure {
 		Ellipse(radius_x, radius_y, color_transparent, border_width, border_color) {
 	}
 
-	virtual const Rect GetRegion() const override { return Rect(-(int)radius_x, -(int)radius_y, 2 * radius_x, 2 * radius_y); }
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };
 

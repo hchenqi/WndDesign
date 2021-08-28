@@ -9,7 +9,6 @@ class RenderTarget;
 
 
 struct ABSTRACT_BASE Figure {
-	virtual const Rect GetRegion() const pure;
 	virtual void DrawOn(RenderTarget& target, Point point) const pure;
 };
 

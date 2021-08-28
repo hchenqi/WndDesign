@@ -90,15 +90,13 @@ Image::~Image() {
 
 
 void ImageFigure::DrawOn(RenderTarget& target, Point point) const {
-	if (opacity > 0) {
-		target.DrawBitmap(
-			static_cast<ID2D1Bitmap1*>(image.bitmap),
-			Rect2RECT(Rect(point, image.GetSize())),
-			Opacity2Float(opacity),
-			D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-			Rect2RECT(Rect(point_zero, image.GetSize()))
-		);
-	}
+	target.DrawBitmap(
+		static_cast<ID2D1Bitmap1*>(image.bitmap),
+		Rect2RECT(Rect(point, image.GetSize())),
+		Opacity2Float(opacity),
+		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+		Rect2RECT(Rect(point_zero, image.GetSize()))
+	);
 }
 
 
