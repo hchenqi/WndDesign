@@ -176,6 +176,7 @@
     <ClInclude Include="frame\MultiViewFrame.h" />
     <ClInclude Include="frame\OverlapWndFrame.h" />
     <ClInclude Include="frame\ScrollFrame.h" />
+    <ClInclude Include="frame\TiledLayerFrame.h" />
     <ClInclude Include="frame\WndFrame.h" />
     <ClInclude Include="geometry\geometry.h" />
     <ClInclude Include="geometry\margin.h" />

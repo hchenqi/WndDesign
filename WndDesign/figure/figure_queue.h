@@ -62,7 +62,7 @@ private:
 	};
 	vector<FigureGroup> groups;
 public:
-	void CheckFigureGroup() const { if (!group_offset_stack.empty()) { throw std::logic_error("unbalanced figure group"); } }
+	void CheckFigureGroup() const { if (!group_offset_stack.empty() || groups.empty()) { throw std::logic_error("invalid figure group"); } }
 	const vector<FigureGroup>& GetFigureGroups() const { return groups; }
 public:
 	uint BeginGroup(Vector group_offset, Rect clip_region) {
@@ -76,6 +76,14 @@ public:
 		groups[group_begin_index].group_end_index = (uint)groups.size();
 		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), vector_zero, region_empty });
 		offset = group_offset_stack.back(); group_offset_stack.pop_back();
+	}
+public:
+	void Begin() {
+		if (!figures.empty() || !groups.empty()) { throw std::logic_error("invalid begin call"); }
+		BeginGroup(vector_zero, region_empty);
+	}
+	void End() {
+		EndGroup(0);
 	}
 };
 

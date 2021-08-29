@@ -31,12 +31,13 @@ void Layer::SetSize(Size size) {
 
 void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect clip_region) {
     figure_queue.CheckFigureGroup();
-    if (bitmap == nullptr) { return; }
+    clip_region = clip_region.Intersect(Rect(point_zero, size)); if (clip_region.IsEmpty()) { return; }
     ID2D1DeviceContext& device_context = GetD2DDeviceContext(); device_context.SetTarget(static_cast<ID2D1Bitmap1*>(bitmap));
+    device_context.PushAxisAlignedClip(Rect2RECT(clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
+    device_context.Clear(Color2COLOR(color_transparent));
     auto& groups = figure_queue.GetFigureGroups();
     auto& figures = figure_queue.GetFigures(); uint figure_index = 0;
-    clip_region = clip_region.Intersect(Rect(point_zero, size));
-    for (uint group_index = 0; group_index < groups.size(); ++group_index) {
+    for (uint group_index = 1; group_index < groups.size(); ++group_index) {
         auto& group = groups[group_index];
         for (; figure_index < group.figure_index; ++figure_index) {
             figures[figure_index].figure->DrawOn(static_cast<RenderTarget&>(device_context), figures[figure_index].offset + offset);
@@ -75,10 +76,10 @@ void LayerFigure::DrawOn(RenderTarget& target, Point point) const {
 	if (layer.bitmap == nullptr) { return; }
 	target.DrawBitmap(
 		static_cast<ID2D1Bitmap1*>(layer.bitmap),
-		Rect2RECT(Rect(point, layer.size)),
+		Rect2RECT(Rect(point, region.size)),
 		1.0,
 		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		Rect2RECT(Rect(point_zero, layer.size))
+		Rect2RECT(region)
 	);
 }
 
