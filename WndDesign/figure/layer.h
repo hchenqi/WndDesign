@@ -4,21 +4,22 @@
 #include "../common/uncopyable.h"
 
 
+struct ID2D1Bitmap1;
+
+
 BEGIN_NAMESPACE(WndDesign)
 
 class FigureQueue;
 
 
 class Layer : Uncopyable {
-private:
+protected:
 	friend struct LayerFigure;
-	Size size;
-	alloc_ptr<void> bitmap;
+	alloc_ptr<ID2D1Bitmap1> bitmap;
+	Layer() : bitmap(nullptr) {}
 public:
-	Layer() : size(), bitmap(nullptr) {}
+	Layer(Size size);
 	~Layer();
-	const Size GetSize() const { return size; }
-	void SetSize(Size size);
 public:
 	void DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect clip_region);
 };

@@ -1,15 +1,16 @@
-#include "d2d_hwnd.h"
-#include "d3d_api.h"
-#include "dxgi_api.h"
-#include "dcomp_api.h"
-#include "d2d_api.h"
-#include "directx_helper.h"
+#include "desktop_wnd_layer.h"
+
+#include "../system/d3d_api.h"
+#include "../system/dxgi_api.h"
+#include "../system/dcomp_api.h"
+#include "../system/d2d_api.h"
+#include "../system/directx_helper.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-HWNDTarget::HWNDTarget(HANDLE hwnd, Size size) : Target(nullptr), swap_chain(nullptr), comp_target(nullptr), comp_visual(nullptr) {
+DesktopWndLayer::DesktopWndLayer(HANDLE hwnd, Size size) : swap_chain(nullptr), comp_target(nullptr), comp_visual(nullptr) {
 	// Create swapchain.
 	DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = { 0 };
 	swap_chain_desc.Width = size.width;
@@ -37,7 +38,7 @@ HWNDTarget::HWNDTarget(HANDLE hwnd, Size size) : Target(nullptr), swap_chain(nul
 	GetDCompDevice().Commit();
 }
 
-HWNDTarget::~HWNDTarget() {
+DesktopWndLayer::~DesktopWndLayer() {
 	SafeRelease(&comp_visual);
 	SafeRelease(&comp_target);
 
@@ -45,27 +46,27 @@ HWNDTarget::~HWNDTarget() {
 	SafeRelease(&swap_chain);
 }
 
-void HWNDTarget::CreateTarget() {
+void DesktopWndLayer::CreateTarget() {
 	D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
 		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
 		D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
 	);
 	ComPtr<IDXGISurface> dxgi_surface;
 	hr << swap_chain->GetBuffer(0, IID_PPV_ARGS(&dxgi_surface));
-	hr << GetD2DDeviceContext().CreateBitmapFromDxgiSurface(dxgi_surface.Get(), &bitmap_properties, &bitmap);
+	hr << GetD2DDeviceContext().CreateBitmapFromDxgiSurface(dxgi_surface.Get(), &bitmap_properties, reinterpret_cast<ID2D1Bitmap1**>(&bitmap));
 }
 
-void HWNDTarget::DestroyTarget() {
+void DesktopWndLayer::DestroyTarget() {
 	SafeRelease(&bitmap);
 }
 
-void HWNDTarget::OnResize(Size size) {
+void DesktopWndLayer::OnResize(Size size) {
 	DestroyTarget();
 	hr << swap_chain->ResizeBuffers(0, size.width, size.height, DXGI_FORMAT_UNKNOWN, 0);
 	CreateTarget();
 }
 
-void HWNDTarget::Present() {
+void DesktopWndLayer::Present() {
 	DXGI_PRESENT_PARAMETERS present_parameters = {};
 	hr << swap_chain->Present1(0, 0, &present_parameters);
 }

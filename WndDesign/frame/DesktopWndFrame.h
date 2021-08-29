@@ -7,6 +7,8 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
+class DesktopWndLayer;
+
 
 class DesktopWndFrame : private WndObject {
 public:
@@ -17,9 +19,8 @@ private:
 	child_ptr child;
 private:
 	using HANDLE = void*;
-	class HWNDTarget;
 	HANDLE hwnd;
-	std::unique_ptr<HWNDTarget> target;
+	std::unique_ptr<DesktopWndLayer> layer;
 public:
 	void UpdateInvalidRegion();
 	void Present();

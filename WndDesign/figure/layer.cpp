@@ -19,19 +19,12 @@ inline alloc_ptr<ID2D1Bitmap1> D2DCreateBitmap(Size size) {
 }
 
 
-Layer::~Layer() { SafeRelease(reinterpret_cast<ID2D1Bitmap1**>(&bitmap)); }
+Layer::Layer(Size size) : bitmap(D2DCreateBitmap(size)) {}
 
-void Layer::SetSize(Size size) {
-	if (this->size != size) {
-		this->size = size;
-		SafeRelease(reinterpret_cast<ID2D1Bitmap1**>(&bitmap));
-		if (!size.IsEmpty()) { bitmap = D2DCreateBitmap(size); }
-	}
-}
+Layer::~Layer() { SafeRelease(&bitmap); }
 
 void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect clip_region) {
-    figure_queue.CheckFigureGroup();
-    clip_region = clip_region.Intersect(Rect(point_zero, size)); if (clip_region.IsEmpty()) { return; }
+    figure_queue.CheckFigureGroup(); if (bitmap == nullptr) { return; }
     ID2D1DeviceContext& device_context = GetD2DDeviceContext(); device_context.SetTarget(static_cast<ID2D1Bitmap1*>(bitmap));
     device_context.PushAxisAlignedClip(Rect2RECT(clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
     device_context.Clear(Color2COLOR(color_transparent));

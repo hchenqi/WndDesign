@@ -197,7 +197,7 @@
     <ClInclude Include="message\notify_msg.h" />
     <ClInclude Include="style\frame_style.h" />
     <ClInclude Include="system\d2d_api.h" />
-    <ClInclude Include="system\d2d_hwnd.h" />
+    <ClInclude Include="figure\desktop_wnd_layer.h" />
     <ClInclude Include="system\d3d_api.h" />
     <ClInclude Include="system\dcomp_api.h" />
     <ClInclude Include="system\directx_helper.h" />
@@ -213,8 +213,9 @@
     <ClCompile Include="figure\image.cpp" />
     <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />
+    <ClCompile Include="frame\LayerFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
-    <ClCompile Include="system\d2d_hwnd.cpp" />
+    <ClCompile Include="figure\desktop_wnd_layer.cpp" />
     <ClCompile Include="system\directx_resource.cpp" />
     <ClCompile Include="window\Desktop.cpp" />
   </ItemGroup>

@@ -36,7 +36,8 @@ public:
 	void Sub(const Region& region);
 	void Xor(const Region& region);
 
-	std::pair<Rect, std::vector<Rect>> GetRects() const;
+	const Rect GetBoundingRect() const;
+	const std::pair<Rect, std::vector<Rect>> GetRects() const;
 };
 
 
