@@ -6,12 +6,11 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-template<class WidthType, class HeightType>
-class WndFrame : public WndType<WidthType, HeightType> {
+class WndFrame : public WndObject {
 public:
-	using child_ptr = child_ptr<WidthType, HeightType>;
+	using child_ptr = child_ptr<>;
 protected:
-	WndFrame(child_ptr child) : child(std::move(child)) { RegisterChild(this->child); }
+	WndFrame(child_ptr child) : child(std::move(child)) { RegisterChild(*this->child); }
 protected:
 	child_ptr child;
 private:
@@ -25,8 +24,7 @@ private:
 };
 
 
-template<class WidthType, class HeightType>
-class WndFrameMutable : public WndFrame<WidthType, HeightType> {
+class WndFrameMutable : public WndFrame {
 public:
 	WndFrameMutable(child_ptr child) : WndFrame(std::move(child)) {}
 private:

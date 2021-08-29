@@ -9,10 +9,7 @@ BEGIN_NAMESPACE(WndDesign)
 class Layer;
 
 
-template<class WidthType, class HeightType>
-class LayerFrame : public WndFrame<WidthType, HeightType> {
-public:
-	using WndFrame::child_ptr;
+class LayerFrame : public WndFrame {
 public:
 	LayerFrame(child_ptr child);
 	~LayerFrame();
