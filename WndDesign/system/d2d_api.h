@@ -15,5 +15,8 @@ ID2D1Factory1& GetD2DFactory();
 ID2D1DeviceContext& GetD2DDeviceContext();
 ID2D1SolidColorBrush& GetD2DSolidColorBrush(Color color);
 
+void BeginDraw();
+void EndDraw();
+
 
 END_NAMESPACE(WndDesign)

@@ -42,9 +42,6 @@
     <ClInclude Include="system\d2d_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system\directx_resource.cpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="system\dxgi_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -67,9 +64,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\directx_resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="system\d2d_target.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="window\WndObject.h">
@@ -171,12 +165,15 @@
     <ClInclude Include="message\ime_msg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="figure\layer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="figure\tiled_layer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="system\d2d_hwnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="system\d2d_target.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="window\Desktop.cpp">
@@ -189,6 +186,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="geometry\region.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\directx_resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="figure\layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

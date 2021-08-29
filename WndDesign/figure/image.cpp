@@ -26,7 +26,7 @@ ComPtr<IWICFormatConverter> LoadFromDecoder(ComPtr<IWICBitmapDecoder> decoder) {
 	return converter;
 }
 
-ComPtr<IWICFormatConverter> LoadImageFromFile(const wstring& file_name) {
+ComPtr<IWICFormatConverter> LoadImageFromFile(const std::wstring& file_name) {
 	try {
 		ComPtr<IWICBitmapDecoder> decoder;
 		hr << GetWICFactory().CreateDecoderFromFilename(
@@ -74,7 +74,7 @@ ComPtr<ID2D1Bitmap1> CreateD2DBitmapFromWicBitmap(ComPtr<IWICFormatConverter> co
 END_NAMESPACE(Anonymous)
 
 
-Image::Image(const wstring& file_name) :
+Image::Image(const std::wstring& file_name) :
 	bitmap(CreateD2DBitmapFromWicBitmap(LoadImageFromFile(file_name)).Detach()),
 	size(SIZE2Size(static_cast<ID2D1Bitmap1*>(bitmap)->GetSize())) {
 }
@@ -85,17 +85,17 @@ Image::Image(void* address, size_t size) :
 }
 
 Image::~Image() { 
-	static_cast<ID2D1Bitmap1*>(bitmap)->Release(); bitmap = nullptr;
+	SafeRelease(reinterpret_cast<ID2D1Bitmap1**>(&bitmap)); 
 }
 
 
 void ImageFigure::DrawOn(RenderTarget& target, Point point) const {
 	target.DrawBitmap(
 		static_cast<ID2D1Bitmap1*>(image.bitmap),
-		Rect2RECT(Rect(point, image.GetSize())),
+		Rect2RECT(Rect(point, image.size)),
 		Opacity2Float(opacity),
 		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		Rect2RECT(Rect(point_zero, image.GetSize()))
+		Rect2RECT(Rect(point_zero, image.size))
 	);
 }
 

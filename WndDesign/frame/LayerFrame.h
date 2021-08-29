@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../window/wnd_traits.h"
+#include "../figure/layer.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -15,8 +16,8 @@ public:
 private:
 	child_ptr child;
 private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
-		return UpdateChildSizeRef(child, size_ref);
+	virtual const Size OnSizeRefUpdate(Size size_ref) override { 
+		return UpdateChildSizeRef(child, size_ref); 
 	}
 	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
 

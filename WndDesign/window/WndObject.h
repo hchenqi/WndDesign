@@ -68,7 +68,7 @@ private:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const {}
 
 	// message
-private:
+protected:
 	void SetCapture() const {}
 	void ReleaseCapture() const {}
 	void SetFocus() const {}

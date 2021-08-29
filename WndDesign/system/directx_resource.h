@@ -6,11 +6,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void DirectXInitialize();
-
-void DirectXUninitialize();
-
-void DirectXRecreate();
+void DirectXRecreateResource();
 
 
 END_NAMESPACE(WndDesign)

@@ -48,13 +48,13 @@ private:
 			struct { // as group begin
 				uint group_end_index;
 				uint figure_index;
-				Vector coordinate_offset;
+				Vector offset;
 				Rect clip_region;
 			};
 			struct { // as group end
 				uint null_index;  // == -1
 				uint figure_index;
-				mutable Vector prev_coordinate_offset;
+				mutable Vector prev_offset;
 				mutable Rect prev_clip_region;
 			};
 		};
@@ -65,17 +65,17 @@ public:
 	void CheckFigureGroup() const { if (!group_offset_stack.empty()) { throw std::logic_error("unbalanced figure group"); } }
 	const vector<FigureGroup>& GetFigureGroups() const { return groups; }
 public:
-	uint BeginGroup(Vector coordinate_offset, Rect clip_region) {
+	uint BeginGroup(Vector group_offset, Rect clip_region) {
 		uint group_begin_index = (uint)groups.size();
-		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), coordinate_offset + offset, clip_region });
+		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), group_offset + offset, clip_region });
 		group_offset_stack.push_back(offset); offset = vector_zero;
 		return group_begin_index;
 	}
 	void EndGroup(uint group_begin_index) {
 		if (group_begin_index >= groups.size() || groups[group_begin_index].group_end_index != -1) { throw std::invalid_argument("invalid group begin index"); }
 		groups[group_begin_index].group_end_index = (uint)groups.size();
-		offset = group_offset_stack.back(); group_offset_stack.pop_back();
 		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), vector_zero, region_empty });
+		offset = group_offset_stack.back(); group_offset_stack.pop_back();
 	}
 };
 

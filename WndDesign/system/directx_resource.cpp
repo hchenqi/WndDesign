@@ -39,19 +39,37 @@ public:
 
 private:
 	static DirectXResource directx_resource;
-	DirectXResource() {}
-	~DirectXResource() {}
 
-public:
-	static DirectXResource& Get() { return directx_resource; }
+private:
+	DirectXResource();
+	~DirectXResource();
 
-public:
 	void CreateDeviceIndependentResource();
 	void DiscardDeviceIndependentResource();
 	void CreateDeviceDependentResource();
 	void DiscardDeviceDependentResource();
+
+public:
+	static DirectXResource& Get() { return directx_resource; }
+
+	void RecreateDeviceDependentResource() {
+		DiscardDeviceDependentResource();
+		CreateDeviceDependentResource();
+	}
 };
 
+
+DirectXResource::DirectXResource() {
+	hr << CoInitialize(nullptr);
+	CreateDeviceIndependentResource();
+	CreateDeviceDependentResource();
+}
+
+DirectXResource::~DirectXResource() {
+	DiscardDeviceDependentResource();
+	DiscardDeviceIndependentResource();
+	CoUninitialize();
+}
 
 void DirectXResource::CreateDeviceIndependentResource() {
 	// Create D2D factory.
@@ -127,23 +145,7 @@ void DirectXResource::DiscardDeviceDependentResource() {
 }
 
 
-void DirectXInitialize() {
-	hr << CoInitialize(nullptr);
-	DirectXResource::Get().CreateDeviceIndependentResource();
-	DirectXResource::Get().CreateDeviceDependentResource();
-}
-
-void DirectXUninitialize() {
-	DirectXResource::Get().DiscardDeviceDependentResource();
-	DirectXResource::Get().DiscardDeviceIndependentResource();
-	CoUninitialize();
-}
-
-void DirectXRecreate() {
-	DirectXResource::Get().DiscardDeviceDependentResource();
-	DirectXResource::Get().CreateDeviceDependentResource();
-}
-
+void DirectXRecreateResource() { DirectXResource::Get().RecreateDeviceDependentResource(); }
 
 ID3D11Device& GetD3DDevice() { return *DirectXResource::Get().d3d_device.Get(); }
 
@@ -166,6 +168,15 @@ ID2D1SolidColorBrush& GetD2DSolidColorBrush(Color color) {
 	ID2D1SolidColorBrush& brush = GetD2DSolidColorBrush();
 	brush.SetColor(Color2COLOR(color));
 	return brush;
+}
+
+void BeginDraw() {
+	GetD2DDeviceContext().BeginDraw();
+}
+
+void EndDraw() {
+	hr << GetD2DDeviceContext().EndDraw();
+	GetD2DDeviceContext().SetTarget(nullptr);
 }
 
 

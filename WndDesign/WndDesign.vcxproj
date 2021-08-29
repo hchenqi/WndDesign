@@ -168,7 +168,9 @@
     <ClInclude Include="figure\figure.h" />
     <ClInclude Include="figure\figure_queue.h" />
     <ClInclude Include="figure\image.h" />
+    <ClInclude Include="figure\layer.h" />
     <ClInclude Include="figure\shape.h" />
+    <ClInclude Include="figure\tiled_layer.h" />
     <ClInclude Include="frame\DesktopWndFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
     <ClInclude Include="frame\MultiViewFrame.h" />
@@ -195,7 +197,6 @@
     <ClInclude Include="style\frame_style.h" />
     <ClInclude Include="system\d2d_api.h" />
     <ClInclude Include="system\d2d_hwnd.h" />
-    <ClInclude Include="system\d2d_target.h" />
     <ClInclude Include="system\d3d_api.h" />
     <ClInclude Include="system\dcomp_api.h" />
     <ClInclude Include="system\directx_helper.h" />
@@ -209,10 +210,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\image.cpp" />
+    <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="system\d2d_hwnd.cpp" />
-    <ClCompile Include="system\d2d_target.cpp" />
     <ClCompile Include="system\directx_resource.cpp" />
     <ClCompile Include="window\Desktop.cpp" />
   </ItemGroup>
