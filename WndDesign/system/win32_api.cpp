@@ -1,12 +1,22 @@
 #include "win32_api.h"
 #include "../message/message.h"
-#include "../frame/DesktopWndFrame.h"
+#include "../frame/DesktopFrame.h"
 
 #include <Windows.h>
 #include <windowsx.h>
 
 
 BEGIN_NAMESPACE(WndDesign)
+
+struct DesktopFrameApi : DesktopFrame {
+    DesktopFrame::GetRegion;
+    DesktopFrame::GetMinMaxRegion;
+    DesktopFrame::SetRegion;
+    DesktopFrame::Draw;
+    DesktopFrame::DispatchMouseMsg;
+    DesktopFrame::DispatchKeyMsg;
+    DesktopFrame::DispatchNotifyMsg;
+};
 
 BEGIN_NAMESPACE(Anonymous)
 
@@ -21,9 +31,10 @@ inline const Rect RECT2Rect(const RECT& rect) {
 inline bool IsMouseMsg(UINT msg) { return WM_MOUSEFIRST <= msg && msg <= WM_MOUSELAST; }
 inline bool IsKeyboardMsg(UINT msg) { return WM_KEYFIRST <= msg && msg <= WM_KEYLAST; }
 
-
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    ref_ptr<DesktopWndFrame> frame = reinterpret_cast<ref_ptr<DesktopWndFrame>>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    static bool is_mouse_tracked = false;
+
+    ref_ptr<DesktopFrameApi> frame = reinterpret_cast<ref_ptr<DesktopFrameApi>>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     if (frame == nullptr) { goto FrameIrrelevantMessages; }
 
     // mouse message
@@ -33,18 +44,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         mouse_msg._key_state = GET_KEYSTATE_WPARAM(wParam);;
         mouse_msg.wheel_delta = GET_WHEEL_DELTA_WPARAM(wParam);
         switch (msg) {
-        case WM_MOUSEMOVE:
-            mouse_msg.type = MouseMsg::Move;
-            // Track mouse message for mouse leave notification.
-            if (mouse_tracked_frame == nullptr) {
+        case WM_MOUSEMOVE: mouse_msg.type = MouseMsg::Move;
+            if (!is_mouse_tracked) {
                 TRACKMOUSEEVENT track_mouse_event;
                 track_mouse_event.cbSize = sizeof(TRACKMOUSEEVENT);
                 track_mouse_event.dwFlags = TME_LEAVE;
                 track_mouse_event.hwndTrack = hWnd;
                 track_mouse_event.dwHoverTime = HOVER_DEFAULT;
                 TrackMouseEvent(&track_mouse_event);
-                mouse_tracked_frame = frame;
-                frame->OnNotifyMsg(NotifyMsg::MouseEnter);
+                is_mouse_tracked = true;
             }
             break;
         case WM_LBUTTONDOWN: mouse_msg.type = MouseMsg::LeftDown; break;
@@ -57,7 +65,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_MOUSEHWHEEL: mouse_msg.type = MouseMsg::WheelHorizontal; mouse_msg.point -= frame->GetRegion().point - point_zero; break;
         default: return DefWindowProc(hWnd, msg, wParam, lParam);
         }
-        frame->OnMouseMsg(mouse_msg);
+        frame->DispatchMouseMsg(mouse_msg);
         return 0;
     }
 
@@ -72,7 +80,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_CHAR: key_msg.type = KeyMsg::Char; break;
         default: return DefWindowProc(hWnd, msg, wParam, lParam);
         }
-        frame->OnKeyMsg(key_msg);
+        frame->DispatchKeyMsg(key_msg);
         return 0;
     }
 
@@ -111,35 +119,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         break;
 
         // region message
-        case WM_GETMINMAXINFO:
-        {
+        case WM_GETMINMAXINFO: {
             if (frame == nullptr) { break; }
             MINMAXINFO* min_max_info = reinterpret_cast<MINMAXINFO*>(lParam);
-            auto [min_size, max_size] = frame->GetMinMaxSize();
-            min_max_info->ptMaxPosition = { 0,0 };
-            min_max_info->ptMaxSize = { static_cast<LONG>(max_size.width), static_cast<LONG>(max_size.height) };
-            min_max_info->ptMinTrackSize = { static_cast<LONG>(min_size.width), static_cast<LONG>(min_size.height) };
-            min_max_info->ptMaxTrackSize = { static_cast<LONG>(max_size.width), static_cast<LONG>(max_size.height) };
-        }break;
-        case WM_WINDOWPOSCHANGING:
+            auto [min_size, max_region] = frame->GetMinMaxRegion();
+            min_max_info->ptMaxPosition = { max_region.point.x, max_region.point.y };
+            min_max_info->ptMaxSize = { (LONG)max_region.size.width, (LONG)max_region.size.height };
+            min_max_info->ptMinTrackSize = { (LONG)min_size.width, (LONG)min_size.height };
+            min_max_info->ptMaxTrackSize = min_max_info->ptMaxSize;
             break;
-        case WM_WINDOWPOSCHANGED:
-        {
+        }
+        case WM_WINDOWPOSCHANGING: break;
+        case WM_WINDOWPOSCHANGED: {
             WINDOWPOS* position = reinterpret_cast<WINDOWPOS*>(lParam);
             if ((position->flags & SWP_NOSIZE) && (position->flags & SWP_NOMOVE)) { break; }  // Filter out other messages.
             Rect rect(Point(position->x, position->y), Size(static_cast<uint>(position->cx), static_cast<uint>(position->cy)));
-            frame->SetRegion(rect); CommitQueue();
-        }break;
-        case WM_PAINT:
-        {
+            frame->SetRegion(rect);
+            break;
+        }
+        case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             frame->Draw(RECT2Rect(ps.rcPaint));
             EndPaint(hWnd, &ps);
-        }break;
+            break;
+        }
 
-        case WM_MOUSELEAVE: frame->OnNotifyMsg(NotifyMsg::MouseLeave); break;
-        case WM_KILLFOCUS: frame->OnNotifyMsg(NotifyMsg::LoseFocus); break;
+        case WM_MOUSELEAVE: is_mouse_tracked = false; frame->DispatchNotifyMsg(NotifyMsg::MouseLeave); break;
+        case WM_KILLFOCUS: frame->DispatchNotifyMsg(NotifyMsg::LoseFocus); break;
 
             // convert scroll message to mouse wheel message
         case WM_HSCROLL:
@@ -166,11 +173,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         return 0;
     }
 
-    //// frame irrelevant message ////
+    // frame irrelevant message
 FrameIrrelevantMessages:
     switch (msg) {
     case WM_CREATE: break;
-    case WM_DESTROY: if (frame != nullptr) { frame->OnDestroy(); }  break;
+    case WM_DESTROY: if (frame != nullptr) { frame->Destroy(); }  break;
 
         // Intercept all non-client messages.
     case WM_NCCALCSIZE: break;  // Process the message to set client region the same as the window region.
@@ -186,7 +193,6 @@ FrameIrrelevantMessages:
     }
     return 0;  // The message is handled.
 }
-
 
 static const wchar_t wnd_class_name[] = L"WndDesignFrame";
 HINSTANCE hInstance = NULL;
@@ -221,9 +227,7 @@ HANDLE CreateWnd(Rect region, const std::wstring& title) {
     return hWnd;
 }
 
-void DestroyWnd(HANDLE hWnd) {
-    DestroyWindow((HWND)hWnd);
-}
+void DestroyWnd(HANDLE hWnd) { DestroyWindow((HWND)hWnd); }
 
 void SetWndUserData(HANDLE hWnd, void* data) {
     SetWindowLongPtrW((HWND)hWnd, GWLP_USERDATA, (LONG_PTR)data);
@@ -237,21 +241,19 @@ void SetWndRegion(HANDLE hWnd, Rect region) {
     MoveWindow((HWND)hWnd, region.point.x, region.point.y, region.size.width, region.size.height, false);
 }
 
+void ShowWnd(HANDLE hWnd) { ShowWindow((HWND)hWnd, SW_SHOWDEFAULT); }
+void MinimizeWnd(HANDLE hWnd) { ShowWindow((HWND)hWnd, SW_MINIMIZE); }
+void MaximizeWnd(HANDLE hWnd) { ShowWindow((HWND)hWnd, SW_MAXIMIZE); }
+void RestoreWnd(HANDLE hWnd) { ShowWindow((HWND)hWnd, SW_RESTORE); }
+
 void InvalidateWndRegion(HANDLE hWnd, Rect region) {
-    InvalidateRect(hWnd, , false);
+    RECT rect = Rect2RECT(region);
+    InvalidateRect((HWND)hWnd, &rect, false);
 }
 
-void SetCapture(HANDLE hWnd) {
-    ::SetCapture((HWND)hWnd);
-}
-
-void ReleaseCapture() {
-    ::ReleaseCapture();
-}
-
-void SetFocus(HANDLE hWnd) {
-    ::SetFocus((HWND)hWnd);
-}
+void SetCapture(HANDLE hWnd) { ::SetCapture((HWND)hWnd); }
+void ReleaseCapture() { ::ReleaseCapture(); }
+void SetFocus(HANDLE hWnd) { ::SetFocus((HWND)hWnd); }
 
 int MessageLoop() {
     MSG msg;
@@ -262,9 +264,7 @@ int MessageLoop() {
     return (int)msg.wParam;
 }
 
-void Terminate() {
-    PostQuitMessage(0);
-}
+void Terminate() { PostQuitMessage(0); }
 
 
 END_NAMESPACE(Win32)

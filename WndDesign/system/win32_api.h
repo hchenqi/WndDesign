@@ -22,6 +22,11 @@ void SetWndUserData(HANDLE hWnd, void* data);
 void SetWndTitle(HANDLE hWnd, const wstring& title);
 void SetWndRegion(HANDLE hWnd, Rect region);
 
+void ShowWnd(HANDLE hWnd);
+void MinimizeWnd(HANDLE hWnd);
+void MaximizeWnd(HANDLE hWnd);
+void RestoreWnd(HANDLE hWnd);
+
 void InvalidateWndRegion(HANDLE hWnd, Rect region);
 
 void SetCapture(HANDLE hWnd);

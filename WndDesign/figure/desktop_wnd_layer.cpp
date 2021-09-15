@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-DesktopWndLayer::DesktopWndLayer(HANDLE hwnd, Size size) : swap_chain(nullptr), comp_target(nullptr), comp_visual(nullptr) {
+DesktopLayer::DesktopLayer(HANDLE hwnd, Size size) : swap_chain(nullptr), comp_target(nullptr), comp_visual(nullptr) {
 	// Create swapchain.
 	DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = { 0 };
 	swap_chain_desc.Width = size.width;
@@ -38,7 +38,7 @@ DesktopWndLayer::DesktopWndLayer(HANDLE hwnd, Size size) : swap_chain(nullptr), 
 	GetDCompDevice().Commit();
 }
 
-DesktopWndLayer::~DesktopWndLayer() {
+DesktopLayer::~DesktopLayer() {
 	SafeRelease(&comp_visual);
 	SafeRelease(&comp_target);
 
@@ -46,7 +46,7 @@ DesktopWndLayer::~DesktopWndLayer() {
 	SafeRelease(&swap_chain);
 }
 
-void DesktopWndLayer::CreateTarget() {
+void DesktopLayer::CreateTarget() {
 	D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
 		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
 		D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
@@ -56,17 +56,17 @@ void DesktopWndLayer::CreateTarget() {
 	hr << GetD2DDeviceContext().CreateBitmapFromDxgiSurface(dxgi_surface.Get(), &bitmap_properties, reinterpret_cast<ID2D1Bitmap1**>(&bitmap));
 }
 
-void DesktopWndLayer::DestroyTarget() {
+void DesktopLayer::DestroyTarget() {
 	SafeRelease(&bitmap);
 }
 
-void DesktopWndLayer::OnResize(Size size) {
+void DesktopLayer::OnResize(Size size) {
 	DestroyTarget();
 	hr << swap_chain->ResizeBuffers(0, size.width, size.height, DXGI_FORMAT_UNKNOWN, 0);
 	CreateTarget();
 }
 
-void DesktopWndLayer::Present() {
+void DesktopLayer::Present() {
 	DXGI_PRESENT_PARAMETERS present_parameters = {};
 	hr << swap_chain->Present1(0, 0, &present_parameters);
 }

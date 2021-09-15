@@ -1,12 +1,13 @@
 #pragma once
 
-#include "../geometry/geometry.h"
+#include "value_tag.h"
+#include "../figure/color.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-struct DesktopWndStyle {
+struct DesktopFrameStyle {
 	struct LengthStyle {
 	public:
 		ValueTag _normal = length_auto;
@@ -35,7 +36,23 @@ struct DesktopWndStyle {
 		constexpr PositionStyle& setVerticalCenter() { _top = _bottom = position_center; return *this; }
 	}position;
 
+	struct BorderStyle {
+	public:
+		ushort _width = 0;
+		ushort _radius = 0;
+		Color _color = color_transparent;
+	public:
+		constexpr BorderStyle& width(ushort width) { _width = width; return *this; }
+		constexpr BorderStyle& radius(ushort radius) { _radius = radius; return *this; }
+		constexpr BorderStyle& color(Color color) { _color = color; return *this; }
+	}border;
 
+	struct TitleStyle {
+	public:
+		wstring _text;
+	public:
+		void set(wstring title) { _text = std::move(title); }
+	}title;
 };
 
 

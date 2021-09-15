@@ -9,9 +9,9 @@ BEGIN_NAMESPACE(WndDesign)
 struct FrameStyle {
 	struct BorderStyle {
 	public:
-		ushort _width;
-		ushort _radius;
-		Color _color;
+		ushort _width = 0;
+		ushort _radius = 0;
+		Color _color = color_transparent;
 	public:
 		constexpr BorderStyle& width(ushort width) { _width = width; return *this; }
 		constexpr BorderStyle& radius(ushort radius) { _radius = radius; return *this; }
@@ -20,10 +20,10 @@ struct FrameStyle {
 
 	struct PaddingStyle {
 	public:
-		uchar _left;
-		uchar _top;
-		uchar _right;
-		uchar _bottom;
+		uchar _left = 0;
+		uchar _top = 0;
+		uchar _right = 0;
+		uchar _bottom = 0;
 	public:
 		constexpr PaddingStyle& left(uchar left) { _left = left; return *this; }
 		constexpr PaddingStyle& top(uchar top) { _top = top; return *this; }
@@ -34,13 +34,6 @@ struct FrameStyle {
 		constexpr void set(uchar left_right, uchar top_bottom) { _left = _right = left_right; _top = _bottom = top_bottom; }
 		constexpr void set(uchar value) { _left = _top = _right = _bottom = value; }
 	}padding;
-
-	struct BackgroundStyle {
-	public:
-		Color _color;
-	public:
-		constexpr BackgroundStyle& color(Color color) { _color = color; return *this; }
-	}background;
 };
 
 

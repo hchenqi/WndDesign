@@ -171,10 +171,10 @@
     <ClInclude Include="figure\layer.h" />
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\tiled_layer.h" />
-    <ClInclude Include="frame\DesktopWndFrame.h" />
+    <ClInclude Include="frame\DesktopFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
     <ClInclude Include="frame\MultiViewFrame.h" />
-    <ClInclude Include="frame\OverlapWndFrame.h" />
+    <ClInclude Include="frame\OverlapFrame.h" />
     <ClInclude Include="frame\ScrollFrame.h" />
     <ClInclude Include="frame\TiledLayerFrame.h" />
     <ClInclude Include="frame\WndFrame.h" />
@@ -195,8 +195,11 @@
     <ClInclude Include="message\message.h" />
     <ClInclude Include="message\mouse_msg.h" />
     <ClInclude Include="message\notify_msg.h" />
-    <ClInclude Include="style\desktop_wnd_style.h" />
+    <ClInclude Include="style\desktop_frame_style.h" />
     <ClInclude Include="style\frame_style.h" />
+    <ClInclude Include="style\style_helper.h" />
+    <ClInclude Include="style\value_tag.h" />
+    <ClInclude Include="style\wnd_style.h" />
     <ClInclude Include="system\d2d_api.h" />
     <ClInclude Include="figure\desktop_wnd_layer.h" />
     <ClInclude Include="system\d3d_api.h" />
@@ -208,6 +211,7 @@
     <ClInclude Include="system\wic_api.h" />
     <ClInclude Include="system\win32_api.h" />
     <ClInclude Include="window\Desktop.h" />
+    <ClInclude Include="window\desktop_impl.h" />
     <ClInclude Include="window\wnd_traits.h" />
     <ClInclude Include="window\WndObject.h" />
   </ItemGroup>
@@ -215,13 +219,13 @@
     <ClCompile Include="figure\image.cpp" />
     <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />
-    <ClCompile Include="frame\DesktopWndFrame.cpp" />
+    <ClCompile Include="frame\DesktopFrame.cpp" />
     <ClCompile Include="frame\LayerFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_wnd_layer.cpp" />
     <ClCompile Include="system\directx_resource.cpp" />
     <ClCompile Include="system\win32_api.cpp" />
-    <ClCompile Include="window\Desktop.cpp" />
+    <ClCompile Include="window\desktop_impl.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

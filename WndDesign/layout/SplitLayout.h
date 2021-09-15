@@ -67,10 +67,11 @@ private:
 		}
 	}
 private:
-	virtual void OnMouseMsg(MouseMsg& msg) override {
-		if ((uint)msg.point.y < height_first) { return SendChildMouseMsg(first, msg); }
-		msg.point.y -= height_first;
-		if ((uint)msg.point.y < height_second) { return SendChildMouseMsg(second, msg); }
+	virtual ref_ptr<WndObject> HitTest(Point& point) override {
+		if ((uint)point.y < height_first) { return first; }
+		point.y -= height_first;
+		if ((uint)point.y < height_second) { return second; }
+		return nullptr; 
 	}
 };
 

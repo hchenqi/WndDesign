@@ -20,7 +20,7 @@ private:
 	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) override { Redraw(redraw_region); }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const override { DrawChild(child, point_zero, figure_queue, draw_region); }
 private:
-	virtual void OnMouseMsg(MouseMsg& msg) override { SendChildMouseMsg(child, msg); }
+	virtual ref_ptr<WndObject> HitTest(Point& point) override { return child; }
 };
 
 

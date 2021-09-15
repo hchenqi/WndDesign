@@ -102,10 +102,10 @@
     <ClInclude Include="layout\OverlapLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="frame\OverlapWndFrame.h">
+    <ClInclude Include="frame\OverlapFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="frame\DesktopWndFrame.h">
+    <ClInclude Include="frame\DesktopFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="control\EditBox.h">
@@ -177,15 +177,24 @@
     <ClInclude Include="system\win32_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="style\desktop_wnd_style.h">
+    <ClInclude Include="style\desktop_frame_style.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="style\value_tag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="style\wnd_style.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="style\style_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\desktop_impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_wnd_layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="window\Desktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="figure\shape.cpp">
@@ -206,10 +215,13 @@
     <ClCompile Include="frame\LayerFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="frame\DesktopWndFrame.cpp">
+    <ClCompile Include="frame\DesktopFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\win32_api.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="window\desktop_impl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

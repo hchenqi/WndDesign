@@ -12,12 +12,12 @@ struct IDCompositionVisual;
 BEGIN_NAMESPACE(WndDesign)
 
 
-class DesktopWndLayer : private Layer {
+class DesktopLayer : private Layer {
 public:
 	using HANDLE = void*;
 public:
-	DesktopWndLayer(HANDLE hwnd, Size size);
-	~DesktopWndLayer();
+	DesktopLayer(HANDLE hwnd, Size size);
+	~DesktopLayer();
 	void OnResize(Size size);
 	void Present();
 	Layer::DrawFigureQueue;

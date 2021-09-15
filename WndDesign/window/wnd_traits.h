@@ -31,6 +31,7 @@ private:
 public:
 	child_ptr(std::unique_ptr<WndObject>&& ptr) : std::unique_ptr<WndObject>(std::move(ptr)) { VerifyNonNull(); }
 	operator WndObject& () const { VerifyNonNull(); return **this; }
+	operator ref_ptr<WndObject> () const { VerifyNonNull(); return get(); }
 };
 
 template<class WidthType, class HeightType>

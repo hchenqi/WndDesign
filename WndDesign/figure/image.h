@@ -33,4 +33,15 @@ struct ImageFigure : Figure {
 };
 
 
+struct ImageRepeatFigure : Figure {
+	const Image& image;
+	Rect region;
+	uchar opacity;
+
+	ImageRepeatFigure(const Image& image, Rect region, uchar opacity = 0xFF) : image(image), region(region), opacity(opacity) {}
+
+	virtual void DrawOn(RenderTarget& target, Point point) const override;
+};
+
+
 END_NAMESPACE(WndDesign)

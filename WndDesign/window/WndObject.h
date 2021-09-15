@@ -11,10 +11,9 @@ BEGIN_NAMESPACE(WndDesign)
 
 class WndObject : Uncopyable {
 protected:
-	WndObject() {}
 	virtual ~WndObject() {}
 
-	// parent window 
+	// parent window
 private:
 	ref_ptr<WndObject> parent = nullptr;
 private:
@@ -68,15 +67,19 @@ private:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const {}
 
 	// message
+private:
+	bool is_mouse_tracked = false;
+	bool is_mouse_captured = false;
+	bool is_on_focus = false;
 protected:
 	void SetCapture() const {}
 	void ReleaseCapture() const {}
 	void SetFocus() const {}
-protected:
-	void SendChildMouseMsg(WndObject& child, MouseMsg& msg) const { VerifyChild(child); child.OnMouseMsg(msg); }
 private:
-	virtual void OnMouseMsg(MouseMsg& msg) {}
-	virtual void OnKeyMsg(KeyMsg msg) {}
+	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
+private:
+	virtual bool OnMouseMsg(MouseMsg msg) { return false; }
+	virtual bool OnKeyMsg(KeyMsg msg) { return false; }
 	virtual void OnNotifyMsg(NotifyMsg msg) {}
 };
 
