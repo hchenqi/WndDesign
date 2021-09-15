@@ -195,6 +195,7 @@
     <ClInclude Include="message\message.h" />
     <ClInclude Include="message\mouse_msg.h" />
     <ClInclude Include="message\notify_msg.h" />
+    <ClInclude Include="style\desktop_wnd_style.h" />
     <ClInclude Include="style\frame_style.h" />
     <ClInclude Include="system\d2d_api.h" />
     <ClInclude Include="figure\desktop_wnd_layer.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="system\dwrite_api.h" />
     <ClInclude Include="system\dxgi_api.h" />
     <ClInclude Include="system\wic_api.h" />
+    <ClInclude Include="system\win32_api.h" />
     <ClInclude Include="window\Desktop.h" />
     <ClInclude Include="window\wnd_traits.h" />
     <ClInclude Include="window\WndObject.h" />
@@ -213,10 +215,12 @@
     <ClCompile Include="figure\image.cpp" />
     <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />
+    <ClCompile Include="frame\DesktopWndFrame.cpp" />
     <ClCompile Include="frame\LayerFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_wnd_layer.cpp" />
     <ClCompile Include="system\directx_resource.cpp" />
+    <ClCompile Include="system\win32_api.cpp" />
     <ClCompile Include="window\Desktop.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

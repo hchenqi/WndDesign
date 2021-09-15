@@ -14,7 +14,7 @@ struct KeyMsg {
 		Char,
 		KeyDown,
 		KeyUp,
-	};
+	}type;
 	Key key;
 	wchar ch;
 };
