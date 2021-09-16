@@ -14,7 +14,7 @@ class DesktopLayer;
 
 class DesktopFrame : private WndObject {
 private:
-	friend class DesktopImpl;
+	friend class Desktop;
 	friend struct DesktopFrameApi;
 
 public:
@@ -35,9 +35,11 @@ protected:
 	// layout
 private:
 	Rect region;
+	Rect client_region;
 private:
 	const Rect GetRegion() const {}
 	void SetRegion(Rect new_region);
+	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
 
 	// child
 private:
@@ -52,6 +54,8 @@ protected:
 	void Minimize();
 	void Maximize();
 	void Restore();
+	void Destroy();
+
 
 	// paint
 private:
@@ -59,12 +63,6 @@ private:
 private:
 	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) override;
 	void Draw(Rect draw_region) const;
-
-	// message
-private:
-	void DispatchMouseMsg(MouseMsg msg) {}
-	void DispatchKeyMsg(KeyMsg msg) {}
-	void DispatchNotifyMsg(NotifyMsg msg) {}
 };
 
 

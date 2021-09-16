@@ -31,8 +31,15 @@ private:
 	}
 
 private:
-	virtual void OnMouseMsg(MouseMsg msg) {
-		SendChildMouseMsg(child, msg);
+	virtual void OnMouseMsg(MouseMsg msg) { 
+		if (msg.type == MouseMsg::WheelVertical) {
+
+
+			if () {
+
+			}
+		}
+		WndObject::OnMouseMsg(msg);
 	}
 };
 

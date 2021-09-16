@@ -51,7 +51,7 @@
     <ClInclude Include="system\directx_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="figure\desktop_wnd_layer.h">
+    <ClInclude Include="figure\desktop_layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\d3d_api.h">
@@ -81,7 +81,7 @@
     <ClInclude Include="control\TextBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="window\Desktop.h">
+    <ClInclude Include="window\Global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="common\reversion_wrapper.h">
@@ -189,12 +189,15 @@
     <ClInclude Include="style\style_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="window\desktop_impl.h">
+    <ClInclude Include="style\border_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="window\desktop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="figure\desktop_wnd_layer.cpp">
+    <ClCompile Include="figure\desktop_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="figure\shape.cpp">
@@ -221,7 +224,13 @@
     <ClCompile Include="system\win32_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="window\desktop_impl.cpp">
+    <ClCompile Include="window\Global.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="window\WndObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="window\desktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

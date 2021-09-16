@@ -1,5 +1,5 @@
 #include "win32_api.h"
-#include "../message/message.h"
+#include "../window/desktop.h"
 #include "../frame/DesktopFrame.h"
 
 #include <Windows.h>
@@ -12,10 +12,8 @@ struct DesktopFrameApi : DesktopFrame {
     DesktopFrame::GetRegion;
     DesktopFrame::GetMinMaxRegion;
     DesktopFrame::SetRegion;
+    DesktopFrame::Destroy;
     DesktopFrame::Draw;
-    DesktopFrame::DispatchMouseMsg;
-    DesktopFrame::DispatchKeyMsg;
-    DesktopFrame::DispatchNotifyMsg;
 };
 
 BEGIN_NAMESPACE(Anonymous)
@@ -65,7 +63,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_MOUSEHWHEEL: mouse_msg.type = MouseMsg::WheelHorizontal; mouse_msg.point -= frame->GetRegion().point - point_zero; break;
         default: return DefWindowProc(hWnd, msg, wParam, lParam);
         }
-        frame->DispatchMouseMsg(mouse_msg);
+        desktop.DispatchMouseMsg(*frame, mouse_msg);
         return 0;
     }
 
@@ -80,7 +78,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_CHAR: key_msg.type = KeyMsg::Char; break;
         default: return DefWindowProc(hWnd, msg, wParam, lParam);
         }
-        frame->DispatchKeyMsg(key_msg);
+        desktop.DispatchKeyMsg(*frame, key_msg);
         return 0;
     }
 
@@ -145,8 +143,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             break;
         }
 
-        case WM_MOUSELEAVE: is_mouse_tracked = false; frame->DispatchNotifyMsg(NotifyMsg::MouseLeave); break;
-        case WM_KILLFOCUS: frame->DispatchNotifyMsg(NotifyMsg::LoseFocus); break;
+        case WM_MOUSELEAVE: is_mouse_tracked = false; desktop.LoseTrack(); break;
+        case WM_CAPTURECHANGED: desktop.LoseCapture(); break;
+        case WM_KILLFOCUS: desktop.LoseFocus(); break;
 
             // convert scroll message to mouse wheel message
         case WM_HSCROLL:
@@ -216,6 +215,11 @@ END_NAMESPACE(Anonymous)
 
 BEGIN_NAMESPACE(Win32)
 
+
+const Size GetDesktopSize() {
+    static Size size = []() { RECT rect; SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0); return RECT2Rect(rect).size; }();
+    return size;
+}
 
 HANDLE CreateWnd(Rect region, const std::wstring& title) {
     RegisterWndClass();

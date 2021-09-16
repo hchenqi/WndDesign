@@ -10,6 +10,9 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 class WndObject : Uncopyable {
+private:
+	friend class Desktop;
+
 protected:
 	virtual ~WndObject() {}
 
@@ -54,6 +57,9 @@ protected:
 private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
 	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) {}
+private:
+	virtual const Vector GetChildOffset(const WndObject& child) { return vector_zero; }
+	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
 
 	// paint
 protected:
@@ -72,14 +78,15 @@ private:
 	bool is_mouse_captured = false;
 	bool is_on_focus = false;
 protected:
-	void SetCapture() const {}
-	void ReleaseCapture() const {}
-	void SetFocus() const {}
-private:
-	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
-private:
-	virtual bool OnMouseMsg(MouseMsg msg) { return false; }
-	virtual bool OnKeyMsg(KeyMsg msg) { return false; }
+	void SetCapture();
+	void ReleaseCapture();
+	void SetFocus();
+protected:
+	void PassMouseMsg(MouseMsg msg);
+	void PassKeyMsg(KeyMsg msg);
+protected:
+	virtual void OnMouseMsg(MouseMsg msg) { if (msg.wheel_delta != 0) { PassMouseMsg(msg); } }
+	virtual void OnKeyMsg(KeyMsg msg) { PassKeyMsg(msg); }
 	virtual void OnNotifyMsg(NotifyMsg msg) {}
 };
 
