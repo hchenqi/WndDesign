@@ -2,14 +2,13 @@
 
 #include "../window/wnd_traits.h"
 #include "../style/desktop_frame_style.h"
+#include "../figure/desktop_layer.h"
 
 #include <string>
 #include <vector>
 
 
 BEGIN_NAMESPACE(WndDesign)
-
-class DesktopLayer;
 
 
 class DesktopFrame : private WndObject {
@@ -56,13 +55,12 @@ protected:
 	void Restore();
 	void Destroy();
 
-
 	// paint
 private:
-	std::unique_ptr<DesktopLayer> layer;
+	DesktopLayer layer;
 private:
 	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) override;
-	void Draw(Rect draw_region) const;
+	void Draw(Rect draw_region);
 };
 
 

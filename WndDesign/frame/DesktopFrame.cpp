@@ -4,20 +4,21 @@
 #include "../figure/desktop_layer.h"
 #include "../system/win32_api.h"
 #include "../system/d2d_api.h"
+#include "../system/directx_resource.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-DesktopFrame::DesktopFrame(DesktopFrameStyle style, child_ptr child) : style(style), child(std::move(child)), hwnd(nullptr) { 
-	RegisterChild(this->child); 
+DesktopFrame::DesktopFrame(DesktopFrameStyle style, child_ptr child) : style(style), child(std::move(child)), hwnd(nullptr) {
+	RegisterChild(this->child);
 	Rect region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize());
 	hwnd = Win32::CreateWnd(region, style.title._text);
-	layer = std::make_unique<DesktopLayer>(hwnd, region.size);
+	layer.Create(hwnd, region.size);
 }
 
 DesktopFrame::~DesktopFrame() {
-	layer.reset();
+	layer.Destroy();
 	Win32::DestroyWnd(hwnd);
 }
 
@@ -28,7 +29,7 @@ const std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
 void DesktopFrame::SetRegion(Rect new_region) {
 	if (new_region.size != region.size) {
 		region.size = new_region.size;
-		layer->OnResize(new_region.size);
+		layer.Resize(new_region.size);
 		UpdateChildSizeRef(child, GetChildSize());
 	}
 	region.point = new_region.point;
@@ -44,13 +45,19 @@ void DesktopFrame::OnChildRedraw(const WndObject& child, Rect redraw_region) {
 	Win32::InvalidateWndRegion(hwnd, redraw_region);
 }
 
-void DesktopFrame::Draw(Rect draw_region) const {
+void DesktopFrame::Draw(Rect draw_region) {
 	BeginDraw();
 	FigureQueue figure_queue; figure_queue.Begin();
 	DrawChild(child, point_zero, figure_queue, draw_region);
-	figure_queue.End(); layer->DrawFigureQueue(figure_queue, vector_zero, draw_region);
-	EndDraw();
-	layer->Present();
+	figure_queue.End(); layer.DrawFigureQueue(figure_queue, vector_zero, draw_region);
+	try {
+		EndDraw();
+	} catch (std::runtime_error&) {
+		DirectXRecreateResource();
+		layer.Create(hwnd, region.size);
+		return Win32::InvalidateWndRegion(hwnd, Rect(point_zero, region.size));
+	}
+	layer.Present();
 }
 
 

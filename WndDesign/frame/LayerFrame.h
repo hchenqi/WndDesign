@@ -2,6 +2,7 @@
 
 #include "WndFrame.h"
 #include "../geometry/region.h"
+#include "../figure/layer.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -11,12 +12,12 @@ class Layer;
 
 class LayerFrame : public WndFrame {
 public:
-	LayerFrame(child_ptr child);
-	~LayerFrame();
+	LayerFrame(child_ptr child) : WndFrame(std::move(child)) {}
+	~LayerFrame() {}
 private:
 	Size size;
 	mutable Region cached_region;
-	mutable std::unique_ptr<Layer> layer;
+	mutable Layer layer;
 private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override;

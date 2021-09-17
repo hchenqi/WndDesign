@@ -10,8 +10,11 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-DesktopLayer::DesktopLayer(HANDLE hwnd, Size size) : swap_chain(nullptr), comp_target(nullptr), comp_visual(nullptr) {
+void DesktopLayer::Create(HANDLE hwnd, Size size) {
+	Destroy();
+
 	// Create swapchain.
+	ComPtr<IDXGISwapChain1> swap_chain;
 	DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = { 0 };
 	swap_chain_desc.Width = size.width;
 	swap_chain_desc.Height = size.height;
@@ -26,44 +29,52 @@ DesktopLayer::DesktopLayer(HANDLE hwnd, Size size) : swap_chain(nullptr), comp_t
 	swap_chain_desc.Flags = 0;
 	swap_chain_desc.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
 	hr << GetDXGIFactory().CreateSwapChainForComposition(&GetD3DDevice(), &swap_chain_desc, nullptr, &swap_chain);
+	this->swap_chain = static_cast<SwapChain*>(swap_chain.Detach());
 
-	// Create target.
-	CreateTarget();
+	// Create bitmap.
+	CreateBitmap();
 
 	// Create DComp resource.
-	hr << GetDCompDevice().CreateTargetForHwnd((HWND)hwnd, false, &comp_target);
+	ComPtr<IDCompositionVisual> comp_visual;
 	hr << GetDCompDevice().CreateVisual(&comp_visual);
-	comp_visual->SetContent(swap_chain);
-	comp_target->SetRoot(comp_visual);
+	comp_visual->SetContent(this->swap_chain);
+
+	ComPtr<IDCompositionTarget> comp_target;
+	hr << GetDCompDevice().CreateTargetForHwnd((HWND)hwnd, false, &comp_target);
+	comp_target->SetRoot(comp_visual.Get());
+	this->comp_target = static_cast<CompositionTarget*>(comp_target.Detach());
+
 	GetDCompDevice().Commit();
 }
 
-DesktopLayer::~DesktopLayer() {
-	SafeRelease(&comp_visual);
-	SafeRelease(&comp_target);
 
-	DestroyTarget();
+void DesktopLayer::Destroy() {
+	SafeRelease(&comp_target);
+	DestroyBitmap();
 	SafeRelease(&swap_chain);
 }
 
-void DesktopLayer::CreateTarget() {
+void DesktopLayer::CreateBitmap() {
+	ComPtr<IDXGISurface> dxgi_surface;
+	hr << swap_chain->GetBuffer(0, IID_PPV_ARGS(&dxgi_surface));
+
+	ComPtr<ID2D1Bitmap1> bitmap;
 	D2D1_BITMAP_PROPERTIES1 bitmap_properties = D2D1::BitmapProperties1(
 		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
 		D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
 	);
-	ComPtr<IDXGISurface> dxgi_surface;
-	hr << swap_chain->GetBuffer(0, IID_PPV_ARGS(&dxgi_surface));
-	hr << GetD2DDeviceContext().CreateBitmapFromDxgiSurface(dxgi_surface.Get(), &bitmap_properties, reinterpret_cast<ID2D1Bitmap1**>(&bitmap));
+	hr << GetD2DDeviceContext().CreateBitmapFromDxgiSurface(dxgi_surface.Get(), &bitmap_properties, &bitmap);
+	this->bitmap.Set(static_cast<BitmapResource*>(bitmap.Detach()));
 }
 
-void DesktopLayer::DestroyTarget() {
-	SafeRelease(&bitmap);
+void DesktopLayer::DestroyBitmap() {
+	bitmap.Destroy();
 }
 
-void DesktopLayer::OnResize(Size size) {
-	DestroyTarget();
+void DesktopLayer::Resize(Size size) {
+	DestroyBitmap();
 	hr << swap_chain->ResizeBuffers(0, size.width, size.height, DXGI_FORMAT_UNKNOWN, 0);
-	CreateTarget();
+	CreateBitmap();
 }
 
 void DesktopLayer::Present() {

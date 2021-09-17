@@ -3,31 +3,29 @@
 #include "layer.h"
 
 
-struct IDXGISwapChain1;
-
-struct IDCompositionTarget;
-struct IDCompositionVisual;
-
-
 BEGIN_NAMESPACE(WndDesign)
+
+struct SwapChain;
+struct CompositionTarget;
 
 
 class DesktopLayer : private Layer {
 public:
 	using HANDLE = void*;
+	alloc_ptr<SwapChain> swap_chain;
+	alloc_ptr<CompositionTarget> comp_target;
 public:
-	DesktopLayer(HANDLE hwnd, Size size);
-	~DesktopLayer();
-	void OnResize(Size size);
+	DesktopLayer() : swap_chain(nullptr), comp_target(nullptr) {}
+	~DesktopLayer() { Destroy(); }
+private:
+	void CreateBitmap();
+	void DestroyBitmap();
+public:
+	void Create(HANDLE hwnd, Size size);
+	void Destroy();
+	void Resize(Size size);
 	void Present();
 	Layer::DrawFigureQueue;
-private:
-	alloc_ptr<IDXGISwapChain1> swap_chain;
-	alloc_ptr<IDCompositionTarget> comp_target;
-	alloc_ptr<IDCompositionVisual> comp_visual;
-private:
-	void CreateTarget();
-	void DestroyTarget();
 };
 
 

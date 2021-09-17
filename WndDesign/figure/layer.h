@@ -1,10 +1,7 @@
 #pragma once
 
 #include "figure.h"
-#include "../common/uncopyable.h"
-
-
-struct ID2D1Bitmap1;
+#include "bitmap.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -15,11 +12,13 @@ class FigureQueue;
 class Layer : Uncopyable {
 protected:
 	friend struct LayerFigure;
-	alloc_ptr<ID2D1Bitmap1> bitmap;
-	Layer() : bitmap(nullptr) {}
+	Bitmap bitmap;
 public:
-	Layer(Size size);
-	~Layer();
+	Layer() {}
+	~Layer() {}
+	bool IsEmpty() const { return bitmap.IsEmpty(); }
+	void Create(Size size);
+	void Destroy() { bitmap.Destroy(); }
 public:
 	void DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect clip_region);
 };

@@ -164,6 +164,7 @@
     <ClInclude Include="control\ImageBox.h" />
     <ClInclude Include="control\Placeholder.h" />
     <ClInclude Include="control\TextBox.h" />
+    <ClInclude Include="figure\bitmap.h" />
     <ClInclude Include="figure\color.h" />
     <ClInclude Include="figure\figure.h" />
     <ClInclude Include="figure\figure_queue.h" />
@@ -217,6 +218,7 @@
     <ClInclude Include="window\WndObject.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="figure\bitmap.cpp" />
     <ClCompile Include="figure\image.cpp" />
     <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />

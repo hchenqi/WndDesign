@@ -4,9 +4,12 @@
 #include "d2d_api.h"
 #include "dwrite_api.h"
 #include "wic_api.h"
+#include "../figure/bitmap.h"
 
 #include "directx_helper.h"
 #include "directx_resource.h"
+
+#include <hash_set>
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -35,6 +38,9 @@ public:
 
 	// WIC
 	ComPtr<IWICImagingFactory2> wic_factory;
+
+	// Bitmap (D2D bitmap)
+	std::hash_set<ref_ptr<Bitmap>> bitmap_set;
 
 
 private:
@@ -100,9 +106,9 @@ void DirectXResource::CreateDeviceDependentResource() {
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE, nullptr,
 		D3D11_CREATE_DEVICE_BGRA_SUPPORT
-	#ifdef _DEBUG
+#ifdef _DEBUG
 		| D3D11_CREATE_DEVICE_DEBUG
-	#endif
+#endif
 		,
 		featureLevels, ARRAYSIZE(featureLevels),
 		D3D11_SDK_VERSION,
@@ -127,6 +133,8 @@ void DirectXResource::CreateDeviceDependentResource() {
 }
 
 void DirectXResource::DiscardDeviceDependentResource() {
+	for (auto bitmap : bitmap_set) { bitmap->Destroy(); }
+
 	d2d_solid_color_brush.Reset();
 	d2d_device_context.Reset();
 
@@ -144,6 +152,9 @@ void DirectXResource::DiscardDeviceDependentResource() {
 	d3d_device.Reset();
 }
 
+
+void RegisterBitmap(Bitmap& bitmap) { DirectXResource::Get().bitmap_set.insert(&bitmap); }
+void UnregisterBitmap(Bitmap& bitmap) { DirectXResource::Get().bitmap_set.insert(&bitmap); }
 
 void DirectXRecreateResource() { DirectXResource::Get().RecreateDeviceDependentResource(); }
 

@@ -38,9 +38,13 @@ inline void SafeRelease(Interface** ppInterfaceToRelease) {
 }
 
 
-struct RenderTarget : public ID2D1DeviceContext {};  // alias for ID2D1DeviceContext
-
-struct TextLayout : IDWriteTextLayout3 {};  // alias for IDWriteTextLayout3
+// resource aliases
+struct RenderTarget : ID2D1DeviceContext {};
+struct BitmapResource : ID2D1Bitmap1 {};
+struct SwapChain : IDXGISwapChain1 {};
+struct CompositionTarget : IDCompositionTarget {};
+struct ImageSource : IWICFormatConverter {};
+struct TextLayout : IDWriteTextLayout3 {};
 
 
 inline const D2D1_POINT_2F Point2POINT(Point point) {
