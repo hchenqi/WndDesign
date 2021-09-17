@@ -1,5 +1,5 @@
 #include "DesktopFrame.h"
-#include "../window/Desktop.h"
+#include "../window/desktop.h"
 #include "../style/style_helper.h"
 #include "../figure/desktop_layer.h"
 #include "../system/win32_api.h"
@@ -13,7 +13,7 @@ BEGIN_NAMESPACE(WndDesign)
 DesktopFrame::DesktopFrame(DesktopFrameStyle style, child_ptr child) : style(style), child(std::move(child)), hwnd(nullptr) {
 	RegisterChild(this->child);
 	Rect region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize());
-	hwnd = Win32::CreateWnd(region, style.title._text);
+	hwnd = Win32::CreateWnd(region, style.title);
 	layer.Create(hwnd, region.size);
 }
 
@@ -23,14 +23,22 @@ DesktopFrame::~DesktopFrame() {
 }
 
 const std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
-	return StyleHelper::CalculateMinMaxRegion(style.width, style.height, style.position, desktop_impl.GetSize());
+	auto [size_min, size_max] = StyleHelper::CalculateMinMaxSize(style.width, style.height, desktop.GetSize());
+	Rect region_max(point_zero, size_max);
+	if (size_max == desktop.GetSize()) {
+		region_max = ExtendRegionByMargin(region_max, StyleHelper::CalculateBorderMargin(style.border));
+	}
+	return { size_min, region_max };
 }
+
+void DesktopFrame::SetTitle(const std::wstring& title) { Win32::SetWndTitle(hwnd, title); }
 
 void DesktopFrame::SetRegion(Rect new_region) {
 	if (new_region.size != region.size) {
 		region.size = new_region.size;
 		layer.Resize(new_region.size);
-		UpdateChildSizeRef(child, GetChildSize());
+		client_region = ShrinkRegionByMargin(Rect(point_zero, region.size), StyleHelper::CalculateBorderMargin(style.border));
+		UpdateChildSizeRef(child, client_region.size);
 	}
 	region.point = new_region.point;
 }

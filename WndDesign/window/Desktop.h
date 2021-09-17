@@ -22,12 +22,13 @@ public:
 	void AddChild(frame_ptr frame);
 	void RemoveChild(frame_ref frame);
 
+
+
+	const Size GetSize() const;
+
 private:
-	struct TrackWnd {
-		ref_ptr<WndObject> wnd;
-		Point point;
-	};
-	std::vector<TrackWnd> track_wnd_stack;
+	struct WndTrackInfo { ref_ptr<WndObject> wnd; Point point; };
+	std::vector<WndTrackInfo> track_wnd_stack;
 	ref_ptr<WndObject> wnd_capture;
 	ref_ptr<WndObject> wnd_focus;
 private:
@@ -43,8 +44,8 @@ public:
 	void ReleaseCapture(WndObject& wnd) {}
 	void SetFocus(WndObject& wnd) {}
 public:
-	void LoseTrack() { 
-	
+	void LoseTrack() {
+
 	}
 	void LoseCapture() { wnd_capture = nullptr; }
 	void LoseFocus() { if (wnd_focus != nullptr) { wnd_focus->OnNotifyMsg(NotifyMsg::LoseFocus); wnd_focus = nullptr; } }

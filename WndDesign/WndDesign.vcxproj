@@ -180,6 +180,8 @@
     <ClInclude Include="frame\TiledLayerFrame.h" />
     <ClInclude Include="frame\WndFrame.h" />
     <ClInclude Include="geometry\geometry.h" />
+    <ClInclude Include="geometry\geometry_helper.h" />
+    <ClInclude Include="geometry\interval.h" />
     <ClInclude Include="geometry\margin.h" />
     <ClInclude Include="geometry\point.h" />
     <ClInclude Include="geometry\rect.h" />
@@ -201,7 +203,7 @@
     <ClInclude Include="style\frame_style.h" />
     <ClInclude Include="style\style_helper.h" />
     <ClInclude Include="style\value_tag.h" />
-    <ClInclude Include="style\wnd_style.h" />
+    <ClInclude Include="style\style.h" />
     <ClInclude Include="system\d2d_api.h" />
     <ClInclude Include="figure\desktop_layer.h" />
     <ClInclude Include="system\d3d_api.h" />

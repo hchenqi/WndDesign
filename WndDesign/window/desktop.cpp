@@ -1,5 +1,6 @@
 #include "desktop.h"
 #include "../frame/DesktopFrame.h"
+#include "../system/win32_api.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -13,11 +14,13 @@ void Desktop::AddChild(frame_ptr frame) {
 	frame_list.back()->Show();
 }
 
-void Desktop::RemoveChild(DesktopFrame& frame) {
+void Desktop::RemoveChild(frame_ref frame) {
 	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
 	if (it == frame_list.end()) { throw std::invalid_argument("invalid desktop frame"); }
 	frame_list.erase(it);
 }
+
+const Size Desktop::GetSize() const { return Win32::GetDesktopSize(); }
 
 DesktopFrame& Desktop::GetDesktopFrame(WndObject& wnd) {
 	ref_ptr<WndObject> child = &wnd;

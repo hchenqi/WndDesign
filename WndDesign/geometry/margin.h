@@ -13,7 +13,10 @@ struct Margin {
 	int bottom;
 
 	explicit constexpr Margin() :left(), top(), right(), bottom() {}
+	explicit constexpr Margin(int all) : left(all), top(all), right(all), bottom(all) {}
 	explicit constexpr Margin(int left, int top, int right, int bottom) : left(left), top(top), right(right), bottom(bottom) {}
+
+	const Margin operator-() { return  Margin(-left, -top, -right, -bottom); }
 
 	const Margin operator+(const Margin& margin) const {
 		return Margin(left + margin.left, top + margin.top, right + margin.right, bottom + margin.bottom);

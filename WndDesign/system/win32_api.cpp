@@ -9,8 +9,8 @@
 BEGIN_NAMESPACE(WndDesign)
 
 struct DesktopFrameApi : DesktopFrame {
-    DesktopFrame::GetRegion;
     DesktopFrame::GetMinMaxRegion;
+    DesktopFrame::GetRegion;
     DesktopFrame::SetRegion;
     DesktopFrame::Destroy;
     DesktopFrame::Draw;
@@ -120,10 +120,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_GETMINMAXINFO: {
             if (frame == nullptr) { break; }
             MINMAXINFO* min_max_info = reinterpret_cast<MINMAXINFO*>(lParam);
-            auto [min_size, max_region] = frame->GetMinMaxRegion();
-            min_max_info->ptMaxPosition = { max_region.point.x, max_region.point.y };
-            min_max_info->ptMaxSize = { (LONG)max_region.size.width, (LONG)max_region.size.height };
-            min_max_info->ptMinTrackSize = { (LONG)min_size.width, (LONG)min_size.height };
+            auto [size_min, region_max] = frame->GetMinMaxRegion();
+            min_max_info->ptMaxPosition = { region_max.point.x, region_max.point.y };
+            min_max_info->ptMaxSize = { (LONG)region_max.size.width, (LONG)region_max.size.height };
+            min_max_info->ptMinTrackSize = { (LONG)size_min.width, (LONG)size_min.height };
             min_max_info->ptMaxTrackSize = min_max_info->ptMaxSize;
             break;
         }

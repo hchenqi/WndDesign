@@ -183,7 +183,7 @@
     <ClInclude Include="style\value_tag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="style\wnd_style.h">
+    <ClInclude Include="style\style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="style\style_helper.h">
@@ -196,6 +196,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="figure\bitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\interval.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\geometry_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,9 +4,6 @@
 #include "../style/desktop_frame_style.h"
 #include "../figure/desktop_layer.h"
 
-#include <string>
-#include <vector>
-
 
 BEGIN_NAMESPACE(WndDesign)
 
@@ -29,16 +26,16 @@ private:
 private:
 	const std::pair<Size, Rect> GetMinMaxRegion() const;
 protected:
-	void SetTitle(const wstring& title) {}
+	void SetTitle(const std::wstring& title);
 
 	// layout
 private:
 	Rect region;
 	Rect client_region;
 private:
-	const Rect GetRegion() const {}
+	const Rect GetRegion() const { return region; }
 	void SetRegion(Rect new_region);
-	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
+	virtual ref_ptr<WndObject> HitTest(Point& point) override { return this; }
 
 	// child
 private:

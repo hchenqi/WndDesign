@@ -47,8 +47,8 @@ public:
 	constexpr int AsSigned() const { return value(); }
 	constexpr uint AsUnsigned() const { if (value() < 0) { throw std::invalid_argument("invalid unsigned value"); } return value(); }
 
-	constexpr ValueTag& ConvertToPixel(uint entire_length) {
-		if (tag() == Tag::Percent) { *this = ValueTag(value() * static_cast<int>(entire_length) / 100, Tag::Pixel); }
+	constexpr ValueTag& ConvertToPixel(uint length_ref) {
+		if (tag() == Tag::Percent) { *this = ValueTag(value() * static_cast<int>(length_ref) / 100, Tag::Pixel); }
 		return *this;
 	}
 };
