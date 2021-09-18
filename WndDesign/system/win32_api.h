@@ -18,22 +18,22 @@ BEGIN_NAMESPACE(Win32)
 const Size GetDesktopSize();
 
 HANDLE CreateWnd(Rect region, const wstring& title);
-void DestroyWnd(HANDLE hWnd);
-void SetWndUserData(HANDLE hWnd, void* data);
+void DestroyWnd(HANDLE hwnd);
+void SetWndUserData(HANDLE hwnd, void* data);
 
-void SetWndTitle(HANDLE hWnd, const wstring& title);
-void SetWndRegion(HANDLE hWnd, Rect region);
+void SetWndTitle(HANDLE hwnd, const wstring& title);
+void SetWndRegion(HANDLE hwnd, Rect region);
 
-void ShowWnd(HANDLE hWnd);
-void MinimizeWnd(HANDLE hWnd);
-void MaximizeWnd(HANDLE hWnd);
-void RestoreWnd(HANDLE hWnd);
+void ShowWnd(HANDLE hwnd);
+void MinimizeWnd(HANDLE hwnd);
+void MaximizeWnd(HANDLE hwnd);
+void RestoreWnd(HANDLE hwnd);
 
-void InvalidateWndRegion(HANDLE hWnd, Rect region);
+void InvalidateWndRegion(HANDLE hwnd, Rect region);
 
-void SetCapture(HANDLE hWnd);
+void SetCapture(HANDLE hwnd);
 void ReleaseCapture();
-void SetFocus(HANDLE hWnd);
+void SetFocus(HANDLE hwnd);
 
 int MessageLoop();
 void Terminate();

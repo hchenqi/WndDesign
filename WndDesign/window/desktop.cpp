@@ -1,6 +1,7 @@
 #include "desktop.h"
 #include "../frame/DesktopFrame.h"
 #include "../system/win32_api.h"
+#include "../system/win32_ime.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -38,6 +39,9 @@ DesktopFrame& Desktop::GetDesktopFramePoint(WndObject& wnd, Point& point) {
 	}
 	return static_cast<DesktopFrame&>(*child);
 }
+
+void Desktop::ImeSetPosition(WndObject& wnd, Point point) { WndDesign::ImeSetPosition(GetDesktopFramePoint(wnd, point).hwnd, point); }
+void Desktop::OnImeSetContext(HANDLE hwnd) { ime_focus != nullptr ? WndDesign::ImeEnable(hwnd) : WndDesign::ImeDisable(hwnd); }
 
 
 END_NAMESPACE(WndDesign)

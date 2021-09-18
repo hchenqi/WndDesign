@@ -193,7 +193,6 @@
     <ClInclude Include="layout\ListLayout.h" />
     <ClInclude Include="layout\OverlapLayout.h" />
     <ClInclude Include="layout\SplitLayout.h" />
-    <ClInclude Include="message\ime_msg.h" />
     <ClInclude Include="message\key_msg.h" />
     <ClInclude Include="message\message.h" />
     <ClInclude Include="message\mouse_msg.h" />
@@ -212,8 +211,10 @@
     <ClInclude Include="system\directx_resource.h" />
     <ClInclude Include="system\dwrite_api.h" />
     <ClInclude Include="system\dxgi_api.h" />
+    <ClInclude Include="message\ime.h" />
     <ClInclude Include="system\wic_api.h" />
     <ClInclude Include="system\win32_api.h" />
+    <ClInclude Include="system\win32_ime.h" />
     <ClInclude Include="window\Global.h" />
     <ClInclude Include="window\desktop.h" />
     <ClInclude Include="window\wnd_traits.h" />
@@ -229,7 +230,9 @@
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_layer.cpp" />
     <ClCompile Include="system\directx_resource.cpp" />
+    <ClCompile Include="message\ime.cpp" />
     <ClCompile Include="system\win32_api.cpp" />
+    <ClCompile Include="system\win32_ime.cpp" />
     <ClCompile Include="window\Global.cpp" />
     <ClCompile Include="window\desktop.cpp" />
     <ClCompile Include="window\WndObject.cpp" />

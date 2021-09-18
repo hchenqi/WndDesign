@@ -14,7 +14,7 @@ private:
 	friend class Desktop;
 
 protected:
-	virtual ~WndObject() {}
+	virtual ~WndObject();
 
 	// parent window
 private:
@@ -77,6 +77,7 @@ private:
 	bool is_mouse_tracked = false;
 	bool is_mouse_captured = false;
 	bool is_on_focus = false;
+	bool ime_aware = false;
 protected:
 	void SetCapture();
 	void ReleaseCapture();
