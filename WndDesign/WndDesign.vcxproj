@@ -197,12 +197,15 @@
     <ClInclude Include="message\message.h" />
     <ClInclude Include="message\mouse_msg.h" />
     <ClInclude Include="message\notify_msg.h" />
+    <ClInclude Include="message\timer.h" />
     <ClInclude Include="style\border_helper.h" />
     <ClInclude Include="style\desktop_frame_style.h" />
     <ClInclude Include="style\frame_style.h" />
     <ClInclude Include="style\style_helper.h" />
     <ClInclude Include="style\value_tag.h" />
     <ClInclude Include="style\style.h" />
+    <ClInclude Include="system\clipboard.h" />
+    <ClInclude Include="system\cursor.h" />
     <ClInclude Include="system\d2d_api.h" />
     <ClInclude Include="figure\desktop_layer.h" />
     <ClInclude Include="system\d3d_api.h" />
@@ -213,6 +216,7 @@
     <ClInclude Include="system\dxgi_api.h" />
     <ClInclude Include="message\ime.h" />
     <ClInclude Include="system\wic_api.h" />
+    <ClInclude Include="system\win32_aero_snap.h" />
     <ClInclude Include="system\win32_api.h" />
     <ClInclude Include="system\win32_ime.h" />
     <ClInclude Include="window\Global.h" />
@@ -229,8 +233,12 @@
     <ClCompile Include="frame\LayerFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_layer.cpp" />
+    <ClCompile Include="message\timer.cpp" />
+    <ClCompile Include="system\clipboard.cpp" />
+    <ClCompile Include="system\cursor.cpp" />
     <ClCompile Include="system\directx_resource.cpp" />
     <ClCompile Include="message\ime.cpp" />
+    <ClCompile Include="system\win32_aero_snap.cpp" />
     <ClCompile Include="system\win32_api.cpp" />
     <ClCompile Include="system\win32_ime.cpp" />
     <ClCompile Include="system\win_main.cpp" />

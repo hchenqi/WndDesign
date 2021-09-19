@@ -207,6 +207,18 @@
     <ClInclude Include="system\win32_ime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="system\clipboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\cursor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system\win32_aero_snap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="message\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">
@@ -255,6 +267,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="system\win_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\clipboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\cursor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system\win32_aero_snap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="message\timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
