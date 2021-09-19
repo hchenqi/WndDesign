@@ -23,6 +23,7 @@ void Desktop::RemoveChild(frame_ref frame) {
 	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
 	if (it == frame_list.end()) { throw std::invalid_argument("invalid desktop frame"); }
 	frame_list.erase(it);
+	if (frame_list.empty()) { Terminate(); }
 }
 
 const Size Desktop::GetSize() const { return Win32::GetDesktopSize(); }
@@ -42,6 +43,12 @@ DesktopFrame& Desktop::GetDesktopFramePoint(WndObject& wnd, Point& point) {
 		point += parent->GetChildOffset(*child);
 	}
 	return static_cast<DesktopFrame&>(*child);
+}
+
+void Desktop::RecreateFrameLayer() {
+	for (auto& frame : frame_list) {
+		frame->RecreateLayer();
+	}
 }
 
 void Desktop::SetCapture(WndObject& wnd) {
@@ -64,8 +71,8 @@ void Desktop::LoseCapture() {
 void Desktop::LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_index_begin) {
 	if (wnd_track_index_begin >= wnd_track_stack.end()) { return; };
 	auto it_begin = wnd_track_index_begin, it_end = wnd_track_stack.end();
-	for (auto it = it_end - 1; it >= it_begin; --it) {
-		(*it)->OnNotifyMsg(NotifyMsg::MouseLeave);
+	for (auto it = it_end; it > it_begin;) {
+		(*--it)->OnNotifyMsg(NotifyMsg::MouseLeave);
 	}
 	wnd_track_stack.erase(it_begin, it_end);
 }
@@ -81,7 +88,7 @@ void Desktop::DispatchMouseMsg(frame_ref frame, MouseMsg msg) {
 	do {
 		if (wnd_track_index >= wnd_track_stack.end() || *wnd_track_index != parent) {
 			LoseTrack(wnd_track_index);
-			wnd_track_index = wnd_track_stack.emplace(wnd_track_index, parent);
+			wnd_track_stack.push_back(parent); wnd_track_index = wnd_track_stack.end();
 			parent->OnNotifyMsg(NotifyMsg::MouseEnter);
 		}
 		ref_ptr<WndObject> child = parent->HitTest(msg.point);
@@ -146,6 +153,10 @@ void Desktop::ImeSetPosition(WndObject& wnd, Point point) {
 void Desktop::OnImeSetContext(frame_ref frame) {
 	ime_focus != nullptr ? WndDesign::ImeEnable(frame.hwnd) : WndDesign::ImeDisable(frame.hwnd);
 }
+
+void Desktop::MessageLoop() { Win32::MessageLoop(); }
+
+void Desktop::Terminate() { frame_list.clear(); Win32::Terminate(); }
 
 
 END_NAMESPACE(WndDesign)

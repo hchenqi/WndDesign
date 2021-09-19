@@ -12,13 +12,14 @@ BEGIN_NAMESPACE(WndDesign)
 
 DesktopFrame::DesktopFrame(DesktopFrameStyle style, child_ptr child) : style(style), child(std::move(child)), hwnd(nullptr) {
 	RegisterChild(this->child);
-	Rect region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize());
-	hwnd = Win32::CreateWnd(region, style.title);
-	layer.Create(hwnd, region.size);
+	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize());
+	hwnd = Win32::CreateWnd(region, style.title); Win32::SetWndUserData(hwnd, this);
+	RecreateLayer();
 }
 
 DesktopFrame::~DesktopFrame() {
 	layer.Destroy();
+	Win32::SetWndUserData(hwnd, nullptr); 
 	Win32::DestroyWnd(hwnd);
 }
 
@@ -36,7 +37,7 @@ void DesktopFrame::SetTitle(const std::wstring& title) { Win32::SetWndTitle(hwnd
 void DesktopFrame::SetRegion(Rect new_region) {
 	if (new_region.size != region.size) {
 		region.size = new_region.size;
-		layer.Resize(new_region.size);
+		layer.Resize(new_region.size); invalid_region.Set(Rect(point_zero, region.size));
 		client_region = ShrinkRegionByMargin(Rect(point_zero, region.size), StyleHelper::CalculateBorderMargin(style.border));
 		UpdateChildSizeRef(child, client_region.size);
 	}
@@ -50,22 +51,30 @@ void DesktopFrame::Restore() { Win32::RestoreWnd(hwnd); }
 void DesktopFrame::Destroy() { desktop.RemoveChild(*this); }
 
 void DesktopFrame::OnChildRedraw(const WndObject& child, Rect redraw_region) {
+	redraw_region = redraw_region.Intersect(Rect(point_zero, region.size));
+	invalid_region.Union(redraw_region);
 	Win32::InvalidateWndRegion(hwnd, redraw_region);
 }
 
-void DesktopFrame::Draw(Rect draw_region) {
+void DesktopFrame::Draw() {
+	Rect render_rect = invalid_region.GetBoundingRect();
 	BeginDraw();
 	FigureQueue figure_queue; figure_queue.Begin();
-	DrawChild(child, point_zero, figure_queue, draw_region);
-	figure_queue.End(); layer.DrawFigureQueue(figure_queue, vector_zero, draw_region);
+	DrawChild(child, point_zero, figure_queue, render_rect);
+	figure_queue.End(); layer.DrawFigureQueue(figure_queue, vector_zero, render_rect);
 	try {
 		EndDraw();
 	} catch (std::runtime_error&) {
 		DirectXRecreateResource();
-		layer.Create(hwnd, region.size);
-		return Win32::InvalidateWndRegion(hwnd, Rect(point_zero, region.size));
+		return desktop.RecreateFrameLayer();
 	}
-	layer.Present();
+	invalid_region.Clear();
+	layer.Present(render_rect);
+}
+
+void DesktopFrame::RecreateLayer() {
+	layer.Create(hwnd, region.size); invalid_region.Set(Rect(point_zero, region.size));
+	Win32::InvalidateWndRegion(hwnd, Rect(point_zero, region.size));
 }
 
 

@@ -3,6 +3,7 @@
 #include "../window/wnd_traits.h"
 #include "../style/desktop_frame_style.h"
 #include "../figure/desktop_layer.h"
+#include "../geometry/region.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -35,7 +36,7 @@ private:
 private:
 	const Rect GetRegion() const { return region; }
 	void SetRegion(Rect new_region);
-	virtual ref_ptr<WndObject> HitTest(Point& point) override { return this; }
+	virtual ref_ptr<WndObject> HitTest(Point& point) override { return child; }
 
 	// child
 private:
@@ -55,9 +56,12 @@ protected:
 	// paint
 private:
 	DesktopLayer layer;
+	Region invalid_region;
 private:
 	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) override;
-	void Draw(Rect draw_region);
+	void Draw();
+private:
+	void RecreateLayer();
 };
 
 

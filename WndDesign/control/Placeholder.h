@@ -11,7 +11,7 @@ class Placeholder;
 
 
 template<>
-class Placeholder<Auto, Auto> : public WndType<int, Auto> {
+class Placeholder<Auto, Auto> : public WndType<Auto, Auto> {
 public:
 	Placeholder(Size size) : size(size) {}
 private:

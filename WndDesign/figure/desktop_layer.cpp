@@ -77,8 +77,9 @@ void DesktopLayer::Resize(Size size) {
 	CreateBitmap();
 }
 
-void DesktopLayer::Present() {
-	DXGI_PRESENT_PARAMETERS present_parameters = {};
+void DesktopLayer::Present(Rect rect) {
+	RECT dirty_rect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
+	DXGI_PRESENT_PARAMETERS present_parameters = { 1, &dirty_rect };
 	hr << swap_chain->Present1(0, 0, &present_parameters);
 }
 

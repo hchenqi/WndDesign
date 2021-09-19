@@ -16,7 +16,7 @@ public:
 	~LayerFrame() {}
 private:
 	Size size;
-	mutable Region cached_region;
+	mutable Region invalid_region;
 	mutable Layer layer;
 private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) override;

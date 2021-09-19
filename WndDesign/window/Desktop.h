@@ -35,7 +35,9 @@ public:
 public:
 	DesktopFrame& GetDesktopFrame(WndObject& wnd);
 	DesktopFrame& GetDesktopFramePoint(WndObject& wnd, Point& point);
-
+public:
+	void RecreateFrameLayer();
+	
 	// mouse capture
 private:
 	ref_ptr<DesktopFrame> frame_capture = nullptr;
@@ -50,8 +52,10 @@ public:
 private:
 	std::vector<ref_ptr<WndObject>> wnd_track_stack;
 	ref_ptr<WndObject> wnd_mouse_receive = nullptr;
+private:
+	void LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_index_begin);
 public:
-	void LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_index_begin = {});
+	void LoseTrack() { LoseTrack(wnd_track_stack.begin()); }
 
 	// mouse message
 public:
@@ -88,6 +92,11 @@ public:
 	void OnImeCompositionBegin() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionBegin(); } }
 	void OnImeComposition(std::wstring str) { if (ime_focus != nullptr) { ime_focus->OnImeComposition(str); } }
 	void OnImeCompositionEnd() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionEnd(); } }
+
+	// global
+public:
+	void MessageLoop();
+	void Terminate();
 };
 
 extern Desktop desktop;

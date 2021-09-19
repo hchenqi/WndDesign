@@ -110,15 +110,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			frame->SetRegion(rect);
 			break;
 		}
+
+			// notifications
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hwnd, &ps);
-			frame->Draw(RECT2Rect(ps.rcPaint));
+			frame->Draw();
 			EndPaint(hwnd, &ps);
 			break;
 		}
-
-			// notifications
+		case WM_ERASEBKGND: return true;
 		case WM_MOUSELEAVE: is_mouse_tracked = false; desktop.LoseTrack(); break;
 		case WM_CAPTURECHANGED: desktop.LoseCapture(); break;
 		case WM_KILLFOCUS: desktop.LoseFocus(); break;
@@ -134,8 +135,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			if (GetAsyncKeyState(VK_CONTROL)) { key_state |= MK_CONTROL; }
 			short wheel_delta = 0;
 			switch (LOWORD(wparam)) {
-			case SB_LINEUP: case SB_PAGEUP:wheel_delta = WHEEL_DELTA; break;
-			case SB_LINEDOWN:case SB_PAGEDOWN:wheel_delta = -WHEEL_DELTA; break;
+			case SB_LINEUP: case SB_PAGEUP: wheel_delta = WHEEL_DELTA; break;
+			case SB_LINEDOWN: case SB_PAGEDOWN: wheel_delta = -WHEEL_DELTA; break;
 			default: return 0;
 			}
 			return WndProc(
@@ -148,21 +149,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		return 0;
 	}
 
-	// frame irrelevant message
 FrameIrrelevantMessages:
 	switch (msg) {
 	case WM_CREATE: break;
 	case WM_DESTROY: if (frame != nullptr) { frame->Destroy(); }  break;
 
-		// Intercept all non-client messages.
-	case WM_NCCALCSIZE: break;  // Process the message to set client region the same as the window region.
-	case WM_NCACTIVATE: return TRUE;  // Do not draw the nonclient area.
-	case WM_NCHITTEST: return HTCLIENT;  // There's no non-client region.
-	//case WM_NCCREATE: return TRUE; // Leave the message alone, or title won't get displayed.
-	//case WM_NCDESTROY: break; // It doesn't matter.
+		// non-client message
+	case WM_NCCALCSIZE: break;
+	case WM_NCHITTEST: return HTCLIENT;
 	case WM_NCPAINT: break;
-
-	case WM_ERASEBKGND: break;  // Intercept WM_ERASEBKGND from DefWindowProc(), else there may be problem using driect2d.
+	case WM_NCACTIVATE: return true;
 
 	default: return DefWindowProc(hwnd, msg, wparam, lparam);
 	}

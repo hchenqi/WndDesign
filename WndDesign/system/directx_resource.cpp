@@ -12,6 +12,13 @@
 #include <unordered_set>
 
 
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dcomp.lib")
+#pragma comment(lib, "dwrite.lib")
+#pragma comment(lib, "windowscodecs.lib")
+
+
 BEGIN_NAMESPACE(WndDesign)
 
 
@@ -42,11 +49,7 @@ public:
 	// Bitmap (D2D bitmap)
 	std::unordered_set<ref_ptr<Bitmap>> bitmap_set;
 
-
-private:
-	static DirectXResource directx_resource;
-
-private:
+public:
 	DirectXResource();
 	~DirectXResource();
 
@@ -56,13 +59,13 @@ private:
 	void DiscardDeviceDependentResource();
 
 public:
-	static DirectXResource& Get() { return directx_resource; }
-
 	void RecreateDeviceDependentResource() {
 		DiscardDeviceDependentResource();
 		CreateDeviceDependentResource();
 	}
 };
+
+DirectXResource directx_resource;
 
 
 DirectXResource::DirectXResource() {
@@ -153,26 +156,26 @@ void DirectXResource::DiscardDeviceDependentResource() {
 }
 
 
-void RegisterBitmap(Bitmap& bitmap) { DirectXResource::Get().bitmap_set.insert(&bitmap); }
-void UnregisterBitmap(Bitmap& bitmap) { DirectXResource::Get().bitmap_set.insert(&bitmap); }
+void RegisterBitmap(Bitmap& bitmap) { directx_resource.bitmap_set.insert(&bitmap); }
+void UnregisterBitmap(Bitmap& bitmap) { directx_resource.bitmap_set.erase(&bitmap); }
 
-void DirectXRecreateResource() { DirectXResource::Get().RecreateDeviceDependentResource(); }
+void DirectXRecreateResource() { directx_resource.RecreateDeviceDependentResource(); }
 
-ID3D11Device& GetD3DDevice() { return *DirectXResource::Get().d3d_device.Get(); }
+ID3D11Device& GetD3DDevice() { return *directx_resource.d3d_device.Get(); }
 
-IDXGIDevice1& GetDXGIDevice() { return *DirectXResource::Get().dxgi_device.Get(); }
-IDXGIAdapter& GetDXGIAdapter() { return *DirectXResource::Get().dxgi_adapter.Get(); }
-IDXGIFactory2& GetDXGIFactory() { return *DirectXResource::Get().dxgi_factory.Get(); }
+IDXGIDevice1& GetDXGIDevice() { return *directx_resource.dxgi_device.Get(); }
+IDXGIAdapter& GetDXGIAdapter() { return *directx_resource.dxgi_adapter.Get(); }
+IDXGIFactory2& GetDXGIFactory() { return *directx_resource.dxgi_factory.Get(); }
 
-IDCompositionDevice& GetDCompDevice() { return *DirectXResource::Get().dcomp_device.Get(); }
+IDCompositionDevice& GetDCompDevice() { return *directx_resource.dcomp_device.Get(); }
 
-ID2D1Factory1& GetD2DFactory() { return *DirectXResource::Get().d2d_factory.Get(); }
-ID2D1DeviceContext& GetD2DDeviceContext() { return *DirectXResource::Get().d2d_device_context.Get(); }
-ID2D1SolidColorBrush& GetD2DSolidColorBrush() { return *DirectXResource::Get().d2d_solid_color_brush.Get(); }
+ID2D1Factory1& GetD2DFactory() { return *directx_resource.d2d_factory.Get(); }
+ID2D1DeviceContext& GetD2DDeviceContext() { return *directx_resource.d2d_device_context.Get(); }
+ID2D1SolidColorBrush& GetD2DSolidColorBrush() { return *directx_resource.d2d_solid_color_brush.Get(); }
 
-IDWriteFactory& GetDWriteFactory() { return *DirectXResource::Get().dwrite_factory.Get(); }
+IDWriteFactory& GetDWriteFactory() { return *directx_resource.dwrite_factory.Get(); }
 
-IWICImagingFactory2& GetWICFactory() { return *DirectXResource::Get().wic_factory.Get(); }
+IWICImagingFactory2& GetWICFactory() { return *directx_resource.wic_factory.Get(); }
 
 
 ID2D1SolidColorBrush& GetD2DSolidColorBrush(Color color) {

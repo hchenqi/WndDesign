@@ -233,6 +233,7 @@
     <ClCompile Include="message\ime.cpp" />
     <ClCompile Include="system\win32_api.cpp" />
     <ClCompile Include="system\win32_ime.cpp" />
+    <ClCompile Include="system\win_main.cpp" />
     <ClCompile Include="window\Global.cpp" />
     <ClCompile Include="window\desktop.cpp" />
     <ClCompile Include="window\WndObject.cpp" />

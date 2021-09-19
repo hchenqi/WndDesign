@@ -24,7 +24,7 @@ public:
 	void Create(HANDLE hwnd, Size size);
 	void Destroy();
 	void Resize(Size size);
-	void Present();
+	void Present(Rect dirty_rect);
 	Layer::DrawFigureQueue;
 };
 

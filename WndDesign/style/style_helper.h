@@ -51,7 +51,7 @@ private:
 			}
 		}
 		return Interval(
-			CalculatePosition(position_low, position_high, length_ref, length_normal.AsUnsigned()),
+			CalculatePosition(position_low, position_high, length_normal.AsUnsigned(), length_ref),
 			Clamp(length_normal.AsUnsigned(), length_min.AsUnsigned(), length_max.AsUnsigned())
 		);
 	}

@@ -254,5 +254,8 @@
     <ClCompile Include="system\win32_ime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="system\win_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
