@@ -18,6 +18,10 @@ public:
 	using frame_ptr = std::unique_ptr<DesktopFrame>;
 	using frame_ref = DesktopFrame&;
 
+public:
+	Desktop();
+	~Desktop();
+
 	// layout
 public:
 	const Size GetSize() const;
@@ -80,7 +84,7 @@ public:
 	void ImeDisable(WndObject& wnd) { wnd.ime_aware = false; }
 	void ImeSetPosition(WndObject& wnd, Point point);
 public:
-	void OnImeSetContext(HANDLE hwnd);
+	void OnImeSetContext(frame_ref frame);
 	void OnImeCompositionBegin() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionBegin(); } }
 	void OnImeComposition(std::wstring str) { if (ime_focus != nullptr) { ime_focus->OnImeComposition(str); } }
 	void OnImeCompositionEnd() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionEnd(); } }

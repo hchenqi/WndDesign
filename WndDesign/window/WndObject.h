@@ -14,6 +14,8 @@ private:
 	friend class Desktop;
 
 protected:
+	WndObject() {}
+public:
 	virtual ~WndObject();
 
 	// parent window

@@ -5,7 +5,7 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-class RenderTarget;
+struct RenderTarget;
 
 
 struct ABSTRACT_BASE Figure {

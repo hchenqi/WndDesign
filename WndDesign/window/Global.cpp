@@ -2,6 +2,7 @@
 
 #include "Global.h"
 #include "desktop.h"
+#include "../frame/DesktopFrame.h"
 #include "../system/win32_api.h"
 
 

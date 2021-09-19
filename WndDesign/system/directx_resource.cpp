@@ -9,7 +9,7 @@
 #include "directx_helper.h"
 #include "directx_resource.h"
 
-#include <hash_set>
+#include <unordered_set>
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -40,7 +40,7 @@ public:
 	ComPtr<IWICImagingFactory2> wic_factory;
 
 	// Bitmap (D2D bitmap)
-	std::hash_set<ref_ptr<Bitmap>> bitmap_set;
+	std::unordered_set<ref_ptr<Bitmap>> bitmap_set;
 
 
 private:

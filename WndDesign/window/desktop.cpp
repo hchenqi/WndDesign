@@ -9,6 +9,10 @@ BEGIN_NAMESPACE(WndDesign)
 Desktop desktop;
 
 
+Desktop::Desktop() {}
+
+Desktop::~Desktop() {}
+
 void Desktop::AddChild(frame_ptr frame) {
 	RegisterChild(*frame);
 	frame_list.push_back(std::move(frame));
@@ -139,8 +143,8 @@ void Desktop::ImeSetPosition(WndObject& wnd, Point point) {
 	WndDesign::ImeSetPosition(GetDesktopFramePoint(wnd, point).hwnd, point);
 }
 
-void Desktop::OnImeSetContext(HANDLE hwnd) {
-	ime_focus != nullptr ? WndDesign::ImeEnable(hwnd) : WndDesign::ImeDisable(hwnd);
+void Desktop::OnImeSetContext(frame_ref frame) {
+	ime_focus != nullptr ? WndDesign::ImeEnable(frame.hwnd) : WndDesign::ImeDisable(frame.hwnd);
 }
 
 

@@ -16,7 +16,7 @@ private:
 public:
 	using child_ptr = child_ptr<Relative, Relative>;
 
-private:
+public:
 	DesktopFrame(DesktopFrameStyle style, child_ptr child);
 	~DesktopFrame();
 

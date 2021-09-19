@@ -40,7 +40,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	if (IsMouseMsg(msg)) {
 		MouseMsg mouse_msg;
 		mouse_msg.point = Point(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
-		mouse_msg._key_state = GET_KEYSTATE_WPARAM(wparam);;
+		mouse_msg._key_state = (uchar)GET_KEYSTATE_WPARAM(wparam);;
 		mouse_msg.wheel_delta = GET_WHEEL_DELTA_WPARAM(wparam);
 		switch (msg) {
 		case WM_MOUSEMOVE: mouse_msg.type = MouseMsg::Move;
@@ -86,9 +86,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	{
 		switch (msg) {
 			// ime message
-		case WM_IME_SETCONTEXT: desktop.OnImeSetContext(hwnd); break;
+		case WM_IME_SETCONTEXT: desktop.OnImeSetContext(*frame); break;
 		case WM_IME_STARTCOMPOSITION: desktop.OnImeCompositionBegin(); break;
-		case WM_IME_COMPOSITION: desktop.OnImeComposition(ImeGetString(hwnd, lparam)); break;
+		case WM_IME_COMPOSITION: desktop.OnImeComposition(ImeGetString(hwnd, (uint)lparam)); break;
 		case WM_IME_ENDCOMPOSITION: desktop.OnImeCompositionEnd(); break;
 
 			// region message
