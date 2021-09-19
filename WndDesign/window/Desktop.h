@@ -22,7 +22,7 @@ public:
 public:
 	const Size GetSize() const;
 
-	// desktop frame and window
+	// frame
 private:
 	std::vector<Desktop::frame_ptr> frame_list;
 public:
@@ -32,69 +32,46 @@ public:
 	DesktopFrame& GetDesktopFrame(WndObject& wnd);
 	DesktopFrame& GetDesktopFramePoint(WndObject& wnd, Point& point);
 
-	// mouse and key message
+	// mouse capture
 private:
-	using WndTrackInfo = struct { ref_ptr<WndObject> wnd; Point point; };
-	std::vector<WndTrackInfo> track_wnd_stack;
-	ref_ptr<WndObject> wnd_capture;
-	ref_ptr<WndObject> wnd_focus;
+	ref_ptr<DesktopFrame> frame_capture = nullptr;
+	ref_ptr<WndObject> wnd_capture = nullptr;
+	Point wnd_capture_offset;
+public:
+	void SetCapture(WndObject& wnd);
+	void ReleaseCapture(WndObject& wnd);
+	void LoseCapture();
+
+	// mouse track
 private:
-	uint wnd_mouse_receive_index;
-	ref_ptr<WndObject> wnd_key_receive;
+	std::vector<ref_ptr<WndObject>> wnd_track_stack;
+	ref_ptr<WndObject> wnd_mouse_receive = nullptr;
 public:
-	void SetCapture(WndObject& wnd) {}
-	void ReleaseCapture(WndObject& wnd) {}
-	void SetFocus(WndObject& wnd) {
-		if (wnd_focus != nullptr) {
+	void LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_index_begin = {});
 
-		} else {
-			Win32::SetFocus(GetDesktopFrame(wnd).hwnd);
-		}
-		ime_focus = nullptr; 
-		if (wnd.ime_aware) {
-			if (auto it = ime_wnd_map.find(&wnd); it != ime_wnd_map.end()) {
-				ime_focus = it->second;
-			}
-		} 
-	}
+	// mouse message
 public:
-	void LoseTrack() {
+	void DispatchMouseMsg(frame_ref frame, MouseMsg msg);
+	void PassMouseMsg(WndObject& wnd, MouseMsg msg);
 
-	}
-	void LoseCapture() { wnd_capture = nullptr; }
-	void LoseFocus() { 
-		if (wnd_focus != nullptr) {
-			wnd_focus->OnNotifyMsg(NotifyMsg::LoseFocus); 
-			wnd_focus = nullptr; ime_focus = nullptr;
-		}
-	}
+	// key focus
+private:
+	ref_ptr<DesktopFrame> frame_focus = nullptr;
+	ref_ptr<WndObject> wnd_focus = nullptr;
+	ref_ptr<ImeMsgHandler> ime_focus = nullptr;
+	ref_ptr<WndObject> wnd_key_receive = nullptr;
 public:
-	void DispatchMouseMsg(frame_ref frame, MouseMsg msg) {
-		frame.HitTest(msg.point);
+	void SetFocus(WndObject& wnd);
+	void LoseFocus();
 
-
-
-	}
-	void DispatchKeyMsg(frame_ref frame, KeyMsg msg) {
-		if (wnd_focus != nullptr) { wnd_focus->OnKeyMsg(msg); }
-	}
+	// key message
 public:
-	void PassMouseMsg(WndObject& wnd, MouseMsg msg) {
-
-	}
-	void PassKeyMsg(WndObject& wnd, KeyMsg msg) {
-		if (wnd_key_receive == &wnd) {
-			wnd_key_receive = wnd.parent;
-			if (wnd_key_receive != nullptr) {
-				wnd_key_receive->OnKeyMsg(msg);
-			}
-		}
-	}
+	void DispatchKeyMsg(frame_ref frame, KeyMsg msg);
+	void PassKeyMsg(WndObject& wnd, KeyMsg msg);
 
 	// ime message
 private:
 	std::unordered_map<ref_ptr<WndObject>, ref_ptr<ImeMsgHandler>> ime_wnd_map;
-	ref_ptr<ImeMsgHandler> ime_focus = nullptr;
 public:
 	void SetImeWnd(WndObject& wnd, ImeMsgHandler& ime) { ime_wnd_map.emplace(&wnd, &ime); ImeEnable(wnd); }
 	void RemoveImeWnd(WndObject& wnd) { ime_wnd_map.erase(&wnd); }
