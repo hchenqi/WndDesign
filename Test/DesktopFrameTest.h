@@ -2,6 +2,7 @@
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/control/Placeholder.h"
 #include "WndDesign/figure/shape.h"
+#include "WndDesign/system/win32_aero_snap.h"
 
 
 using namespace WndDesign;
@@ -15,10 +16,14 @@ private:
 		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, color));
 	}
 	virtual void OnMouseMsg(MouseMsg msg) override {
-		if (msg.type == MouseMsg::LeftDown) {
+		switch (msg.type) {
+		case MouseMsg::Move: SetCursor(Cursor::Default); break;
+		case MouseMsg::RightDown:
 			SetFocus();
 			color = color == Color::Gray ? Color::White : Color::Gray;
-			Redraw(Rect(100, 100, 200, 200));
+			Redraw(region_infinite);
+			break;
+		case MouseMsg::LeftDown: AeroSnapDraggingEffect(*this, msg.point); break;
 		}
 	}
 	virtual void OnKeyMsg(KeyMsg msg) {
@@ -34,7 +39,7 @@ int main() {
 	style.width.normal(800px).max(100pct);
 	style.height.normal(500px).max(100pct);
 	style.position.setHorizontalCenter().setVerticalCenter();
-	style.border.width(3).color(Color::DarkGreen);
+	style.border.width(5).color(Color::Violet);
 	style.title.assign(L"DesktopTest");
 
 	global.AddWnd(std::make_unique<DesktopFrame>(style, std::make_unique<EmptyWindow>()));

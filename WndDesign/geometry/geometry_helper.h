@@ -61,11 +61,10 @@ inline const Rect ShrinkRegionByLength(Rect rect, uint length) {
 	return region;
 }
 
-inline bool PointInRoundedRectangle(Size size, uint radius, Point point) {
-	if ((uint)point.x >= size.width || (uint)point.y >= size.height) { return false; }
-	if (uint max_radius = min(size.width, size.height) / 2; radius > max_radius) { radius = max_radius; }
-	int x1 = (int)(radius), x2 = (int)(size.width - radius);
-	int	y1 = (int)(radius), y2 = (int)(size.height - radius);
+inline bool PointInRoundedRectangle(Point point, Rect rect, uint radius) {
+	if (!rect.Contains(point)) { return false; } if (radius == 0) { return true; }
+	int x1 = rect.left() + (int)radius, x2 = rect.right() - (int)radius;
+	int	y1 = rect.top() + (int)radius, y2 = rect.bottom() - (int)radius;
 	int x = point.x, y = point.y;
 	if (x < x1 && y < y1) { return square(x - x1) + square(y - y1) <= square(radius); }
 	if (x < x1 && y > y2) { return square(x - x1) + square(y - y2) <= square(radius); }
