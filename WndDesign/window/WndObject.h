@@ -67,8 +67,8 @@ private:
 protected:
 	void Redraw(Rect redraw_region) const { if (HasParent()) { GetParent().OnChildRedraw(*this, redraw_region); } }
 	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) const {
-		VerifyChild(child); Vector offset = child_offset - point_zero;
-		figure_queue.PushOffset(offset); child.OnDraw(figure_queue, draw_region + offset); figure_queue.PopOffset(offset);
+		if (draw_region.IsEmpty()) { return; } VerifyChild(child); Vector offset = child_offset - point_zero;
+		figure_queue.PushOffset(offset); child.OnDraw(figure_queue, draw_region - offset); figure_queue.PopOffset(offset);
 	}
 private:
 	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) {}

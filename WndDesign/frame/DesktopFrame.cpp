@@ -40,7 +40,7 @@ void DesktopFrame::SetTitle(const std::wstring& title) { Win32::SetWndTitle(hwnd
 void DesktopFrame::SetRegion(Rect new_region) {
 	if (new_region.size != region.size) {
 		region.size = new_region.size; UpdateClientRect();
-		layer.Resize(new_region.size); 
+		layer.Resize(new_region.size);
 		invalid_region.Set(Rect(point_zero, region.size));
 		UpdateChildSizeRef(child, client_rect.size);
 		Redraw(region_infinite);
@@ -76,7 +76,7 @@ void DesktopFrame::Draw() {
 	Rect render_rect = invalid_region.GetBoundingRect(); if (render_rect.IsEmpty()) { return; }
 	BeginDraw();
 	FigureQueue figure_queue; figure_queue.Begin();
-	DrawChild(child, point_zero, figure_queue, render_rect);
+	DrawChild(child, client_rect.point, figure_queue, render_rect.Intersect(client_rect));
 	style.border._radius > 0 ?
 		figure_queue.add(point_zero, new RoundedRectangle(region.size, style.border._radius, style.border._width, style.border._color)) :
 		figure_queue.add(point_zero, new Rectangle(region.size, style.border._width, style.border._color));
@@ -103,7 +103,7 @@ void DesktopFrame::OnMouseMsg(MouseMsg msg) {
 }
 
 void DesktopFrame::RecreateLayer() {
-	layer.Create(hwnd, region.size); 
+	layer.Create(hwnd, region.size);
 	invalid_region.Set(Rect(point_zero, region.size));
 	Redraw(region_infinite);
 }

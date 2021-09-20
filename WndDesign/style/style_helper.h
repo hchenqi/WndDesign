@@ -10,24 +10,15 @@ BEGIN_NAMESPACE(WndDesign)
 struct StyleHelper : Style {
 public:
 	static const Size CalculateSize(ValueTag width, ValueTag height, Size size_ref) {
-		width.ConvertToPixel(size_ref.width); height.ConvertToPixel(size_ref.height);
-		return Size(width.AsUnsigned(), height.AsUnsigned());
+		return Size(width.ConvertToPixel(size_ref.width).AsUnsigned(), height.ConvertToPixel(size_ref.height).AsUnsigned());
 	}
 	static const std::pair<Size, Size> CalculateMinMaxSize(LengthStyle width, LengthStyle height, Size size_ref) {
 		return { CalculateSize(width._min, height._min, size_ref), CalculateSize(width._max, height._max, size_ref) };
 	}
 private:
-	static bool IsPositionAuto(ValueTag position) {
-		return position.IsAuto() || position.IsCenter();
-	}
-	static const LengthStyle ConvertToPixel(LengthStyle length, uint length_ref) {
-		length._normal.ConvertToPixel(length_ref);
-		length._min.ConvertToPixel(length_ref);
-		length._max.ConvertToPixel(length_ref);
-		return length;
-	}
+	static bool IsPositionAuto(ValueTag position) { return position.IsAuto() || position.IsCenter(); }
 	static uint CalculatePosition(ValueTag position_low, ValueTag position_high, uint length, uint length_ref) {
-		if (position_low.IsAuto() || position_low.IsCenter()) {
+		if (IsPositionAuto(position_low)) {
 			if (position_low.IsCenter()) {
 				position_low = px((((int)length_ref) - (int)length) / 2);
 			} else if (!position_high.IsAuto()) {
