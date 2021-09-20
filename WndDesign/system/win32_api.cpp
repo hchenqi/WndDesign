@@ -27,6 +27,10 @@ inline const Rect RECT2Rect(const RECT& rect) {
 	return Rect(rect.left, rect.top, (uint)(rect.right - rect.left), (uint)(rect.bottom - rect.top));
 }
 
+inline const Size GetWorkAreaSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return RECT2Rect(rect).size; }
+
+Size desktop_size = GetWorkAreaSize();
+
 inline bool IsMouseMsg(UINT msg) { return WM_MOUSEFIRST <= msg && msg <= WM_MOUSELAST; }
 inline bool IsKeyboardMsg(UINT msg) { return WM_KEYFIRST <= msg && msg <= WM_KEYLAST; }
 
@@ -93,15 +97,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 			// region message
 		case WM_GETMINMAXINFO: {
-			if (frame == nullptr) { break; }
 			MINMAXINFO* min_max_info = reinterpret_cast<MINMAXINFO*>(lparam);
 			auto [size_min, region_max] = frame->GetMinMaxRegion();
 			min_max_info->ptMaxPosition = { region_max.point.x, region_max.point.y };
 			min_max_info->ptMaxSize = { (LONG)region_max.size.width, (LONG)region_max.size.height };
 			min_max_info->ptMinTrackSize = { (LONG)size_min.width, (LONG)size_min.height };
 			min_max_info->ptMaxTrackSize = min_max_info->ptMaxSize;
-			break;
-		}
+		}break;
 		case WM_WINDOWPOSCHANGING: break;
 		case WM_WINDOWPOSCHANGED: {
 			WINDOWPOS* position = reinterpret_cast<WINDOWPOS*>(lparam);
@@ -117,8 +119,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			HDC hdc = BeginPaint(hwnd, &ps);
 			frame->Draw();
 			EndPaint(hwnd, &ps);
-			break;
-		}
+		}break;
 		case WM_ERASEBKGND: return true;
 		case WM_MOUSELEAVE: is_mouse_tracked = false; desktop.LoseTrack(); break;
 		case WM_CAPTURECHANGED: desktop.LoseCapture(); break;
@@ -160,6 +161,10 @@ FrameIrrelevantMessages:
 	case WM_NCPAINT: break;
 	case WM_NCACTIVATE: return true;
 
+	case WM_SETTINGCHANGE:
+		if (wparam == SPI_SETWORKAREA) { desktop_size = GetWorkAreaSize(); break; }
+		[[fallthrough]];
+
 	default: return DefWindowProc(hwnd, msg, wparam, lparam);
 	}
 	return 0;  // The message is handled.
@@ -188,10 +193,7 @@ END_NAMESPACE(Anonymous)
 BEGIN_NAMESPACE(Win32)
 
 
-const Size GetDesktopSize() {
-	static Size size = []() { RECT rect; SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0); return RECT2Rect(rect).size; }();
-	return size;
-}
+const Size GetDesktopSize() { return desktop_size; }
 
 HANDLE CreateWnd(Rect region, const std::wstring& title) {
 	RegisterWndClass();
