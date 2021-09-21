@@ -15,7 +15,8 @@ BEGIN_NAMESPACE(WndDesign)
 
 DesktopFrame::DesktopFrame(DesktopFrameStyle style, child_ptr child) : style(style), child(std::move(child)), hwnd(nullptr) {
 	RegisterChild(this->child);
-	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize()); UpdateClientRect();
+	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize()); 
+	UpdateClientRect(); UpdateChildSizeRef(this->child, client_rect.size);
 	hwnd = Win32::CreateWnd(region, style.title); Win32::SetWndUserData(hwnd, this);
 	RecreateLayer();
 }
@@ -39,10 +40,10 @@ void DesktopFrame::SetTitle(const std::wstring& title) { Win32::SetWndTitle(hwnd
 
 void DesktopFrame::SetRegion(Rect new_region) {
 	if (new_region.size != region.size) {
-		region.size = new_region.size; UpdateClientRect();
+		region.size = new_region.size;
+		UpdateClientRect(); UpdateChildSizeRef(child, client_rect.size);
 		layer.Resize(new_region.size);
 		invalid_region.Set(Rect(point_zero, region.size));
-		UpdateChildSizeRef(child, client_rect.size);
 		Redraw(region_infinite);
 	}
 	region.point = new_region.point;

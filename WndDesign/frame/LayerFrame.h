@@ -7,13 +7,10 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-class Layer;
-
 
 class LayerFrame : public WndFrame {
 public:
 	LayerFrame(child_ptr child) : WndFrame(std::move(child)) {}
-	~LayerFrame() {}
 private:
 	Size size;
 	mutable Region invalid_region;

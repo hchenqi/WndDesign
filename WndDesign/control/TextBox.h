@@ -1,36 +1,27 @@
 #pragma once
 
 #include "../window/wnd_traits.h"
+#include "../figure/text_block.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-template<class Direction, class SizeType>
-class TextBox;
-
-
-template<>
-class TextBox<Vertical, Relative> : public WndType<Relative, Auto> {
-
-private:	
+class TextBox : public WndType<Relative, Auto> {
+public:
+	TextBox(TextBlockStyle style, std::wstring text) : style(style), text(text) {}
+	~TextBox() {}
+private:
+	TextBlockStyle style;
+	std::wstring text;
+	TextBlock text_block = TextBlock(style, text);
+private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) override {
-		return layout.AutoResize(Size(size_ref.width, length_max));
+		return text_block.UpdateSizeRef(Size(size_ref.width, length_max));
 	}
-
 private:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const {
-		figure_queue.add(point_zero, new TextLayoutFigure(layout));
-	}
-};
-
-
-template<>
-class TextBox<Vertical, Auto> : public WndType<Auto, Auto> {
-
-private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
-		return layout.AutoResize(Size(length_max, length_max));
+		figure_queue.add(point_zero, new TextBlockFigure(text_block, style.font._color));
 	}
 };
 
