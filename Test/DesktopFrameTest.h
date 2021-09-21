@@ -42,6 +42,6 @@ int main() {
 	style.border.width(5).color(Color::Violet);
 	style.title.assign(L"DesktopTest");
 
-	global.AddWnd(std::make_unique<DesktopFrame>(style, std::make_unique<EmptyWindow>()));
+	global.AddWnd(new DesktopFrame(style, new EmptyWindow()));
 	global.MessageLoop();
 }

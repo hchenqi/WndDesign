@@ -12,6 +12,7 @@ class DesktopFrame;
 
 struct Global {
 	void AddWnd(std::unique_ptr<DesktopFrame> frame);
+	void AddWnd(alloc_ptr<DesktopFrame> frame) { AddWnd(std::unique_ptr<DesktopFrame>(frame)); }
 	void RemoveWnd(DesktopFrame& frame);
 	void MessageLoop();
 	void Terminate();
