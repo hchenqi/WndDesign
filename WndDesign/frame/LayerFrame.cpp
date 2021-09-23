@@ -14,7 +14,7 @@ const Size LayerFrame::OnSizeRefUpdate(Size size_ref) {
 	return size;
 }
 
-void LayerFrame::OnChildSizeUpdate(const WndObject& child, Size child_size) {
+void LayerFrame::OnChildSizeUpdate(WndObject& child, Size child_size) {
 	if (size != child_size) {
 		size = child_size;
 		layer.Destroy();
@@ -23,7 +23,7 @@ void LayerFrame::OnChildSizeUpdate(const WndObject& child, Size child_size) {
 	}
 }
 
-void LayerFrame::OnChildRedraw(const WndObject& child, Rect redraw_region) {
+void LayerFrame::OnChildRedraw(WndObject& child, Rect redraw_region) {
 	redraw_region = redraw_region.Intersect(Rect(point_zero, size));
 	invalid_region.Union(redraw_region);
 	Redraw(redraw_region);

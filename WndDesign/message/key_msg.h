@@ -111,7 +111,7 @@ enum class Key : uchar {
 	RAlt = 0xA5,
 };
 
-constexpr inline Key CharKey(char ch) {
+constexpr Key CharKey(char ch) {
 	if ((ch >= '0' && ch <= '9') ||   // Numbers        : 0x30 - 0x39
 		(ch >= 'A' && ch <= 'Z')) {   // Captial letters: 0x41 - 0x5A
 		return static_cast<Key>(ch);

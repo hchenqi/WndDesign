@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DesktopFrameTest.h" />
+    <ClInclude Include="EditBoxTest.h" />
     <ClInclude Include="TextBoxTest.h" />
   </ItemGroup>
   <ItemGroup>

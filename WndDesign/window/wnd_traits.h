@@ -8,13 +8,19 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-struct Relative {};  // dependent to size_ref provided by parent window (Assigned/Max/Relative)
-struct Auto {};      // independent of parent window (Auto/Fixed)
+struct Assigned {};
+struct Relative {};
+struct Auto {};
 
 template<class WidthType, class HeightType>
-struct LayoutType {
-	static_assert((std::is_same_v<WidthType, Relative> || std::is_same_v<WidthType, Auto>) &&
-				  (std::is_same_v<HeightType, Relative> || std::is_same_v<HeightType, Auto>), "invalid size type");
+class LayoutType {
+	template <class T, class... Types>
+	static constexpr bool is_any_of_v = std::disjunction_v<std::is_same<T, Types>...>;
+
+	template <class T>
+	static constexpr bool is_size_type_v = is_any_of_v<T, Assigned, Relative, Auto>;
+
+	static_assert(is_size_type_v<WidthType> && is_size_type_v<HeightType>, "invalid size type");
 };
 
 template<class WidthType, class HeightType>

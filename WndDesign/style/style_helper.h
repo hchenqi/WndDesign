@@ -2,6 +2,7 @@
 
 #include "style.h"
 #include "../geometry/geometry_helper.h"
+#include "../figure/shape.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -58,6 +59,13 @@ public:
 	}
 	static const Margin CalculatePaddingMargin(PaddingStyle padding) {
 		return Margin(padding._left, padding._top, padding._right, padding._bottom);
+	}
+	static std::unique_ptr<Figure> GetBorderFigure(Size size, BorderStyle border) {
+		if (border._radius > 0) {
+			return std::make_unique<RoundedRectangle>(size, border._radius, (float)border._width, border._color);
+		} else {
+			return std::make_unique<Rectangle>(size, (float)border._width, border._color);
+		}
 	}
 };
 

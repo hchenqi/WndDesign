@@ -90,7 +90,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	{
 		switch (msg) {
 			// ime message
-		case WM_IME_SETCONTEXT: desktop.OnImeSetContext(*frame); break;
+		case WM_IME_SETCONTEXT: break;
 		case WM_IME_STARTCOMPOSITION: desktop.OnImeCompositionBegin(); break;
 		case WM_IME_COMPOSITION: desktop.OnImeComposition(ImeGetString(hwnd, (uint)lparam)); break;
 		case WM_IME_ENDCOMPOSITION: desktop.OnImeCompositionEnd(); break;

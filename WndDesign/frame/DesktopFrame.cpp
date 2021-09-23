@@ -16,7 +16,7 @@ BEGIN_NAMESPACE(WndDesign)
 DesktopFrame::DesktopFrame(DesktopFrameStyle style, child_ptr child) : style(style), child(std::move(child)), hwnd(nullptr) {
 	RegisterChild(this->child);
 	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize()); 
-	UpdateClientRect(); UpdateChildSizeRef(this->child, client_rect.size);
+	UpdateClientRegion(); UpdateChildSizeRef(this->child, client_region.size);
 	hwnd = Win32::CreateWnd(region, style.title); Win32::SetWndUserData(hwnd, this);
 	RecreateLayer();
 }
@@ -41,7 +41,7 @@ void DesktopFrame::SetTitle(const std::wstring& title) { Win32::SetWndTitle(hwnd
 void DesktopFrame::SetRegion(Rect new_region) {
 	if (new_region.size != region.size) {
 		region.size = new_region.size;
-		UpdateClientRect(); UpdateChildSizeRef(child, client_rect.size);
+		UpdateClientRegion(); UpdateChildSizeRef(child, client_region.size);
 		layer.Resize(new_region.size);
 		invalid_region.Set(Rect(point_zero, region.size));
 		Redraw(region_infinite);
@@ -49,13 +49,13 @@ void DesktopFrame::SetRegion(Rect new_region) {
 	region.point = new_region.point;
 }
 
-void DesktopFrame::UpdateClientRect() {
-	client_rect = ShrinkRegionByMargin(Rect(point_zero, region.size), StyleHelper::CalculateBorderMargin(style.border));
+void DesktopFrame::UpdateClientRegion() {
+	client_region = ShrinkRegionByMargin(Rect(point_zero, region.size), StyleHelper::CalculateBorderMargin(style.border));
 }
 
 ref_ptr<WndObject> DesktopFrame::HitTest(Point& point) {
-	if (PointInRoundedRectangle(point, client_rect, style.border._radius)) {
-		point -= client_rect.point - point_zero;
+	if (PointInRoundedRectangle(point, client_region, style.border._radius)) {
+		point -= client_region.point - point_zero;
 		return child;
 	}
 	return this;
@@ -73,14 +73,16 @@ void DesktopFrame::Redraw(Rect redraw_region) {
 	Win32::InvalidateWndRegion(hwnd, redraw_region);
 }
 
+void DesktopFrame::OnChildRedraw(WndObject& child, Rect redraw_region) { 
+	Redraw(redraw_region + GetClientOffset()); 
+}
+
 void DesktopFrame::Draw() {
 	Rect render_rect = invalid_region.GetBoundingRect(); if (render_rect.IsEmpty()) { return; }
 	BeginDraw();
 	FigureQueue figure_queue; figure_queue.Begin();
-	DrawChild(child, client_rect.point, figure_queue, render_rect.Intersect(client_rect));
-	style.border._radius > 0 ?
-		figure_queue.add(point_zero, new RoundedRectangle(region.size, style.border._radius, style.border._width, style.border._color)) :
-		figure_queue.add(point_zero, new Rectangle(region.size, style.border._width, style.border._color));
+	DrawChild(child, client_region.point, figure_queue, render_rect.Intersect(client_region));
+	figure_queue.add(point_zero, StyleHelper::GetBorderFigure(region.size, style.border));
 	figure_queue.End(); layer.DrawFigureQueue(figure_queue, vector_zero, render_rect);
 	try {
 		EndDraw();

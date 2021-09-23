@@ -1,17 +1,13 @@
 #include "desktop.h"
-#include "../frame/DesktopFrame.h"
 #include "../system/win32_api.h"
 #include "../system/win32_ime.h"
+#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 Desktop desktop;
 
-
-Desktop::Desktop() {}
-
-Desktop::~Desktop() {}
 
 void Desktop::AddChild(frame_ptr frame) {
 	RegisterChild(*frame);
@@ -52,12 +48,10 @@ void Desktop::RecreateFrameLayer() {
 }
 
 void Desktop::SetCapture(WndObject& wnd) {
-	wnd_capture_offset = point_zero;
-	DesktopFrame& frame = GetDesktopFramePoint(wnd, wnd_capture_offset);
-	wnd_capture_offset += frame.region.point - point_zero;
+	DesktopFrame& frame = GetDesktopFrame(wnd);
 	if (frame_capture != &frame) { Win32::SetCapture(frame.hwnd); }
 	if (wnd_capture != &wnd) { LoseCapture(); }
-	frame_capture = &frame; wnd_capture = &wnd;
+	frame_capture = &frame; wnd_capture = &wnd; wnd_capture->is_mouse_captured = true;
 }
 
 void Desktop::ReleaseCapture(WndObject& wnd) {
@@ -65,23 +59,25 @@ void Desktop::ReleaseCapture(WndObject& wnd) {
 }
 
 void Desktop::LoseCapture() {
-	frame_capture = nullptr; wnd_capture = nullptr;
+	if (wnd_capture != nullptr) {
+		wnd_capture->is_mouse_captured = false;
+		frame_capture = nullptr; wnd_capture = nullptr;
+	}
 }
 
 void Desktop::LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_index_begin) {
 	if (wnd_track_index_begin >= wnd_track_stack.end()) { return; };
 	auto it_begin = wnd_track_index_begin, it_end = wnd_track_stack.end();
 	for (auto it = it_end; it > it_begin;) {
-		(*--it)->OnNotifyMsg(NotifyMsg::MouseLeave);
+		(*--it)->OnNotifyMsg(NotifyMsg::MouseLeave); (*it)->is_mouse_tracked = false;
 	}
 	wnd_track_stack.erase(it_begin, it_end);
 }
 
 void Desktop::DispatchMouseMsg(frame_ref frame, MouseMsg msg) {
 	if (wnd_capture != nullptr) {
-		msg.point += frame.region.point - wnd_capture_offset;
-		wnd_mouse_receive = wnd_capture;
-		return wnd_mouse_receive->OnMouseMsg(msg);
+		Point point = point_zero; GetDesktopFramePoint(*wnd_capture, point); msg.point += point_zero - point;
+		return wnd_capture->OnMouseMsg(msg);
 	}
 	ref_ptr<WndObject> parent = &frame;
 	auto wnd_track_index = wnd_track_stack.begin();
@@ -89,69 +85,49 @@ void Desktop::DispatchMouseMsg(frame_ref frame, MouseMsg msg) {
 		if (wnd_track_index >= wnd_track_stack.end() || *wnd_track_index != parent) {
 			LoseTrack(wnd_track_index);
 			wnd_track_stack.push_back(parent); wnd_track_index = wnd_track_stack.end();
-			parent->OnNotifyMsg(NotifyMsg::MouseEnter);
+			parent->OnNotifyMsg(NotifyMsg::MouseEnter); parent->is_mouse_tracked = true;
 		}
 		ref_ptr<WndObject> child = parent->HitTest(msg.point);
-		if (child == nullptr) { return; }
+		if (child == nullptr) {
+			SetCursor(Cursor::Default);
+			return;
+		}
 		if (child == parent) {
-			wnd_mouse_receive = parent;
-			return wnd_mouse_receive->OnMouseMsg(msg);
+			return parent->OnMouseMsg(msg);
 		}
 		parent = child;
 	} while (true);
-}
-
-void Desktop::PassMouseMsg(WndObject& wnd, MouseMsg msg) {
-	if (wnd_mouse_receive == &wnd) {
-		wnd_mouse_receive = wnd.parent;
-		if (wnd_mouse_receive != nullptr) {
-			msg.point += wnd_mouse_receive->GetChildOffset(wnd);
-			wnd_key_receive->OnMouseMsg(msg);
-		}
-	}
 }
 
 void Desktop::SetFocus(WndObject& wnd) {
 	DesktopFrame& frame = GetDesktopFrame(wnd);
 	if (frame_focus != &frame) { Win32::SetFocus(frame.hwnd); }
 	if (wnd_focus != &wnd) { LoseFocus(); }
-	frame_focus = &frame; wnd_focus = &wnd; ime_focus = nullptr;
+	frame_focus = &frame; wnd_focus = &wnd; ime_focus = nullptr; wnd_focus->is_on_focus = true;
 	if (wnd.ime_aware) {
-		if (auto it = ime_wnd_map.find(&wnd); it != ime_wnd_map.end()) {
-			ime_focus = it->second;
-		}
+		ime_focus = ime_wnd_map.at(&wnd);
+		WndDesign::ImeEnable(frame.hwnd);
+	} else {
+		WndDesign::ImeDisable(frame.hwnd);
 	}
 }
 
 void Desktop::LoseFocus() {
 	if (wnd_focus != nullptr) {
 		wnd_focus->OnNotifyMsg(NotifyMsg::LoseFocus);
+		wnd_focus->is_on_focus = false;
 		frame_focus = nullptr; wnd_focus = nullptr; ime_focus = nullptr;
 	}
 }
 
 void Desktop::DispatchKeyMsg(frame_ref frame, KeyMsg msg) {
-	if (wnd_focus != nullptr) { 
-		wnd_key_receive = wnd_focus; 
-		wnd_key_receive->OnKeyMsg(msg);
-	}
-}
-
-void Desktop::PassKeyMsg(WndObject& wnd, KeyMsg msg) {
-	if (wnd_key_receive == &wnd) {
-		wnd_key_receive = wnd.parent;
-		if (wnd_key_receive != nullptr) {
-			wnd_key_receive->OnKeyMsg(msg);
-		}
+	if (wnd_focus != nullptr) {
+		wnd_focus->OnKeyMsg(msg);
 	}
 }
 
 void Desktop::ImeSetPosition(WndObject& wnd, Point point) {
 	WndDesign::ImeSetPosition(GetDesktopFramePoint(wnd, point).hwnd, point);
-}
-
-void Desktop::OnImeSetContext(frame_ref frame) {
-	ime_focus != nullptr ? WndDesign::ImeEnable(frame.hwnd) : WndDesign::ImeDisable(frame.hwnd);
 }
 
 void Desktop::MessageLoop() { Win32::MessageLoop(); }

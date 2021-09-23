@@ -1,6 +1,7 @@
 #pragma once
 
 #include "WndObject.h"
+#include "../frame/DesktopFrame.h"
 #include "../message/ime.h"
 
 #include <memory>
@@ -10,8 +11,6 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-class DesktopFrame;
-
 
 class Desktop : public WndObject {
 public:
@@ -19,8 +18,8 @@ public:
 	using frame_ref = DesktopFrame&;
 
 public:
-	Desktop();
-	~Desktop();
+	Desktop() {}
+	~Desktop() {}
 
 	// layout
 public:
@@ -38,44 +37,33 @@ public:
 public:
 	void RecreateFrameLayer();
 	
-	// mouse capture
+	// mouse message
 private:
 	ref_ptr<DesktopFrame> frame_capture = nullptr;
 	ref_ptr<WndObject> wnd_capture = nullptr;
-	Point wnd_capture_offset;
 public:
 	void SetCapture(WndObject& wnd);
 	void ReleaseCapture(WndObject& wnd);
 	void LoseCapture();
-
-	// mouse track
 private:
 	std::vector<ref_ptr<WndObject>> wnd_track_stack;
-	ref_ptr<WndObject> wnd_mouse_receive = nullptr;
 private:
 	void LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_index_begin);
 public:
 	void LoseTrack() { LoseTrack(wnd_track_stack.begin()); }
-
-	// mouse message
 public:
 	void DispatchMouseMsg(frame_ref frame, MouseMsg msg);
-	void PassMouseMsg(WndObject& wnd, MouseMsg msg);
 
-	// key focus
+	// key message
 private:
 	ref_ptr<DesktopFrame> frame_focus = nullptr;
 	ref_ptr<WndObject> wnd_focus = nullptr;
 	ref_ptr<ImeMsgHandler> ime_focus = nullptr;
-	ref_ptr<WndObject> wnd_key_receive = nullptr;
 public:
 	void SetFocus(WndObject& wnd);
 	void LoseFocus();
-
-	// key message
 public:
 	void DispatchKeyMsg(frame_ref frame, KeyMsg msg);
-	void PassKeyMsg(WndObject& wnd, KeyMsg msg);
 
 	// ime message
 private:
@@ -88,7 +76,6 @@ public:
 	void ImeDisable(WndObject& wnd) { wnd.ime_aware = false; }
 	void ImeSetPosition(WndObject& wnd, Point point);
 public:
-	void OnImeSetContext(frame_ref frame);
 	void OnImeCompositionBegin() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionBegin(); } }
 	void OnImeComposition(std::wstring str) { if (ime_focus != nullptr) { ime_focus->OnImeComposition(str); } }
 	void OnImeCompositionEnd() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionEnd(); } }

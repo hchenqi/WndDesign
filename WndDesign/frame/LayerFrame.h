@@ -17,9 +17,9 @@ private:
 	mutable Layer layer;
 private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) override;
-	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override;
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
 private:
-	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) override;
+	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override;
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const override;
 };
 

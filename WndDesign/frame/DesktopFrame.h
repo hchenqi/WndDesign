@@ -32,13 +32,14 @@ protected:
 	// layout
 private:
 	Rect region;
-	Rect client_rect;
+	Rect client_region;
 private:
 	const Rect GetRegion() const { return region; }
 	void SetRegion(Rect new_region);
-	void UpdateClientRect();
+	void UpdateClientRegion();
+	const Vector GetClientOffset() const { return client_region.point - point_zero; }
 private:
-	virtual const Vector GetChildOffset(const WndObject& child) { return client_rect.point - point_zero; }
+	virtual const Vector GetChildOffset(WndObject& child) const override { return GetClientOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;
 
 	// child
@@ -62,7 +63,7 @@ private:
 	Region invalid_region;
 private:
 	void Redraw(Rect redraw_region);
-	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) override { Redraw(redraw_region); }
+	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override;
 	void Draw();
 private:
 	void RecreateLayer();

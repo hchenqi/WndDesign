@@ -158,6 +158,7 @@
     <ClInclude Include="common\core.h" />
     <ClInclude Include="common\reversion_wrapper.h" />
     <ClInclude Include="common\uncopyable.h" />
+    <ClInclude Include="common\unicode_helper.h" />
     <ClInclude Include="control\Button.h" />
     <ClInclude Include="control\CheckBox.h" />
     <ClInclude Include="control\EditBox.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="frame\ClipFrame.h" />
     <ClInclude Include="frame\DesktopFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
+    <ClInclude Include="frame\MarginFrame.h" />
     <ClInclude Include="frame\MultiViewFrame.h" />
     <ClInclude Include="frame\OverlapFrame.h" />
     <ClInclude Include="frame\ScrollFrame.h" />
@@ -198,6 +200,7 @@
     <ClInclude Include="message\key_msg.h" />
     <ClInclude Include="message\message.h" />
     <ClInclude Include="message\mouse_msg.h" />
+    <ClInclude Include="message\mouse_tracker.h" />
     <ClInclude Include="message\notify_msg.h" />
     <ClInclude Include="message\timer.h" />
     <ClInclude Include="style\border_helper.h" />
@@ -228,6 +231,8 @@
     <ClInclude Include="window\WndObject.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="common\unicode_helper.cpp" />
+    <ClCompile Include="control\EditBox.cpp" />
     <ClCompile Include="figure\bitmap.cpp" />
     <ClCompile Include="figure\image.cpp" />
     <ClCompile Include="figure\layer.cpp" />
@@ -235,6 +240,7 @@
     <ClCompile Include="figure\text_block.cpp" />
     <ClCompile Include="frame\DesktopFrame.cpp" />
     <ClCompile Include="frame\LayerFrame.cpp" />
+    <ClCompile Include="frame\MarginFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_layer.cpp" />
     <ClCompile Include="message\timer.cpp" />

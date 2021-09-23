@@ -22,13 +22,13 @@ public:
 private:
 	ref_ptr<WndObject> parent = nullptr;
 private:
-	bool HasParent() const { return parent != nullptr; }
-	WndObject& GetParent() const { assert(HasParent()); return *parent; }
+	bool HasParent() { return parent != nullptr; }
+	WndObject& GetParent() { assert(HasParent()); return *parent; }
 
 	// child window
 private:
-	void VerifyChild(const WndObject& child) const {
-		if (child.parent != this) { throw std::invalid_argument("invalid child window"); } 
+	void VerifyChild(WndObject& child) const {
+		if (child.parent != this) { throw std::invalid_argument("invalid child window"); }
 	}
 protected:
 	void RegisterChild(WndObject& child) {
@@ -44,34 +44,36 @@ private:
 	uint64 parent_specific_data = 0;
 protected:
 	template<class T, class = std::enable_if_t<sizeof(T) <= sizeof(uint64)>>
-	void SetChildData(WndObject& child, T data) const {
+	void SetChildData(WndObject& child, T data) {
 		VerifyChild(child); memcpy(&child.parent_specific_data, &data, sizeof(T));
 	}
 	template<class T, class = std::enable_if_t<sizeof(T) <= sizeof(uint64)>>
-	T GetChildData(const WndObject& child) const {
+	T GetChildData(WndObject& child) {
 		VerifyChild(child); T data; memcpy(&data, &child.parent_specific_data, sizeof(T)); return data;
 	}
 
 	// layout
 protected:
-	const Size UpdateChildSizeRef(WndObject& child, Size size_ref) const { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
-	void SizeUpdated(Size size) const { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
+	const Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
+	void SizeUpdated(Size size) { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
+	void ScrollIntoView(Rect region) { if (HasParent()) { GetParent().OnChildScrollIntoView(*this, region); } }
 private:
 	virtual const Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
-	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) {}
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
 private:
-	virtual const Vector GetChildOffset(const WndObject& child) { return vector_zero; }
+	virtual const Vector GetChildOffset(WndObject& child) const { return vector_zero; }
+	virtual void OnChildScrollIntoView(WndObject& child, Rect region) { ScrollIntoView(region += GetChildOffset(child)); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
 
 	// paint
 protected:
-	void Redraw(Rect redraw_region) const { if (HasParent()) { GetParent().OnChildRedraw(*this, redraw_region); } }
+	void Redraw(Rect redraw_region) { if (HasParent()) { GetParent().OnChildRedraw(*this, redraw_region); } }
 	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) const {
 		if (draw_region.IsEmpty()) { return; } VerifyChild(child); Vector offset = child_offset - point_zero;
 		figure_queue.PushOffset(offset); child.OnDraw(figure_queue, draw_region - offset); figure_queue.PopOffset(offset);
 	}
 private:
-	virtual void OnChildRedraw(const WndObject& child, Rect redraw_region) {}
+	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) {}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const {}
 
 	// message
@@ -85,11 +87,11 @@ protected:
 	void ReleaseCapture();
 	void SetFocus();
 protected:
-	void PassMouseMsg(MouseMsg msg);
-	void PassKeyMsg(KeyMsg msg);
-protected:
-	virtual void OnMouseMsg(MouseMsg msg) { if (msg.wheel_delta != 0) { PassMouseMsg(msg); } }
-	virtual void OnKeyMsg(KeyMsg msg) { PassKeyMsg(msg); }
+	void PassMouseMsg(MouseMsg msg) { if (HasParent()) { msg.point += GetParent().GetChildOffset(*this); GetParent().OnMouseMsg(msg); } }
+	void PassKeyMsg(KeyMsg msg) { if (HasParent()) { GetParent().OnKeyMsg(msg); } }
+private:
+	virtual void OnMouseMsg(MouseMsg msg) {}
+	virtual void OnKeyMsg(KeyMsg msg) {}
 	virtual void OnNotifyMsg(NotifyMsg msg) {}
 };
 

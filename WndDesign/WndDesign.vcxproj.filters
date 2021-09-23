@@ -228,6 +228,15 @@
     <ClInclude Include="frame\ClipFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="message\mouse_tracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common\unicode_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame\MarginFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">
@@ -291,6 +300,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="figure\text_block.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="control\EditBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common\unicode_helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="frame\MarginFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
