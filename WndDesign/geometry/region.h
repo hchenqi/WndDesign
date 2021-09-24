@@ -24,8 +24,6 @@ public:
 
 	void Translate(Vector vector);
 
-	void Swap(Region&& region) noexcept { std::swap(rgn, region.rgn); }
-
 	void Union(const Rect& region);
 	void Intersect(const Rect& region);
 	void Sub(const Rect& region);
@@ -36,8 +34,8 @@ public:
 	void Sub(const Region& region);
 	void Xor(const Region& region);
 
-	const Rect GetBoundingRect() const;
-	const std::pair<Rect, std::vector<Rect>> GetRects() const;
+	Rect GetBoundingRect() const;
+	std::pair<Rect, std::vector<Rect>> GetRects() const;
 };
 
 

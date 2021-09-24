@@ -10,7 +10,7 @@ MarginFrame::MarginFrame(Style style, child_ptr child) :
 	margin(StyleHelper::CalculateBorderMargin(style.border) + StyleHelper::CalculatePaddingMargin(style.padding)) {
 }
 
-const Size MarginFrame::OnSizeRefUpdate(Size size_ref) {
+Size MarginFrame::OnSizeRefUpdate(Size size_ref) {
 	size = ExtendSizeByMargin(UpdateChildSizeRef(child, ShrinkSizeByMargin(size_ref, margin)), margin); return size;
 }
 
@@ -27,7 +27,7 @@ void MarginFrame::OnChildRedraw(WndObject& child, Rect redraw_region) {
 	Redraw(redraw_region + GetClientOffset());
 }
 
-void MarginFrame::OnDraw(FigureQueue& figure_queue, Rect draw_region) const {
+void MarginFrame::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	DrawChild(child, point_zero + GetClientOffset(), figure_queue, draw_region);
 	figure_queue.add(point_zero, StyleHelper::GetBorderFigure(size, style.border));
 }

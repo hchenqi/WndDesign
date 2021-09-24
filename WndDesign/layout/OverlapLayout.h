@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../frame/OverlapWndFrame.h"
+#include "../frame/OverlapFrame.h"
 
 #include <list>
 
@@ -14,7 +14,7 @@ class OverlapLayout : public WndObject {
 	// child window
 private:
 	struct ChildInfo {
-		OverlapWndFrame& child;
+		OverlapFrame& child;
 		Rect region;
 		std::list<ChildInfo>::iterator index;
 	};
@@ -25,12 +25,12 @@ private:
 	void SetChildData(WndObject& child, ChildInfo& info) {
 		WndObject::SetChildData<ChildInfo*>(child, &info);
 	}
-	ChildInfo& GetChildData(const WndObject& child) {
+	ChildInfo& GetChildData(WndObject& child) {
 		return *WndObject::GetChildData<ChildInfo*>(child);
 	}
 
 public:
-	void AddChild(OverlapWndFrame& child) {
+	void AddChild(OverlapFrame& child) {
 		WndObject::AddChild(child);
 		ChildInfo& info = child_list.emplace_front(child, region_empty); info.index = child_list.begin();
 		SetChildData(child, info);
@@ -49,7 +49,7 @@ private:
 	Size size;
 
 private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			size = size_ref;
 			for (auto& info : child_list) {
@@ -60,7 +60,7 @@ private:
 		return size;
 	}
 
-	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		ChildInfo& info = GetChildData(child);
 		info.region.size = child_size;
 		info.region.point = info.child.GetPosition();

@@ -6,13 +6,9 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class OverlapWndFrame : private WndObject {
+class OverlapFrame : private WndObject {
 private:
 	friend class OverlapLayout;
-
-	const Point GetPosition() const {
-
-	}
 };
 
 

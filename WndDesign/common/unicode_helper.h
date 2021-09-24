@@ -51,9 +51,9 @@ public:
 	~WordBreakIterator();
 public:
 	void SetText(const std::wstring& str);
-	const TextRange Seek(uint pos);
-	const TextRange Next();
-	const TextRange Prev();
+	TextRange Seek(uint pos);
+	TextRange Next();
+	TextRange Prev();
 };
 
 

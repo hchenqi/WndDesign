@@ -15,7 +15,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 DesktopFrame::DesktopFrame(DesktopFrameStyle style, child_ptr child) : style(style), child(std::move(child)), hwnd(nullptr) {
 	RegisterChild(this->child);
-	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize()); 
+	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize());
 	UpdateClientRegion(); UpdateChildSizeRef(this->child, client_region.size);
 	hwnd = Win32::CreateWnd(region, style.title); Win32::SetWndUserData(hwnd, this);
 	RecreateLayer();
@@ -27,7 +27,7 @@ DesktopFrame::~DesktopFrame() {
 	Win32::DestroyWnd(hwnd);
 }
 
-const std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
+std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
 	auto [size_min, size_max] = StyleHelper::CalculateMinMaxSize(style.width, style.height, desktop.GetSize());
 	Rect region_max(point_zero, size_max);
 	if (size_max == desktop.GetSize()) {
@@ -36,7 +36,7 @@ const std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
 	return { size_min, region_max };
 }
 
-void DesktopFrame::SetTitle(const std::wstring& title) { Win32::SetWndTitle(hwnd, title); }
+void DesktopFrame::SetTitle(std::wstring title) { Win32::SetWndTitle(hwnd, title); }
 
 void DesktopFrame::SetRegion(Rect new_region) {
 	if (new_region.size != region.size) {
@@ -73,8 +73,8 @@ void DesktopFrame::Redraw(Rect redraw_region) {
 	Win32::InvalidateWndRegion(hwnd, redraw_region);
 }
 
-void DesktopFrame::OnChildRedraw(WndObject& child, Rect redraw_region) { 
-	Redraw(redraw_region + GetClientOffset()); 
+void DesktopFrame::OnChildRedraw(WndObject& child, Rect redraw_region) {
+	Redraw(redraw_region + GetClientOffset());
 }
 
 void DesktopFrame::Draw() {

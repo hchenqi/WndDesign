@@ -26,7 +26,7 @@ ComPtr<IWICFormatConverter> LoadFromDecoder(ComPtr<IWICBitmapDecoder> decoder) {
 	return converter;
 }
 
-ComPtr<IWICFormatConverter> LoadImageFromFile(const std::wstring& file_name) {
+ComPtr<IWICFormatConverter> LoadImageFromFile(std::wstring file_name) {
 	try {
 		ComPtr<IWICBitmapDecoder> decoder;
 		hr << GetWICFactory().CreateDecoderFromFilename(
@@ -61,7 +61,7 @@ ComPtr<IWICFormatConverter> LoadImageFromMemory(void* address, size_t size) {
 }
 
 
-inline const Size GetImageSize(ImageSource& source) {
+inline Size GetImageSize(ImageSource& source) {
 	Size size; hr << source.GetSize(&size.width, &size.height); return size;
 }
 
@@ -79,7 +79,7 @@ inline ComPtr<ID2D1Bitmap1> CreateD2DBitmapFromWicBitmap(IWICFormatConverter& co
 END_NAMESPACE(Anonymous)
 
 
-Image::Image(const std::wstring& file_name) :
+Image::Image(std::wstring file_name) :
 	source(static_cast<ImageSource*>(LoadImageFromFile(file_name).Detach())),
 	size(GetImageSize(*source)) {
 }
@@ -93,7 +93,7 @@ Image::~Image() {
 	SafeRelease(&source);
 }
 
-void Image::CreateBitmap() const {
+void Image::CreateBitmap() {
 	if (bitmap.IsEmpty()) {
 		bitmap.Set(static_cast<BitmapResource*>(CreateD2DBitmapFromWicBitmap(*source).Detach()));
 	}

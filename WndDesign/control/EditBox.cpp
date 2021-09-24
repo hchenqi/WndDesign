@@ -7,14 +7,14 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-const Size EditBox::OnSizeRefUpdate(Size size_ref) {
+Size EditBox::OnSizeRefUpdate(Size size_ref) {
 	Size size = TextBox::OnSizeRefUpdate(size_ref);
 	UpdateCaretRegion(text_block.HitTestTextPosition(caret_text_position));
 	UpdateSelectionRegion();
 	return size;
 }
 
-void EditBox::OnDraw(FigureQueue& figure_queue, Rect draw_region) const {
+void EditBox::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	TextBox::OnDraw(figure_queue, draw_region);
 	if (IsCaretVisible() && !caret_region.Intersect(draw_region).IsEmpty()) {
 		figure_queue.add(caret_region.point, new Rectangle(caret_region.size, style.edit._caret_color));
@@ -181,7 +181,7 @@ void EditBox::Insert(wchar ch) {
 	}
 }
 
-void EditBox::Insert(const std::wstring& str) {
+void EditBox::Insert(std::wstring str) {
 	if (IsEditDisabled()) { return; }
 	if (HasSelection()) {
 		ReplaceText(selection_begin, selection_end - selection_begin, str);

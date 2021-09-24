@@ -22,7 +22,7 @@ void Desktop::RemoveChild(frame_ref frame) {
 	if (frame_list.empty()) { Terminate(); }
 }
 
-const Size Desktop::GetSize() const { return Win32::GetDesktopSize(); }
+Size Desktop::GetSize() const { return Win32::GetDesktopSize(); }
 
 DesktopFrame& Desktop::GetDesktopFrame(WndObject& wnd) {
 	ref_ptr<WndObject> child = &wnd;

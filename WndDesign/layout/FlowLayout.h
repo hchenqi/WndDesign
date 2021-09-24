@@ -13,12 +13,12 @@ class FlowLayout;
 
 
 template<>
-class FlowLayout<Vertical> : public WndType<Relative, Auto> {
+class FlowLayout<Vertical> : public WndType<Assigned, Auto> {
 public:
-	using child_ptr = child_ptr<Auto, Relative>;
+	using child_ptr = child_ptr<Auto, Assigned>;
 public:
 	FlowLayout(uint row_height, uint column_gap, uint row_gap) :
-		row_height(row_height), column_gap(column_gap), row_gap(row_gap), row_list({0}) {
+		row_height(row_height), column_gap(column_gap), row_gap(row_gap), row_list({ 0 }) {
 	}
 
 private:
@@ -40,7 +40,7 @@ private:
 	void SetChildData(WndObject& child, ChildData data) {
 		WndObject::SetChildData<ChildData>(child, data);
 	}
-	ChildData GetChildData(const WndObject& child) {
+	ChildData GetChildData(WndObject& child) {
 		return WndObject::GetChildData<ChildData>(child);
 	}
 
@@ -57,7 +57,7 @@ public:
 		if (child_list.empty()) {
 			assert(row_list.size() == 1);
 			row_list.push_back(1);
-			ChildInfo & info = child_list.emplace_back(std::move(child));
+			ChildInfo& info = child_list.emplace_back(std::move(child));
 			info.column_offset = 0;
 			info.width = UpdateChildSizeRef(info.child, Size(length_min, row_height)).width;
 			SetChildData(info.child, { 0, 0 });
@@ -91,7 +91,7 @@ private:
 		size.height = child_list.empty() ? 0 : row_index * (row_height + row_gap) + row_height;
 	}
 
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) {
 			size.width = size_ref.width;
 			size.height = 0;
@@ -99,7 +99,7 @@ private:
 		}
 		return size;
 	}
-	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		auto [row_index, column_index] = GetChildData(child);
 		child_index child_index = row_list[row_index] + column_index;
 		ChildInfo& info = child_list[child_index];

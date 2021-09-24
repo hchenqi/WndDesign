@@ -20,13 +20,13 @@ using Microsoft::WRL::ComPtr;
 
 
 struct HResultWrapper {
-	const HResultWrapper& operator<<(HRESULT hr) const {
+	HResultWrapper& operator<<(HRESULT hr) {
 		if (!SUCCEEDED(hr)) { throw std::runtime_error("hresult failure"); }
 		return *this;
 	}
 };
 
-inline static const HResultWrapper hr;
+inline static HResultWrapper hr;
 
 
 template<class Interface>
@@ -47,30 +47,30 @@ struct ImageSource : IWICFormatConverter {};
 struct TextLayout : IDWriteTextLayout {};
 
 
-inline const D2D1_POINT_2F Point2POINT(Point point) {
+inline D2D1_POINT_2F Point2POINT(Point point) {
 	return D2D1::Point2F(static_cast<FLOAT>(point.x), static_cast<FLOAT>(point.y));
 }
 
-inline const D2D1_SIZE_F Size2SIZE(Size size) {
+inline D2D1_SIZE_F Size2SIZE(Size size) {
 	return D2D1::SizeF(static_cast<FLOAT>(size.width), static_cast<FLOAT>(size.height));
 }
 
-inline const D2D1_RECT_F Rect2RECT(Rect rect) {
+inline D2D1_RECT_F Rect2RECT(Rect rect) {
 	return D2D1::RectF(
 		static_cast<FLOAT>(rect.left()), static_cast<FLOAT>(rect.top()),
 		static_cast<FLOAT>(rect.right()), static_cast<FLOAT>(rect.bottom())
 	);
 }
 
-inline const Point POINT2Point(D2D1_POINT_2F point) {
+inline Point POINT2Point(D2D1_POINT_2F point) {
 	return Point(static_cast<uint>(point.x), static_cast<uint>(point.y));
 }
 
-inline const Size SIZE2Size(D2D1_SIZE_F size) {
+inline Size SIZE2Size(D2D1_SIZE_F size) {
 	return Size(static_cast<uint>(size.width), static_cast<uint>(size.height));
 }
 
-inline const Rect RECT2Rect(D2D1_RECT_F rect) {
+inline Rect RECT2Rect(D2D1_RECT_F rect) {
 	return Rect(
 		static_cast<int>(rect.left),
 		static_cast<int>(rect.top),
@@ -83,7 +83,7 @@ inline float Opacity2Float(uchar opacity) {
 	return opacity / (float)0xFF;
 }
 
-inline const D2D1_COLOR_F Color2COLOR(Color color) {
+inline D2D1_COLOR_F Color2COLOR(Color color) {
 	return D2D1::ColorF(color.AsUnsigned(), Opacity2Float(color.alpha));
 }
 

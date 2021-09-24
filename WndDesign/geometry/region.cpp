@@ -7,7 +7,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-inline const Rect RECT2Rect(const RECT& rect) {
+inline Rect RECT2Rect(RECT rect) {
     return Rect(rect.left, rect.top, (uint)(rect.right - rect.left), (uint)(rect.bottom - rect.top));
 }
 
@@ -58,13 +58,13 @@ void Region::Intersect(const Rect& region) { Intersect(TempRegion(region)); }
 void Region::Sub(const Rect& region) { Sub(TempRegion(region)); }
 void Region::Xor(const Rect& region) { Xor(TempRegion(region)); }
 
-const Rect Region::GetBoundingRect() const {
+Rect Region::GetBoundingRect() const {
     RECT rect;
     GetRgnBox((HRGN)rgn, &rect);
     return RECT2Rect(rect);
 }
 
-const std::pair<Rect, std::vector<Rect>> Region::GetRects() const {
+std::pair<Rect, std::vector<Rect>> Region::GetRects() const {
     static std::vector<char> buffer;
     int size = GetRegionData((HRGN)rgn, 0, NULL); buffer.resize(size);
     GetRegionData((HRGN)rgn, size, (LPRGNDATA)buffer.data());

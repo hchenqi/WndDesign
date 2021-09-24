@@ -11,9 +11,9 @@ class ScrollFrame;
 
 
 template<>
-class ScrollFrame<Vertical> : public WndFrame, public LayoutType<Relative, Relative> {
+class ScrollFrame<Vertical> : public WndFrame, public LayoutType<Assigned, Assigned> {
 public:
-	using child_ptr = WndDesign::child_ptr<Relative, Auto>;
+	using child_ptr = WndDesign::child_ptr<Assigned, Auto>;
 public:
 	ScrollFrame(child_ptr child) : WndFrame(std::move(child)) {}
 private:
@@ -47,7 +47,7 @@ public:
 		Scroll(y - Clamp(y, length, frame_offset, frame_offset + (int)frame_height));
 	}
 private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		child_height = UpdateChildSizeRef(child, Size(size_ref.width, length_max)).height;
 		frame_height = size_ref.height; UpdateFrameOffset(frame_offset); return Size();
 	}
@@ -55,8 +55,8 @@ private:
 		child_height = child_size.height; UpdateFrameOffset(frame_offset);
 	}
 private:
-	virtual const Vector GetChildOffset(WndObject& child) const { 
-		return Vector(0, -frame_offset); 
+	virtual Vector GetChildOffset(WndObject& child) {
+		return Vector(0, -frame_offset);
 	}
 	virtual void OnChildScrollIntoView(WndObject& child, Rect region) {
 		ScrollIntoView(region.point.y, region.size.height);
@@ -69,7 +69,7 @@ private:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
 		redraw_region.point.y -= frame_offset; Redraw(redraw_region);
 	}
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const override {
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, Point(0, -frame_offset), figure_queue, draw_region);
 	}
 private:

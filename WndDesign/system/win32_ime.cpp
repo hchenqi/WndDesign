@@ -19,7 +19,7 @@ void ImeDisable(HANDLE hwnd) {
 }
 #pragma warning (pop)
 
-void ImeSetPosition(HANDLE hwnd, const Point& point) {
+void ImeSetPosition(HANDLE hwnd, Point point) {
 	HIMC imc = ImmGetContext((HWND)hwnd);
 	COMPOSITIONFORM cf = { CFS_POINT, { point.x, point.y } };
 	ImmSetCompositionWindow(imc, &cf);

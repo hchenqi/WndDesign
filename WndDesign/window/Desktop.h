@@ -23,7 +23,7 @@ public:
 
 	// layout
 public:
-	const Size GetSize() const;
+	Size GetSize() const;
 
 	// frame
 private:
@@ -36,7 +36,7 @@ public:
 	DesktopFrame& GetDesktopFramePoint(WndObject& wnd, Point& point);
 public:
 	void RecreateFrameLayer();
-	
+
 	// mouse message
 private:
 	ref_ptr<DesktopFrame> frame_capture = nullptr;

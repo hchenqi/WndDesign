@@ -7,21 +7,19 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-using std::wstring;
-
 using HANDLE = void*;
 
 
 BEGIN_NAMESPACE(Win32)
 
 
-const Size GetDesktopSize();
+Size GetDesktopSize();
 
-HANDLE CreateWnd(Rect region, const wstring& title);
+HANDLE CreateWnd(Rect region, std::wstring title);
 void DestroyWnd(HANDLE hwnd);
 void SetWndUserData(HANDLE hwnd, void* data);
 
-void SetWndTitle(HANDLE hwnd, const wstring& title);
+void SetWndTitle(HANDLE hwnd, std::wstring title);
 void SetWndRegion(HANDLE hwnd, Rect region);
 
 void ShowWnd(HANDLE hwnd);

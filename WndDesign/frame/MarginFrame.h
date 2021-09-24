@@ -18,15 +18,15 @@ private:
 	Margin margin;
 	Size size;
 private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override;
+	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
 private:
-	const Vector GetClientOffset() const { return Vector(margin.left, margin.top); }
-	virtual const Vector GetChildOffset(WndObject& child) const { return GetClientOffset(); }
+	Vector GetClientOffset() const { return Vector(margin.left, margin.top); }
+	virtual Vector GetChildOffset(WndObject& child) { return GetClientOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;
 private:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override;
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const override;
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
 };
 
 

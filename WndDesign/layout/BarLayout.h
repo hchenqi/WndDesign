@@ -11,9 +11,9 @@ class BarLayout;
 
 
 template<>
-class BarLayout<Horizontal> : public WndType<Relative, Relative> {
+class BarLayout<Horizontal> : public WndType<Assigned, Assigned> {
 public:
-	using child_ptr = child_ptr<Auto, Relative>;
+	using child_ptr = child_ptr<Auto, Assigned>;
 public:
 	BarLayout(child_ptr left, child_ptr right, child_ptr center) :
 		left(std::move(left)), right(std::move(right)), center(std::move(center)) {
@@ -31,11 +31,11 @@ private:
 	uint width_right;
 	uint width_center;
 private:
-	const Rect GetRegionLeft() const { return Rect(Point(0, 0), Size(width_left, size.height)); }
-	const Rect GetRegionRight() const { return Rect(Point((int)size.width - (int)width_right, 0), Size(width_right, size.height)); }
-	const Rect GetRegionCenter() const { return Rect(Point(((int)size.width - (int)width_center) / 2, 0), Size(width_center, size.height)); }
+	Rect GetRegionLeft() { return Rect(Point(0, 0), Size(width_left, size.height)); }
+	Rect GetRegionRight() { return Rect(Point((int)size.width - (int)width_right, 0), Size(width_right, size.height)); }
+	Rect GetRegionCenter() { return Rect(Point(((int)size.width - (int)width_center) / 2, 0), Size(width_center, size.height)); }
 private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) {
 			size.height = size_ref.height;
 			width_left = UpdateChildSizeRef(left, Size(length_min, size.height)).width;
@@ -44,7 +44,7 @@ private:
 		}
 		return size;
 	}
-	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (&child == center.get()) {
 			if (width_center != child_size.width) { width_center = child_size.width; }
 		} else if (&child == right.get()) {

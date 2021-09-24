@@ -39,7 +39,7 @@ public:
 private:
 	static constexpr uint move_tolerate_range = 5;  // 5px
 	static uint Square(int x) { return static_cast<uint>(x * x); };
-	static uint SquareDistance(const Point& a, const Point& b) { return Square(a.x - b.x) + Square(a.y - b.y); }
+	static uint SquareDistance(Point a, Point b) { return Square(a.x - b.x) + Square(a.y - b.y); }
 public:
 	MouseTrackMsg Track(MouseMsg msg) {
 		MouseTrackMsg ret;

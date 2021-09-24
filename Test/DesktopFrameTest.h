@@ -8,11 +8,11 @@
 using namespace WndDesign;
 
 
-class EmptyWindow : public Placeholder<Relative, Relative> {
+class EmptyWindow : public Placeholder<Assigned, Assigned> {
 private:
 	Color color = Color::Gray;
 private:
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const override {
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, color));
 	}
 	virtual void OnMouseMsg(MouseMsg msg) override {

@@ -7,7 +7,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class TextBox : public WndType<Relative, Auto> {
+class TextBox : public WndType<Assigned, Auto> {
 public:
 	using Style = TextBlockStyle;
 public:
@@ -20,18 +20,20 @@ protected:
 	std::wstring text;
 	TextBlock text_block = TextBlock(style, text);
 protected:
+	Size UpdateSize() {
+		return Size(width_ref, text_block.UpdateSizeRef(Size(width_ref, length_max)).height);
+	}
 	void TextUpdated() {
 		text_block.SetText(style, text);
-		SizeUpdated(Size(width_ref, text_block.UpdateSizeRef(Size(width_ref, length_max)).height));
+		SizeUpdated(UpdateSize());
 		Redraw(region_infinite);
 	}
 protected:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
-		width_ref = size_ref.width;
-		return Size(width_ref, text_block.UpdateSizeRef(Size(width_ref, length_max)).height);
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
+		width_ref = size_ref.width; return UpdateSize();
 	}
 protected:
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const {
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(point_zero, new TextBlockFigure(text_block, style.font._color));
 	}
 };

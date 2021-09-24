@@ -4,7 +4,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-const Size LayerFrame::OnSizeRefUpdate(Size size_ref) {
+Size LayerFrame::OnSizeRefUpdate(Size size_ref) {
 	Size child_size = UpdateChildSizeRef(child, size_ref);
 	if (size != child_size) {
 		size = child_size;
@@ -29,7 +29,7 @@ void LayerFrame::OnChildRedraw(WndObject& child, Rect redraw_region) {
 	Redraw(redraw_region);
 }
 
-void LayerFrame::OnDraw(FigureQueue& figure_queue, Rect draw_region) const {
+void LayerFrame::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
 	Region render_region(draw_region); render_region.Intersect(invalid_region);
 	if (!render_region.IsEmpty()) {

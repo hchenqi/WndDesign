@@ -19,15 +19,15 @@ struct DesktopFrameApi : DesktopFrame {
 
 BEGIN_NAMESPACE(Anonymous)
 
-inline const RECT Rect2RECT(const Rect& rect) {
+inline RECT Rect2RECT(Rect rect) {
 	return { rect.left(), rect.top(), rect.right(), rect.bottom() };
 }
 
-inline const Rect RECT2Rect(const RECT& rect) {
+inline Rect RECT2Rect(RECT rect) {
 	return Rect(rect.left, rect.top, (uint)(rect.right - rect.left), (uint)(rect.bottom - rect.top));
 }
 
-inline const Size GetWorkAreaSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return RECT2Rect(rect).size; }
+inline Size GetWorkAreaSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return RECT2Rect(rect).size; }
 
 Size desktop_size = GetWorkAreaSize();
 
@@ -193,9 +193,9 @@ END_NAMESPACE(Anonymous)
 BEGIN_NAMESPACE(Win32)
 
 
-const Size GetDesktopSize() { return desktop_size; }
+Size GetDesktopSize() { return desktop_size; }
 
-HANDLE CreateWnd(Rect region, const std::wstring& title) {
+HANDLE CreateWnd(Rect region, std::wstring title) {
 	RegisterWndClass();
 	HWND hwnd = CreateWindowExW(WS_EX_NOREDIRECTIONBITMAP, wnd_class_name, title.c_str(),
 								WS_POPUP | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_HSCROLL | WS_VSCROLL,
@@ -211,7 +211,7 @@ void SetWndUserData(HANDLE hwnd, void* data) {
 	SetWindowLongPtrW((HWND)hwnd, GWLP_USERDATA, (LONG_PTR)data);
 }
 
-void SetWndTitle(HANDLE hwnd, const std::wstring& title) {
+void SetWndTitle(HANDLE hwnd, std::wstring title) {
 	SetWindowTextW((HWND)hwnd, title.c_str());
 }
 

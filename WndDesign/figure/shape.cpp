@@ -7,7 +7,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-inline const D2D1_RECT_F ShrinkD2DRectByLength(D2D1_RECT_F rect, float length) {
+inline D2D1_RECT_F ShrinkD2DRectByLength(D2D1_RECT_F rect, float length) {
 	return D2D1::RectF(rect.left + length, rect.top + length, rect.right - length, rect.bottom - length);
 }
 

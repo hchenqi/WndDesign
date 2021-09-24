@@ -29,14 +29,14 @@ private:
 	};
 public:
 	MyEditBox() : EditBox(Style(), L"Hello World!") {}
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const {
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, Color::White));
 		EditBox::OnDraw(figure_queue, draw_region);
 	}
 };
 
 
-class MyEditBoxMargin : public MarginFrame, public LayoutType<Relative, Auto> {
+class MyEditBoxMargin : public MarginFrame, public LayoutType<Assigned, Auto> {
 private:
 	struct Style : MarginFrame::Style {
 		Style() {
@@ -45,7 +45,7 @@ private:
 		}
 	};
 public:
-	using child_ptr = WndDesign::child_ptr<Relative, Auto>;
+	using child_ptr = WndDesign::child_ptr<Assigned, Auto>;
 public:
 	MyEditBoxMargin(child_ptr child) : MarginFrame(Style(), std::move(child)) {}
 };

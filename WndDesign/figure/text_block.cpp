@@ -58,7 +58,7 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	this->layout = static_cast<TextLayout*>(layout.Detach());
 }
 
-const Size TextBlock::UpdateSizeRef(Size size_ref) const {
+Size TextBlock::UpdateSizeRef(Size size_ref) {
 	layout->SetMaxWidth(static_cast<FLOAT>(size_ref.width));
 	layout->SetMaxHeight(static_cast<FLOAT>(size_ref.height));
 	DWRITE_TEXT_METRICS metrics; layout->GetMetrics(&metrics);
@@ -69,7 +69,7 @@ const Size TextBlock::UpdateSizeRef(Size size_ref) const {
 }
 
 
-inline const TextBlockHitTestInfo HitTestMetricsToInfo(const DWRITE_HIT_TEST_METRICS& metrics, bool is_inside, bool is_trailing_hit) {
+inline TextBlockHitTestInfo HitTestMetricsToInfo(const DWRITE_HIT_TEST_METRICS& metrics, bool is_inside, bool is_trailing_hit) {
 	Point left_top = Point((int)roundf(metrics.left), (int)roundf(metrics.top));
 	Point right_bottom = Point((int)roundf(metrics.left + metrics.width), (int)roundf(metrics.top + metrics.height));
 	return TextBlockHitTestInfo{
@@ -81,13 +81,13 @@ inline const TextBlockHitTestInfo HitTestMetricsToInfo(const DWRITE_HIT_TEST_MET
 	};
 }
 
-const TextBlockHitTestInfo TextBlock::HitTestPoint(Point point) const {
+TextBlockHitTestInfo TextBlock::HitTestPoint(Point point) const {
 	BOOL isTrailingHit; BOOL isInside; DWRITE_HIT_TEST_METRICS metrics;
 	layout->HitTestPoint(static_cast<FLOAT>(point.x), static_cast<FLOAT>(point.y), &isTrailingHit, &isInside, &metrics);
 	return HitTestMetricsToInfo(metrics, (bool)isInside, (bool)isTrailingHit);
 }
 
-const TextBlockHitTestInfo TextBlock::HitTestTextPosition(uint text_position) const {
+TextBlockHitTestInfo TextBlock::HitTestTextPosition(uint text_position) const {
 	FLOAT x, y; DWRITE_HIT_TEST_METRICS metrics;
 	layout->HitTestTextPosition(text_position, false, &x, &y, &metrics);
 	return HitTestMetricsToInfo(metrics, true, false);

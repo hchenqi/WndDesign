@@ -11,7 +11,7 @@ Bitmap::Bitmap() : bitmap(nullptr) { RegisterBitmap(*this); }
 
 Bitmap::~Bitmap() { Destroy(); UnregisterBitmap(*this); }
 
-void Bitmap::Destroy() const { SafeRelease(&bitmap); }
+void Bitmap::Destroy() { SafeRelease(&bitmap); }
 
 
 END_NAMESPACE(WndDesign)

@@ -10,10 +10,10 @@ BEGIN_NAMESPACE(WndDesign)
 
 struct StyleHelper : Style {
 public:
-	static const Size CalculateSize(ValueTag width, ValueTag height, Size size_ref) {
+	static Size CalculateSize(ValueTag width, ValueTag height, Size size_ref) {
 		return Size(width.ConvertToPixel(size_ref.width).AsUnsigned(), height.ConvertToPixel(size_ref.height).AsUnsigned());
 	}
-	static const std::pair<Size, Size> CalculateMinMaxSize(LengthStyle width, LengthStyle height, Size size_ref) {
+	static std::pair<Size, Size> CalculateMinMaxSize(LengthStyle width, LengthStyle height, Size size_ref) {
 		return { CalculateSize(width._min, height._min, size_ref), CalculateSize(width._max, height._max, size_ref) };
 	}
 private:
@@ -28,7 +28,7 @@ private:
 		}
 		return position_low.AsSigned();
 	}
-	static const Interval CalculateLength(LengthStyle length, ValueTag position_low, ValueTag position_high, uint length_ref) {
+	static Interval CalculateLength(LengthStyle length, ValueTag position_low, ValueTag position_high, uint length_ref) {
 		if (length_ref == 0) { return Interval(); }
 		ValueTag& length_normal = length._normal.ConvertToPixel(length_ref);
 		ValueTag& length_min = length._min.ConvertToPixel(length_ref);
@@ -48,16 +48,16 @@ private:
 		);
 	}
 public:
-	static const Rect CalculateRegion(LengthStyle width, LengthStyle height, PositionStyle position, Size size_ref) {
+	static Rect CalculateRegion(LengthStyle width, LengthStyle height, PositionStyle position, Size size_ref) {
 		return MakeRectFromInterval(
 			CalculateLength(width, position._left, position._right, size_ref.width),
 			CalculateLength(height, position._top, position._bottom, size_ref.height)
 		);
 	}
-	static const Margin CalculateBorderMargin(BorderStyle border) {
+	static Margin CalculateBorderMargin(BorderStyle border) {
 		return Margin((int)border._width);
 	}
-	static const Margin CalculatePaddingMargin(PaddingStyle padding) {
+	static Margin CalculatePaddingMargin(PaddingStyle padding) {
 		return Margin(padding._left, padding._top, padding._right, padding._bottom);
 	}
 	static std::unique_ptr<Figure> GetBorderFigure(Size size, BorderStyle border) {

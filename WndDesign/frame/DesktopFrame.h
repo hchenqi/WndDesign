@@ -15,7 +15,7 @@ private:
 	friend struct DesktopFrameApi;
 
 public:
-	using child_ptr = child_ptr<Relative, Relative>;
+	using child_ptr = child_ptr<Assigned, Assigned>;
 
 public:
 	DesktopFrame(DesktopFrameStyle style, child_ptr child);
@@ -25,21 +25,21 @@ public:
 private:
 	DesktopFrameStyle style;
 private:
-	const std::pair<Size, Rect> GetMinMaxRegion() const;
+	std::pair<Size, Rect> GetMinMaxRegion() const;
 protected:
-	void SetTitle(const std::wstring& title);
+	void SetTitle(std::wstring title);
 
 	// layout
 private:
 	Rect region;
 	Rect client_region;
 private:
-	const Rect GetRegion() const { return region; }
+	Rect GetRegion() const { return region; }
 	void SetRegion(Rect new_region);
 	void UpdateClientRegion();
-	const Vector GetClientOffset() const { return client_region.point - point_zero; }
+	Vector GetClientOffset() const { return client_region.point - point_zero; }
 private:
-	virtual const Vector GetChildOffset(WndObject& child) const override { return GetClientOffset(); }
+	virtual Vector GetChildOffset(WndObject& child) override { return GetClientOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;
 
 	// child

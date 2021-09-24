@@ -6,7 +6,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void SetClipboardData(const wstring& text) {
+void SetClipboardData(std::wstring text) {
 	if (OpenClipboard(NULL)) {
 		EmptyClipboard();
 		HGLOBAL hdata = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, (text.length() + 1) * sizeof(wchar));
@@ -20,7 +20,7 @@ void SetClipboardData(const wstring& text) {
 	}
 }
 
-void GetClipboardData(wstring& text) {
+void GetClipboardData(std::wstring& text) {
 	if (OpenClipboard(NULL)) {
 		HANDLE hdata = ::GetClipboardData(CF_UNICODETEXT);
 		if (hdata != nullptr) {

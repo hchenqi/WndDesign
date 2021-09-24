@@ -15,8 +15,8 @@ public:
 	Bitmap();
 	~Bitmap();
 	bool IsEmpty() const { return bitmap == nullptr; }
-	void Set(alloc_ptr<BitmapResource> bitmap) const { Destroy(); this->bitmap = bitmap; }
-	void Destroy() const;
+	void Set(alloc_ptr<BitmapResource> bitmap) { Destroy(); this->bitmap = bitmap; }
+	void Destroy();
 	ref_ptr<BitmapResource> Get() const { if (IsEmpty()) { throw std::invalid_argument("invalid bitmap resource"); } return bitmap; }
 };
 

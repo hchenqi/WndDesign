@@ -28,34 +28,34 @@ constexpr Rect region_infinite = Rect(point_min, size_max);
 
 
 // begin_point + vector = end_point
-inline const Point operator+(const Point& begin_point, const Vector& vector) {
+inline Point operator+(Point begin_point, Vector vector) {
 	return Point(begin_point.x + vector.x, begin_point.y + vector.y);
 }
 
 // end_point - vector = begin_point
-inline const Point operator-(const Point& end_point, const Vector& vector) {
+inline Point operator-(Point end_point, Vector vector) {
 	return Point(end_point.x - vector.x, end_point.y - vector.y);
 }
 
 // end_point - begin_point = vector
-inline const Vector operator-(const Point& end_point, const Point& begin_point) {
+inline Vector operator-(Point end_point, Point begin_point) {
 	return Vector(end_point.x - begin_point.x, end_point.y - begin_point.y);
 }
 
 
-inline const Rect operator+(const Rect& rect, const Vector& vector) {
+inline Rect operator+(Rect rect, Vector vector) {
 	return Rect(rect.point + vector, rect.size);
 }
 
-inline const Rect operator-(const Rect& rect, const Vector& vector) {
+inline Rect operator-(Rect rect, Vector vector) {
 	return Rect(rect.point - vector, rect.size);
 }
 
 
-inline Point& operator+=(Point& point, Vector offset) { return point = point + offset;}
-inline Point& operator-=(Point& point, Vector offset) {return point = point - offset;}
-inline Rect& operator+=(Rect& rect, Vector offset) {return rect = rect + offset;}
-inline Rect& operator-=(Rect& rect, Vector offset) {return rect = rect - offset;}
+inline Point& operator+=(Point& point, Vector offset) { return point = point + offset; }
+inline Point& operator-=(Point& point, Vector offset) { return point = point - offset; }
+inline Rect& operator+=(Rect& rect, Vector offset) { return rect = rect + offset; }
+inline Rect& operator-=(Rect& rect, Vector offset) { return rect = rect - offset; }
 
 
 END_NAMESPACE(WndDesign)

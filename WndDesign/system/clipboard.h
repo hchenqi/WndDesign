@@ -7,12 +7,10 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-using std::wstring;
 
+void SetClipboardData(std::wstring text);
 
-void SetClipboardData(const wstring& text);
-
-void GetClipboardData(wstring& text);
+void GetClipboardData(std::wstring& text);
 
 
 END_NAMESPACE(WndDesign)

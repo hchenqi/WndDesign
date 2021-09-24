@@ -19,11 +19,11 @@ private:
 	alloc_ptr<ImageSource> source;
 	Bitmap bitmap;
 public:
-	Image(const std::wstring& file_name);
+	Image(std::wstring file_name);
 	Image(void* address, size_t size);
 	~Image();
-	const Size GetSize() const { return size; }
-	void CreateBitmap() const;
+	Size GetSize() const { return size; }
+	void CreateBitmap();
 };
 
 
@@ -31,7 +31,7 @@ struct ImageFigure : Figure {
 	const Image& image;
 	uchar opacity;
 
-	ImageFigure(const Image& image, uchar opacity = 0xFF) : image(image), opacity(opacity) { image.CreateBitmap(); }
+	ImageFigure(Image& image, uchar opacity = 0xFF) : image(image), opacity(opacity) { image.CreateBitmap(); }
 
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };

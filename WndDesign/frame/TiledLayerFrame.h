@@ -16,7 +16,7 @@ public:
 private:
 	child_ptr child;
 private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		return UpdateChildSizeRef(child, size_ref);
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {

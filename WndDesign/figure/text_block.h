@@ -21,10 +21,10 @@ public:
 	~TextBlock();
 public:
 	void SetText(const TextBlockStyle& style, const std::wstring& text);
-	const Size UpdateSizeRef(Size size_ref) const;
+	Size UpdateSizeRef(Size size_ref);
 public:
-	const TextBlockHitTestInfo HitTestPoint(Point point) const;
-	const TextBlockHitTestInfo HitTestTextPosition(uint text_position) const;
+	TextBlockHitTestInfo HitTestPoint(Point point) const;
+	TextBlockHitTestInfo HitTestTextPosition(uint text_position) const;
 	std::vector<TextBlockHitTestInfo> HitTestTextRange(uint text_position, uint text_length) const;
 };
 

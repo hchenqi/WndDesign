@@ -16,11 +16,11 @@ private:
 	mutable Region invalid_region;
 	mutable Layer layer;
 private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override;
+	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
 private:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override;
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const override;
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
 };
 
 

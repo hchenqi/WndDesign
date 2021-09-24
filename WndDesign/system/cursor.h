@@ -27,7 +27,7 @@ enum class Cursor : uint {
 
 void SetCursor(Cursor cursor = Cursor::Default);
 
-const Point GetCursorPosition();
+Point GetCursorPosition();
 
 
 END_NAMESPACE(WndDesign)

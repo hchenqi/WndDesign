@@ -2,20 +2,38 @@
 
 #include "../window/wnd_traits.h"
 
+#include <array>
 #include <vector>
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-template<class Direction>
+constexpr uint dynamic_extent = -1;
+
+
+template<class Direction, uint size = dynamic_extent>
 class ListLayout;
 
 
+template<class Direction, uint size = dynamic_extent>
+class _ListLayout_Base {
+
+	std::array<>
+};
+
+
+template<class Direction>
+class _ListLayout_Base<Direction, dynamic_extent> {
+
+};
+
+
+
 template<>
-class ListLayout<Vertical> : public WndType<Relative, Auto> {
+class ListLayout<Vertical> : public WndType<Assigned, Auto> {
 public:
-	using child_ptr = child_ptr<Relative, Auto>;
+	using child_ptr = child_ptr<Assigned, Auto>;
 public:
 	ListLayout(uint row_gap) : row_gap(row_gap) {}
 
@@ -31,7 +49,7 @@ private:
 	void SetChildData(WndObject& child, uint64 index) {
 		WndObject::SetChildData<uint64>(child, index);
 	}
-	uint64 GetChildData(const WndObject& child) {
+	uint64 GetChildData(WndObject& child) {
 		return WndObject::GetChildData<uint64>(child);
 	}
 
@@ -50,7 +68,7 @@ private:
 	Size size;
 	uint row_gap;
 private:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) {
 			size.width = size_ref.width;
 			size.height = 0;
@@ -63,7 +81,7 @@ private:
 		}
 		return size;
 	}
-	virtual void OnChildSizeUpdate(const WndObject& child, Size child_size) override {
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		uint64 index = GetChildData(child); assert(index < child_list.size());
 		if (child_list[index].height != child_size.height) {
 			child_list[index].height = child_size.height;

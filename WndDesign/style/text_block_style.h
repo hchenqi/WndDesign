@@ -117,8 +117,8 @@ struct TextBlockStyle {
 		float _size = 16.0f;
 		Color _color = Color::Black;
 	public:
-		FontFormat& family(const std::wstring& family) { _family = family; return *this; }
-		FontFormat& locale(const std::wstring& locale) { _locale = locale; return *this; }
+		FontFormat& family(std::wstring family) { _family = family; return *this; }
+		FontFormat& locale(std::wstring locale) { _locale = locale; return *this; }
 		constexpr FontFormat& weight(FontWeight weight) { _weight = weight; return *this; }
 		constexpr FontFormat& style(FontStyle style) { _style = style; return *this; }
 		constexpr FontFormat& stretch(FontStretch stretch) { _stretch = stretch; return *this; }

@@ -20,7 +20,7 @@ inline int Clamp(int number, Interval interval) {
 	return number;
 }
 
-inline const Point ClampPointInRegion(Point point, Rect rect) {
+inline Point ClampPointInRegion(Point point, Rect rect) {
 	return Point(
 		Clamp(point.x, Interval(rect.point.x, rect.size.width)),
 		Clamp(point.y, Interval(rect.point.y, rect.size.height))
@@ -35,7 +35,7 @@ inline float Distance(Point a, Point b) { return (float)sqrt(SquareDistance(a, b
 
 inline float Distance(Point point, Rect rect) { return Distance(point, ClampPointInRegion(point, rect)); }
 
-inline const Rect ShrinkRegionBySize(Rect region, Size size) {
+inline Rect ShrinkRegionBySize(Rect region, Size size) {
 	Size new_size = Size(
 		(region.size.width > size.width ? region.size.width - size.width : 0) + 1,
 		(region.size.height > size.height ? region.size.height - size.height : 0) + 1
@@ -43,14 +43,14 @@ inline const Rect ShrinkRegionBySize(Rect region, Size size) {
 	return Rect(region.point, new_size);
 }
 
-inline const Rect ClampRectInRegion(Rect rect, Rect region) {
+inline Rect ClampRectInRegion(Rect rect, Rect region) {
 	if (rect.size.width > region.size.width) { rect.size.width = region.size.width; }
 	if (rect.size.height > region.size.height) { rect.size.height = region.size.height; }
 	rect.point = ClampPointInRegion(rect.point, ShrinkRegionBySize(region, rect.size));
 	return rect;
 }
 
-inline const Rect ShrinkRegionByLength(Rect rect, uint length) {
+inline Rect ShrinkRegionByLength(Rect rect, uint length) {
 	uint max_length = min(rect.size.width, rect.size.height) / 2;
 	if (length > max_length) { length = max_length; }
 	Rect region = rect;
@@ -74,20 +74,20 @@ inline bool PointInRoundedRectangle(Point point, Rect rect, uint radius) {
 }
 
 
-inline const Rect MakeRectFromInterval(Interval horizontal, Interval vertical) {
+inline Rect MakeRectFromInterval(Interval horizontal, Interval vertical) {
 	return Rect(horizontal.begin, vertical.begin, horizontal.length, vertical.length);
 }
 
 
-inline const Point ScalePointBySize(Point point, Size size) {
+inline Point ScalePointBySize(Point point, Size size) {
 	return Point(point.x * (int)size.width, point.y * (int)size.height);
 }
 
-inline const Size ScaleSizeBySize(Size old_size, Size size) {
+inline Size ScaleSizeBySize(Size old_size, Size size) {
 	return Size(old_size.width * size.width, old_size.height * size.height);
 }
 
-inline const Rect ScaleRectBySize(Rect region, Size size) {
+inline Rect ScaleRectBySize(Rect region, Size size) {
 	return Rect(ScalePointBySize(region.point, size), ScaleSizeBySize(region.size, size));
 }
 
@@ -96,7 +96,7 @@ inline int div_floor(int a, int b) { return a >= 0 ? a / b : (a - b + 1) / b; }
 
 inline int div_ceil(int a, int b) { return a <= 0 ? a / b : (a + b - 1) / b; }
 
-inline const Rect RegionToOverlappingTileRange(Rect region, Size tile_size) {
+inline Rect RegionToOverlappingTileRange(Rect region, Size tile_size) {
 	if (tile_size.IsEmpty()) { return region_empty; }
 	Point begin_point(div_floor(region.point.x, tile_size.width), div_floor(region.point.y, tile_size.height));
 	Point end_point(div_ceil(region.right(), tile_size.width), div_ceil(region.bottom(), tile_size.height));
@@ -105,7 +105,7 @@ inline const Rect RegionToOverlappingTileRange(Rect region, Size tile_size) {
 }
 
 
-inline const Size ShrinkSizeByMargin(Size size, Margin margin) {
+inline Size ShrinkSizeByMargin(Size size, Margin margin) {
 	int width = (int)size.width - (margin.left + margin.right);
 	int height = (int)size.height - (margin.top + margin.bottom);
 	size.width = width >= 0 ? width : 0;
@@ -113,22 +113,22 @@ inline const Size ShrinkSizeByMargin(Size size, Margin margin) {
 	return size;
 }
 
-inline const Size ExtendSizeByMargin(Size size, Margin margin) {
+inline Size ExtendSizeByMargin(Size size, Margin margin) {
 	return ShrinkSizeByMargin(size, -margin);
 }
 
-inline const Rect ShrinkRegionByMargin(Rect region, Margin margin) {
+inline Rect ShrinkRegionByMargin(Rect region, Margin margin) {
 	region.point.x += margin.left;
 	region.point.y += margin.top;
 	region.size = ShrinkSizeByMargin(region.size, margin);
 	return region;
 }
 
-inline const Rect ExtendRegionByMargin(Rect region, Margin margin) {
+inline Rect ExtendRegionByMargin(Rect region, Margin margin) {
 	return ShrinkRegionByMargin(region, -margin);
 }
 
-inline const Margin CalculateRelativeMargin(Size size, Rect region) {
+inline Margin CalculateRelativeMargin(Size size, Rect region) {
 	return Margin(
 		region.point.x, region.point.y,
 		(int)size.width - region.point.x - (int)region.size.width, (int)size.height - region.point.y - (int)region.size.height

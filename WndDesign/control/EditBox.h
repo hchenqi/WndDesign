@@ -28,7 +28,7 @@ public:
 	struct Style : TextBox::Style, EditBoxStyle {};
 
 public:
-	EditBox(Style style, std::wstring text = L"") : TextBox(style, text), ImeMsgHandler(this), mouse_tracker(*this) { 
+	EditBox(Style style, std::wstring text = L"") : TextBox(style, text), ImeMsgHandler(this), mouse_tracker(*this) {
 		TextUpdated(); if (style.edit._disable_edit) { ImeDisable(); }
 	}
 	~EditBox() {}
@@ -50,16 +50,16 @@ private:
 public:
 	void SetText(std::wstring str) { text.assign(std::move(str)); TextUpdated(); }
 	void InsertText(uint pos, wchar ch) { text.insert(pos, 1, ch); TextUpdated(); }
-	void InsertText(uint pos, const std::wstring& str) { text.insert(pos, str); TextUpdated(); }
+	void InsertText(uint pos, std::wstring str) { text.insert(pos, str); TextUpdated(); }
 	void ReplaceText(uint begin, uint length, wchar ch) { text.replace(begin, length, 1, ch); TextUpdated(); }
-	void ReplaceText(uint begin, uint length, const std::wstring& str) { text.replace(begin, length, str); TextUpdated(); }
+	void ReplaceText(uint begin, uint length, std::wstring str) { text.replace(begin, length, str); TextUpdated(); }
 	void DeleteText(uint begin, uint length) { text.erase(begin, length); TextUpdated(); }
 
 	// layout and paint
 protected:
-	virtual const Size OnSizeRefUpdate(Size size_ref) override;
+	virtual Size OnSizeRefUpdate(Size size_ref) override;
 protected:
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) const;
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region);
 
 	// caret
 private:
@@ -113,7 +113,7 @@ private:
 	// keyboard input
 private:
 	void Insert(wchar ch);
-	void Insert(const std::wstring& str);
+	void Insert(std::wstring str);
 	void Delete(bool is_backspace);
 
 	// ime input
