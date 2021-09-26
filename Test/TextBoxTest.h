@@ -9,10 +9,10 @@ using namespace WndDesign;
 
 struct MainFrameStyle : DesktopFrameStyle {
 	MainFrameStyle() {
-		width.normal(800px).max(100pct);
-		height.normal(500px).max(100pct);
+		width.min(200px).normal(800px).max(100pct);
+		height.min(200px).normal(500px).max(100pct);
 		position.setHorizontalCenter().setVerticalCenter();
-		border.width(5).color(Color::Violet);
+		border.width(5).radius(10).color(Color::Violet);
 		title.assign(L"DesktopTest");
 	}
 };
@@ -26,6 +26,6 @@ struct TextBoxStyle : TextBlockStyle {
 
 
 int main() {
-	global.AddWnd(new DesktopFrame(MainFrameStyle(), new ClipFrame<Vertical>(new TextBox(TextBoxStyle(), L"Hello World!"))));
+	global.AddWnd(new DesktopFrame(MainFrameStyle(), new ClipFrame(new TextBox(TextBoxStyle(), L"Hello World!"))));
 	global.MessageLoop();
 }

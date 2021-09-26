@@ -27,35 +27,17 @@ constexpr Rect region_empty = Rect(point_zero, size_empty);
 constexpr Rect region_infinite = Rect(point_min, size_max);
 
 
-// begin_point + vector = end_point
-inline Point operator+(Point begin_point, Vector vector) {
-	return Point(begin_point.x + vector.x, begin_point.y + vector.y);
-}
+constexpr Point operator+(Point begin_point, Vector vector) { return Point(begin_point.x + vector.x, begin_point.y + vector.y); }
+constexpr Point operator-(Point end_point, Vector vector) { return Point(end_point.x - vector.x, end_point.y - vector.y); }
+constexpr Vector operator-(Point end_point, Point begin_point) { return Vector(end_point.x - begin_point.x, end_point.y - begin_point.y); }
 
-// end_point - vector = begin_point
-inline Point operator-(Point end_point, Vector vector) {
-	return Point(end_point.x - vector.x, end_point.y - vector.y);
-}
+constexpr Rect operator+(Rect rect, Vector vector) { return Rect(rect.point + vector, rect.size); }
+constexpr Rect operator-(Rect rect, Vector vector) { return Rect(rect.point - vector, rect.size); }
 
-// end_point - begin_point = vector
-inline Vector operator-(Point end_point, Point begin_point) {
-	return Vector(end_point.x - begin_point.x, end_point.y - begin_point.y);
-}
-
-
-inline Rect operator+(Rect rect, Vector vector) {
-	return Rect(rect.point + vector, rect.size);
-}
-
-inline Rect operator-(Rect rect, Vector vector) {
-	return Rect(rect.point - vector, rect.size);
-}
-
-
-inline Point& operator+=(Point& point, Vector offset) { return point = point + offset; }
-inline Point& operator-=(Point& point, Vector offset) { return point = point - offset; }
-inline Rect& operator+=(Rect& rect, Vector offset) { return rect = rect + offset; }
-inline Rect& operator-=(Rect& rect, Vector offset) { return rect = rect - offset; }
+constexpr Point& operator+=(Point& point, Vector offset) { return point = point + offset; }
+constexpr Point& operator-=(Point& point, Vector offset) { return point = point - offset; }
+constexpr Rect& operator+=(Rect& rect, Vector offset) { return rect = rect + offset; }
+constexpr Rect& operator-=(Rect& rect, Vector offset) { return rect = rect - offset; }
 
 
 END_NAMESPACE(WndDesign)

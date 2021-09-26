@@ -20,9 +20,9 @@ public:
 	// parent
 private:
 	ref_ptr<WndObject> parent = nullptr;
-private:
-	bool HasParent() { return parent != nullptr; }
-	WndObject& GetParent() { return *parent; }
+protected:
+	bool HasParent() const { return parent != nullptr; }
+	WndObject& GetParent() const { if (!HasParent()) { throw std::invalid_argument("window has no parent"); } return *parent; }
 
 	// child
 private:

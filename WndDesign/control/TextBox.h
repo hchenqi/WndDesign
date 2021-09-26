@@ -2,6 +2,7 @@
 
 #include "../window/wnd_traits.h"
 #include "../figure/text_block.h"
+#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -35,6 +36,12 @@ protected:
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(point_zero, new TextBlockFigure(text_block, style.font._color));
+	}
+protected:
+	virtual void OnNotifyMsg(NotifyMsg msg) override {
+		switch (msg) {
+		case NotifyMsg::MouseEnter: SetCursor(Cursor::Default); break;
+		}
 	}
 };
 

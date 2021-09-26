@@ -26,7 +26,7 @@ private:
 		case MouseMsg::LeftDown: AeroSnapDraggingEffect(*this, msg.point); break;
 		}
 	}
-	virtual void OnKeyMsg(KeyMsg msg) {
+	virtual void OnKeyMsg(KeyMsg msg) override {
 		if (msg.key == Key::Escape) {
 			global.Terminate();
 		}

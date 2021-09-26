@@ -41,6 +41,7 @@ public:
 private:
 	ref_ptr<DesktopFrame> frame_capture = nullptr;
 	ref_ptr<WndObject> wnd_capture = nullptr;
+	Point wnd_capture_offset;
 public:
 	void SetCapture(WndObject& wnd);
 	void ReleaseCapture(WndObject& wnd);
@@ -58,7 +59,7 @@ public:
 private:
 	ref_ptr<DesktopFrame> frame_focus = nullptr;
 	ref_ptr<WndObject> wnd_focus = nullptr;
-	ref_ptr<ImeMsgHandler> ime_focus = nullptr;
+	ref_ptr<ImeApi> ime_focus = nullptr;
 public:
 	void SetFocus(WndObject& wnd);
 	void LoseFocus();
@@ -67,9 +68,9 @@ public:
 
 	// ime message
 private:
-	std::unordered_map<ref_ptr<WndObject>, ref_ptr<ImeMsgHandler>> ime_wnd_map;
+	std::unordered_map<ref_ptr<WndObject>, ref_ptr<ImeApi>> ime_wnd_map;
 public:
-	void SetImeWnd(WndObject& wnd, ImeMsgHandler& ime) { ime_wnd_map.emplace(&wnd, &ime); ImeEnable(wnd); }
+	void SetImeWnd(WndObject& wnd, ImeApi& ime) { ime_wnd_map.emplace(&wnd, &ime); ImeEnable(wnd); }
 	void RemoveImeWnd(WndObject& wnd) { ime_wnd_map.erase(&wnd); }
 public:
 	void ImeEnable(WndObject& wnd) { wnd.ime_aware = true; }

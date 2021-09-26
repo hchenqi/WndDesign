@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../window/wnd_traits.h"
+#include "BorderFrame.h"
 #include "../style/desktop_frame_style.h"
 #include "../figure/desktop_layer.h"
 #include "../geometry/region.h"
@@ -9,13 +9,10 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class DesktopFrame : private WndObject {
+class DesktopFrame : private BorderFrame<Assigned, Assigned> {
 private:
 	friend class Desktop;
 	friend struct DesktopFrameApi;
-
-public:
-	using child_ptr = child_ptr<Assigned, Assigned>;
 
 public:
 	DesktopFrame(DesktopFrameStyle style, child_ptr child);
@@ -31,25 +28,15 @@ protected:
 
 	// layout
 private:
-	Rect region;
-	Rect client_region;
+	Point point;
 private:
-	Rect GetRegion() const { return region; }
+	Rect GetRegion() { return Rect(point, size); }
 	void SetRegion(Rect new_region);
-	void UpdateClientRegion();
-	Vector GetClientOffset() const { return client_region.point - point_zero; }
-private:
-	virtual Vector GetChildOffset(WndObject& child) override { return GetClientOffset(); }
-	virtual ref_ptr<WndObject> HitTest(Point& point) override;
-
-	// child
-private:
-	child_ptr child;
 
 	// hwnd
 protected:
 	using HANDLE = void*;
-	HANDLE hwnd;
+	HANDLE hwnd = nullptr;
 protected:
 	void Show();
 	void Minimize();
@@ -62,11 +49,12 @@ private:
 	DesktopLayer layer;
 	Region invalid_region;
 private:
+	void ResizeLayer();
+	void RecreateLayer();
+private:
 	void Redraw(Rect redraw_region);
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override;
 	void Draw();
-private:
-	void RecreateLayer();
 
 	// message
 private:

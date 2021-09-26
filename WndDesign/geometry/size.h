@@ -13,11 +13,11 @@ struct Size {
 	explicit constexpr Size() : width(0), height(0) {}
 	explicit constexpr Size(uint width, uint height) : width(width), height(height) {}
 
-	bool operator==(const Size& size) const { return width == size.width && height == size.height; }
-	bool operator!=(const Size& size) const { return width != size.width || height != size.height; }
+	constexpr bool operator==(const Size& size) const { return width == size.width && height == size.height; }
+	constexpr bool operator!=(const Size& size) const { return width != size.width || height != size.height; }
 
-	bool IsEmpty() const { return width == 0 || height == 0; }
-	uint Area() const { return width * height; }
+	constexpr bool IsEmpty() const { return width == 0 || height == 0; }
+	constexpr uint Area() const { return width * height; }
 };
 
 

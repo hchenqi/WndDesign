@@ -1,35 +1,35 @@
 #pragma once
 
 #include "TextBox.h"
+#include "../common/unicode_helper.h"
 #include "../message/timer.h"
 #include "../message/ime.h"
 #include "../message/mouse_tracker.h"
-#include "../common/unicode_helper.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class EditBox : public TextBox, private ImeMsgHandler {
+class EditBox : public TextBox, private ImeApi {
 private:
 	struct EditBoxStyle {
 		struct EditStyle {
 		public:
 			Color _selection_color = Color(Color::DimGray, 0x7f);
 			Color _caret_color = Color::DimGray;
-			bool _disable_edit = false;  // can only select and copy
+			bool _disabled = false;  // can only select and copy
 		public:
 			constexpr EditStyle& selection_color(Color selection_color) { _selection_color = selection_color; return *this; }
 			constexpr EditStyle& caret_color(Color caret_color) { _caret_color = caret_color; return *this; }
-			constexpr EditStyle& disable_edit() { _disable_edit = true; return *this; }
+			constexpr EditStyle& disable() { _disabled = true; return *this; }
 		}edit;
 	};
 public:
 	struct Style : TextBox::Style, EditBoxStyle {};
 
 public:
-	EditBox(Style style, std::wstring text = L"") : TextBox(style, text), ImeMsgHandler(this), mouse_tracker(*this) {
-		TextUpdated(); if (style.edit._disable_edit) { ImeDisable(); }
+	EditBox(Style style, std::wstring text = L"") : TextBox(style, text), ImeApi(this), style(style) {
+		TextUpdated(); if (style.edit._disabled) { ImeDisable(); }
 	}
 	~EditBox() {}
 
@@ -37,7 +37,7 @@ public:
 private:
 	EditBoxStyle style;
 private:
-	bool IsEditDisabled() const { return style.edit._disable_edit; }
+	bool IsEditDisabled() const { return style.edit._disabled; }
 
 	// text block
 public:
@@ -59,13 +59,13 @@ public:
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 protected:
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region);
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
 
 	// caret
 private:
 	static constexpr ushort caret_blink_period = 500;  // 500ms
 	static constexpr ushort caret_blink_expire_time = 20000;  // 20s
-	enum class CaretState : ushort { Hide, Show, BlinkHide, BlinkShow };
+	enum class CaretState : ushort { Hide, Show, BlinkShow, BlinkHide };
 private:
 	Timer caret_timer = Timer(std::bind(&EditBox::BlinkCaret, this));
 	CaretState caret_state = CaretState::Hide;
@@ -88,7 +88,7 @@ private:
 private:
 	void UpdateCaretRegion(const HitTestInfo& info);
 private:
-	void SetCaret(Point mouse_down_position);
+	void SetCaret(Point point);
 	void SetCaret(uint text_position, bool is_trailing_hit);
 	void MoveCaret(CaretMoveDirection direction);
 
@@ -133,13 +133,13 @@ private:
 
 	// message
 private:
-	MouseTracker mouse_tracker;
+	MouseTracker mouse_tracker = *this;
 	bool is_ctrl_down = false;
 	bool is_shift_down = false;
 protected:
-	virtual void OnMouseMsg(MouseMsg msg);
-	virtual void OnKeyMsg(KeyMsg msg);
-	virtual void OnNotifyMsg(NotifyMsg msg);
+	virtual void OnMouseMsg(MouseMsg msg) override;
+	virtual void OnKeyMsg(KeyMsg msg) override;
+	virtual void OnNotifyMsg(NotifyMsg msg) override;
 };
 
 

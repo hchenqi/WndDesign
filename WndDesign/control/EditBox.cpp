@@ -50,15 +50,13 @@ void EditBox::BlinkCaret() {
 		caret_timer.Stop();
 		return;
 	}
-	if (caret_state == CaretState::Hide) {
-		caret_timer.Stop();
-	} else if (caret_state == CaretState::Show || caret_state == CaretState::BlinkShow) {
-		caret_state = CaretState::BlinkHide;
-		RedrawCaretRegion();
-	} else { // caret_state = CaretState::BlinkHide.
-		caret_state = CaretState::BlinkShow;
-		RedrawCaretRegion();
+	switch (caret_state) {
+	case CaretState::Hide: caret_timer.Stop(); return;
+	case CaretState::Show:
+	case CaretState::BlinkShow: caret_state = CaretState::BlinkHide; break;
+	case CaretState::BlinkHide: caret_state = CaretState::BlinkShow; break;
 	}
+	RedrawCaretRegion();
 }
 
 void EditBox::UpdateCaretRegion(const HitTestInfo& info) {
@@ -70,12 +68,11 @@ void EditBox::UpdateCaretRegion(const HitTestInfo& info) {
 		caret_text_position += info.text_length;
 		caret_region.point.x += static_cast<int>(info.geometry_region.size.width);
 	}
-	ScrollIntoView(caret_region);
 	RedrawCaretRegion();
 }
 
-void EditBox::SetCaret(Point mouse_down_position) {
-	HitTestInfo info = text_block.HitTestPoint(mouse_down_position);
+void EditBox::SetCaret(Point point) {
+	HitTestInfo info = text_block.HitTestPoint(point);
 	UpdateCaretRegion(info); caret_state = CaretState::Show;
 	ClearSelection();
 	mouse_down_text_position = caret_text_position;
@@ -201,14 +198,11 @@ void EditBox::Delete(bool is_backspace) {
 		if (is_backspace) {
 			if (caret_text_position == 0) { return; }
 			uint previous_caret_position = caret_text_position;
-			SetCaret(previous_caret_position - 1, false);
-			uint character_length = previous_caret_position - caret_text_position;
-			DeleteText(caret_text_position, character_length);
+			SetCaret(caret_text_position - 1, false);
+			DeleteText(caret_text_position, previous_caret_position - caret_text_position);
 		} else {
 			if (caret_text_position >= text.length()) { return; }
-			uint character_length = GetCharacterLength(caret_text_position);
-			if (character_length == 0) { return; }
-			DeleteText(caret_text_position, character_length);
+			DeleteText(caret_text_position, GetCharacterLength(caret_text_position));
 		}
 	}
 }
@@ -250,7 +244,7 @@ void EditBox::Copy() {
 
 void EditBox::Paste() {
 	if (IsEditDisabled()) { return; }
-	wstring str; GetClipboardData(str);
+	std::wstring str; GetClipboardData(str);
 	if (!str.empty()) { Insert(str); }
 }
 

@@ -13,15 +13,15 @@ struct Vector {
 	explicit constexpr Vector() :x(0), y(0) {}
 	explicit constexpr Vector(int x, int y) : x(x), y(y) {}
 
-	bool operator==(const Vector& vector) const { return x == vector.x && y == vector.y; }
-	bool operator!=(const Vector& vector) const { return x != vector.x || y != vector.y; }
+	constexpr bool operator==(const Vector& vector) const { return x == vector.x && y == vector.y; }
+	constexpr bool operator!=(const Vector& vector) const { return x != vector.x || y != vector.y; }
 
-	Vector operator-() const { return Vector(-x, -y); }
+	constexpr Vector operator-() const { return Vector(-x, -y); }
 
-	Vector operator+(const Vector& vector) const { return Vector(x + vector.x, y + vector.y); }
-	Vector operator-(const Vector& vector) const { return Vector(x - vector.x, y - vector.y); }
-	Vector& operator+=(const Vector& vector) { return (*this) = (*this) + vector; }
-	Vector& operator-=(const Vector& vector) { return (*this) = (*this) - vector; }
+	constexpr Vector operator+(const Vector& vector) const { return Vector(x + vector.x, y + vector.y); }
+	constexpr Vector operator-(const Vector& vector) const { return Vector(x - vector.x, y - vector.y); }
+	constexpr Vector& operator+=(const Vector& vector) { return (*this) = (*this) + vector; }
+	constexpr Vector& operator-=(const Vector& vector) { return (*this) = (*this) - vector; }
 };
 
 

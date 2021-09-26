@@ -22,19 +22,16 @@ enum class MouseTrackMsg {
 
 class MouseTracker : Uncopyable {
 public:
-	MouseTracker(WndObject& wnd) :
-		wnd(static_cast<WndObjectHelper&>(wnd)), hit_count(0), is_mouse_down(false), mouse_down_position() {
-	}
-	~MouseTracker() {}
+	MouseTracker(WndObject& wnd) : wnd(static_cast<WndObjectApi&>(wnd)) {}
 private:
-	struct WndObjectHelper : public WndObject { public: WndObject::SetCapture; WndObject::ReleaseCapture; };
-	WndObjectHelper& wnd;
+	struct WndObjectApi : public WndObject { public: WndObject::SetCapture; WndObject::ReleaseCapture; };
+	WndObjectApi& wnd;
 private:
-	uint hit_count;
+	uint hit_count = 0;
 	static constexpr uint timer_interval = 500;  // 500ms
 	Timer timer = Timer([&]() { hit_count = 0; timer.Stop(); });
 public:
-	bool is_mouse_down;
+	bool is_mouse_down = false;
 	Point mouse_down_position;
 private:
 	static constexpr uint move_tolerate_range = 5;  // 5px
@@ -66,8 +63,8 @@ public:
 		case MouseMsg::Move:
 			ret = is_mouse_down ? MouseTrackMsg::LeftDrag : MouseTrackMsg::MouseMove;
 			break;
-		default: 
-			ret = MouseTrackMsg::None; 
+		default:
+			ret = MouseTrackMsg::None;
 			break;
 		}
 		return ret;

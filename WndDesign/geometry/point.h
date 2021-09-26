@@ -13,13 +13,13 @@ struct Point {
 	explicit constexpr Point() : x(0), y(0) {}
 	explicit constexpr Point(int x, int y) : x(x), y(y) {}
 
-	bool operator==(const Point& point) const { return x == point.x && y == point.y; }
-	bool operator!=(const Point& point) const { return x != point.x || y != point.y; }
+	constexpr bool operator==(const Point& point) const { return x == point.x && y == point.y; }
+	constexpr bool operator!=(const Point& point) const { return x != point.x || y != point.y; }
 
-	bool operator>(const Point& point) const { return x > point.x && y > point.y; }
-	bool operator<(const Point& point) const { return x < point.x&& y < point.y; }
-	bool operator>=(const Point& point) const { return x >= point.x && y >= point.y; }
-	bool operator<=(const Point& point) const { return x <= point.x && y <= point.y; }
+	constexpr bool operator>(const Point& point) const { return x > point.x && y > point.y; }
+	constexpr bool operator<(const Point& point) const { return x < point.x&& y < point.y; }
+	constexpr bool operator>=(const Point& point) const { return x >= point.x && y >= point.y; }
+	constexpr bool operator<=(const Point& point) const { return x <= point.x && y <= point.y; }
 };
 
 

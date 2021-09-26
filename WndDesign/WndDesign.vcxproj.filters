@@ -126,9 +126,6 @@
     <ClInclude Include="geometry\margin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="style\frame_style.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="control\Placeholder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -172,9 +169,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\win32_api.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="style\desktop_frame_style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="style\value_tag.h">
@@ -234,7 +228,16 @@
     <ClInclude Include="common\unicode_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="frame\MarginFrame.h">
+    <ClInclude Include="frame\PaddingFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="control\Scrollbar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame\BorderFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="style\desktop_frame_style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -255,9 +258,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="figure\layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="frame\LayerFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="frame\DesktopFrame.cpp">
@@ -306,9 +306,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="common\unicode_helper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="frame\MarginFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

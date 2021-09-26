@@ -164,6 +164,7 @@
     <ClInclude Include="control\EditBox.h" />
     <ClInclude Include="control\ImageBox.h" />
     <ClInclude Include="control\Placeholder.h" />
+    <ClInclude Include="control\Scrollbar.h" />
     <ClInclude Include="control\TextBox.h" />
     <ClInclude Include="figure\bitmap.h" />
     <ClInclude Include="figure\color.h" />
@@ -174,10 +175,11 @@
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\text_block.h" />
     <ClInclude Include="figure\tiled_layer.h" />
+    <ClInclude Include="frame\BorderFrame.h" />
     <ClInclude Include="frame\ClipFrame.h" />
     <ClInclude Include="frame\DesktopFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
-    <ClInclude Include="frame\MarginFrame.h" />
+    <ClInclude Include="frame\PaddingFrame.h" />
     <ClInclude Include="frame\MultiViewFrame.h" />
     <ClInclude Include="frame\OverlapFrame.h" />
     <ClInclude Include="frame\ScrollFrame.h" />
@@ -205,7 +207,6 @@
     <ClInclude Include="message\timer.h" />
     <ClInclude Include="style\border_helper.h" />
     <ClInclude Include="style\desktop_frame_style.h" />
-    <ClInclude Include="style\frame_style.h" />
     <ClInclude Include="style\style_helper.h" />
     <ClInclude Include="style\text_block_style.h" />
     <ClInclude Include="style\value_tag.h" />
@@ -239,8 +240,6 @@
     <ClCompile Include="figure\shape.cpp" />
     <ClCompile Include="figure\text_block.cpp" />
     <ClCompile Include="frame\DesktopFrame.cpp" />
-    <ClCompile Include="frame\LayerFrame.cpp" />
-    <ClCompile Include="frame\MarginFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_layer.cpp" />
     <ClCompile Include="message\timer.cpp" />

@@ -48,14 +48,16 @@ void Desktop::RecreateFrameLayer() {
 }
 
 void Desktop::SetCapture(WndObject& wnd) {
-	DesktopFrame& frame = GetDesktopFrame(wnd);
+	wnd_capture_offset = point_zero;
+	DesktopFrame& frame = GetDesktopFramePoint(wnd, wnd_capture_offset);
+	wnd_capture_offset += frame.point - point_zero;
 	if (frame_capture != &frame) { Win32::SetCapture(frame.hwnd); }
 	if (wnd_capture != &wnd) { LoseCapture(); }
 	frame_capture = &frame; wnd_capture = &wnd; wnd_capture->is_mouse_captured = true;
 }
 
 void Desktop::ReleaseCapture(WndObject& wnd) {
-	Win32::ReleaseCapture();
+	if (wnd_capture == &wnd) { Win32::ReleaseCapture(); }
 }
 
 void Desktop::LoseCapture() {
@@ -76,7 +78,7 @@ void Desktop::LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_inde
 
 void Desktop::DispatchMouseMsg(frame_ref frame, MouseMsg msg) {
 	if (wnd_capture != nullptr) {
-		Point point = point_zero; GetDesktopFramePoint(*wnd_capture, point); msg.point += point_zero - point;
+		msg.point += frame.point - wnd_capture_offset;
 		return wnd_capture->OnMouseMsg(msg);
 	}
 	ref_ptr<WndObject> parent = &frame;
@@ -88,13 +90,8 @@ void Desktop::DispatchMouseMsg(frame_ref frame, MouseMsg msg) {
 			parent->OnNotifyMsg(NotifyMsg::MouseEnter); parent->is_mouse_tracked = true;
 		}
 		ref_ptr<WndObject> child = parent->HitTest(msg.point);
-		if (child == nullptr) {
-			SetCursor(Cursor::Default);
-			return;
-		}
-		if (child == parent) {
-			return parent->OnMouseMsg(msg);
-		}
+		if (child == nullptr) { SetCursor(Cursor::Default); return; }
+		if (child == parent) { return parent->OnMouseMsg(msg); }
 		parent = child;
 	} while (true);
 }
@@ -127,7 +124,8 @@ void Desktop::DispatchKeyMsg(frame_ref frame, KeyMsg msg) {
 }
 
 void Desktop::ImeSetPosition(WndObject& wnd, Point point) {
-	WndDesign::ImeSetPosition(GetDesktopFramePoint(wnd, point).hwnd, point);
+	DesktopFrame& frame = GetDesktopFramePoint(wnd, point);
+	WndDesign::ImeSetPosition(frame.hwnd, point);
 }
 
 void Desktop::MessageLoop() { Win32::MessageLoop(); }

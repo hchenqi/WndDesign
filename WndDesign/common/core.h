@@ -25,8 +25,8 @@ using uint64 = unsigned long long;
 using wchar = wchar_t;
 
 
-template<class T> inline T max(T a, T b) { return a > b ? a : b; }
-template<class T> inline T min(T a, T b) { return a < b ? a : b; }
+template<class T> constexpr T max(T a, T b) { return a > b ? a : b; }
+template<class T> constexpr T min(T a, T b) { return a < b ? a : b; }
 
 
 END_NAMESPACE(WndDesign)
