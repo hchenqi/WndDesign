@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="DesktopFrameTest.h" />
     <ClInclude Include="EditBoxTest.h" />
+    <ClInclude Include="ScrollBoxTest.h" />
+    <ClInclude Include="SplitLayoutTest.h" />
     <ClInclude Include="TextBoxTest.h" />
   </ItemGroup>
   <ItemGroup>

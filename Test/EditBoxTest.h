@@ -14,7 +14,7 @@ struct MainFrameStyle : DesktopFrameStyle {
 		height.normal(500px).max(100pct);
 		position.setHorizontalCenter().setVerticalCenter();
 		border.width(5).color(Color::Violet);
-		title.assign(L"DesktopTest");
+		title.assign(L"EditBoxTest");
 	}
 };
 

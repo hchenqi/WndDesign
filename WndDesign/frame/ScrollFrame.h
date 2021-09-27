@@ -33,12 +33,15 @@ private:
 	static int Clamp(int position, uint length, int position_min, int position_max) {
 		return Clamp(Clamp(position + (int)length, position_min, position_max) - (int)length, position_min, position_max);
 	}
-private:
+public:
 	void UpdateFrameOffset(int frame_offset) {
 		frame_offset = child_height < frame_height ? 0 : Clamp(frame_offset, 0, (int)(child_height - frame_height));
-		if (this->frame_offset != frame_offset) { this->frame_offset = frame_offset; Redraw(region_infinite); }
+		if (this->frame_offset != frame_offset) {
+			this->frame_offset = frame_offset;
+			Redraw(region_infinite);
+		}
+		OnFrameOffsetUpdate(child_height, frame_height, frame_offset);
 	}
-public:
 	int Scroll(int offset) {
 		int assumed_frame_offset = frame_offset + offset;
 		UpdateFrameOffset(assumed_frame_offset);
@@ -50,6 +53,8 @@ public:
 	void ScrollIntoView(int y, uint length) {
 		Scroll(y - Clamp(y, length, frame_offset, frame_offset + (int)frame_height));
 	}
+private:
+	virtual void OnFrameOffsetUpdate(uint content_height, uint frame_height, int frame_offset) {}
 private:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		child_height = UpdateChildSizeRef(child, Size(size_ref.width, length_max)).height;

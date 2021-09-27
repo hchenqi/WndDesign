@@ -13,7 +13,7 @@ struct MainFrameStyle : DesktopFrameStyle {
 		height.min(200px).normal(500px).max(100pct);
 		position.setHorizontalCenter().setVerticalCenter();
 		border.width(5).radius(10).color(Color::Violet);
-		title.assign(L"DesktopTest");
+		title.assign(L"TextBoxTest");
 	}
 };
 
@@ -26,6 +26,13 @@ struct TextBoxStyle : TextBlockStyle {
 
 
 int main() {
-	global.AddWnd(new DesktopFrame(MainFrameStyle(), new ClipFrame(new TextBox(TextBoxStyle(), L"Hello World!"))));
+	global.AddWnd(
+		new DesktopFrame{
+			MainFrameStyle(),
+			new ClipFrame{
+				new TextBox(TextBoxStyle(), L"Hello World!")
+			}
+		}
+	);
 	global.MessageLoop();
 }

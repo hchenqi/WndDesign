@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../frame/ScrollFrame.h"
 #include "../geometry/interval.h"
 #include "../figure/shape.h"
+#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -15,17 +15,13 @@ class Scrollbar;
 template<>
 class Scrollbar<Vertical> : public WndType<Auto, Assigned> {
 public:
-	using ScrollFrame = ScrollFrame<Vertical>;
-public:
-	Scrollbar(ScrollFrame& frame, uint width = 20) : frame(frame), width(width) { RegisterChild(slider); }
-
-private:
-	ScrollFrame& frame;
+	Scrollbar(uint width = 20) : width(width) { RegisterChild(slider); }
 
 	// layout
 private:
 	uint width;
-	uint height = length_min;
+	uint height = 0;
+	uint content_height = 0;
 	uint slider_height = 0;
 	int slider_offset = 0;
 private:
@@ -35,16 +31,19 @@ private:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { height = size_ref.height; return GetSize(); }
 public:
 	void UpdateScrollOffset(uint content_height, uint frame_height, int frame_offset) {
-		bool is_shown = IsShown();
+		bool is_shown = IsShown(); this->content_height = content_height;
 		slider_height = (uint)roundf((float)height * frame_height / content_height);
 		slider_offset = (int)roundf((float)height * frame_offset / content_height);
 		if (is_shown ^ IsShown()) { SizeUpdated(GetSize()); }
+		Redraw(region_infinite);
 	}
 private:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		if (Interval(slider_offset, slider_height).Contains(point.y)) { return &slider; }
-		return this;
+		return nullptr;
 	}
+private:
+	virtual void OnFrameOffsetChange(int scroll_offset) {}
 
 	// paint
 private:
@@ -55,6 +54,9 @@ private:
 private:
 	Color slider_color = slider_color_normal;
 private:
+	void SetSliderColor(Color color) { slider_color = color; RedrawSlider(); }
+	void RedrawSlider() { Redraw(Rect(0, slider_offset, width, slider_height)); }
+private:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		if (IsShown()) {
 			figure_queue.add(point_zero, new Rectangle(GetSize(), frame_color));
@@ -64,19 +66,26 @@ private:
 
 	// message
 private:
+	enum class State { Normal, Hover, Press } slider_state = State::Normal;
+	int mouse_down_offset = 0;
+private:
+	void OnMousePress(int y) { mouse_down_offset = y - slider_offset; }
+	void OnMouseDrag(int y) { OnFrameOffsetChange((y - mouse_down_offset) * (int)content_height / (int)height); }
+private:
+	virtual void OnNotifyMsg(NotifyMsg msg) override {
+		switch (msg) {
+		case NotifyMsg::MouseEnter: SetCursor(Cursor::Default); break;
+		}
+	}
 
-
-	// slider
 private:
 	struct Slider : public WndObject {
 	private:
 		Scrollbar& GetScrollbar() const { return static_cast<Scrollbar&>(GetParent()); }
 	private:
-		enum class State { Normal, Hover, Press } state = State::Normal;
-	private:
-		void SetColor(Color color) { GetScrollbar().slider_color = color; Redraw(region_infinite); }
+		void SetColor(Color color) { GetScrollbar().SetSliderColor(color); }
 		void SetState(State state) {
-			this->state = state;
+			GetScrollbar().slider_state = state;
 			switch (state) {
 			case State::Normal: SetColor(slider_color_normal); break;
 			case State::Hover: SetColor(slider_color_hover); break;
@@ -86,11 +95,9 @@ private:
 	private:
 		virtual void OnMouseMsg(MouseMsg msg) override {
 			switch (msg.type) {
-			case MouseMsg::LeftDown: SetState(State::Press); break;
-			case MouseMsg::Move: if (state == State::Press) {
-
-			}break;
-			case MouseMsg::LeftUp: SetState(State::Hover); break;
+			case MouseMsg::LeftDown: SetState(State::Press); GetScrollbar().OnMousePress(msg.point.y); SetCapture(); break;
+			case MouseMsg::Move: if (GetScrollbar().slider_state == State::Press) { GetScrollbar().OnMouseDrag(msg.point.y); }break;
+			case MouseMsg::LeftUp: SetState(State::Hover); ReleaseCapture(); break;
 			}
 		}
 		virtual void OnNotifyMsg(NotifyMsg msg) override {
@@ -99,9 +106,7 @@ private:
 			case NotifyMsg::MouseLeave: SetState(State::Normal); break;
 			}
 		}
-	};
-
-	Slider slider;
+	}slider;
 };
 
 
