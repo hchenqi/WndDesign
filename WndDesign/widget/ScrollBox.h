@@ -26,6 +26,9 @@ private:
 		virtual void OnFrameOffsetChange(int scroll_offset) override {
 			GetScrollbox().GetFrame().UpdateFrameOffset(scroll_offset);
 		}
+		virtual void OnMouseMsg(MouseMsg msg) override {
+			if (msg.type == MouseMsg::WheelVertical) { GetScrollbox().GetFrame().Scroll(-msg.wheel_delta); }
+		}
 	};
 private:
 	Frame& GetFrame() const { return static_cast<Frame&>(*first); }

@@ -21,10 +21,6 @@ private:
 private:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override { return Redraw(redraw_region); }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override { return DrawChild(child, point_zero, figure_queue, draw_region); }
-private:
-	virtual void OnMouseMsg(MouseMsg msg) override { return PassMouseMsg(msg); }
-	virtual void OnKeyMsg(KeyMsg msg) override { return PassKeyMsg(msg); }
-	virtual void OnNotifyMsg(NotifyMsg msg) override {}
 };
 
 

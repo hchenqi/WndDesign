@@ -26,7 +26,7 @@ protected:
 
 	// child
 private:
-	void VerifyChild(WndObject& child) {
+	void VerifyChild(WndObject& child) const {
 		if (child.parent != this) { throw std::invalid_argument("invalid child window"); }
 	}
 protected:
@@ -46,7 +46,7 @@ protected:
 		VerifyChild(child); memcpy(&child.parent_data, &data, sizeof(T));
 	}
 	template<class T, class = std::enable_if_t<sizeof(T) <= sizeof(uint64)>>
-	T GetChildData(WndObject& child) {
+	T GetChildData(WndObject& child) const {
 		VerifyChild(child); T data; memcpy(&data, &child.parent_data, sizeof(T)); return data;
 	}
 
@@ -85,9 +85,9 @@ protected:
 protected:
 	void PassMouseMsg(MouseMsg msg) { if (HasParent()) { msg.point += GetParent().GetChildOffset(*this); GetParent().OnMouseMsg(msg); } }
 	void PassKeyMsg(KeyMsg msg) { if (HasParent()) { GetParent().OnKeyMsg(msg); } }
-private:
-	virtual void OnMouseMsg(MouseMsg msg) {}
-	virtual void OnKeyMsg(KeyMsg msg) {}
+protected:
+	virtual void OnMouseMsg(MouseMsg msg) { if (msg.wheel_delta != 0) { return PassMouseMsg(msg); } }
+	virtual void OnKeyMsg(KeyMsg msg) { return PassKeyMsg(msg); }
 	virtual void OnNotifyMsg(NotifyMsg msg) {}
 };
 

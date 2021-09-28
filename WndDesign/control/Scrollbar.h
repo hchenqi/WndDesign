@@ -40,7 +40,7 @@ public:
 private:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		if (Interval(slider_offset, slider_height).Contains(point.y)) { return &slider; }
-		return nullptr;
+		return this;
 	}
 private:
 	virtual void OnFrameOffsetChange(int scroll_offset) {}
@@ -98,6 +98,7 @@ private:
 			case MouseMsg::LeftDown: SetState(State::Press); GetScrollbar().OnMousePress(msg.point.y); SetCapture(); break;
 			case MouseMsg::Move: if (GetScrollbar().slider_state == State::Press) { GetScrollbar().OnMouseDrag(msg.point.y); }break;
 			case MouseMsg::LeftUp: SetState(State::Hover); ReleaseCapture(); break;
+			case MouseMsg::WheelVertical: return PassMouseMsg(msg);
 			}
 		}
 		virtual void OnNotifyMsg(NotifyMsg msg) override {

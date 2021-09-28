@@ -19,8 +19,8 @@ public:
 protected:
 	child_ptr child;
 private:
+	Size size;
 	uint child_height = 0;
-	uint frame_height = 0;
 	int frame_offset = 0;
 private:
 	Vector GetChildOffset() const { return Vector(0, -frame_offset); }
@@ -34,13 +34,10 @@ private:
 		return Clamp(Clamp(position + (int)length, position_min, position_max) - (int)length, position_min, position_max);
 	}
 public:
-	void UpdateFrameOffset(int frame_offset) {
-		frame_offset = child_height < frame_height ? 0 : Clamp(frame_offset, 0, (int)(child_height - frame_height));
-		if (this->frame_offset != frame_offset) {
-			this->frame_offset = frame_offset;
-			Redraw(region_infinite);
-		}
-		OnFrameOffsetUpdate(child_height, frame_height, frame_offset);
+	void UpdateFrameOffset(int offset) {
+		frame_offset = child_height < size.height ? 0 : Clamp(offset, 0, (int)(child_height - size.height));
+		OnFrameOffsetUpdate(child_height, size.height, frame_offset);
+		Redraw(region_infinite);
 	}
 	int Scroll(int offset) {
 		int assumed_frame_offset = frame_offset + offset;
@@ -48,20 +45,29 @@ public:
 		return assumed_frame_offset - frame_offset;
 	}
 	void ScrollIntoView(int y) {
-		Scroll(y - Clamp(y, frame_offset, frame_offset + (int)frame_height));
+		Scroll(y - Clamp(y, frame_offset, frame_offset + (int)size.height));
 	}
 	void ScrollIntoView(int y, uint length) {
-		Scroll(y - Clamp(y, length, frame_offset, frame_offset + (int)frame_height));
+		Scroll(y - Clamp(y, length, frame_offset, frame_offset + (int)size.height));
 	}
 private:
 	virtual void OnFrameOffsetUpdate(uint content_height, uint frame_height, int frame_offset) {}
 private:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
-		child_height = UpdateChildSizeRef(child, Size(size_ref.width, length_max)).height;
-		frame_height = size_ref.height; UpdateFrameOffset(frame_offset); return size_ref;
+		if (size != size_ref) {
+			if (size.width != size_ref.width) {
+				child_height = UpdateChildSizeRef(child, Size(size_ref.width, length_max)).height;
+			}
+			size = size_ref;
+			UpdateFrameOffset(frame_offset);
+		}
+		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
-		child_height = child_size.height; UpdateFrameOffset(frame_offset);
+		if (child_height != child_size.height) {
+			child_height = child_size.height;
+			UpdateFrameOffset(frame_offset);
+		}
 	}
 private:
 	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }

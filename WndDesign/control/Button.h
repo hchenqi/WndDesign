@@ -14,6 +14,7 @@ protected:
 		switch (msg.type) {
 		case MouseMsg::LeftDown: state = State::Press; OnPress(); break;
 		case MouseMsg::LeftUp: if (state == State::Press) { OnClick(); state = State::Hover; } break;
+		case MouseMsg::WheelVertical: case MouseMsg::WheelHorizontal: return PassMouseMsg(msg);
 		}
 	}
 	virtual void OnNotifyMsg(NotifyMsg msg) override {
@@ -23,10 +24,10 @@ protected:
 		}
 	}
 protected:
-	void OnHover() {}
-	void OnPress() {}
-	void OnClick() {}
-	void OnLeave() {}
+	virtual void OnHover() {}
+	virtual void OnPress() {}
+	virtual void OnClick() {}
+	virtual void OnLeave() {}
 };
 
 
