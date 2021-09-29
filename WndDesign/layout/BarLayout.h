@@ -17,9 +17,7 @@ public:
 public:
 	BarLayout(child_ptr left, child_ptr right, child_ptr center) :
 		left(std::move(left)), right(std::move(right)), center(std::move(center)) {
-		RegisterChild(this->left);
-		RegisterChild(this->right);
-		RegisterChild(this->center);
+		RegisterChild(this->left); RegisterChild(this->right); RegisterChild(this->center);
 	}
 private:
 	child_ptr left;
@@ -27,13 +25,14 @@ private:
 	child_ptr center;
 private:
 	Size size;
-	uint width_left;
-	uint width_right;
-	uint width_center;
+	uint width_left = 0;
+	uint width_right = 0;
+	uint width_center = 0;
 private:
-	Rect GetRegionLeft() { return Rect(Point(0, 0), Size(width_left, size.height)); }
-	Rect GetRegionRight() { return Rect(Point((int)size.width - (int)width_right, 0), Size(width_right, size.height)); }
-	Rect GetRegionCenter() { return Rect(Point(((int)size.width - (int)width_center) / 2, 0), Size(width_center, size.height)); }
+	Rect GetRegionLeft() const { return Rect(Point(0, 0), Size(width_left, size.height)); }
+	Rect GetRegionRight() const { return Rect(Point((int)size.width - (int)width_right, 0), Size(width_right, size.height)); }
+	Rect GetRegionCenter() const { return Rect(Point(((int)size.width - (int)width_center) / 2, 0), Size(width_center, size.height)); }
+	Rect GetChildRegion(WndObject& child) const { return &child == center.get() ? GetRegionCenter() : &child == right.get() ? GetRegionRight() : GetRegionLeft(); }
 private:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) {
@@ -51,6 +50,30 @@ private:
 			if (width_right != child_size.width) { width_right = child_size.width; }
 		} else {
 			if (width_left != child_size.width) { width_left = child_size.width; }
+		}
+	}
+private:
+	virtual Vector GetChildOffset(WndObject& child) override {
+		return GetChildRegion(child).point - point_zero;
+	}
+	virtual ref_ptr<WndObject> HitTest(Point& point) override {
+		using pair = std::pair<WndObject&, Rect>;
+		for (auto [child, child_region] : { pair{center, GetRegionCenter()}, pair{right, GetRegionRight()}, pair{left, GetRegionLeft()} }) {
+			if (child_region.Contains(point)) { point -= child_region.point - point_zero; return &child; }
+		}
+		return this;
+	}
+private:
+	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
+		Rect child_region = GetChildRegion(child);
+		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
+		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
+	}
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override { 
+		using pair = std::pair<WndObject&, Rect>;
+		for (auto [child, child_region] : { pair{center, GetRegionCenter()}, pair{right, GetRegionRight()}, pair{left, GetRegionLeft()} }) {
+			Rect draw_region_child = child_region.Intersect(draw_region);
+			if (!draw_region_child.IsEmpty()) { DrawChild(child, child_region.point, figure_queue, draw_region_child); }
 		}
 	}
 };

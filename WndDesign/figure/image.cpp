@@ -1,5 +1,5 @@
 #include "image.h"
-
+#include "../geometry/tiling.h"
 #include "../system/d2d_api.h"
 #include "../system/wic_api.h"
 #include "../system/directx_helper.h"
@@ -93,7 +93,7 @@ Image::~Image() {
 	SafeRelease(&source);
 }
 
-void Image::CreateBitmap() {
+void Image::CreateBitmap() const {
 	if (bitmap.IsEmpty()) {
 		bitmap.Set(static_cast<BitmapResource*>(CreateD2DBitmapFromWicBitmap(*source).Detach()));
 	}
@@ -103,11 +103,25 @@ void Image::CreateBitmap() {
 void ImageFigure::DrawOn(RenderTarget& target, Point point) const {
 	target.DrawBitmap(
 		image.bitmap.Get(),
-		Rect2RECT(Rect(point, image.size)),
+		Rect2RECT(Rect(point, region.size)),
 		Opacity2Float(opacity),
 		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		Rect2RECT(Rect(point_zero, image.size))
+		Rect2RECT(region)
 	);
+}
+
+
+void ImageRepeatFigure::DrawOn(RenderTarget& target, Point point) const {
+	Size image_size = image.GetSize();
+	Rect region_on_target = Rect(point_zero, GetTargetSize(target)).Intersect(Rect(point, region.size));
+	Rect region_on_image = Rect(region.point, region_on_target.size);
+	ImageFigure image_figure(image, region_empty, opacity);
+	for (RectPointIterator it(RegionToOverlappingTileRange(region_on_image, image_size)); it; ++it) {
+		Point tile_offset = ScalePointBySize(*it, image_size);
+		Rect tile_region_on_image = Rect(tile_offset, image_size).Intersect(region_on_image);
+		image_figure.region = tile_region_on_image - (tile_offset - point_zero);
+		image_figure.DrawOn(target, tile_region_on_image.point + (region_on_target.point - region_on_image.point));
+	}
 }
 
 

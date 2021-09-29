@@ -177,6 +177,7 @@
     <ClInclude Include="figure\text_block.h" />
     <ClInclude Include="figure\tiled_layer.h" />
     <ClInclude Include="frame\BorderFrame.h" />
+    <ClInclude Include="frame\CenterFrame.h" />
     <ClInclude Include="frame\ClipFrame.h" />
     <ClInclude Include="frame\DesktopFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
@@ -186,14 +187,15 @@
     <ClInclude Include="frame\ScrollFrame.h" />
     <ClInclude Include="frame\TiledLayerFrame.h" />
     <ClInclude Include="frame\WndFrame.h" />
+    <ClInclude Include="geometry\clamp.h" />
     <ClInclude Include="geometry\geometry.h" />
-    <ClInclude Include="geometry\geometry_helper.h" />
     <ClInclude Include="geometry\interval.h" />
     <ClInclude Include="geometry\margin.h" />
     <ClInclude Include="geometry\point.h" />
     <ClInclude Include="geometry\rect.h" />
     <ClInclude Include="geometry\region.h" />
     <ClInclude Include="geometry\size.h" />
+    <ClInclude Include="geometry\tiling.h" />
     <ClInclude Include="geometry\vector.h" />
     <ClInclude Include="layout\BarLayout.h" />
     <ClInclude Include="layout\FlowLayout.h" />
@@ -237,6 +239,7 @@
     <ClCompile Include="common\unicode_helper.cpp" />
     <ClCompile Include="control\EditBox.cpp" />
     <ClCompile Include="figure\bitmap.cpp" />
+    <ClCompile Include="figure\figure.cpp" />
     <ClCompile Include="figure\image.cpp" />
     <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />

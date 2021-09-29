@@ -40,7 +40,7 @@ int main() {
 			MainFrameStyle(),
 			new SplitLayout<Vertical, First>{
 				new EditBox(EditBoxStyle(), L"edit here..."),
-				new ClipFrame{
+				new ClipFrame<>{
 					new TextBox(TextBoxStyle(), L"Hello World!")
 				}
 			}

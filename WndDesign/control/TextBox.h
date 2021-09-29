@@ -39,9 +39,7 @@ protected:
 	}
 protected:
 	virtual void OnNotifyMsg(NotifyMsg msg) override {
-		switch (msg) {
-		case NotifyMsg::MouseEnter: SetCursor(Cursor::Default); break;
-		}
+		if (msg == NotifyMsg::MouseEnter) { SetCursor(Cursor::Default); }
 	}
 };
 

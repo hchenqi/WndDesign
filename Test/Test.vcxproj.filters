@@ -33,6 +33,9 @@
     <ClInclude Include="ListLayoutTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ImageBoxTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp">

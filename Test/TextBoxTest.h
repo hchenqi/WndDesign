@@ -29,7 +29,7 @@ int main() {
 	global.AddWnd(
 		new DesktopFrame{
 			MainFrameStyle(),
-			new ClipFrame{
+			new ClipFrame<>{
 				new TextBox(TextBoxStyle(), L"Hello World!")
 			}
 		}

@@ -40,7 +40,7 @@ int main() {
 	style.height.normal(500px).max(100pct);
 	style.position.setHorizontalCenter().setVerticalCenter();
 	style.border.width(5).color(Color::Violet);
-	style.title.assign(L"DesktopTest");
+	style.title.assign(L"DesktopFrameTest");
 
 	global.AddWnd(new DesktopFrame(style, new EmptyWindow()));
 	global.MessageLoop();

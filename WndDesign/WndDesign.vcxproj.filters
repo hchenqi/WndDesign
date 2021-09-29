@@ -192,9 +192,6 @@
     <ClInclude Include="geometry\interval.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="geometry\geometry_helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="message\ime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -244,6 +241,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="common\array_vector_selector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\clamp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\tiling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame\CenterFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -312,6 +318,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="common\unicode_helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="figure\figure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
