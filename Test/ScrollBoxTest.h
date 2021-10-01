@@ -1,5 +1,6 @@
 #include "WndDesign/window/Global.h"
 #include "WndDesign/frame/DesktopFrame.h"
+#include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/widget/ScrollBox.h"
 #include "WndDesign/control/EditBox.h"
 
@@ -30,7 +31,9 @@ int main() {
 		new DesktopFrame{
 			MainFrameStyle(),
 			new ScrollBox{
-				new EditBox(EditBoxStyle(), L"edit here..."),
+				new ClipFrame<Assigned, Auto>{
+					new EditBox(EditBoxStyle(), L"edit here...")
+				}
 			}
 		}
 	);

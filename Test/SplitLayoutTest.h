@@ -39,7 +39,9 @@ int main() {
 		new DesktopFrame{
 			MainFrameStyle(),
 			new SplitLayout<Vertical, First>{
-				new EditBox(EditBoxStyle(), L"edit here..."),
+				new ClipFrame<Assigned, Auto>{
+					new EditBox(EditBoxStyle(), L"edit here...")
+				},
 				new ClipFrame<>{
 					new TextBox(TextBoxStyle(), L"Hello World!")
 				}

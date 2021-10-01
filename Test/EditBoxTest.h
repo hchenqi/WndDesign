@@ -2,6 +2,7 @@
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/frame/ScrollFrame.h"
 #include "WndDesign/frame/PaddingFrame.h"
+#include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/control/EditBox.h"
 
 
@@ -42,7 +43,9 @@ int main() {
 			new ScrollFrame<Vertical>{
 				new PaddingFrame<Assigned, Auto>{
 					Margin(100),
-					new MyEditBox()
+					new ClipFrame<Assigned, Auto>{
+						new MyEditBox()
+					}
 				}
 			}
 		}

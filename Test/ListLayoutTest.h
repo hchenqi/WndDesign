@@ -2,6 +2,7 @@
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/frame/ScrollFrame.h"
 #include "WndDesign/frame/PaddingFrame.h"
+#include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/layout/ListLayout.h"
 #include "WndDesign/control/EditBox.h"
 #include "WndDesign/figure/shape.h"
@@ -48,11 +49,17 @@ int main() {
 			new ScrollFrame<Vertical>{
 				new ListLayout<Vertical, 3>{
 					100,
-					new TextBox(TextBoxStyle(), L"ListLayoutTest"),
-					new EditBox(EditBoxStyle1(), L"EditBox"),
-					new PaddingFrame<Assigned, Auto>{
-						Margin(20, 0),
-						new EditBox(EditBoxStyle2(), L"EditBoxWithPadding"),
+					new ClipFrame<Assigned, Auto>{
+						new TextBox(TextBoxStyle(), L"ListLayoutTest"),
+					},
+					new ClipFrame<Assigned, Auto>{
+						new EditBox(EditBoxStyle1(), L"EditBox")
+					},
+					new ClipFrame<Assigned, Auto>{
+						new PaddingFrame<Relative, Auto>{
+							Margin(20, 0),
+							new EditBox(EditBoxStyle2(), L"EditBoxWithPadding")
+						}
 					}
 				}
 			}
