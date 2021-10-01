@@ -9,7 +9,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class DesktopFrame : private BorderFrame<Assigned, Assigned> {
+class DesktopFrame : protected BorderFrame<Assigned, Assigned> {
 private:
 	friend class Desktop;
 	friend struct DesktopFrameApi;

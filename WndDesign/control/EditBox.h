@@ -46,14 +46,14 @@ private:
 	WordBreakIterator word_break_iterator;
 private:
 	uint GetCharacterLength(uint text_position) { return GetUTF16CharLength(text[text_position]); }
-	void TextUpdated() { TextBox::TextUpdated(); word_break_iterator.SetText(text); }
+	void TextUpdated() { word_break_iterator.SetText(text); }
 public:
-	void SetText(std::wstring str) { text.assign(std::move(str)); TextUpdated(); }
-	void InsertText(uint pos, wchar ch) { text.insert(pos, 1, ch); TextUpdated(); }
-	void InsertText(uint pos, std::wstring str) { text.insert(pos, str); TextUpdated(); }
-	void ReplaceText(uint begin, uint length, wchar ch) { text.replace(begin, length, 1, ch); TextUpdated(); }
-	void ReplaceText(uint begin, uint length, std::wstring str) { text.replace(begin, length, str); TextUpdated(); }
-	void DeleteText(uint begin, uint length) { text.erase(begin, length); TextUpdated(); }
+	void SetText(std::wstring str) { TextBox::SetText(str); TextUpdated(); }
+	void InsertText(uint pos, wchar ch) { TextBox::InsertText(pos, ch); TextUpdated(); }
+	void InsertText(uint pos, std::wstring str) { TextBox::InsertText(pos, str); TextUpdated(); }
+	void ReplaceText(uint begin, uint length, wchar ch) { TextBox::ReplaceText(begin, length, ch); TextUpdated(); }
+	void ReplaceText(uint begin, uint length, std::wstring str) { TextBox::ReplaceText(begin, length, str); TextUpdated(); }
+	void DeleteText(uint begin, uint length) { TextBox::DeleteText(begin, length); TextUpdated(); }
 
 	// layout and paint
 protected:
