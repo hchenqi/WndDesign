@@ -9,6 +9,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 struct Assigned {};
+struct Relative {};
 struct Auto {};
 
 template<class WidthType, class HeightType>
@@ -17,7 +18,7 @@ class LayoutType {
 	static constexpr bool is_any_of_v = std::disjunction_v<std::is_same<T, Types>...>;
 
 	template <class T>
-	static constexpr bool is_size_type_v = is_any_of_v<T, Assigned, Auto>;
+	static constexpr bool is_size_type_v = is_any_of_v<T, Assigned, Relative, Auto>;
 
 	static_assert(is_size_type_v<WidthType> && is_size_type_v<HeightType>, "invalid size type");
 };

@@ -180,7 +180,9 @@
     <ClInclude Include="frame\CenterFrame.h" />
     <ClInclude Include="frame\ClipFrame.h" />
     <ClInclude Include="frame\DesktopFrame.h" />
+    <ClInclude Include="frame\FixedFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
+    <ClInclude Include="frame\MaxFrame.h" />
     <ClInclude Include="frame\PaddingFrame.h" />
     <ClInclude Include="frame\MultiViewFrame.h" />
     <ClInclude Include="frame\OverlapFrame.h" />
@@ -229,6 +231,7 @@
     <ClInclude Include="system\win32_aero_snap.h" />
     <ClInclude Include="system\win32_api.h" />
     <ClInclude Include="system\win32_ime.h" />
+    <ClInclude Include="widget\TitleBarFrame.h" />
     <ClInclude Include="widget\ScrollBox.h" />
     <ClInclude Include="window\Global.h" />
     <ClInclude Include="window\desktop.h" />

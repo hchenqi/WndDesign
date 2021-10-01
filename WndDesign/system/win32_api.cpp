@@ -12,7 +12,10 @@ BEGIN_NAMESPACE(WndDesign)
 struct DesktopFrameApi : DesktopFrame {
 	DesktopFrame::GetMinMaxRegion;
 	DesktopFrame::GetRegion;
-	DesktopFrame::SetRegion;
+	DesktopFrame::SetSize;
+	DesktopFrame::SetPoint;
+	DesktopFrame::Status;
+	DesktopFrame::SetStatus;
 	DesktopFrame::Destroy;
 	DesktopFrame::Draw;
 };
@@ -105,13 +108,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			min_max_info->ptMaxTrackSize = min_max_info->ptMaxSize;
 		}break;
 		case WM_WINDOWPOSCHANGING: break;
-		case WM_WINDOWPOSCHANGED: {
-			WINDOWPOS* position = reinterpret_cast<WINDOWPOS*>(lparam);
-			if ((position->flags & SWP_NOSIZE) && (position->flags & SWP_NOMOVE)) { break; }  // Filter out other messages.
-			Rect rect(Point(position->x, position->y), Size(static_cast<uint>(position->cx), static_cast<uint>(position->cy)));
-			frame->SetRegion(rect);
-			break;
-		}
+		case WM_WINDOWPOSCHANGED: return DefWindowProc(hwnd, msg, wparam, lparam);
+		case WM_MOVE: frame->SetPoint(Point(LOWORD(lparam), HIWORD(lparam))); break;
+		case WM_SIZE: frame->SetSize(Size(LOWORD(lparam), HIWORD(lparam))); 
+			frame->SetStatus(static_cast<DesktopFrameApi::Status>(wparam <= 2 ? wparam : 2)); break;
 
 			// notifications
 		case WM_PAINT: {

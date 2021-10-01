@@ -2,7 +2,6 @@
 
 #include "mouse_msg.h"
 #include "timer.h"
-#include "../window/WndObject.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -21,11 +20,6 @@ enum class MouseTrackMsg {
 
 
 class MouseTracker : Uncopyable {
-public:
-	MouseTracker(WndObject& wnd) : wnd(static_cast<WndObjectApi&>(wnd)) {}
-private:
-	struct WndObjectApi : public WndObject { public: WndObject::SetCapture; WndObject::ReleaseCapture; };
-	WndObjectApi& wnd;
 private:
 	uint hit_count = 0;
 	static constexpr uint timer_interval = 500;  // 500ms
@@ -53,12 +47,10 @@ public:
 			hit_count++; timer.Set(timer_interval);
 			is_mouse_down = true;
 			mouse_down_position = msg.point;
-			wnd.SetCapture();
 			break;
 		case MouseMsg::LeftUp:
 			ret = is_mouse_down ? MouseTrackMsg::LeftClick : MouseTrackMsg::LeftUp;
 			is_mouse_down = false;
-			wnd.ReleaseCapture();
 			break;
 		case MouseMsg::Move:
 			ret = is_mouse_down ? MouseTrackMsg::LeftDrag : MouseTrackMsg::MouseMove;

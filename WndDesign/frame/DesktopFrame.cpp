@@ -36,12 +36,11 @@ std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
 
 void DesktopFrame::SetTitle(std::wstring title) { Win32::SetWndTitle(hwnd, title); }
 
-void DesktopFrame::SetRegion(Rect new_region) {
-	if (new_region.size != size) {
-		BorderFrame::OnSizeRefUpdate(new_region.size);
+void DesktopFrame::SetSize(Size size) {
+	if (this->size != size) {
+		BorderFrame::OnSizeRefUpdate(size);
 		ResizeLayer();
 	}
-	point = new_region.point;
 }
 
 void DesktopFrame::Show() { Win32::ShowWnd(hwnd); }

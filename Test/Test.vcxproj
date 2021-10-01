@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BarLayoutTest.h" />
     <ClInclude Include="DesktopFrameTest.h" />
     <ClInclude Include="EditBoxTest.h" />
     <ClInclude Include="ImageBoxTest.h" />

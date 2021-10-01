@@ -4,6 +4,7 @@
 #include "../geometry/geometry.h"
 #include "../figure/figure_queue.h"
 #include "../message/message.h"
+#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -86,9 +87,9 @@ protected:
 	void PassMouseMsg(MouseMsg msg) { if (HasParent()) { msg.point += GetParent().GetChildOffset(*this); GetParent().OnMouseMsg(msg); } }
 	void PassKeyMsg(KeyMsg msg) { if (HasParent()) { GetParent().OnKeyMsg(msg); } }
 protected:
-	virtual void OnMouseMsg(MouseMsg msg) { if (msg.wheel_delta != 0) { return PassMouseMsg(msg); } }
+	virtual void OnMouseMsg(MouseMsg msg) { return PassMouseMsg(msg); }
 	virtual void OnKeyMsg(KeyMsg msg) { return PassKeyMsg(msg); }
-	virtual void OnNotifyMsg(NotifyMsg msg) {}
+	virtual void OnNotifyMsg(NotifyMsg msg) { if (msg == NotifyMsg::MouseHover) { SetCursor(Cursor::Default); } }
 };
 
 

@@ -2,7 +2,6 @@
 
 #include "../window/wnd_traits.h"
 #include "../figure/image.h"
-#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -20,10 +19,6 @@ private:
 		draw_region = draw_region.Intersect(Rect(point_zero, image.GetSize())); if (draw_region.IsEmpty()) { return; }
 		figure_queue.add(draw_region.point, new ImageFigure(image, draw_region));
 	}
-private:
-	virtual void OnNotifyMsg(NotifyMsg msg) override {
-		if (msg == NotifyMsg::MouseEnter) { SetCursor(Cursor::Default); }
-	}
 };
 
 
@@ -36,10 +31,6 @@ private:
 private:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(draw_region.point, new ImageRepeatFigure(image, Rect(draw_region.point + offset, draw_region.size)));
-	}
-private:
-	virtual void OnNotifyMsg(NotifyMsg msg) override {
-		if (msg == NotifyMsg::MouseEnter) { SetCursor(Cursor::Default); }
 	}
 };
 

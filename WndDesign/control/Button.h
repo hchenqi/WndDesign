@@ -1,12 +1,15 @@
 #pragma once
 
-#include "../window/WndObject.h"
+#include "Placeholder.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class Button : public WndObject {
+template<class WidthType, class HeightType>
+class Button : public Placeholder<WidthType, HeightType> {
+public:
+	using Placeholder<WidthType, HeightType>::Placeholder;
 private:
 	enum class State { Normal, Hover, Press } state = State::Normal;
 protected:
@@ -14,12 +17,13 @@ protected:
 		switch (msg.type) {
 		case MouseMsg::LeftDown: state = State::Press; OnPress(); break;
 		case MouseMsg::LeftUp: if (state == State::Press) { OnClick(); state = State::Hover; } break;
-		case MouseMsg::WheelVertical: case MouseMsg::WheelHorizontal: return PassMouseMsg(msg);
+		case MouseMsg::WheelVertical: case MouseMsg::WheelHorizontal: return this->PassMouseMsg(msg);
 		}
 	}
 	virtual void OnNotifyMsg(NotifyMsg msg) override {
 		switch (msg) {
 		case NotifyMsg::MouseEnter: if (state == State::Normal) { state = State::Hover; OnHover(); } break;
+		case NotifyMsg::MouseHover: SetCursor(Cursor::Default); break;
 		case NotifyMsg::MouseLeave: state = State::Normal; OnLeave(); break;
 		}
 	}

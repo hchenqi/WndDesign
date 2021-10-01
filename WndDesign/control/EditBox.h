@@ -133,7 +133,7 @@ private:
 
 	// message
 private:
-	MouseTracker mouse_tracker = *this;
+	MouseTracker mouse_tracker;
 	bool is_ctrl_down = false;
 	bool is_shift_down = false;
 protected:

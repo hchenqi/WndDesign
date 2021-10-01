@@ -105,7 +105,8 @@ private:
 		auto it_begin = HitTestItem(draw_region.top());
 		auto it_end = HitTestItem(draw_region.bottom() - 1);
 		for (auto it = it_begin; it <= it_end; ++it) {
-			DrawChild(it->child, Point(0, (int)it->offset), figure_queue, draw_region);
+			Rect child_region(Point(0, (int)it->offset), Size(size.width, it->length));
+			DrawChild(it->child, child_region.point, figure_queue, draw_region.Intersect(child_region));
 		}
 	}
 };
@@ -203,7 +204,8 @@ private:
 		auto it_begin = HitTestItem(draw_region.left());
 		auto it_end = HitTestItem(draw_region.right() - 1);
 		for (auto it = it_begin; it <= it_end; ++it) {
-			DrawChild(it->child, Point((int)it->offset, 0), figure_queue, draw_region);
+			Rect child_region(Point((int)it->offset, 0), Size(it->length, size.height));
+			DrawChild(it->child, child_region.point, figure_queue, draw_region.Intersect(child_region));
 		}
 	}
 };

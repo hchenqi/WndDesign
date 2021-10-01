@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../window/wnd_traits.h"
 #include "../geometry/interval.h"
 #include "../figure/shape.h"
-#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -71,12 +71,6 @@ private:
 private:
 	void OnMousePress(int y) { mouse_down_offset = y - slider_offset; }
 	void OnMouseDrag(int y) { OnFrameOffsetChange((y - mouse_down_offset) * (int)content_height / (int)height); }
-private:
-	virtual void OnNotifyMsg(NotifyMsg msg) override {
-		switch (msg) {
-		case NotifyMsg::MouseEnter: SetCursor(Cursor::Default); break;
-		}
-	}
 
 private:
 	struct Slider : public WndObject {

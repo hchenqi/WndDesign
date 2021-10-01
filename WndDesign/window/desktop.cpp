@@ -1,7 +1,6 @@
 #include "desktop.h"
 #include "../system/win32_api.h"
 #include "../system/win32_ime.h"
-#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -67,9 +66,8 @@ void Desktop::LoseCapture() {
 	}
 }
 
-void Desktop::LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_index_begin) {
-	if (wnd_track_index_begin >= wnd_track_stack.end()) { return; };
-	auto it_begin = wnd_track_index_begin, it_end = wnd_track_stack.end();
+void Desktop::LoseTrack(std::vector<ref_ptr<WndObject>>::iterator it_begin) {
+	auto it_end = wnd_track_stack.end();
 	for (auto it = it_end; it > it_begin;) {
 		(*--it)->OnNotifyMsg(NotifyMsg::MouseLeave); (*it)->is_mouse_tracked = false;
 	}
@@ -84,14 +82,29 @@ void Desktop::DispatchMouseMsg(frame_ref frame, MouseMsg msg) {
 	ref_ptr<WndObject> parent = &frame;
 	auto wnd_track_index = wnd_track_stack.begin();
 	do {
-		if (wnd_track_index >= wnd_track_stack.end() || *wnd_track_index != parent) {
-			LoseTrack(wnd_track_index);
+		ref_ptr<WndObject> child = parent->HitTest(msg.point);
+		if (child == nullptr) {
+			if (wnd_track_index < wnd_track_stack.end()) { LoseTrack(); }
+			return SetCursor(Cursor::Default);
+		}
+		if (parent->is_mouse_tracked == false) {
+			if (wnd_track_index < wnd_track_stack.end()) { LoseTrack(wnd_track_index); }
 			wnd_track_stack.push_back(parent); wnd_track_index = wnd_track_stack.end();
 			parent->OnNotifyMsg(NotifyMsg::MouseEnter); parent->is_mouse_tracked = true;
+			if (child == parent) {
+				parent->OnNotifyMsg(NotifyMsg::MouseHover);
+				return parent->OnMouseMsg(msg);
+			}
+		} else {
+			wnd_track_index++;
+			if (child == parent) {
+				if (wnd_track_index < wnd_track_stack.end()) {
+					LoseTrack(wnd_track_index);
+					parent->OnNotifyMsg(NotifyMsg::MouseHover);
+				}
+				return parent->OnMouseMsg(msg);
+			}
 		}
-		ref_ptr<WndObject> child = parent->HitTest(msg.point);
-		if (child == nullptr) { SetCursor(Cursor::Default); return; }
-		if (child == parent) { return parent->OnMouseMsg(msg); }
 		parent = child;
 	} while (true);
 }

@@ -38,7 +38,7 @@ ComPtr<IWICFormatConverter> LoadImageFromFile(std::wstring file_name) {
 		);
 		return LoadFromDecoder(decoder);
 	} catch (std::runtime_error&) {
-		throw std::invalid_argument("invalid iamge file");
+		throw std::invalid_argument("invalid image file");
 	}
 }
 
@@ -56,7 +56,7 @@ ComPtr<IWICFormatConverter> LoadImageFromMemory(void* address, size_t size) {
 		);
 		return LoadFromDecoder(decoder);
 	} catch (std::runtime_error&) {
-		throw std::invalid_argument("invalid iamge address");
+		throw std::invalid_argument("invalid image address");
 	}
 }
 

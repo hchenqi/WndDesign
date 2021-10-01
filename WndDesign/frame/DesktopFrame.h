@@ -31,12 +31,17 @@ private:
 	Point point;
 private:
 	Rect GetRegion() { return Rect(point, size); }
-	void SetRegion(Rect new_region);
+	void SetSize(Size size);
+	void SetPoint(Point point) { this->point = point; }
 
 	// hwnd
 protected:
 	using HANDLE = void*;
 	HANDLE hwnd = nullptr;
+protected:
+	enum class Status { Normal, Minimized, Maximized } status = Status::Normal;
+private:
+	void SetStatus(Status status) { this->status = status; }
 protected:
 	void Show();
 	void Minimize();

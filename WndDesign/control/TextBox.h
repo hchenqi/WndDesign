@@ -2,27 +2,26 @@
 
 #include "../window/wnd_traits.h"
 #include "../figure/text_block.h"
-#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class TextBox : public WndType<Assigned, Auto> {
+class TextBox : public WndType<Relative, Auto> {
 public:
 	using Style = TextBlockStyle;
 public:
-	TextBox(Style style, std::wstring text) : style(style), text(text) {}
+	TextBox(Style style, std::wstring text) : style(style), text(text), text_block(style, text) {}
 	~TextBox() {}
 private:
 	Style style;
 	uint width_ref = 0;
 protected:
 	std::wstring text;
-	TextBlock text_block = TextBlock(style, text);
+	TextBlock text_block;
 protected:
 	Size UpdateSize() {
-		return Size(width_ref, text_block.UpdateSizeRef(Size(width_ref, length_max)).height);
+		return text_block.UpdateSizeRef(Size(width_ref, length_max));
 	}
 	void TextUpdated() {
 		text_block.SetText(style, text);
@@ -36,10 +35,6 @@ protected:
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(point_zero, new TextBlockFigure(text_block, style.font._color));
-	}
-protected:
-	virtual void OnNotifyMsg(NotifyMsg msg) override {
-		if (msg == NotifyMsg::MouseEnter) { SetCursor(Cursor::Default); }
 	}
 };
 
