@@ -250,6 +250,7 @@
     <ClCompile Include="frame\DesktopFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_layer.cpp" />
+    <ClCompile Include="layout\FlowLayout.cpp" />
     <ClCompile Include="message\timer.cpp" />
     <ClCompile Include="system\clipboard.cpp" />
     <ClCompile Include="system\cursor.cpp" />

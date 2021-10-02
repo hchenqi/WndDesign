@@ -70,11 +70,8 @@ private:
 		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-		using pair = std::pair<WndObject&, Rect>;
-		for (auto [child, child_region] : { pair{first, GetRegionFirst()}, pair{second, GetRegionSecond()} }) {
-			Rect draw_region_child = child_region.Intersect(draw_region);
-			if (!draw_region_child.IsEmpty()) { DrawChild(child, child_region.point, figure_queue, draw_region_child); }
-		}
+		DrawChild(first, GetRegionFirst(), figure_queue, draw_region);
+		DrawChild(second, GetRegionSecond(), figure_queue, draw_region);
 	}
 };
 
@@ -135,11 +132,8 @@ private:
 		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-		using pair = std::pair<WndObject&, Rect>;
-		for (auto [child, child_region] : { pair{first, GetRegionFirst()}, pair{second, GetRegionSecond()} }) {
-			Rect draw_region_child = child_region.Intersect(draw_region);
-			if (!draw_region_child.IsEmpty()) { DrawChild(child, child_region.point, figure_queue, draw_region_child); }
-		}
+		DrawChild(first, GetRegionFirst(), figure_queue, draw_region);
+		DrawChild(second, GetRegionSecond(), figure_queue, draw_region);
 	}
 };
 

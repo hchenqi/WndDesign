@@ -83,24 +83,8 @@ private:
 	class ButtonBase : public Button<Auto, Assigned> {
 	public:
 		ButtonBase(TitleBarFrame& frame) : Button<Auto, Assigned>(50), frame(frame) {}
-	public:
+	protected:
 		TitleBarFrame& frame;
-	private:
-		static constexpr Color background_normal = Color::DarkGray;
-		static constexpr Color background_hover = Color::Gray;
-		static constexpr Color background_press = Color::DimGray;
-	protected:
-		Color background = background_normal;
-	protected:
-		void SetBackgroundColor(Color color) { background = color; Redraw(region_infinite); }
-	protected:
-		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-			figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background));
-		}
-	private:
-		virtual void OnHover() override { SetBackgroundColor(background_hover); }
-		virtual void OnPress() override { SetBackgroundColor(background_press); }
-		virtual void OnLeave() override { SetBackgroundColor(background_normal); }
 	};
 
 	class MinimizeButton : public ButtonBase {

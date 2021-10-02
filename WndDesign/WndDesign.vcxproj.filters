@@ -332,5 +332,8 @@
     <ClCompile Include="figure\figure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="layout\FlowLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

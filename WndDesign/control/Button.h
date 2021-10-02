@@ -10,6 +10,24 @@ template<class WidthType, class HeightType>
 class Button : public Placeholder<WidthType, HeightType> {
 public:
 	using Placeholder<WidthType, HeightType>::Placeholder;
+protected:
+	Color background_normal = Color::DarkGray;
+	Color background_hover = Color::Gray;
+	Color background_press = Color::DimGray;
+protected:
+	Color background = background_normal;
+protected:
+	void SetBackgroundColor(Color color) { background = color; this->Redraw(region_infinite); }
+protected:
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
+		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background));
+	}
+private:
+	void OnHover() { SetBackgroundColor(background_hover); }
+	void OnPress() { SetBackgroundColor(background_press); }
+	void OnLeave() { SetBackgroundColor(background_normal); }
+private:
+	virtual void OnClick() {}
 private:
 	enum class State { Normal, Hover, Press } state = State::Normal;
 protected:
@@ -27,11 +45,6 @@ protected:
 		case NotifyMsg::MouseLeave: state = State::Normal; OnLeave(); break;
 		}
 	}
-protected:
-	virtual void OnHover() {}
-	virtual void OnPress() {}
-	virtual void OnClick() {}
-	virtual void OnLeave() {}
 };
 
 

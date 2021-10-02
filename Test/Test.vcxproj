@@ -22,6 +22,7 @@
     <ClInclude Include="BarLayoutTest.h" />
     <ClInclude Include="DesktopFrameTest.h" />
     <ClInclude Include="EditBoxTest.h" />
+    <ClInclude Include="FlowLayoutTest.h" />
     <ClInclude Include="ImageBoxTest.h" />
     <ClInclude Include="ListLayoutTest.h" />
     <ClInclude Include="ScrollBoxTest.h" />

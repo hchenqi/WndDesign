@@ -106,7 +106,7 @@ private:
 		auto it_end = HitTestItem(draw_region.bottom() - 1);
 		for (auto it = it_begin; it <= it_end; ++it) {
 			Rect child_region(Point(0, (int)it->offset), Size(size.width, it->length));
-			DrawChild(it->child, child_region.point, figure_queue, draw_region.Intersect(child_region));
+			DrawChild(it->child, child_region, figure_queue, draw_region);
 		}
 	}
 };
@@ -205,7 +205,7 @@ private:
 		auto it_end = HitTestItem(draw_region.right() - 1);
 		for (auto it = it_begin; it <= it_end; ++it) {
 			Rect child_region(Point((int)it->offset, 0), Size(it->length, size.height));
-			DrawChild(it->child, child_region.point, figure_queue, draw_region.Intersect(child_region));
+			DrawChild(it->child, child_region, figure_queue, draw_region);
 		}
 	}
 };

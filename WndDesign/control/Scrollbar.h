@@ -98,6 +98,7 @@ private:
 		virtual void OnNotifyMsg(NotifyMsg msg) override {
 			switch (msg) {
 			case NotifyMsg::MouseEnter: SetState(State::Hover); break;
+			case NotifyMsg::MouseHover: SetCursor(Cursor::Default); break;
 			case NotifyMsg::MouseLeave: SetState(State::Normal); break;
 			}
 		}

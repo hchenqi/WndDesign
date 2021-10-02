@@ -54,7 +54,7 @@ protected:
 		size = ExtendSize(child_size, (int)border_width); return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
-		size = ExtendSize(child_size, (int)border_width); SizeUpdated(size);
+		this->child_size = child_size; size = ExtendSize(child_size, (int)border_width); SizeUpdated(size);
 	}
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
