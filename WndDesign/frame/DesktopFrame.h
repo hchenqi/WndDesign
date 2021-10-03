@@ -13,14 +13,17 @@ class DesktopFrame : protected BorderFrame<Assigned, Assigned> {
 private:
 	friend class Desktop;
 	friend struct DesktopFrameApi;
-
 public:
-	DesktopFrame(DesktopFrameStyle style, child_ptr child);
+	using child_ptr = BorderFrame::child_ptr;
+public:
+	using Style = DesktopFrameStyle;
+public:
+	DesktopFrame(Style style, child_ptr child);
 	~DesktopFrame();
 
 	// style
 private:
-	DesktopFrameStyle style;
+	Style style;
 private:
 	std::pair<Size, Rect> GetMinMaxRegion() const;
 protected:

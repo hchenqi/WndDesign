@@ -17,48 +17,70 @@ BEGIN_NAMESPACE(WndDesign)
 
 class TitleBarFrame : public DesktopFrame {
 public:
-	using Style = DesktopFrameStyle;
 	using child_ptr = DesktopFrame::child_ptr;
+	using child_ptr_menu = WndDesign::child_ptr<Auto, Assigned>;
+
+private:
+	struct TitleBarFrameStyle {
+		struct TitleBarStyle {
+		public:
+			uint _height = 30;
+			uint _max_title_length = 300;
+			Color _background = Color::DarkGray;
+		public:
+			constexpr TitleBarStyle& height(uint height) { _height = height; return *this; }
+			constexpr TitleBarStyle& maxt_title_length(uint maxt_title_length) { _max_title_length = maxt_title_length; return *this; }
+			constexpr TitleBarStyle& background(Color background) { _background = background; return *this; }
+		}title_bar;
+
+		TextBox::Style title_format;
+	};
 public:
-	TitleBarFrame(Style style, child_ptr child) : DesktopFrame{
+	struct Style : DesktopFrame::Style, TitleBarFrameStyle {};
+
+public:
+	TitleBarFrame(Style style, child_ptr child, child_ptr_menu menu = new Placeholder<Auto, Assigned>(0)) : DesktopFrame{
 		style,
 		new SplitLayout<Vertical, First>{
-			new TitleBar(*this, style.title),
+			new TitleBar(*this, style, std::move(menu)),
 			std::move(child)
 		}
 	} {
 	}
+
 private:
 	ref_ptr<TextBox> title = nullptr;
 public:
 	void SetTitle(std::wstring str) { title->SetText(str); }
+
 private:
 	bool IsMaximized() const { return status == Status::Maximized; }
 	void MaximizeOrRestore() { if (status == Status::Normal) { Maximize(); } else if (status == Status::Maximized) { Restore(); } }
+
 private:
 	class TitleBar : public BarLayout<Horizontal> {
 	public:
-		TitleBar(TitleBarFrame& frame, std::wstring title) : BarLayout(
-			30,
-			new Placeholder<Auto, Assigned>(0),
+		TitleBar(TitleBarFrame& frame, const Style& style, child_ptr_menu menu) : BarLayout(
+			style.title_bar._height,
+			std::move(menu),
 			new ListLayout<Horizontal, 3>{
 				0,
-				new MinimizeButton(frame),
-				new MaximizeButton(frame),
-				new CloseButton(frame)
+				new MinimizeButton(frame, style.title_bar._background),
+				new MaximizeButton(frame, style.title_bar._background),
+				new CloseButton(frame, style.title_bar._background)
 			},
 			new ClipFrame<Auto, Assigned>{
 				new MaxFrame{
-					300,
-					new Title(frame, title)
+					style.title_bar._max_title_length,
+					new Title(frame, style.title_format, style.title)
 				}
 			}
-		), frame(frame) {
+		), frame(frame), background(style.title_bar._background) {
 		}
 	private:
 		TitleBarFrame& frame;
 	private:
-		static constexpr Color background = Color::SpringGreen;
+		Color background;
 	private:
 		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 			figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background));
@@ -77,12 +99,14 @@ private:
 
 	class Title : public TextBox {
 	public:
-		Title(TitleBarFrame& frame, std::wstring text) : TextBox({}, text) { frame.title = this; }
+		Title(TitleBarFrame& frame, TextBox::Style style, std::wstring text) : TextBox(style, text) { frame.title = this; }
 	};
 
 	class ButtonBase : public Button<Auto, Assigned> {
 	public:
-		ButtonBase(TitleBarFrame& frame) : Button<Auto, Assigned>(50), frame(frame) {}
+		ButtonBase(TitleBarFrame& frame, Color background) : Button<Auto, Assigned>(50), frame(frame) {
+			this->background = this->background_normal = background;
+		}
 	protected:
 		TitleBarFrame& frame;
 	};

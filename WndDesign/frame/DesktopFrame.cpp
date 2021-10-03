@@ -13,7 +13,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-DesktopFrame::DesktopFrame(DesktopFrameStyle style, child_ptr child) :
+DesktopFrame::DesktopFrame(Style style, child_ptr child) :
 	BorderFrame(style.border._width, style.border._radius, style.border._color, std::move(child)), style(style) {
 	Rect region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize());
 	point = region.point; BorderFrame::OnSizeRefUpdate(region.size);
