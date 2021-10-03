@@ -15,10 +15,11 @@ TextBlock::~TextBlock() {
 void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	SafeRelease(&layout);
 
+	// font format
 	ComPtr<IDWriteTextFormat> format;
 	hr << GetDWriteFactory().CreateTextFormat(
-		style.font._family.c_str(),
-		NULL,
+		L"",
+		nullptr,
 		static_cast<DWRITE_FONT_WEIGHT>(style.font._weight),
 		static_cast<DWRITE_FONT_STYLE>(style.font._style),
 		static_cast<DWRITE_FONT_STRETCH>(style.font._stretch),
@@ -27,14 +28,30 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 		&format
 	);
 
-	ComPtr<IDWriteTextLayout> layout;
+	// font layout
+	ComPtr<IDWriteTextLayout> layout_0;
+	ComPtr<IDWriteTextLayout4> layout_4;
 	hr << GetDWriteFactory().CreateTextLayout(
 		text.c_str(), static_cast<UINT>(text.length()),
-		format.Get(),
-		0, 0,
-		&layout
+		format.Get(), 0, 0, &layout_0
 	);
+	hr << layout_0.As(&layout_4);
+	layout = static_cast<TextLayout*>(layout_4.Detach());
 
+	// font fallback
+	ComPtr<IDWriteFontFallbackBuilder> font_fallback_builder;
+	GetDWriteFactory().CreateFontFallbackBuilder(&font_fallback_builder);
+	
+	DWRITE_UNICODE_RANGE range = { 0, (uint)-1 };
+	std::vector<const wchar*> family_list; family_list.reserve(style.font._family_list.size());
+	for (auto& str : style.font._family_list) { family_list.push_back(str.c_str()); }
+	font_fallback_builder->AddMapping(&range, 1, family_list.data(), (uint)family_list.size());
+
+	ComPtr<IDWriteFontFallback> font_fallback;
+	font_fallback_builder->CreateFontFallback(&font_fallback);
+	layout->SetFontFallback(font_fallback.Get());
+
+	// paragraph style
 	layout->SetTextAlignment(static_cast<DWRITE_TEXT_ALIGNMENT>(style.paragraph._text_align));
 	layout->SetParagraphAlignment(static_cast<DWRITE_PARAGRAPH_ALIGNMENT>(style.paragraph._paragraph_align));
 	layout->SetFlowDirection(static_cast<DWRITE_FLOW_DIRECTION>(style.paragraph._flow_direction));
@@ -54,8 +71,6 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	} else if (tab_size.IsPercent()) {
 		layout->SetIncrementalTabStop(static_cast<FLOAT>(tab_size.AsUnsigned()) * style.font._size / 100.0F);
 	}
-
-	this->layout = static_cast<TextLayout*>(layout.Detach());
 }
 
 Size TextBlock::UpdateSizeRef(Size size_ref) {

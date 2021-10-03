@@ -4,6 +4,7 @@
 #include "../figure/color.h"
 
 #include <string>
+#include <vector>
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -107,7 +108,7 @@ struct TextBlockStyle {
 
 	struct FontFormat {
 	public:
-		std::wstring _family = L"Segoe UI";
+		std::vector<std::wstring> _family_list = { L"Segoe UI", L"DengXian"};
 		std::wstring _locale = L"";
 		FontWeight _weight = FontWeight::Normal;
 		FontStyle _style = FontStyle::Normal;
@@ -117,7 +118,9 @@ struct TextBlockStyle {
 		float _size = 16.0f;
 		Color _color = Color::Black;
 	public:
-		FontFormat& family(std::wstring family) { _family = family; return *this; }
+		FontFormat& family(std::wstring family) { _family_list = { family }; return *this; }
+		template<class... Types, class = std::enable_if_t<sizeof...(Types) >= 1>> 
+		FontFormat& family(Types... family_list) { _family_list = { family_list... }; return *this; }
 		FontFormat& locale(std::wstring locale) { _locale = locale; return *this; }
 		constexpr FontFormat& weight(FontWeight weight) { _weight = weight; return *this; }
 		constexpr FontFormat& style(FontStyle style) { _style = style; return *this; }

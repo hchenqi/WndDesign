@@ -3,13 +3,13 @@
 #include "../common/core.h"
 
 
-struct IDWriteFactory;
+struct IDWriteFactory7;
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-IDWriteFactory& GetDWriteFactory();
+IDWriteFactory7& GetDWriteFactory();
 
 
 END_NAMESPACE(WndDesign)

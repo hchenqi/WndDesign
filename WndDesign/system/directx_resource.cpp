@@ -41,7 +41,7 @@ public:
 	ComPtr<ID2D1SolidColorBrush> d2d_solid_color_brush;
 
 	// DWrite
-	ComPtr<IDWriteFactory> dwrite_factory;
+	ComPtr<IDWriteFactory7> dwrite_factory;
 
 	// WIC
 	ComPtr<IWICImagingFactory2> wic_factory;
@@ -85,7 +85,7 @@ void DirectXResource::CreateDeviceIndependentResource() {
 	hr << D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), &d2d_factory);
 
 	// Create DWrite factory.
-	hr << DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &dwrite_factory);
+	hr << DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &dwrite_factory);
 
 	// Create WIC factory.
 	hr << CoCreateInstance(CLSID_WICImagingFactory2, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&wic_factory));
@@ -173,7 +173,7 @@ ID2D1Factory1& GetD2DFactory() { return *directx_resource.d2d_factory.Get(); }
 ID2D1DeviceContext& GetD2DDeviceContext() { return *directx_resource.d2d_device_context.Get(); }
 ID2D1SolidColorBrush& GetD2DSolidColorBrush() { return *directx_resource.d2d_solid_color_brush.Get(); }
 
-IDWriteFactory& GetDWriteFactory() { return *directx_resource.dwrite_factory.Get(); }
+IDWriteFactory7& GetDWriteFactory() { return *directx_resource.dwrite_factory.Get(); }
 
 IWICImagingFactory2& GetWICFactory() { return *directx_resource.wic_factory.Get(); }
 

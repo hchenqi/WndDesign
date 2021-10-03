@@ -24,7 +24,7 @@ class MyEditBox : public EditBox {
 private:
 	struct Style : EditBox::Style {
 		Style() {
-			font.family(L"DengXian").size(20).weight(FontWeight::Bold).color(Color::Black);
+			font.family(L"Calibri", L"DengXian").size(20);
 		}
 	};
 public:

@@ -44,7 +44,7 @@ struct BitmapResource : ID2D1Bitmap1 {};
 struct SwapChain : IDXGISwapChain1 {};
 struct CompositionTarget : IDCompositionTarget {};
 struct ImageSource : IWICFormatConverter {};
-struct TextLayout : IDWriteTextLayout {};
+struct TextLayout : IDWriteTextLayout4 {};
 
 
 inline D2D1_POINT_2F Point2POINT(Point point) {
