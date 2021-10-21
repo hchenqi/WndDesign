@@ -47,10 +47,10 @@ private:
 
 	// paint
 private:
-	static constexpr Color frame_color = Color::Silver;
-	static constexpr Color slider_color_normal = Color::DarkGray;
-	static constexpr Color slider_color_hover = Color::Gray;
-	static constexpr Color slider_color_press = Color::DimGray;
+	static constexpr Color frame_color = Color::DarkGray;
+	static constexpr Color slider_color_normal = Color::Gray;
+	static constexpr Color slider_color_hover = Color::DimGray;
+	static constexpr Color slider_color_press = 0x606060;
 private:
 	Color slider_color = slider_color_normal;
 private:

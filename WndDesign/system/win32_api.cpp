@@ -109,8 +109,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		}break;
 		case WM_WINDOWPOSCHANGING: break;
 		case WM_WINDOWPOSCHANGED: return DefWindowProc(hwnd, msg, wparam, lparam);
-		case WM_MOVE: frame->SetPoint(Point(LOWORD(lparam), HIWORD(lparam))); break;
-		case WM_SIZE: frame->SetSize(Size(LOWORD(lparam), HIWORD(lparam))); 
+		case WM_MOVE: frame->SetPoint(Point((short)LOWORD(lparam), (short)HIWORD(lparam))); break;
+		case WM_SIZE: frame->SetSize(Size(LOWORD(lparam), HIWORD(lparam)));
 			frame->SetStatus(static_cast<DesktopFrameApi::Status>(wparam <= 2 ? wparam : 2)); break;
 
 			// notifications
@@ -155,7 +155,6 @@ FrameIrrelevantMessages:
 	case WM_CREATE: break;
 	case WM_DESTROY: if (frame != nullptr) { frame->Destroy(); }  break;
 
-		// non-client message
 	case WM_NCCALCSIZE: break;
 	case WM_NCHITTEST: return HTCLIENT;
 	case WM_NCPAINT: break;
@@ -167,7 +166,7 @@ FrameIrrelevantMessages:
 
 	default: return DefWindowProc(hwnd, msg, wparam, lparam);
 	}
-	return 0;  // The message is handled.
+	return 0;
 }
 
 static const wchar_t wnd_class_name[] = L"WndDesignFrame";

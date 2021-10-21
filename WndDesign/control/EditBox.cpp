@@ -295,7 +295,7 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 		break;
 	case KeyMsg::Char:
 		if (is_ctrl_down) { break; }
-		if (wchar ch = msg.ch; !iswcntrl(ch)) { Insert(ch); };
+		if (!iswcntrl(msg.ch)) { Insert(msg.ch); };
 		break;
 	}
 	StartBlinkingCaret();

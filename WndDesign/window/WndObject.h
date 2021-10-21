@@ -91,7 +91,7 @@ protected:
 protected:
 	void PassMouseMsg(MouseMsg msg) { if (HasParent()) { msg.point += GetParent().GetChildOffset(*this); GetParent().OnMouseMsg(msg); } }
 	void PassKeyMsg(KeyMsg msg) { if (HasParent()) { GetParent().OnKeyMsg(msg); } }
-protected:
+private:
 	virtual void OnMouseMsg(MouseMsg msg) { return PassMouseMsg(msg); }
 	virtual void OnKeyMsg(KeyMsg msg) { return PassKeyMsg(msg); }
 	virtual void OnNotifyMsg(NotifyMsg msg) { if (msg == NotifyMsg::MouseHover) { SetCursor(Cursor::Default); } }

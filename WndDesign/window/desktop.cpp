@@ -1,4 +1,5 @@
 #include "desktop.h"
+#include "../frame/DesktopFrame.h"
 #include "../system/win32_api.h"
 #include "../system/win32_ime.h"
 
@@ -7,6 +8,10 @@ BEGIN_NAMESPACE(WndDesign)
 
 Desktop desktop;
 
+
+Desktop::Desktop() {}
+
+Desktop::~Desktop() {}
 
 void Desktop::AddChild(frame_ptr frame) {
 	RegisterChild(*frame);
@@ -20,8 +25,6 @@ void Desktop::RemoveChild(frame_ref frame) {
 	frame_list.erase(it);
 	if (frame_list.empty()) { Terminate(); }
 }
-
-Size Desktop::GetSize() const { return Win32::GetDesktopSize(); }
 
 DesktopFrame& Desktop::GetDesktopFrame(WndObject& wnd) {
 	ref_ptr<WndObject> child = &wnd;

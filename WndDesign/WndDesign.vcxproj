@@ -211,7 +211,6 @@
     <ClInclude Include="message\notify_msg.h" />
     <ClInclude Include="message\timer.h" />
     <ClInclude Include="style\border_helper.h" />
-    <ClInclude Include="style\desktop_frame_style.h" />
     <ClInclude Include="style\style_helper.h" />
     <ClInclude Include="style\text_block_style.h" />
     <ClInclude Include="style\value_tag.h" />

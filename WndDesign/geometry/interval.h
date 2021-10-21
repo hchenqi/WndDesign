@@ -23,7 +23,7 @@ struct Interval {
 	constexpr bool IsEmpty() const { return length == 0; }
 
 	constexpr bool Contains(int number) const { return number >= left() && number < right(); }
-	constexpr bool Contains(const Interval& interval) const { return left() >= interval.left() && right() <= interval.right(); }
+	constexpr bool Contains(const Interval& interval) const { return interval.left() >= left() && interval.right() <= right(); }
 
 	constexpr Interval Intersect(const Interval& interval) const {
 		int left_max = max(left(), interval.left()), right_min = min(right(), interval.right());

@@ -72,7 +72,7 @@ private:
 			new ClipFrame<Auto, Assigned>{
 				new MaxFrame{
 					style.title_bar._max_title_length,
-					new Title(frame, style.title_format, style.title)
+					new Title(frame, style)
 				}
 			}
 		), frame(frame), background(style.title_bar._background) {
@@ -99,7 +99,14 @@ private:
 
 	class Title : public TextBox {
 	public:
-		Title(TitleBarFrame& frame, TextBox::Style style, std::wstring text) : TextBox(style, text) { frame.title = this; }
+		Title(TitleBarFrame& frame, const TitleBarFrame::Style& style) : TextBox(style.title_format, style.title), background(style.title_bar._background) { frame.title = this; }
+	private:
+		Color background;
+	private:
+		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
+			figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background));
+			TextBox::OnDraw(figure_queue, draw_region);
+		}
 	};
 
 	class ButtonBase : public Button<Auto, Assigned> {
@@ -117,7 +124,7 @@ private:
 	private:
 		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 			ButtonBase::OnDraw(figure_queue, draw_region);
-			figure_queue.add(Point(20, 15), new Line(Vector(10, 0), 1.0, Color::White));
+			figure_queue.add(Point(20, 15), new Rectangle(Size(10, 1), 1.0, Color::White));
 		}
 	private:
 		virtual void OnClick() override { frame.Minimize(); }

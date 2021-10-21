@@ -35,7 +35,7 @@ private:
 
 
 int main() {
-	DesktopFrameStyle style;
+	DesktopFrame::Style style;
 	style.width.normal(800px).max(100pct);
 	style.height.normal(500px).max(100pct);
 	style.position.setHorizontalCenter().setVerticalCenter();

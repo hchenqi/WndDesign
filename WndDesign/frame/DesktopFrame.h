@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BorderFrame.h"
-#include "../style/desktop_frame_style.h"
+#include "../style/style.h"
 #include "../figure/desktop_layer.h"
 #include "../geometry/region.h"
 
@@ -13,17 +13,25 @@ class DesktopFrame : protected BorderFrame<Assigned, Assigned> {
 private:
 	friend class Desktop;
 	friend struct DesktopFrameApi;
+
 public:
 	using child_ptr = BorderFrame::child_ptr;
+
 public:
-	using Style = DesktopFrameStyle;
+	struct Style {
+		LengthStyle width, height;
+		PositionStyle position;
+		BorderStyle border;
+		std::wstring title;
+	};
+
 public:
 	DesktopFrame(Style style, child_ptr child);
 	~DesktopFrame();
 
 	// style
 private:
-	Style style;
+	LengthStyle width, height;
 private:
 	std::pair<Size, Rect> GetMinMaxRegion() const;
 protected:

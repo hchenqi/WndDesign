@@ -1,7 +1,6 @@
 #pragma once
 
 #include "WndObject.h"
-#include "../frame/DesktopFrame.h"
 #include "../message/ime.h"
 
 #include <memory>
@@ -11,6 +10,8 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
+class DesktopFrame;
+
 
 class Desktop : public WndObject {
 public:
@@ -18,12 +19,8 @@ public:
 	using frame_ref = DesktopFrame&;
 
 public:
-	Desktop() {}
-	~Desktop() {}
-
-	// layout
-public:
-	Size GetSize() const;
+	Desktop();
+	~Desktop();
 
 	// frame
 private:

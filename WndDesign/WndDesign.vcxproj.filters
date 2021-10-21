@@ -234,9 +234,6 @@
     <ClInclude Include="frame\BorderFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="style\desktop_frame_style.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="widget\ScrollBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>

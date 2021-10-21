@@ -7,7 +7,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-struct StyleHelper : Style {
+struct StyleHelper {
 public:
 	static constexpr Size CalculateSize(ValueTag width, ValueTag height, Size size_ref) {
 		return Size(width.ConvertToPixel(size_ref.width).AsUnsigned(), height.ConvertToPixel(size_ref.height).AsUnsigned());

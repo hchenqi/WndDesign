@@ -7,7 +7,7 @@
 using namespace WndDesign;
 
 
-struct MainFrameStyle : DesktopFrameStyle {
+struct MainFrameStyle : DesktopFrame::Style {
 	MainFrameStyle() {
 		width.min(200px).normal(800px).max(100pct);
 		height.min(200px).normal(500px).max(100pct);

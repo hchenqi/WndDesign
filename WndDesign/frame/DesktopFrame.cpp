@@ -14,8 +14,8 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 DesktopFrame::DesktopFrame(Style style, child_ptr child) :
-	BorderFrame(style.border._width, style.border._radius, style.border._color, std::move(child)), style(style) {
-	Rect region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop.GetSize());
+	BorderFrame(style.border._width, style.border._radius, style.border._color, std::move(child)), width(style.width), height(style.height) {
+	Rect region = StyleHelper::CalculateRegion(style.width, style.height, style.position, Win32::GetDesktopSize());
 	point = region.point; BorderFrame::OnSizeRefUpdate(region.size);
 	hwnd = Win32::CreateWnd(region, style.title); Win32::SetWndUserData(hwnd, this);
 	RecreateLayer();
@@ -28,9 +28,10 @@ DesktopFrame::~DesktopFrame() {
 }
 
 std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
-	auto [size_min, size_max] = StyleHelper::CalculateMinMaxSize(style.width, style.height, desktop.GetSize());
+	Size desktop_size = Win32::GetDesktopSize();
+	auto [size_min, size_max] = StyleHelper::CalculateMinMaxSize(width, height, desktop_size);
 	Rect region_max(point_zero, size_max);
-	if (size_max == desktop.GetSize()) { region_max = ExtendRegion(region_max, border_width); }
+	if (size_max == desktop_size) { region_max = ExtendRegion(region_max, border_width); }
 	return { size_min, region_max };
 }
 
@@ -89,7 +90,7 @@ void DesktopFrame::Draw() {
 
 void DesktopFrame::OnMouseMsg(MouseMsg msg) {
 	if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
-		BorderPosition border_position = HitTestBorderPosition(size, style.border._width + style.border._radius, msg.point);
+		BorderPosition border_position = HitTestBorderPosition(size, border_width + border_radius, msg.point);
 		if (msg.type == MouseMsg::Move) {
 			SetCursor(GetBorderPositionCursor(border_position));
 		} else {

@@ -17,7 +17,7 @@ protected:
 protected:
 	Color background = background_normal;
 protected:
-	void SetBackgroundColor(Color color) { background = color; this->Redraw(region_infinite); }
+	void SetBackgroundColor(Color color) { if (background != color) { background = color; this->Redraw(region_infinite); } }
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background));
@@ -34,7 +34,7 @@ protected:
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		switch (msg.type) {
 		case MouseMsg::LeftDown: state = State::Press; OnPress(); break;
-		case MouseMsg::LeftUp: if (state == State::Press) { OnClick(); state = State::Hover; } break;
+		case MouseMsg::LeftUp: if (state == State::Press) { state = State::Hover; OnHover(); OnClick(); } break;
 		case MouseMsg::WheelVertical: case MouseMsg::WheelHorizontal: return this->PassMouseMsg(msg);
 		}
 	}
