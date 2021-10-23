@@ -1,27 +1,27 @@
 #pragma once
 
 #include "../window/wnd_traits.h"
-#include "../common/array_vector_selector.h"
 
+#include <vector>
 #include <algorithm>
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-template<class Direction, size_t extent = dynamic_extent>
+template<class Direction>
 class ListLayout;
 
 
-template<size_t extent>
-class ListLayout<Vertical, extent> : public WndType<Assigned, Auto> {
+template<>
+class ListLayout<Vertical> : public WndType<Assigned, Auto> {
 public:
 	using child_ptr = child_ptr<Assigned, Auto>;
 public:
-	template<class ...child_types>
-	ListLayout(uint gap, child_types... child_args) :
-		child_list(array_vector_selector<ChildInfo, extent>::construct(std::forward<child_types>(child_args)...)), gap(gap) {
-		uint index = 0; for (auto& info : child_list) { RegisterChild(info.child); SetChildData(info.child, index++); }
+	template<class... Ts>
+	ListLayout(uint gap, Ts... child_args) : child_list(), gap(gap) {
+		child_list.reserve(sizeof...(Ts)); (child_list.emplace_back(std::move(child_args)), ...);
+		uint index = 0;	for (auto& info : child_list) { RegisterChild(info.child); SetChildData(info.child, index++); }
 	}
 private:
 	struct ChildInfo {
@@ -30,12 +30,11 @@ private:
 		uint length = 0;
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
 	};
-	array_vector_selector_t<ChildInfo, extent> child_list;
+	std::vector<ChildInfo> child_list;
 private:
 	void SetChildData(WndObject& child, uint64 index) { WndObject::SetChildData<uint64>(child, index); }
 	uint64 GetChildData(WndObject& child) const { return WndObject::GetChildData<uint64>(child); }
 public:
-	template<class = std::enable_if_t<extent == dynamic_extent>>
 	void AppendChild(child_ptr child) {
 		RegisterChild(child);
 		SetChildData(child, child_list.size());
@@ -112,15 +111,15 @@ private:
 };
 
 
-template<size_t extent>
-class ListLayout<Horizontal, extent> : public WndType<Auto, Assigned> {
+template<>
+class ListLayout<Horizontal> : public WndType<Auto, Assigned> {
 public:
 	using child_ptr = child_ptr<Auto, Assigned>;
 public:
-	template<class ...child_types>
-	ListLayout(uint gap, child_types... child_args) :
-		child_list(array_vector_selector<ChildInfo, extent>::construct(std::forward<child_types>(child_args)...)), gap(gap) {
-		uint index = 0; for (auto& info : child_list) { RegisterChild(info.child); SetChildData(info.child, index++); }
+	template<class... Ts>
+	ListLayout(uint gap, Ts... child_args) : child_list(), gap(gap) {
+		child_list.reserve(sizeof...(Ts)); (child_list.emplace_back(std::move(child_args)), ...);
+		uint index = 0;	for (auto& info : child_list) { RegisterChild(info.child); SetChildData(info.child, index++); }
 	}
 private:
 	struct ChildInfo {
@@ -129,12 +128,11 @@ private:
 		uint length = 0;
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
 	};
-	array_vector_selector_t<ChildInfo, extent> child_list;
+	std::vector<ChildInfo> child_list;
 private:
 	void SetChildData(WndObject& child, uint64 index) { WndObject::SetChildData<uint64>(child, index); }
 	uint64 GetChildData(WndObject& child) const { return WndObject::GetChildData<uint64>(child); }
 public:
-	template<class = std::enable_if_t<extent == dynamic_extent>>
 	void AppendChild(child_ptr child) {
 		RegisterChild(child);
 		SetChildData(child, child_list.size());

@@ -5,8 +5,24 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-
 #pragma warning (disable : 26451)  // Arithmetic overflow : Using operator '+' on a 4 byte value and then casting the result to a 8 byte value.
+#pragma warning (disable : 4267)  // conversion from 'size_t' to 'WndDesign::uint', possible loss of data
+
+
+FlowLayout::FlowLayout(uint row_height, uint column_gap, uint row_gap) :
+	row_height(row_height), column_gap(column_gap), row_gap(row_gap), row_list({ 0 }) {
+}
+
+Rect FlowLayout::GetChildRegion(WndObject& child) const {
+	auto [row, column] = GetChildData(child); const ChildInfo& info = child_list[row_list[row] + column];
+	return Rect(Point((int)info.offset, (int)GetRowOffset(row)), Size(info.width, row_height));
+}
+
+uint FlowLayout::GetRowOffset(uint row) const { return row * (row_height + row_gap); }
+
+uint FlowLayout::GetRowNumber() const { return row_list.size() - 1; }
+
+uint FlowLayout::HitTestRow(uint y) const { return y / (row_height + row_gap); }
 
 auto FlowLayout::HitTestColumn(row_index row, uint x) const {
 	static auto cmp = [](const ChildInfo& item, uint offset) { return offset >= item.offset; };
@@ -15,20 +31,21 @@ auto FlowLayout::HitTestColumn(row_index row, uint x) const {
 
 void FlowLayout::AppendChild(child_ptr child) {
 	RegisterChild(child);
-	uint row = 0, column = 0, offset = 0;
-	if (!child_list.empty()) {
-		ChildInfo& child_back = child_list.back(); std::tie(row, column) = GetChildData(child_back.child);
-		column++; offset = child_back.offset + child_back.width + column_gap;
-	}
+	child_index child_index = child_list.size();
 	ChildInfo& info = child_list.emplace_back(std::move(child));
 	info.width = UpdateChildSizeRef(info.child, Size(length_min, row_height)).width;
-	Size size_old = size; UpdateLayout(row, column, offset);
-	if (size != size_old) { SizeUpdated(size); } else { Redraw(Rect(Point(0, (int)GetRowOffset(row)), size_max)); }
+	if (UpdateLayout(child_index)) { SizeUpdated(size); }
 }
 
-void FlowLayout::UpdateLayout(row_index row, column_index column, uint offset) {
+bool FlowLayout::UpdateLayout(child_index child_index) {
+	uint row = 0, column = 0, offset = 0;
+	if (child_index > 0) {
+		ChildInfo& prev = child_list[child_index - 1]; std::tie(row, column) = GetChildData(prev.child);
+		column++; offset = prev.offset + prev.width + column_gap;
+	}
+	uint row_begin = row;
 	row_list.erase(row_list.begin() + row + 1, row_list.end());
-	for (child_index child_index = row_list[row] + column; child_index < child_list.size(); ++child_index) {
+	for (; child_index < child_list.size(); ++child_index) {
 		ChildInfo& info = child_list[child_index];
 		if (offset > 0 && offset + info.width > size.width) { row_list.push_back(child_index); row++; column = 0; offset = 0; }
 		info.offset = offset;
@@ -36,24 +53,26 @@ void FlowLayout::UpdateLayout(row_index row, column_index column, uint offset) {
 		offset += info.width + column_gap; column++;
 	}
 	row_list.push_back((uint)child_list.size());
-	size.height = child_list.empty() ? 0 : GetRowOffset(row) + row_height;
+	uint height = child_list.empty() ? 0 : GetRowOffset(row) + row_height;
+	if (size.height == height) { Redraw(Rect(Point(0, (int)GetRowOffset(row_begin)), size_max)); return false; }
+	size.height = height; return true;
 }
 
 Size FlowLayout::OnSizeRefUpdate(Size size_ref) {
 	if (size.width != size_ref.width) {
-		size.width = size_ref.width; size.height = 0;
-		UpdateLayout(0, 0, 0);
+		size.width = size_ref.width;
+		UpdateLayout(0);
 	}
 	return size;
 }
 
 void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 	auto [row, column] = GetChildData(child);
-	ChildInfo& info = child_list[row_list[row] + column];
+	child_index child_index = row_list[row] + column;
+	ChildInfo& info = child_list[child_index];
 	if (info.width != child_size.width) {
 		info.width = child_size.width;
-		Size size_old = size; UpdateLayout(row, column, info.offset);
-		if (size != size_old) { SizeUpdated(size); } else { Redraw(Rect(Point(0, (int)GetRowOffset(row)), size_max)); }
+		if (UpdateLayout(child_index)) { SizeUpdated(size); }
 	}
 }
 

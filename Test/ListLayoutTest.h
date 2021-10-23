@@ -47,7 +47,7 @@ int main() {
 		new DesktopFrame{
 			MainFrameStyle(),
 			new ScrollFrame<Vertical>{
-				new ListLayout<Vertical, 3>{
+				new ListLayout<Vertical>{
 					100,
 					new ClipFrame<Assigned, Auto>{
 						new TextBox(TextBoxStyle(), L"ListLayoutTest"),

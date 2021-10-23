@@ -63,7 +63,7 @@ private:
 		TitleBar(TitleBarFrame& frame, const Style& style, child_ptr_menu menu) : BarLayout(
 			style.title_bar._height,
 			std::move(menu),
-			new ListLayout<Horizontal, 3>{
+			new ListLayout<Horizontal>{
 				0,
 				new MinimizeButton(frame, style.title_bar._background),
 				new MaximizeButton(frame, style.title_bar._background),

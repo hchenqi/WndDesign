@@ -237,9 +237,6 @@
     <ClInclude Include="widget\ScrollBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common\array_vector_selector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="geometry\clamp.h">
       <Filter>Header Files</Filter>
     </ClInclude>

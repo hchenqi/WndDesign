@@ -118,8 +118,8 @@ struct TextBlockStyle {
 		float _size = 16.0f;
 		Color _color = Color::Black;
 	public:
-		template<class... Types, class = std::enable_if_t<sizeof...(Types) >= 1>> 
-		FontFormat& family(Types... family_list) { _family_list = { family_list... }; return *this; }
+		template<class... Ts, class = std::enable_if_t<sizeof...(Ts) >= 1>>
+		FontFormat& family(Ts... family_list) { _family_list = { family_list... }; return *this; }
 		FontFormat& locale(std::wstring locale) { _locale = locale; return *this; }
 		constexpr FontFormat& weight(FontWeight weight) { _weight = weight; return *this; }
 		constexpr FontFormat& style(FontStyle style) { _style = style; return *this; }

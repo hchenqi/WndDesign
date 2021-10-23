@@ -12,9 +12,7 @@ class FlowLayout : public WndType<Assigned, Auto> {
 public:
 	using child_ptr = child_ptr<Auto, Assigned>;
 public:
-	FlowLayout(uint row_height, uint column_gap, uint row_gap) :
-		row_height(row_height), column_gap(column_gap), row_gap(row_gap), row_list({ 0 }) {
-	}
+	FlowLayout(uint row_height, uint column_gap, uint row_gap);
 private:
 	uint row_height;
 	uint column_gap;
@@ -39,18 +37,15 @@ private:
 	void SetChildData(WndObject& child, ChildData data) { WndObject::SetChildData<ChildData>(child, data); }
 	ChildData GetChildData(WndObject& child) const { return WndObject::GetChildData<ChildData>(child); }
 private:
-	Rect GetChildRegion(WndObject& child) const {
-		auto [row, column] = GetChildData(child); const ChildInfo& info = child_list[(size_t)row_list[row] + column];
-		return Rect(Point((int)info.offset, (int)GetRowOffset(row)), Size(info.width, row_height));
-	}
-	uint GetRowOffset(uint row) const { return row * (row_height + row_gap); }
-	uint GetRowNumber() const { return (uint)row_list.size() - 1; }
-	uint HitTestRow(uint y) const { return y / (row_height + row_gap); }
+	Rect GetChildRegion(WndObject& child) const;
+	uint GetRowOffset(uint row) const;
+	uint GetRowNumber() const;
+	uint HitTestRow(uint y) const;
 	auto HitTestColumn(row_index row, uint x) const;
 public:
 	void AppendChild(child_ptr child);
 private:
-	void UpdateLayout(row_index row, column_index column, uint offset);
+	bool UpdateLayout(child_index child_index);
 private:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;

@@ -155,7 +155,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="common\array_vector_selector.h" />
     <ClInclude Include="common\core.h" />
     <ClInclude Include="common\reversion_wrapper.h" />
     <ClInclude Include="common\uncopyable.h" />

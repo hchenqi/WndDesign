@@ -14,8 +14,8 @@ struct Auto {};
 
 template<class WidthType, class HeightType>
 class LayoutType {
-	template <class T, class... Types>
-	static constexpr bool is_any_of_v = std::disjunction_v<std::is_same<T, Types>...>;
+	template <class T, class... Ts>
+	static constexpr bool is_any_of_v = std::disjunction_v<std::is_same<T, Ts>...>;
 
 	template <class T>
 	static constexpr bool is_size_type_v = is_any_of_v<T, Assigned, Relative, Auto>;
