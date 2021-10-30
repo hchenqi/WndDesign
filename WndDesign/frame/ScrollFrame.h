@@ -17,11 +17,11 @@ public:
 	using child_ptr = child_ptr<Assigned, Auto>;
 public:
 	ScrollFrame(child_ptr child) : WndFrame(std::move(child)) {}
-private:
+protected:
 	Size size;
 	uint child_height = 0;
 	int frame_offset = 0;
-private:
+public:
 	Vector GetChildOffset() const { return Vector(0, -frame_offset); }
 public:
 	void UpdateFrameOffset(int offset) {
@@ -29,10 +29,9 @@ public:
 		OnFrameOffsetUpdate(child_height, size.height, frame_offset);
 		Redraw(region_infinite);
 	}
-	int Scroll(int offset) {
-		int assumed_frame_offset = frame_offset + offset;
-		UpdateFrameOffset(assumed_frame_offset);
-		return assumed_frame_offset - frame_offset;
+	void Scroll(int offset) {
+		if (offset == 0) { return; }
+		UpdateFrameOffset(frame_offset + offset);
 	}
 	void ScrollIntoView(int y) {
 		Scroll(y - clamp(y, Interval(frame_offset, size.height)));

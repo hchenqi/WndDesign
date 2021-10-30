@@ -66,7 +66,6 @@ private:
 
 	// message
 private:
-	enum class State { Normal, Hover, Press } slider_state = State::Normal;
 	int mouse_down_offset = 0;
 private:
 	void OnMousePress(int y) { mouse_down_offset = y - slider_offset; }
@@ -77,9 +76,11 @@ private:
 	private:
 		Scrollbar& GetScrollbar() const { return static_cast<Scrollbar&>(GetParent()); }
 	private:
+		enum class State { Normal, Hover, Press } state = State::Normal;
+	private:
 		void SetColor(Color color) { GetScrollbar().SetSliderColor(color); }
 		void SetState(State state) {
-			GetScrollbar().slider_state = state;
+			this->state = state;
 			switch (state) {
 			case State::Normal: SetColor(slider_color_normal); break;
 			case State::Hover: SetColor(slider_color_hover); break;
@@ -90,7 +91,7 @@ private:
 		virtual void OnMouseMsg(MouseMsg msg) override {
 			switch (msg.type) {
 			case MouseMsg::LeftDown: SetState(State::Press); GetScrollbar().OnMousePress(msg.point.y); SetCapture(); break;
-			case MouseMsg::Move: if (GetScrollbar().slider_state == State::Press) { GetScrollbar().OnMouseDrag(msg.point.y); }break;
+			case MouseMsg::Move: if (state == State::Press) { GetScrollbar().OnMouseDrag(msg.point.y); }break;
 			case MouseMsg::LeftUp: SetState(State::Hover); ReleaseCapture(); break;
 			case MouseMsg::WheelVertical: return PassMouseMsg(msg);
 			}
