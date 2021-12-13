@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -12,15 +13,19 @@ BEGIN_NAMESPACE(WndDesign)
 
 class FigureQueue : public Uncopyable {
 private:
-	template<class T> using unique_ptr = std::unique_ptr<T>;
 	template<class T> using vector = std::vector<T>;
+	template<class T> using unique_ptr = std::unique_ptr<T>;
 
 private:
 	Vector offset = vector_zero;
 	vector<Vector> group_offset_stack;
-public:
+private:
 	void PushOffset(Vector offset) { this->offset += offset; }
 	void PopOffset(Vector offset) { PushOffset(-offset); }
+public:
+	void Offset(Vector offset, std::function<void(void)> func) {
+		PushOffset(offset); func(); PopOffset(offset);
+	}
 
 private:
 	struct FigureItem {
@@ -45,13 +50,13 @@ public:
 private:
 	struct FigureGroup {
 		union {
-			struct { // as group begin
+			struct {  // as group begin
 				uint group_end_index;
 				uint figure_index;
 				Vector offset;
 				Rect clip_region;
 			};
-			struct { // as group end
+			struct {  // as group end
 				uint null_index;  // == -1
 				uint figure_index;
 				mutable Vector prev_offset;
@@ -62,9 +67,8 @@ private:
 	};
 	vector<FigureGroup> groups;
 public:
-	void CheckFigureGroup() const { if (!group_offset_stack.empty() || groups.empty()) { throw std::logic_error("invalid figure group"); } }
 	const vector<FigureGroup>& GetFigureGroups() const { return groups; }
-public:
+private:
 	uint BeginGroup(Vector group_offset, Rect clip_region) {
 		uint group_begin_index = (uint)groups.size();
 		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), group_offset + offset, clip_region });
@@ -78,12 +82,13 @@ public:
 		offset = group_offset_stack.back(); group_offset_stack.pop_back();
 	}
 public:
-	void Begin() {
-		if (!figures.empty() || !groups.empty()) { throw std::logic_error("invalid begin call"); }
-		BeginGroup(vector_zero, region_empty);
+	void Group(Vector group_offset, Rect clip_region, std::function<void(void)> func) {
+		uint begin = BeginGroup(group_offset, clip_region); func(); EndGroup(begin);
 	}
-	void End() {
-		EndGroup(0);
+
+public:
+	FigureQueue(std::function<void(FigureQueue&)> func) {
+		BeginGroup(vector_zero, region_empty); func(*this); EndGroup(0);
 	}
 };
 

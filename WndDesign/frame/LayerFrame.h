@@ -48,9 +48,8 @@ protected:
 		if (!render_region.IsEmpty()) {
 			if (layer.IsEmpty()) { layer.Create(size); }
 			Rect render_rect = render_region.GetBoundingRect();
-			FigureQueue figure_queue; figure_queue.Begin();
-			DrawChild(child, point_zero, figure_queue, render_rect);
-			figure_queue.End(); layer.DrawFigureQueue(figure_queue, vector_zero, render_rect);
+			FigureQueue figure_queue([&](FigureQueue& figure_queue) { DrawChild(child, point_zero, figure_queue, render_rect); });
+			layer.DrawFigureQueue(figure_queue, vector_zero, render_rect);
 			invalid_region.Sub(render_rect);
 		}
 		figure_queue.add(draw_region.point, new LayerFigure(layer, draw_region));

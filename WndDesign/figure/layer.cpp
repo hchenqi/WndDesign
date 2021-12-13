@@ -24,7 +24,6 @@ void Layer::Create(Size size) {
 }
 
 void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect clip_region) {
-	figure_queue.CheckFigureGroup();
 	ID2D1DeviceContext& device_context = GetD2DDeviceContext(); device_context.SetTarget(bitmap.Get());
 	device_context.PushAxisAlignedClip(Rect2RECT(clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
 	device_context.Clear(Color2COLOR(color_transparent));

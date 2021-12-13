@@ -67,13 +67,14 @@ protected:
 protected:
 	void Redraw(Rect redraw_region) { if (HasParent()) { GetParent().OnChildRedraw(*this, redraw_region); } }
 	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) {
-		VerifyChild(child); if (draw_region.IsEmpty()) { return; } Vector offset = child_offset - point_zero;
-		figure_queue.PushOffset(offset); child.OnDraw(figure_queue, draw_region - offset); figure_queue.PopOffset(offset);
+		VerifyChild(child); if (draw_region.IsEmpty()) { return; }
+		Vector offset = child_offset - point_zero; draw_region -= offset;
+		figure_queue.Offset(offset, [&]() { child.OnDraw(figure_queue, draw_region); });
 	}
 	void DrawChild(WndObject& child, Rect child_region, FigureQueue& figure_queue, Rect draw_region) {
 		VerifyChild(child); draw_region = draw_region.Intersect(child_region); if (draw_region.IsEmpty()) { return; }
 		Vector offset = child_region.point - point_zero; draw_region -= offset;
-		uint group = figure_queue.BeginGroup(offset, draw_region); child.OnDraw(figure_queue, draw_region); figure_queue.EndGroup(group);
+		figure_queue.Group(offset, draw_region, [&]() { child.OnDraw(figure_queue, draw_region); });
 	}
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) {}

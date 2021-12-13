@@ -75,9 +75,8 @@ void DesktopFrame::OnChildRedraw(WndObject& child, Rect redraw_region) {
 void DesktopFrame::Draw() {
 	Rect render_rect = invalid_region.GetBoundingRect(); if (render_rect.IsEmpty()) { return; }
 	BeginDraw();
-	FigureQueue figure_queue; figure_queue.Begin();
-	BorderFrame::OnDraw(figure_queue, render_rect);
-	figure_queue.End(); layer.DrawFigureQueue(figure_queue, vector_zero, render_rect);
+	FigureQueue figure_queue([&](FigureQueue& figure_queue) { BorderFrame::OnDraw(figure_queue, render_rect); });
+	layer.DrawFigureQueue(figure_queue, vector_zero, render_rect);
 	try {
 		EndDraw();
 	} catch (std::runtime_error&) {
@@ -98,5 +97,6 @@ void DesktopFrame::OnMouseMsg(MouseMsg msg) {
 		}
 	}
 }
+
 
 END_NAMESPACE(WndDesign)
