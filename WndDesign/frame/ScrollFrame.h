@@ -41,7 +41,7 @@ public:
 	}
 private:
 	virtual void OnFrameOffsetUpdate(uint content_height, uint frame_height, int frame_offset) {}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			if (size.width != size_ref.width) {
@@ -58,15 +58,15 @@ private:
 			UpdateFrameOffset(frame_offset);
 		}
 	}
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override { Redraw(redraw_region + GetChildOffset()); }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
 	}
-private:
+protected:
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		if (msg.type == MouseMsg::WheelVertical) { Scroll(-msg.wheel_delta); }
 	}
@@ -104,7 +104,7 @@ public:
 	}
 private:
 	virtual void OnFrameOffsetUpdate(uint content_width, uint frame_width, int frame_offset) {}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			if (size.height != size_ref.height) {
@@ -121,15 +121,15 @@ private:
 			UpdateFrameOffset(frame_offset);
 		}
 	}
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override { Redraw(redraw_region + GetChildOffset()); }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
 	}
-private:
+protected:
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		if (msg.type == MouseMsg::WheelHorizontal) { Scroll(-msg.wheel_delta); }
 	}
@@ -168,7 +168,7 @@ public:
 	}
 private:
 	virtual void OnFrameOffsetUpdate(Size content_size, Size frame_size, Point frame_offset) {}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			size = size_ref;
@@ -183,15 +183,15 @@ private:
 			UpdateFrameOffset(frame_offset);
 		}
 	}
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override { Redraw(redraw_region + GetChildOffset()); }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
 	}
-private:
+protected:
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		if (msg.type == MouseMsg::WheelVertical) { Scroll(Vector(-msg.wheel_delta, 0)); }
 		if (msg.type == MouseMsg::WheelHorizontal) { Scroll(Vector(0, -msg.wheel_delta)); }

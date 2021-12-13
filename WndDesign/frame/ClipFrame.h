@@ -14,7 +14,7 @@ template<>
 class ClipFrame<Assigned, Assigned> : public WndFrame, public LayoutType<Assigned, Assigned> {
 public:
 	ClipFrame(child_ptr<> child) : WndFrame(std::move(child)) {}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { UpdateChildSizeRef(child, size_ref); return size_ref; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {}
 };
@@ -34,7 +34,7 @@ private:
 private:
 	static constexpr uint child_relative = 0;
 	static constexpr uint child_auto = 1;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size.width = size_ref.width;
 		if (GetChildData<uint>(child) == child_relative) { size.height = UpdateChildSizeRef(child, size).height; }
@@ -60,7 +60,7 @@ private:
 private:
 	static constexpr uint child_relative = 0;
 	static constexpr uint child_auto = 1;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size.height = size_ref.height;
 		if (GetChildData<uint>(child) == child_relative) { size.width = UpdateChildSizeRef(child, size).width; }

@@ -8,6 +8,7 @@
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/frame/BorderFrame.h"
 #include "WndDesign/frame/PaddingFrame.h"
+#include "WndDesign/wrapper/Background.h"
 
 #include <cmath>
 #include <ctime>
@@ -29,14 +30,9 @@ struct MainFrameStyle : TitleBarFrame::Style {
 };
 
 
-class MyFlowLayout : public FlowLayout {
+class MyFlowLayout : public Decorate<FlowLayout, SolidColorBackground> {
 public:
-	MyFlowLayout() : FlowLayout(25, 10, 5) { AppendChild(new AddButton); }
-private:
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, Color::White));
-		FlowLayout::OnDraw(figure_queue, draw_region);
-	}
+	MyFlowLayout() : Base(25, 10, 5) { AppendChild(new AddButton); }
 private:
 	class AddButton : public Button<Auto, Assigned> {
 	public:
@@ -51,8 +47,8 @@ private:
 			}
 		};
 		std::wstring NextName() {
-			static const wchar* names[26] = { L"Alice", L"Bob", L"Carol", L"Dave", L"Eve", L"Francis", L"Grace", 
-				L"Hans", L"Isabella", L"Jason", L"Kate", L"Louis", L"Margaret", L"Nathan", L"Olivia", L"Paul", L"Queen", 
+			static const wchar* names[26] = { L"Alice", L"Bob", L"Carol", L"Dave", L"Eve", L"Francis", L"Grace",
+				L"Hans", L"Isabella", L"Jason", L"Kate", L"Louis", L"Margaret", L"Nathan", L"Olivia", L"Paul", L"Queen",
 				L"Richard", L"Susan", L"Thomas", L"Uma", L"Vivian", L"Winnie", L"Xander", L"Yasmine", L"Zach" };
 			static uint next = 0;
 			return next >= 26 ? L"You Win" : names[next++];

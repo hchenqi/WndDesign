@@ -56,7 +56,7 @@ private:
 		static auto cmp = [](const ChildInfo& item, uint offset) { return offset >= item.offset; };
 		return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
 	}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) {
 			size.width = size_ref.width;
@@ -83,7 +83,7 @@ private:
 			SizeUpdated(size);
 		}
 	}
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
 	}
@@ -93,7 +93,7 @@ private:
 		if ((uint)point.y >= it->length) { return this; }
 		return it->child;
 	}
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
 		Rect child_region = GetChildRegion(child);
 		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
@@ -154,7 +154,7 @@ private:
 		static auto cmp = [](const ChildInfo& item, uint offset) { return offset >= item.offset; };
 		return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
 	}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) {
 			size.height = size_ref.height;
@@ -181,7 +181,7 @@ private:
 			SizeUpdated(size);
 		}
 	}
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
 	}
@@ -191,7 +191,7 @@ private:
 		if ((uint)point.x >= it->length) { return this; }
 		return it->child;
 	}
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
 		Rect child_region = GetChildRegion(child);
 		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));

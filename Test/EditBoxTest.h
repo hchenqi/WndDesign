@@ -4,6 +4,7 @@
 #include "WndDesign/frame/PaddingFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/control/EditBox.h"
+#include "WndDesign/wrapper/Background.h"
 
 
 using namespace WndDesign;
@@ -20,7 +21,7 @@ struct MainFrameStyle : DesktopFrame::Style {
 };
 
 
-class MyEditBox : public EditBox {
+class MyEditBox : public Decorate<EditBox, SolidColorBackground> {
 private:
 	struct Style : EditBox::Style {
 		Style() {
@@ -28,11 +29,7 @@ private:
 		}
 	};
 public:
-	MyEditBox() : EditBox(Style(), L"Hello World!") {}
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, Color::White));
-		EditBox::OnDraw(figure_queue, draw_region);
-	}
+	MyEditBox() : Base(Style(), L"Hello World!") {}
 };
 
 

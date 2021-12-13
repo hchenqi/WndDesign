@@ -99,12 +99,6 @@
     <ClInclude Include="geometry\region.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="layout\OverlapLayout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="frame\OverlapFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="frame\DesktopFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -117,9 +111,6 @@
     <ClInclude Include="control\ImageBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="control\CheckBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="figure\figure_queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -130,9 +121,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="layout\BarLayout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="frame\MultiViewFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="layout\SplitLayout.h">
@@ -160,12 +148,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="figure\layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="figure\tiled_layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="frame\TiledLayerFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="system\win32_api.h">
@@ -253,6 +235,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="widget\TitleBarFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wrapper\Background.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wrapper\wrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

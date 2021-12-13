@@ -12,9 +12,9 @@ public:
 	ImageBox(std::wstring image_file) : image(image_file) {}
 private:
 	Image image;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return image.GetSize(); }
-private:
+protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		draw_region = draw_region.Intersect(Rect(point_zero, image.GetSize())); if (draw_region.IsEmpty()) { return; }
 		figure_queue.add(draw_region.point, new ImageFigure(image, draw_region));
@@ -28,7 +28,7 @@ public:
 private:
 	Image image;
 	Vector offset;
-private:
+protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(draw_region.point, new ImageRepeatFigure(image, Rect(draw_region.point + offset, draw_region.size)));
 	}

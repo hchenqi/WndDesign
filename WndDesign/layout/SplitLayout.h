@@ -40,7 +40,7 @@ private:
 		height_second = size.height > height_first ? size.height - height_first : 0;
 		UpdateChildSizeRef(second, GetRegionSecond().size);
 	}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size = size_ref;
 		height_first = UpdateChildSizeRef(first, Size(size.width, length_min)).height;
@@ -53,7 +53,7 @@ private:
 			UpdateHeightSecond(); Redraw(GetRegionSecond());
 		}
 	}
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
 	}
@@ -63,7 +63,7 @@ private:
 		if ((uint)point.y < height_second) { return second; }
 		return nullptr;
 	}
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
 		Rect child_region = GetChildRegion(child);
 		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
@@ -102,7 +102,7 @@ private:
 		width_first = size.width > width_second ? size.width - width_second : 0;
 		UpdateChildSizeRef(first, GetRegionFirst().size);
 	}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size = size_ref;
 		width_second = UpdateChildSizeRef(second, Size(length_min, size.height)).width;
@@ -115,7 +115,7 @@ private:
 			UpdateWidthFirst(); Redraw(GetRegionFirst());
 		}
 	}
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
 	}
@@ -125,7 +125,7 @@ private:
 		if ((uint)point.x < width_second) { return second; }
 		return nullptr;
 	}
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
 		Rect child_region = GetChildRegion(child);
 		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));

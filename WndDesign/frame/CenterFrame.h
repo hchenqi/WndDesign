@@ -20,7 +20,9 @@ private:
 	Vector GetChildOffset() const {
 		return Vector(((int)size.width - (int)child_size.width) / 2, ((int)size.height - (int)child_size.height) / 2);
 	}
-private:
+protected:
+	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
 		return Redraw(redraw_region + GetChildOffset());
 	}
@@ -36,7 +38,7 @@ public:
 	CenterFrame(child_ptr<Assigned, Auto> child) : _CenterFrame_Base(std::move(child)) {}
 	CenterFrame(child_ptr<Auto, Assigned> child) : _CenterFrame_Base(std::move(child)) {}
 	CenterFrame(child_ptr<Auto, Auto> child) : _CenterFrame_Base(std::move(child)) {}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) { size = size_ref; child_size = UpdateChildSizeRef(child, size); } return size;
 	}
@@ -51,7 +53,7 @@ public:
 		child_size = UpdateChildSizeRef(this->child, Size());
 		size.height = child_size.height;
 	}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		this->child_size = child_size;
@@ -67,7 +69,7 @@ public:
 		child_size = UpdateChildSizeRef(this->child, Size());
 		size.width = child_size.width;
 	}
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		this->child_size = child_size;

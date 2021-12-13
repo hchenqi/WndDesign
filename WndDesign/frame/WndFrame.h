@@ -12,13 +12,13 @@ protected:
 	virtual ~WndFrame() override {}
 protected:
 	child_ptr<> child;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return UpdateChildSizeRef(child, size_ref); }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { return SizeUpdated(child_size); }
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return vector_zero; }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { return child; }
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override { return Redraw(redraw_region); }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override { return DrawChild(child, point_zero, figure_queue, draw_region); }
 };
@@ -34,7 +34,7 @@ private:
 	Size size_ref;
 public:
 	void SetChild(child_ptr child) { this->child = std::move(child); SizeUpdated(UpdateChildSizeRef(this->child, size_ref)); }
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { this->size_ref = size_ref; return UpdateChildSizeRef(child, size_ref); }
 };
 

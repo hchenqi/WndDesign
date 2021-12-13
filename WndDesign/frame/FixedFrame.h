@@ -28,7 +28,7 @@ private:
 	static constexpr uint child_auto_assigned = 0;
 	static constexpr uint child_assigned_auto = 1;
 	static constexpr uint child_assigned_assigned = 2;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		switch (GetChildData<uint>(child)) {
@@ -45,7 +45,7 @@ public:
 	FixedFrame(uint width, child_ptr<Assigned, Assigned> child) : WndFrame(std::move(child)), size(width, 0) {}
 private:
 	Size size;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) { size.height = size_ref.height; UpdateChildSizeRef(this->child, size); } return size;
 	}
@@ -59,7 +59,7 @@ public:
 	FixedFrame(uint height, child_ptr<Assigned, Assigned> child) : WndFrame(std::move(child)), size(0, height) {}
 private:
 	Size size;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) { size.width = size_ref.width; UpdateChildSizeRef(this->child, size); } return size;
 	}

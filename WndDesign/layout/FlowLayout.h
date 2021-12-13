@@ -46,10 +46,10 @@ public:
 	void AppendChild(child_ptr child);
 private:
 	bool UpdateLayout(child_index child_index);
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) override;
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;
 protected:

@@ -18,7 +18,7 @@ private:
 	Size size;
 	Region invalid_region;
 	Layer layer;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		Size child_size = UpdateChildSizeRef(child, size_ref);
 		if (size != child_size) {
@@ -36,7 +36,7 @@ private:
 			SizeUpdated(child_size);
 		}
 	}
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
 		redraw_region = redraw_region.Intersect(Rect(point_zero, size));
 		invalid_region.Union(redraw_region);

@@ -16,7 +16,7 @@ public:
 	Placeholder(Size size) : size(size) {}
 private:
 	Size size;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return size; }
 public:
 	void SetSize(Size size) { if (this->size != size) { this->size = size; SizeUpdated(size); } }
@@ -29,7 +29,7 @@ public:
 	Placeholder(uint width) : size(width, 0) {}
 private:
 	Size size;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; return size; }
 public:
 	void SetWidth(uint width) { if (size.width != width) { size.width = width; SizeUpdated(size); } }
@@ -42,7 +42,7 @@ public:
 	Placeholder(uint height) : size(0, height) {}
 private:
 	Size size;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; return size; }
 public:
 	void SetHeight(uint height) { if (size.height != height) { size.height = height; SizeUpdated(size); } }

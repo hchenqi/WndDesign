@@ -13,6 +13,7 @@ BEGIN_NAMESPACE(WndDesign)
 class WndObject : Uncopyable {
 private:
 	friend class Desktop;
+
 protected:
 	WndObject() {}
 public:
@@ -55,10 +56,10 @@ protected:
 protected:
 	Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
 	void SizeUpdated(Size size) { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
-private:
+protected:
 	virtual Vector GetChildOffset(WndObject& child) { return vector_zero; }
 	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
 
@@ -74,7 +75,7 @@ protected:
 		Vector offset = child_region.point - point_zero; draw_region -= offset;
 		uint group = figure_queue.BeginGroup(offset, draw_region); child.OnDraw(figure_queue, draw_region); figure_queue.EndGroup(group);
 	}
-private:
+protected:
 	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) {}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) {}
 
@@ -91,7 +92,7 @@ protected:
 protected:
 	void PassMouseMsg(MouseMsg msg) { if (HasParent()) { msg.point += GetParent().GetChildOffset(*this); GetParent().OnMouseMsg(msg); } }
 	void PassKeyMsg(KeyMsg msg) { if (HasParent()) { GetParent().OnKeyMsg(msg); } }
-private:
+protected:
 	virtual void OnMouseMsg(MouseMsg msg) { return PassMouseMsg(msg); }
 	virtual void OnKeyMsg(KeyMsg msg) { return PassKeyMsg(msg); }
 	virtual void OnNotifyMsg(NotifyMsg msg) { if (msg == NotifyMsg::MouseHover) { SetCursor(Cursor::Default); } }

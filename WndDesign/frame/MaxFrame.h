@@ -14,7 +14,7 @@ public:
 private:
 	uint width_max;
 	Size size;
-private:
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		child_size.width = min(width_max, child_size.width);
