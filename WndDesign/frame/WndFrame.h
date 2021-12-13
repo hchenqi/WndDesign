@@ -39,4 +39,8 @@ protected:
 };
 
 
+template<class T>
+WndFrameMutable(T)->WndFrameMutable<extract_width_type<T>, extract_height_type<T>>;
+
+
 END_NAMESPACE(WndDesign)

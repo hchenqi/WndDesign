@@ -77,4 +77,11 @@ protected:
 };
 
 
+template<class T>
+BorderFrame(ushort, ushort, Color, T)->BorderFrame<extract_width_type<T>, extract_height_type<T>>;
+
+template<class T>
+BorderFrame(ushort, Color, T)->BorderFrame<extract_width_type<T>, extract_height_type<T>>;
+
+
 END_NAMESPACE(WndDesign)

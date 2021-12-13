@@ -37,8 +37,8 @@ int main() {
 	global.AddWnd(
 		new DesktopFrame{
 			MainFrameStyle(),
-			new ScrollFrame<Vertical>{
-				new PaddingFrame<Assigned, Auto>{
+			new ScrollFrame{
+				new PaddingFrame{
 					Margin(100),
 					new ClipFrame<Assigned, Auto>{
 						new MyEditBox()

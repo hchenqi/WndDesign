@@ -60,9 +60,9 @@ private:
 	private:
 		virtual void OnClick() override {
 			GetFlowLayout().AppendChild(
-				new BorderFrame<Auto, Assigned>{
+				new BorderFrame{
 					3, 12, GetRandomColor(),
-					new PaddingFrame<Auto, Assigned>{
+					new PaddingFrame{
 						Margin(5, 0),
 						new ClipFrame<Auto, Assigned>{
 							new MaxFrame{

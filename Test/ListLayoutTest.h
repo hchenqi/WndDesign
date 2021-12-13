@@ -46,7 +46,7 @@ int main() {
 	global.AddWnd(
 		new DesktopFrame{
 			MainFrameStyle(),
-			new ScrollFrame<Vertical>{
+			new ScrollFrame{
 				new ListLayout<Vertical>{
 					100,
 					new ClipFrame<Assigned, Auto>{
@@ -56,7 +56,7 @@ int main() {
 						new EditBox(EditBoxStyle1(), L"EditBox")
 					},
 					new ClipFrame<Assigned, Auto>{
-						new PaddingFrame<Relative, Auto>{
+						new PaddingFrame{
 							Margin(20, 0),
 							new EditBox(EditBoxStyle2(), L"EditBoxWithPadding")
 						}

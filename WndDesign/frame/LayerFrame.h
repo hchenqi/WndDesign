@@ -57,4 +57,8 @@ protected:
 };
 
 
+template<class T>
+LayerFrame(T)->LayerFrame<extract_width_type<T>, extract_height_type<T>>;
+
+
 END_NAMESPACE(WndDesign)

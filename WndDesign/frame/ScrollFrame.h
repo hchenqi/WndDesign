@@ -199,4 +199,27 @@ protected:
 };
 
 
+template<class WidthType, class HeightType>
+struct deduce_scroll_frame_direction;
+
+template<>
+struct deduce_scroll_frame_direction<Assigned, Auto> {
+	using type = Vertical;
+};
+
+template<>
+struct deduce_scroll_frame_direction<Auto, Assigned> {
+	using type = Horizontal;
+};
+
+template<>
+struct deduce_scroll_frame_direction<Auto, Auto> {
+	using type = Bidirectional;
+};
+
+
+template<class T>
+ScrollFrame(T)->ScrollFrame<typename deduce_scroll_frame_direction<extract_width_type<T>, extract_height_type<T>>::type>;
+
+
 END_NAMESPACE(WndDesign)

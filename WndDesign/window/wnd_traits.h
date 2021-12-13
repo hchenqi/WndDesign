@@ -21,6 +21,9 @@ struct layout_type {
 	static constexpr bool is_layout_type_v = is_any_of_v<T, Assigned, Relative, Auto>;
 
 	static_assert(is_layout_type_v<WidthType> && is_layout_type_v<HeightType>, "invalid layout type");
+
+	using width_type = WidthType;
+	using height_type = HeightType;
 };
 
 template<class WidthType, class HeightType>
@@ -54,6 +57,31 @@ public:
 	template<class ChildType, class = std::enable_if_t<std::is_same_v<layout_type<WidthType, HeightType>, typename ChildType::layout_type>>>
 	child_ptr(alloc_ptr<ChildType> ptr) : child_ptr<>(ptr) {}
 };
+
+
+template<class T>
+struct extract_layout_type;
+
+template<class WidthType, class HeightType>
+struct extract_layout_type<child_ptr<WidthType, HeightType>> {
+	using width_type = WidthType;
+	using height_type = HeightType;
+};
+
+template<class ChildType>
+struct extract_layout_type<alloc_ptr<ChildType>> {
+	using width_type = typename ChildType::layout_type::width_type;
+	using height_type = typename ChildType::layout_type::height_type;
+};
+
+template<class ChildType>
+struct extract_layout_type<std::unique_ptr<ChildType>> : public extract_layout_type<alloc_ptr<ChildType>>{};
+
+template<class T>
+using extract_width_type = typename extract_layout_type<T>::width_type;
+
+template<class T>
+using extract_height_type = typename extract_layout_type<T>::height_type;
 
 
 struct Vertical {};
