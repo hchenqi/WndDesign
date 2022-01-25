@@ -65,13 +65,10 @@ public:
 
 	// ime message
 private:
-	std::unordered_map<ref_ptr<WndObject>, ref_ptr<ImeApi>> ime_wnd_map;
+	std::unordered_map<ref_ptr<WndObject>, ref_ptr<ImeApi>> wnd_ime_map;
 public:
-	void SetImeWnd(WndObject& wnd, ImeApi& ime) { ime_wnd_map.emplace(&wnd, &ime); ImeEnable(wnd); }
-	void RemoveImeWnd(WndObject& wnd) { ime_wnd_map.erase(&wnd); }
-public:
-	void ImeEnable(WndObject& wnd) { wnd.ime_aware = true; }
-	void ImeDisable(WndObject& wnd) { wnd.ime_aware = false; }
+	void ImeEnable(WndObject& wnd, ImeApi& ime) { wnd_ime_map.emplace(&wnd, &ime); }
+	void ImeDisable(WndObject& wnd) { wnd_ime_map.erase(&wnd); }
 	void ImeSetPosition(WndObject& wnd, Point point);
 public:
 	void OnImeCompositionBegin() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionBegin(); } }
