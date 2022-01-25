@@ -21,7 +21,8 @@ public:
 	~TextBlock();
 public:
 	void SetText(const TextBlockStyle& style, const std::wstring& text);
-	Size UpdateSizeRef(Size size_ref);
+	void UpdateSizeRef(Size size_ref);
+	Size GetSize() const;
 public:
 	TextBlockHitTestInfo HitTestPoint(Point point) const;
 	TextBlockHitTestInfo HitTestTextPosition(uint text_position) const;

@@ -13,15 +13,17 @@ public:
 public:
 	TextBox(Style style, std::wstring text) : style(style), text(text), text_block(style, text) {}
 	~TextBox() {}
+
+	// style
 private:
 	Style style;
-	uint width_ref = 0;
+
+	// text
 protected:
 	std::wstring text;
 	TextBlock text_block;
-protected:
-	Size UpdateSize() { return text_block.UpdateSizeRef(Size(width_ref, length_max)); }
-	void TextUpdated() { text_block.SetText(style, text); SizeUpdated(UpdateSize()); Redraw(region_infinite); }
+private:
+	void TextUpdated() { text_block.SetText(style, text); redraw_region = region_infinite; SizeUpdated(); Redraw(); }
 public:
 	void SetText(std::wstring str) { text.assign(std::move(str)); TextUpdated(); }
 	void InsertText(uint pos, wchar ch) { text.insert(pos, 1, ch); TextUpdated(); }
@@ -29,12 +31,21 @@ public:
 	void ReplaceText(uint begin, uint length, wchar ch) { text.replace(begin, length, 1, ch); TextUpdated(); }
 	void ReplaceText(uint begin, uint length, std::wstring str) { text.replace(begin, length, str); TextUpdated(); }
 	void DeleteText(uint begin, uint length) { text.erase(begin, length); TextUpdated(); }
+
+	// layout
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { width_ref = size_ref.width; return UpdateSize(); }
+	virtual void OnSizeRefUpdate(Size size_ref) override { text_block.UpdateSizeRef(Size(size_ref.width, length_max)); }
+	virtual Size GetSize() override { return text_block.GetSize(); }
+
+	// paint
+protected:
+	Rect redraw_region = region_empty;
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(point_zero, new TextBlockFigure(text_block, style.font._color));
+		redraw_region = region_empty;
 	}
+	virtual Rect GetRedrawRegion() { return redraw_region; }
 };
 
 

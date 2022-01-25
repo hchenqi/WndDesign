@@ -16,10 +16,10 @@ public:
 	Placeholder(Size size) : size(size) {}
 private:
 	Size size;
-protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { return size; }
 public:
-	void SetSize(Size size) { if (this->size != size) { this->size = size; SizeUpdated(size); } }
+	void SetSize(Size size) { if (this->size != size) { this->size = size; SizeUpdated(); } }
+protected:
+	virtual Size GetSize() override { return size; }
 };
 
 
@@ -29,10 +29,11 @@ public:
 	Placeholder(uint width) : size(width, 0) {}
 private:
 	Size size;
-protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; return size; }
 public:
-	void SetWidth(uint width) { if (size.width != width) { size.width = width; SizeUpdated(size); } }
+	void SetWidth(uint width) { if (size.width != width) { size.width = width; SizeUpdated(); } }
+protected:
+	virtual void OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; }
+	virtual Size GetSize() override { return size; }
 };
 
 
@@ -42,15 +43,22 @@ public:
 	Placeholder(uint height) : size(0, height) {}
 private:
 	Size size;
-protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; return size; }
 public:
-	void SetHeight(uint height) { if (size.height != height) { size.height = height; SizeUpdated(size); } }
+	void SetHeight(uint height) { if (size.height != height) { size.height = height; SizeUpdated(); } }
+protected:
+	virtual void OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; }
+	virtual Size GetSize() override { return size; }
 };
 
 
 template<>
-class Placeholder<Assigned, Assigned> : public WndType<Assigned, Assigned> {};
+class Placeholder<Assigned, Assigned> : public WndType<Assigned, Assigned> {
+private:
+	Size size;
+protected:
+	virtual void OnSizeRefUpdate(Size size_ref) override { size = size_ref; }
+	virtual Size GetSize() override { return size; }
+};
 
 
 END_NAMESPACE(WndDesign)

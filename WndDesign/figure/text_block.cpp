@@ -73,9 +73,12 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	}
 }
 
-Size TextBlock::UpdateSizeRef(Size size_ref) {
+void TextBlock::UpdateSizeRef(Size size_ref) {
 	layout->SetMaxWidth(static_cast<FLOAT>(size_ref.width));
 	layout->SetMaxHeight(static_cast<FLOAT>(size_ref.height));
+}
+
+Size TextBlock::GetSize() const {
 	DWRITE_TEXT_METRICS metrics; layout->GetMetrics(&metrics);
 	return Size(
 		static_cast<uint>(ceil(metrics.widthIncludingTrailingWhitespace)),

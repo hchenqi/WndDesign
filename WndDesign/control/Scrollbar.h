@@ -3,6 +3,7 @@
 #include "../window/wnd_traits.h"
 #include "../geometry/interval.h"
 #include "../figure/shape.h"
+#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -26,21 +27,16 @@ private:
 	int slider_offset = 0;
 private:
 	bool IsShown() const { return slider_height < height; }
-	Size GetSize() const { return Size(IsShown() ? width : 0, height); }
 private:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { height = size_ref.height; return GetSize(); }
+	virtual void OnSizeRefUpdate(Size size_ref) override { height = size_ref.height; }
+	virtual Size GetSize() override { return Size(IsShown() ? width : 0, height); }
 public:
 	void UpdateScrollOffset(uint content_height, uint frame_height, int frame_offset) {
 		bool is_shown = IsShown(); this->content_height = content_height;
 		slider_height = (uint)roundf((float)height * frame_height / content_height);
 		slider_offset = (int)roundf((float)height * frame_offset / content_height);
-		if (is_shown ^ IsShown()) { SizeUpdated(GetSize()); }
-		Redraw(region_infinite);
-	}
-private:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (Interval(slider_offset, slider_height).Contains(point.y)) { return &slider; }
-		return this;
+		if (is_shown ^ IsShown()) { SizeUpdated(); }
+		Redraw();
 	}
 private:
 	virtual void OnFrameOffsetChange(int scroll_offset) {}
@@ -54,8 +50,7 @@ private:
 private:
 	Color slider_color = slider_color_normal;
 private:
-	void SetSliderColor(Color color) { slider_color = color; RedrawSlider(); }
-	void RedrawSlider() { Redraw(Rect(0, slider_offset, width, slider_height)); }
+	void SetSliderColor(Color color) { slider_color = color; Redraw(); }
 private:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		if (IsShown()) {
@@ -70,6 +65,13 @@ private:
 private:
 	void OnMousePress(int y) { mouse_down_offset = y - slider_offset; }
 	void OnMouseDrag(int y) { OnFrameOffsetChange((y - mouse_down_offset) * (int)content_height / (int)height); }
+private:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		if (Interval(slider_offset, slider_height).Contains(msg.point.y)) { 
+			SendChildMouseMsg(slider, msg);
+		}
+	}
+
 
 private:
 	struct Slider : public WndObject {
@@ -93,13 +95,12 @@ private:
 			case MouseMsg::LeftDown: SetState(State::Press); GetScrollbar().OnMousePress(msg.point.y); SetCapture(); break;
 			case MouseMsg::Move: if (state == State::Press) { GetScrollbar().OnMouseDrag(msg.point.y); }break;
 			case MouseMsg::LeftUp: SetState(State::Hover); ReleaseCapture(); break;
-			case MouseMsg::WheelVertical: return PassMouseMsg(msg);
 			}
 		}
 		virtual void OnNotifyMsg(NotifyMsg msg) override {
 			switch (msg) {
 			case NotifyMsg::MouseEnter: SetState(State::Hover); break;
-			case NotifyMsg::MouseHover: SetCursor(Cursor::Default); break;
+			case NotifyMsg::MouseHover: SetCursor(CursorStyle::Default); break;
 			case NotifyMsg::MouseLeave: SetState(State::Normal); break;
 			}
 		}

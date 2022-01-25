@@ -79,7 +79,7 @@ protected:
 protected:
 	virtual void OnChildRedraw(WndObject& child) {}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) {}
-	virtual Rect GetRedrawRegion() { return region_empty; }
+	virtual Rect GetRedrawRegion() { return region_infinite; }
 
 	// message
 private:

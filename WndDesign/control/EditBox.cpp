@@ -1,16 +1,16 @@
 #include "EditBox.h"
 #include "../figure/shape.h"
 #include "../system/clipboard.h"
+#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-Size EditBox::OnSizeRefUpdate(Size size_ref) {
-	Size size = TextBox::OnSizeRefUpdate(size_ref);
+void EditBox::OnSizeRefUpdate(Size size_ref) {
+	TextBox::OnSizeRefUpdate(size_ref);
 	UpdateCaretRegion(text_block.HitTestTextPosition(caret_text_position));
 	UpdateSelectionRegion();
-	return size;
 }
 
 void EditBox::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
@@ -251,7 +251,6 @@ void EditBox::OnMouseMsg(MouseMsg msg) {
 	switch (msg.type) {
 	case MouseMsg::LeftDown: SetFocus(); SetCaret(msg.point); SetCapture(); break;
 	case MouseMsg::LeftUp: ReleaseCapture(); break;
-	case MouseMsg::WheelVertical: return PassMouseMsg(msg);
 	}
 	switch (mouse_tracker.Track(msg)) {
 	case MouseTrackMsg::LeftDoubleClick: SelectWord(); break;
@@ -303,7 +302,7 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 
 void EditBox::OnNotifyMsg(NotifyMsg msg) {
 	switch (msg) {
-	case NotifyMsg::MouseHover: SetCursor(Cursor::Text); break;
+	case NotifyMsg::MouseHover: SetCursor(CursorStyle::Text); break;
 	case NotifyMsg::LoseFocus: ClearSelection(); HideCaret(); break;
 	}
 }

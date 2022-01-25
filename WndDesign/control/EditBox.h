@@ -39,7 +39,7 @@ private:
 private:
 	bool IsEditDisabled() const { return style.edit._disabled; }
 
-	// text block
+	// text
 public:
 	using HitTestInfo = TextBlockHitTestInfo;
 private:
@@ -55,9 +55,11 @@ public:
 	void ReplaceText(uint begin, uint length, std::wstring str) { TextBox::ReplaceText(begin, length, str); TextUpdated(); }
 	void DeleteText(uint begin, uint length) { TextBox::DeleteText(begin, length); TextUpdated(); }
 
-	// layout and paint
+	// layout
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override;
+	virtual void OnSizeRefUpdate(Size size_ref) override;
+
+	// paint
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
 
@@ -72,7 +74,7 @@ private:
 	ushort caret_blink_time = 0;
 private:
 	bool IsCaretVisible() const { return caret_state == CaretState::Show || caret_state == CaretState::BlinkShow; }
-	void RedrawCaretRegion() { Redraw(caret_region); }
+	void RedrawCaretRegion() { redraw_region = caret_region; Redraw(); }
 private:
 	void HideCaret();
 	void StartBlinkingCaret();
@@ -101,7 +103,7 @@ private:
 	Rect selection_region_union;
 private:
 	void UpdateSelectionRegion();
-	void RedrawSelectionRegion() { Redraw(selection_region_union); }
+	void RedrawSelectionRegion() { redraw_region = selection_region_union; Redraw(); }
 private:
 	bool HasSelection() const { return selection_end > selection_begin; }
 	void DoSelection(Point mouse_move_position);
