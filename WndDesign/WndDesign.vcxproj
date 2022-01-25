@@ -173,18 +173,17 @@
     <ClInclude Include="figure\layer.h" />
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\text_block.h" />
-    <ClInclude Include="frame\BorderFrame.h" />
     <ClInclude Include="frame\CenterFrame.h" />
     <ClInclude Include="frame\ClipFrame.h" />
     <ClInclude Include="frame\DesktopFrame.h" />
     <ClInclude Include="frame\FixedFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
     <ClInclude Include="frame\MaxFrame.h" />
-    <ClInclude Include="frame\PaddingFrame.h" />
     <ClInclude Include="frame\ScrollFrame.h" />
     <ClInclude Include="frame\WndFrame.h" />
     <ClInclude Include="geometry\clamp.h" />
     <ClInclude Include="geometry\geometry.h" />
+    <ClInclude Include="geometry\helper.h" />
     <ClInclude Include="geometry\interval.h" />
     <ClInclude Include="geometry\margin.h" />
     <ClInclude Include="geometry\point.h" />
@@ -230,6 +229,9 @@
     <ClInclude Include="window\wnd_traits.h" />
     <ClInclude Include="window\WndObject.h" />
     <ClInclude Include="wrapper\Background.h" />
+    <ClInclude Include="wrapper\Border.h" />
+    <ClInclude Include="wrapper\Cursor.h" />
+    <ClInclude Include="wrapper\Padding.h" />
     <ClInclude Include="wrapper\wrapper.h" />
   </ItemGroup>
   <ItemGroup>

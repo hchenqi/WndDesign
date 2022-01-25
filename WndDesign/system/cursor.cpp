@@ -6,7 +6,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void SetCursor(Cursor cursor) {
+void SetCursor(CursorStyle cursor) {
 	::SetCursor(LoadCursorW(NULL, MAKEINTRESOURCE(cursor)));
 }
 

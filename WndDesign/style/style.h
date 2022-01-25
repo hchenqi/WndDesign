@@ -37,16 +37,4 @@ public:
 };
 
 
-struct BorderStyle {
-public:
-	ushort _width = 0;
-	ushort _radius = 0;
-	Color _color = color_transparent;
-public:
-	constexpr BorderStyle& width(ushort width) { _width = width; return *this; }
-	constexpr BorderStyle& radius(ushort radius) { _radius = radius; return *this; }
-	constexpr BorderStyle& color(Color color) { _color = color; return *this; }
-};
-
-
 END_NAMESPACE(WndDesign)

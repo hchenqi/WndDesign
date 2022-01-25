@@ -6,7 +6,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-enum class Cursor : uint {
+enum class CursorStyle : uint {
 	Hide = 0,
 	Arrow = 32512,			// IDC_ARROW
 	Hand = 32649,			// IDC_HAND
@@ -25,7 +25,7 @@ enum class Cursor : uint {
 };
 
 
-void SetCursor(Cursor cursor = Cursor::Default);
+void SetCursor(CursorStyle cursor = CursorStyle::Default);
 
 Point GetCursorPosition();
 
