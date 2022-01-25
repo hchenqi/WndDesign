@@ -17,11 +17,12 @@ protected:
 	virtual void OnChildSizeUpdate(WndObject& child) override { SizeUpdated(); }
 	virtual Size GetSize() override { return GetChildSize(child); }
 protected:
+	virtual Vector GetChildOffset(WndObject& child) override { return vector_zero; }
+	virtual ref_ptr<WndObject> HitTest(Point& point) override { return child; }
+protected:
 	virtual void OnChildRedraw(WndObject& child) override { Redraw(); }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override { DrawChild(child, point_zero, figure_queue, draw_region); }
 	virtual Rect GetRedrawRegion() override { return GetChildRedrawRegion(child); }
-protected:
-	virtual void OnMouseMsg(MouseMsg msg) override { SendChildMouseMsg(child, msg); }
 };
 
 

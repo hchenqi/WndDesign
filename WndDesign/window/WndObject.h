@@ -60,6 +60,9 @@ protected:
 	virtual void OnSizeRefUpdate(Size size_ref) {}
 	virtual void OnChildSizeUpdate(WndObject& child) {}
 	virtual Size GetSize() { return size_empty; }
+protected:
+	virtual Vector GetChildOffset(WndObject& child) { return vector_zero; }
+	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
 
 	// paint
 protected:
@@ -90,8 +93,6 @@ protected:
 	void SetCapture();
 	void ReleaseCapture();
 	void SetFocus();
-protected:
-	void SendChildMouseMsg(WndObject& child, MouseMsg msg) { VerifyChild(child); child.OnMouseMsg(msg); }
 protected:
 	virtual void OnMouseMsg(MouseMsg msg) {}
 	virtual void OnKeyMsg(KeyMsg msg) {}
