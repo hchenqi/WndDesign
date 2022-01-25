@@ -49,9 +49,9 @@ protected:
 		figure_queue.Offset(GetInnerOffset(), [&]() { Wnd::OnDraw(figure_queue, draw_region - GetInnerOffset()); });
 		if (border._width > 0 && border._color.IsVisible()) {
 			if (border._radius > 0) {
-				figure_queue.add(point_zero, new RoundedRectangle(size, border._radius, border._width, border._color));
+				figure_queue.add(point_zero, new RoundedRectangle(size, border._radius, (float)border._width, border._color));
 			} else {
-				figure_queue.add(point_zero, new Rectangle(size, border._width, border._color));
+				figure_queue.add(point_zero, new Rectangle(size, (float)border._width, border._color));
 			}
 		}
 	}

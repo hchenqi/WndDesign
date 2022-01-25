@@ -1,6 +1,7 @@
 #pragma once
 
-#include "BorderFrame.h"
+#include "WndFrame.h"
+#include "../wrapper/Border.h"
 #include "../style/style.h"
 #include "../figure/desktop_layer.h"
 #include "../geometry/region.h"
@@ -9,19 +10,19 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class DesktopFrame : protected BorderFrame<Assigned, Assigned> {
+class DesktopFrame : private Decorate<WndFrame, Border> {
 private:
 	friend class Desktop;
 	friend struct DesktopFrameApi;
 
 public:
-	using child_ptr = BorderFrame::child_ptr;
+	using child_ptr = child_ptr<Assigned, Assigned>;
 
 public:
 	struct Style {
 		LengthStyle width, height;
 		PositionStyle position;
-		BorderStyle border;
+		Border::Style border;
 		std::wstring title;
 	};
 
@@ -44,6 +45,8 @@ private:
 	Rect GetRegion() { return Rect(point, size); }
 	void SetSize(Size size);
 	void SetPoint(Point point) { this->point = point; }
+private:
+	virtual ref_ptr<WndObject> HitTest(Point& point) override;
 
 	// hwnd
 protected:
@@ -69,7 +72,7 @@ private:
 	void RecreateLayer();
 private:
 	void Redraw(Rect redraw_region);
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override;
+	virtual void OnChildRedraw(WndObject& child) override;
 	void Draw();
 
 	// message
