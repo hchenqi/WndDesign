@@ -4,7 +4,6 @@
 #include "../geometry/geometry.h"
 #include "../figure/figure_queue.h"
 #include "../message/message.h"
-#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -54,18 +53,19 @@ protected:
 
 	// layout
 protected:
-	Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
-	void SizeUpdated(Size size) { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
+	void UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); child.OnSizeRefUpdate(size_ref); }
+	void SizeUpdated() { if (HasParent()) { GetParent().OnChildSizeUpdate(*this); } }
+	Size GetChildSize(WndObject& child) { VerifyChild(child); return child.GetSize(); }
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
-protected:
-	virtual Vector GetChildOffset(WndObject& child) { return vector_zero; }
-	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
+	virtual void OnSizeRefUpdate(Size size_ref) {}
+	virtual void OnChildSizeUpdate(WndObject& child) {}
+	virtual Size GetSize() { return size_empty; }
 
 	// paint
 protected:
-	void Redraw(Rect redraw_region) { if (HasParent()) { GetParent().OnChildRedraw(*this, redraw_region); } }
+	void Redraw() { if (HasParent()) { GetParent().OnChildRedraw(*this); } }
+	Rect GetChildRedrawRegion(WndObject& child) { VerifyChild(child); return child.GetRedrawRegion(); }
+protected:
 	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) {
 		VerifyChild(child); if (draw_region.IsEmpty()) { return; }
 		Vector offset = child_offset - point_zero; draw_region -= offset;
@@ -77,26 +77,25 @@ protected:
 		figure_queue.Group(offset, draw_region, [&]() { child.OnDraw(figure_queue, draw_region); });
 	}
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) {}
+	virtual void OnChildRedraw(WndObject& child) {}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) {}
+	virtual Rect GetRedrawRegion() { return region_empty; }
 
 	// message
 private:
-	bool is_mouse_tracked = false;
-	bool is_mouse_captured = false;
-	bool is_on_focus = false;
-	bool ime_aware = false;
+	ref_ptr<WndObject> child_track = nullptr;
+	ref_ptr<WndObject> child_capture = nullptr;
+	ref_ptr<WndObject> child_focus = nullptr;
 protected:
 	void SetCapture();
 	void ReleaseCapture();
 	void SetFocus();
 protected:
-	void PassMouseMsg(MouseMsg msg) { if (HasParent()) { msg.point += GetParent().GetChildOffset(*this); GetParent().OnMouseMsg(msg); } }
-	void PassKeyMsg(KeyMsg msg) { if (HasParent()) { GetParent().OnKeyMsg(msg); } }
+	void SendChildMouseMsg(WndObject& child, MouseMsg msg) { VerifyChild(child); child.OnMouseMsg(msg); }
 protected:
-	virtual void OnMouseMsg(MouseMsg msg) { return PassMouseMsg(msg); }
-	virtual void OnKeyMsg(KeyMsg msg) { return PassKeyMsg(msg); }
-	virtual void OnNotifyMsg(NotifyMsg msg) { if (msg == NotifyMsg::MouseHover) { SetCursor(Cursor::Default); } }
+	virtual void OnMouseMsg(MouseMsg msg) {}
+	virtual void OnKeyMsg(KeyMsg msg) {}
+	virtual void OnNotifyMsg(NotifyMsg msg) {}
 };
 
 
