@@ -16,7 +16,7 @@ public:
 protected:
 	struct Style {
 	public:
-		Color _color = color_transparent;
+		Color _color = Color::White;
 	public:
 		constexpr Style& color(Color color) { _color = color; return *this; }
 	}background;

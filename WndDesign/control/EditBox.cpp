@@ -1,7 +1,6 @@
 #include "EditBox.h"
 #include "../figure/shape.h"
 #include "../system/clipboard.h"
-#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -301,8 +300,8 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 }
 
 void EditBox::OnNotifyMsg(NotifyMsg msg) {
+	TextBox::OnNotifyMsg(msg);
 	switch (msg) {
-	case NotifyMsg::MouseHover: SetCursor(CursorStyle::Text); break;
 	case NotifyMsg::LoseFocus: ClearSelection(); HideCaret(); break;
 	}
 }

@@ -2,12 +2,13 @@
 
 #include "../window/wnd_traits.h"
 #include "../figure/text_block.h"
+#include "../wrapper/Cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class TextBox : public WndType<Relative, Auto> {
+class TextBox : public Decorate<WndType<Relative, Auto>, Cursor> {
 public:
 	using Style = TextBlockStyle;
 public:
@@ -17,13 +18,15 @@ public:
 	// style
 private:
 	Style style;
+	uint width_ref = 0;
 
 	// text
 protected:
 	std::wstring text;
 	TextBlock text_block;
 private:
-	void TextUpdated() { text_block.SetText(style, text); redraw_region = region_infinite; SizeUpdated(); Redraw(); }
+	void UpdateSize() { text_block.UpdateSizeRef(Size(width_ref, length_max)); }
+	void TextUpdated() { text_block.SetText(style, text); UpdateSize(); redraw_region = region_infinite; SizeUpdated(); Redraw(); }
 public:
 	void SetText(std::wstring str) { text.assign(std::move(str)); TextUpdated(); }
 	void InsertText(uint pos, wchar ch) { text.insert(pos, 1, ch); TextUpdated(); }
@@ -34,18 +37,18 @@ public:
 
 	// layout
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { text_block.UpdateSizeRef(Size(size_ref.width, length_max)); }
+	virtual void OnSizeRefUpdate(Size size_ref) override { width_ref = size_ref.width; UpdateSize(); }
 	virtual Size GetSize() override { return text_block.GetSize(); }
 
 	// paint
 protected:
 	Rect redraw_region = region_empty;
 protected:
+	virtual Rect GetRedrawRegion() { return redraw_region; }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(point_zero, new TextBlockFigure(text_block, style.font._color));
 		redraw_region = region_empty;
 	}
-	virtual Rect GetRedrawRegion() { return redraw_region; }
 };
 
 

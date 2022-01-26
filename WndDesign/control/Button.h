@@ -14,7 +14,7 @@ public:
 
 	// style
 protected:
-	Color background_normal = Color::DarkGray;
+	Color background_normal = (background._color = Color::DarkGray);
 	Color background_hover = Color::Gray;
 	Color background_press = Color::DimGray;
 
