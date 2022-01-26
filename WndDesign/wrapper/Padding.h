@@ -25,7 +25,11 @@ protected:
 	virtual Size GetSize() override { return ExtendSize(Wnd::GetSize(), padding); }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return Wnd::GetChildOffset(child) + GetInnerOffset(); }
-	virtual ref_ptr<WndObject> HitTest(Point& point) override { return Wnd::HitTest(point -= GetInnerOffset()); }
+	virtual ref_ptr<WndObject> HitTest(Point& point) override {
+		Point child_point = point - GetInnerOffset();
+		ref_ptr<WndObject> child = Wnd::HitTest(child_point);
+		return child == this ? this : (point = child_point, child);
+	}
 
 	// paint
 protected:
@@ -33,6 +37,10 @@ protected:
 		figure_queue.Offset(GetInnerOffset(), [&]() { Wnd::OnDraw(figure_queue, draw_region - GetInnerOffset()); });
 	}
 	virtual Rect GetRedrawRegion() override { return Wnd::GetRedrawRegion() + GetInnerOffset(); }
+
+	// message
+protected:
+	virtual void OnMouseMsg(MouseMsg msg) override { msg.point -= GetInnerOffset(); Wnd::OnMouseMsg(msg); }
 };
 
 

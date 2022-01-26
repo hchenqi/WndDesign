@@ -45,8 +45,6 @@ private:
 	Rect GetRegion() { return Rect(point, size); }
 	void SetSize(Size size);
 	void SetPoint(Point point) { this->point = point; }
-private:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override;
 
 	// hwnd
 protected:

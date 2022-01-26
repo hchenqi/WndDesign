@@ -39,8 +39,12 @@ protected:
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return Wnd::GetChildOffset(child) + GetInnerOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (PointInRoundedRectangle(point, GetInnerRegion(), border._radius)) { return Wnd::HitTest(point -= GetInnerOffset()); }
-		return nullptr;
+		if (PointInRoundedRectangle(point, GetInnerRegion(), border._radius)) {
+			Point child_point = point -  GetInnerOffset();
+			ref_ptr<WndObject> child = Wnd::HitTest(child_point);
+			return child == this ? this : (point = child_point, child);
+		}
+		return this;
 	}
 
 	// paint
@@ -56,6 +60,14 @@ protected:
 		}
 	}
 	virtual Rect GetRedrawRegion() override { return Wnd::GetRedrawRegion() + GetInnerOffset(); }
+
+	// message
+protected:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		if (PointInRoundedRectangle(msg.point, GetInnerRegion(), border._radius)) {
+			msg.point -= GetInnerOffset(); Wnd::OnMouseMsg(msg);
+		}
+	}
 };
 
 

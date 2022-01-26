@@ -45,11 +45,6 @@ void DesktopFrame::SetSize(Size size) {
 	}
 }
 
-ref_ptr<WndObject> DesktopFrame::HitTest(Point& point) {
-	ref_ptr<WndObject> child = Base::HitTest(point);
-	return child == nullptr ? this : child;
-}
-
 void DesktopFrame::Show() { Win32::ShowWnd(hwnd); }
 void DesktopFrame::Minimize() { Win32::MinimizeWnd(hwnd); }
 void DesktopFrame::Maximize() { Win32::MaximizeWnd(hwnd); }
