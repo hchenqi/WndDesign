@@ -18,7 +18,6 @@ public:
 public:
 	ScrollFrame(child_ptr child) : WndFrame(std::move(child)) {}
 protected:
-	Size size;
 	uint child_height = 0;
 	int frame_offset = 0;
 public:
@@ -27,7 +26,7 @@ public:
 	void UpdateFrameOffset(int offset) {
 		frame_offset = child_height <= size.height ? 0 : clamp(offset, Interval(0, child_height - size.height));
 		OnFrameOffsetUpdate(child_height, size.height, frame_offset);
-		Redraw(region_infinite);
+		redraw_region = region_infinite; Redraw();
 	}
 	void Scroll(int offset) {
 		if (offset == 0) { return; }
@@ -42,7 +41,7 @@ public:
 private:
 	virtual void OnFrameOffsetUpdate(uint content_height, uint frame_height, int frame_offset) {}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
+	virtual void OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			if (size.width != size_ref.width) {
 				child_height = UpdateChildSizeRef(child, Size(size_ref.width, length_max)).height;
@@ -50,7 +49,6 @@ protected:
 			size = size_ref;
 			UpdateFrameOffset(frame_offset);
 		}
-		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (child_height != child_size.height) {
@@ -62,7 +60,9 @@ protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override { Redraw(redraw_region + GetChildOffset()); }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
+		redraw_region = child_redraw_region + GetChildOffset(); Redraw();
+	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
 	}
@@ -80,7 +80,6 @@ public:
 public:
 	ScrollFrame(child_ptr child) : WndFrame(std::move(child)) {}
 private:
-	Size size;
 	uint child_width = 0;
 	int frame_offset = 0;
 private:
@@ -89,7 +88,7 @@ public:
 	void UpdateFrameOffset(int offset) {
 		frame_offset = child_width <= size.width ? 0 : clamp(offset, Interval(0, child_width - size.width));
 		OnFrameOffsetUpdate(child_width, size.width, frame_offset);
-		Redraw(region_infinite);
+		redraw_region = region_infinite; Redraw();
 	}
 	int Scroll(int offset) {
 		int assumed_frame_offset = frame_offset + offset;
@@ -105,7 +104,7 @@ public:
 private:
 	virtual void OnFrameOffsetUpdate(uint content_width, uint frame_width, int frame_offset) {}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
+	virtual void OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			if (size.height != size_ref.height) {
 				child_width = UpdateChildSizeRef(child, Size(length_max, size_ref.height)).width;
@@ -113,7 +112,6 @@ protected:
 			size = size_ref;
 			UpdateFrameOffset(frame_offset);
 		}
-		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (child_width != child_size.width) {
@@ -125,7 +123,9 @@ protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override { Redraw(redraw_region + GetChildOffset()); }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
+		redraw_region = child_redraw_region + GetChildOffset(); Redraw();
+	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
 	}
@@ -143,7 +143,6 @@ public:
 public:
 	ScrollFrame(child_ptr child) : WndFrame(std::move(child)) {}
 private:
-	Size size;
 	Size child_size;
 	Point frame_offset;
 private:
@@ -153,7 +152,7 @@ public:
 		frame_offset.x = child_size.width <= size.width ? 0 : clamp(offset.x, Interval(0, child_size.width - size.width));
 		frame_offset.y = child_size.height <= size.height ? 0 : clamp(offset.y, Interval(0, child_size.height - size.height));
 		OnFrameOffsetUpdate(child_size, size, frame_offset);
-		Redraw(region_infinite);
+		redraw_region = region_infinite; Redraw();
 	}
 	Vector Scroll(Vector offset) {
 		Point assumed_frame_offset = frame_offset + offset;
@@ -169,13 +168,12 @@ public:
 private:
 	virtual void OnFrameOffsetUpdate(Size content_size, Size frame_size, Point frame_offset) {}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
+	virtual void OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			size = size_ref;
 			child_size = UpdateChildSizeRef(child, Size(length_max, length_max));
 			UpdateFrameOffset(frame_offset);
 		}
-		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (this->child_size != child_size) {
@@ -187,7 +185,9 @@ protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override { Redraw(redraw_region + GetChildOffset()); }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
+		redraw_region = child_redraw_region + GetChildOffset(); Redraw();
+	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
 	}

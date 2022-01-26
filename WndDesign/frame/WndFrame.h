@@ -8,12 +8,12 @@ BEGIN_NAMESPACE(WndDesign)
 
 class WndFrame : public WndObject {
 protected:
-	WndFrame(child_ptr<> child) : child((RegisterChild(child), std::move(child))) {}
+	WndFrame(child_ptr<> child) : child(std::move(child)) { RegisterChild(this->child); }
 	virtual ~WndFrame() override {}
 protected:
 	child_ptr<> child;
-	Size size;
-	Rect redraw_region;
+	Size size = size_empty;
+	Rect redraw_region = region_infinite;
 protected:
 	virtual void OnSizeRefUpdate(Size size_ref) override { size = UpdateChildSizeRef(child, size_ref); }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { if (size != child_size) { size = child_size; SizeUpdated(); } }

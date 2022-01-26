@@ -15,32 +15,30 @@ public:
 public:
 	LayerFrame(child_ptr child) : WndFrame(std::move(child)) {}
 private:
-	Size size;
 	Region invalid_region;
 	Layer layer;
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
+	virtual void OnSizeRefUpdate(Size size_ref) override {
 		Size child_size = UpdateChildSizeRef(child, size_ref);
 		if (size != child_size) {
 			size = child_size;
 			layer.Destroy();
 			invalid_region.Set(Rect(point_zero, size));
 		}
-		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (size != child_size) {
 			size = child_size;
 			layer.Destroy();
 			invalid_region.Set(Rect(point_zero, size));
-			SizeUpdated(child_size);
+			SizeUpdated();
 		}
 	}
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
-		redraw_region = redraw_region.Intersect(Rect(point_zero, size));
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
+		redraw_region = child_redraw_region.Intersect(Rect(point_zero, size));
 		invalid_region.Union(redraw_region);
-		Redraw(redraw_region);
+		Redraw();
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
