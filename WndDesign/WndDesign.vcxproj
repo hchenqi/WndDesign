@@ -203,6 +203,7 @@
     <ClInclude Include="message\notify_msg.h" />
     <ClInclude Include="message\timer.h" />
     <ClInclude Include="style\border_helper.h" />
+    <ClInclude Include="style\cursor.h" />
     <ClInclude Include="style\style_helper.h" />
     <ClInclude Include="style\text_block_style.h" />
     <ClInclude Include="style\value_tag.h" />
@@ -230,7 +231,6 @@
     <ClInclude Include="window\WndObject.h" />
     <ClInclude Include="wrapper\Background.h" />
     <ClInclude Include="wrapper\Border.h" />
-    <ClInclude Include="wrapper\Cursor.h" />
     <ClInclude Include="wrapper\Padding.h" />
     <ClInclude Include="wrapper\wrapper.h" />
   </ItemGroup>

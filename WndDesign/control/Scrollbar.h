@@ -3,7 +3,6 @@
 #include "../window/wnd_traits.h"
 #include "../geometry/interval.h"
 #include "../figure/shape.h"
-#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -98,7 +97,6 @@ private:
 		virtual void OnNotifyMsg(NotifyMsg msg) override {
 			switch (msg) {
 			case NotifyMsg::MouseEnter: SetState(State::Hover); break;
-			case NotifyMsg::MouseHover: SetCursor(CursorStyle::Default); break;
 			case NotifyMsg::MouseLeave: SetState(State::Normal); break;
 			}
 		}

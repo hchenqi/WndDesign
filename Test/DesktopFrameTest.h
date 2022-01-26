@@ -2,18 +2,17 @@
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/control/Placeholder.h"
 #include "WndDesign/wrapper/Background.h"
-#include "WndDesign/wrapper/Cursor.h"
 #include "WndDesign/system/win32_aero_snap.h"
 
 
 using namespace WndDesign;
 
 
-class EmptyWindow : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground, Cursor> {
+class EmptyWindow : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground> {
 public:
 	EmptyWindow() {
+		cursor = Cursor::Hand;
 		background = Color::Gray;
-		cursor.set(CursorStyle::Hand);
 	}
 private:
 	virtual void OnMouseMsg(MouseMsg msg) override {

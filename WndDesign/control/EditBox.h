@@ -29,7 +29,7 @@ public:
 
 public:
 	EditBox(Style style, std::wstring text = L"") : TextBox(style, text), ImeApi(this), style(style) {
-		cursor.set(CursorStyle::Text);
+		cursor = Cursor::Text;
 		TextUpdated(); if (style.edit._disabled) { ImeDisable(); }
 	}
 	~EditBox() {}

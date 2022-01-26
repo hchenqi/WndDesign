@@ -246,7 +246,7 @@
     <ClInclude Include="geometry\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wrapper\Cursor.h">
+    <ClInclude Include="style\cursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

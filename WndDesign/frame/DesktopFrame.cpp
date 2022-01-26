@@ -8,6 +8,7 @@
 #include "../system/win32_aero_snap.h"
 #include "../system/d2d_api.h"
 #include "../system/directx_resource.h"
+#include "../system/cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -92,7 +93,7 @@ void DesktopFrame::OnMouseMsg(MouseMsg msg) {
 	if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
 		BorderPosition border_position = HitTestBorderPosition(size, border._width + border._radius, msg.point);
 		if (msg.type == MouseMsg::Move) {
-			SetCursor(GetBorderPositionCursorStyle(border_position));
+			SetCursor(GetBorderPositionCursor(border_position));
 		} else {
 			AeroSnapBorderResizingEffect(*this, msg.point, border_position);
 		}

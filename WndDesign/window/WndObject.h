@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../common/uncopyable.h"
+#include "../style/cursor.h"
 #include "../geometry/geometry.h"
 #include "../figure/figure_queue.h"
 #include "../message/message.h"
@@ -17,6 +18,10 @@ protected:
 	WndObject() {}
 public:
 	virtual ~WndObject();
+
+	// style
+protected:
+	Cursor cursor = Cursor::Default;
 
 	// parent
 private:

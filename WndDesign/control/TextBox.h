@@ -2,13 +2,12 @@
 
 #include "../window/wnd_traits.h"
 #include "../figure/text_block.h"
-#include "../wrapper/Cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class TextBox : public Decorate<WndType<Relative, Auto>, Cursor> {
+class TextBox : public WndType<Relative, Auto> {
 public:
 	using Style = TextBlockStyle;
 public:

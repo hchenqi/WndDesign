@@ -21,7 +21,7 @@ void WndObject::SetChildTrack(WndObject& child) {
 		child_track->LoseTrack();
 	}
 	child_track = &child;
-	if (child_track == this) { OnNotifyMsg(NotifyMsg::MouseHover); }
+	if (child_track == this) { SetCursor(cursor); OnNotifyMsg(NotifyMsg::MouseHover); }
 }
 
 void WndObject::LoseTrack() {
@@ -66,7 +66,7 @@ void WndObject::DispatchMouseMsg(MouseMsg msg) {
 	if (child_capture == this) { return OnMouseMsg(msg); }
 	if (child_capture != nullptr) { msg.point -= GetChildOffset(*child_capture); return child_capture->DispatchMouseMsg(msg); }
 	ref_ptr<WndObject> child = HitTest(msg.point);
-	if (child == nullptr) { LoseTrack(); return SetCursor(CursorStyle::Default); }
+	if (child == nullptr) { LoseTrack(); SetCursor(cursor); return; }
 	SetChildTrack(*child);
 	if (child == this) { return OnMouseMsg(msg); }
 	return child->DispatchMouseMsg(msg);
