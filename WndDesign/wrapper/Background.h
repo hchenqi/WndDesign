@@ -14,17 +14,13 @@ public:
 
 	// style
 protected:
-	struct Style {
-	public:
-		Color _color = Color::White;
-	public:
-		constexpr Style& color(Color color) { _color = color; return *this; }
-	}background;
+	using Style = Color;
+	Style background = Color::White;
 
 	// paint
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background._color));
+		figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background));
 		Wnd::OnDraw(figure_queue, draw_region);
 	}
 };

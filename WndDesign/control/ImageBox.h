@@ -16,6 +16,7 @@ protected:
 	virtual Size GetSize() override { return image.GetSize(); }
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
+		draw_region = draw_region.Intersect(Rect(point_zero, GetSize())); if (draw_region.IsEmpty()) { return; }
 		figure_queue.add(draw_region.point, new ImageFigure(image, draw_region));
 	}
 };

@@ -14,13 +14,13 @@ public:
 
 	// style
 protected:
-	Color background_normal = (background._color = Color::DarkGray);
+	Color background_normal = this->background = Color::DarkGray;
 	Color background_hover = Color::Gray;
 	Color background_press = Color::DimGray;
 
 	// paint
 private:
-	void SetBackgroundColor(Color color) { if (background._color != color) { background.color(color); this->Redraw(); } }
+	void SetBackgroundColor(Color color) { if (this->background != color) { this->background = color; this->Redraw(); } }
 
 	// message
 private:

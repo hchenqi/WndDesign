@@ -12,7 +12,7 @@ using namespace WndDesign;
 class EmptyWindow : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground, Cursor> {
 public:
 	EmptyWindow() {
-		background.color(Color::Gray);
+		background = Color::Gray;
 		cursor.set(CursorStyle::Hand);
 	}
 private:
@@ -20,7 +20,7 @@ private:
 		switch (msg.type) {
 		case MouseMsg::RightDown:
 			SetFocus();
-			background.color(background._color == Color::Gray ? Color::White : Color::Gray);
+			background = background == Color::Gray ? Color::White : Color::Gray;
 			Redraw();
 			break;
 		case MouseMsg::LeftDown: AeroSnapDraggingEffect(*this, msg.point); break;

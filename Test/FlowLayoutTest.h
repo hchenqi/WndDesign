@@ -6,9 +6,9 @@
 #include "WndDesign/control/EditBox.h"
 #include "WndDesign/frame/MaxFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
-#include "WndDesign/frame/BorderFrame.h"
-#include "WndDesign/frame/PaddingFrame.h"
 #include "WndDesign/wrapper/Background.h"
+#include "WndDesign/wrapper/Border.h"
+#include "WndDesign/wrapper/Padding.h"
 
 #include <cmath>
 #include <ctime>
@@ -34,24 +34,38 @@ class MyFlowLayout : public Decorate<FlowLayout, SolidColorBackground> {
 public:
 	MyFlowLayout() : Base(25, 10, 5) { AppendChild(new AddButton); }
 private:
-	class AddButton : public Button<Auto, Assigned> {
+	class Item : public Decorate<ClipFrame<Auto, Assigned>, Padding, Border> {
 	public:
-		AddButton() : Button(60) {}
-	private:
-		MyFlowLayout& GetFlowLayout() const { return static_cast<MyFlowLayout&>(GetParent()); }
-	private:
 		struct EditBoxStyle : public EditBox::Style {
 			EditBoxStyle() {
 				paragraph.line_height(90pct);
 				font.family(L"Segoe UI").size(18);
 			}
 		};
+	public:
+		Item(std::wstring text, Color border_color) :
+			Base(
+				new MaxFrame{
+					length_max,
+					new EditBox(EditBoxStyle(), text)
+				}
+			) {
+			border.width(3).radius(12).color(border_color);
+			padding = Margin(5, 0);
+		}
+	};
+	class AddButton : public Button<Auto, Assigned> {
+	public:
+		AddButton() : Button(60) {}
+	private:
+		MyFlowLayout& GetFlowLayout() const { return static_cast<MyFlowLayout&>(GetParent()); }
+	private:
 		std::wstring NextName() {
-			static const wchar* names[26] = { L"Alice", L"Bob", L"Carol", L"Dave", L"Eve", L"Francis", L"Grace",
+			static const wchar* names[27] = { L"Alice", L"Bob", L"Carol", L"Dave", L"Eve", L"Francis", L"Grace",
 				L"Hans", L"Isabella", L"Jason", L"Kate", L"Louis", L"Margaret", L"Nathan", L"Olivia", L"Paul", L"Queen",
-				L"Richard", L"Susan", L"Thomas", L"Uma", L"Vivian", L"Winnie", L"Xander", L"Yasmine", L"Zach" };
+				L"Richard", L"Susan", L"Thomas", L"Uma", L"Vivian", L"Winnie", L"Xander", L"Yasmine", L"Zach", L"You Win" };
 			static uint next = 0;
-			return next >= 26 ? L"You Win" : names[next++];
+			return names[next >= 26 ? next : next++];
 		}
 		Color GetRandomColor() {
 			static bool seeded = []() { srand((uint)time(nullptr)); return true; }();
@@ -59,20 +73,7 @@ private:
 		}
 	private:
 		virtual void OnClick() override {
-			GetFlowLayout().AppendChild(
-				new BorderFrame{
-					3, 12, GetRandomColor(),
-					new PaddingFrame{
-						Margin(5, 0),
-						new ClipFrame<Auto, Assigned>{
-							new MaxFrame{
-								length_max,
-								new EditBox(EditBoxStyle(), NextName())
-							}
-						}
-					}
-				}
-			);
+			GetFlowLayout().AppendChild(new Item(NextName(), GetRandomColor()));
 		}
 	};
 };

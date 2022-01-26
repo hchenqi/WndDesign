@@ -1,11 +1,9 @@
 #include "WndDesign/window/Global.h"
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/frame/ScrollFrame.h"
-#include "WndDesign/frame/PaddingFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/layout/ListLayout.h"
 #include "WndDesign/control/EditBox.h"
-#include "WndDesign/figure/shape.h"
 
 
 using namespace WndDesign;
@@ -56,10 +54,7 @@ int main() {
 						new EditBox(EditBoxStyle1(), L"EditBox")
 					},
 					new ClipFrame<Assigned, Auto>{
-						new PaddingFrame{
-							Margin(20, 0),
-							new EditBox(EditBoxStyle2(), L"EditBoxWithPadding")
-						}
+						new EditBox(EditBoxStyle2(), L"EditBox2")
 					}
 				}
 			}

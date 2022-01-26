@@ -3,7 +3,6 @@
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/layout/SplitLayout.h"
 #include "WndDesign/control/EditBox.h"
-#include "WndDesign/figure/shape.h"
 
 
 using namespace WndDesign;

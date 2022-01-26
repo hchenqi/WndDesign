@@ -8,6 +8,7 @@
 #include "../layout/ListLayout.h"
 #include "../control/TextBox.h"
 #include "../control/Button.h"
+#include "../wrapper/Background.h"
 #include "../message/mouse_tracker.h"
 #include "../system/win32_aero_snap.h"
 
@@ -58,9 +59,11 @@ private:
 	void MaximizeOrRestore() { if (status == Status::Normal) { Maximize(); } else if (status == Status::Maximized) { Restore(); } }
 
 private:
-	class TitleBar : public BarLayout<Horizontal> {
+	class TitleBar : public Decorate<BarLayout<Horizontal>, SolidColorBackground> {
 	public:
-		TitleBar(TitleBarFrame& frame, const Style& style, child_ptr_menu menu) : BarLayout(
+		using Style = TitleBarFrame::Style;
+	public:
+		TitleBar(TitleBarFrame& frame, const Style& style, child_ptr_menu menu) : Base(
 			style.title_bar._height,
 			std::move(menu),
 			new ListLayout<Horizontal>{
@@ -75,17 +78,11 @@ private:
 					new Title(frame, style)
 				}
 			}
-		), frame(frame), background(style.title_bar._background) {
+		), frame(frame) {
+			background = style.title_bar._background;
 		}
 	private:
 		TitleBarFrame& frame;
-	private:
-		Color background;
-	private:
-		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-			figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background));
-			BarLayout::OnDraw(figure_queue, draw_region);
-		}
 	private:
 		MouseTracker mouse_tracker;
 	private:
@@ -97,15 +94,11 @@ private:
 		}
 	};
 
-	class Title : public TextBox {
+	class Title : public Decorate<TextBox, SolidColorBackground> {
 	public:
-		Title(TitleBarFrame& frame, const TitleBarFrame::Style& style) : TextBox(style.title_format, style.title), background(style.title_bar._background) { frame.title = this; }
-	private:
-		Color background;
-	private:
-		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-			figure_queue.add(draw_region.point, new Rectangle(draw_region.size, background));
-			TextBox::OnDraw(figure_queue, draw_region);
+		Title(TitleBarFrame& frame, const TitleBarFrame::Style& style) : Base(style.title_format, style.title) { 
+			frame.title = this; 
+			background = style.title_bar._background;
 		}
 	};
 

@@ -39,6 +39,11 @@ public:
 		Redraw();
 	}
 private:
+	virtual ref_ptr<WndObject> HitTest(Point& point) override {
+		if (Interval(slider_offset, slider_height).Contains(point.y)) { return &slider; }
+		return this;
+	}
+private:
 	virtual void OnFrameOffsetChange(int scroll_offset) {}
 
 	// paint
@@ -65,13 +70,6 @@ private:
 private:
 	void OnMousePress(int y) { mouse_down_offset = y - slider_offset; }
 	void OnMouseDrag(int y) { OnFrameOffsetChange((y - mouse_down_offset) * (int)content_height / (int)height); }
-private:
-	virtual void OnMouseMsg(MouseMsg msg) override {
-		if (Interval(slider_offset, slider_height).Contains(msg.point.y)) { 
-			SendChildMouseMsg(slider, msg);
-		}
-	}
-
 
 private:
 	struct Slider : public WndObject {
