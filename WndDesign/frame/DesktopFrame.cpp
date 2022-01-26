@@ -74,8 +74,8 @@ void DesktopFrame::Redraw(Rect redraw_region) {
 	Win32::InvalidateWndRegion(hwnd, redraw_region);
 }
 
-void DesktopFrame::OnChildRedraw(WndObject& child) {
-	Redraw(GetChildRedrawRegion(child) + GetInnerOffset());
+void DesktopFrame::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
+	Redraw(child_redraw_region + GetInnerOffset());
 }
 
 void DesktopFrame::Draw() {

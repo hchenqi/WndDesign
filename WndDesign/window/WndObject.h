@@ -53,12 +53,11 @@ protected:
 
 	// layout
 protected:
-	void UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); child.OnSizeRefUpdate(size_ref); }
-	void SizeUpdated() { if (HasParent()) { GetParent().OnChildSizeUpdate(*this); } }
-	Size GetChildSize(WndObject& child) { VerifyChild(child); return child.GetSize(); }
+	Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); child.OnSizeRefUpdate(size_ref); return child.GetSize(); }
+	void SizeUpdated() { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, GetSize()); } }
 protected:
 	virtual void OnSizeRefUpdate(Size size_ref) {}
-	virtual void OnChildSizeUpdate(WndObject& child) {}
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
 	virtual Size GetSize() { return size_empty; }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) { return vector_zero; }
@@ -66,9 +65,7 @@ protected:
 
 	// paint
 protected:
-	void Redraw() { if (HasParent()) { GetParent().OnChildRedraw(*this); } }
-	Rect GetChildRedrawRegion(WndObject& child) { VerifyChild(child); return child.GetRedrawRegion(); }
-protected:
+	void Redraw() { if (HasParent()) { GetParent().OnChildRedraw(*this, GetRedrawRegion()); } }
 	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) {
 		VerifyChild(child); if (draw_region.IsEmpty()) { return; }
 		Vector offset = child_offset - point_zero; draw_region -= offset;
@@ -80,9 +77,9 @@ protected:
 		figure_queue.Group(offset, draw_region, [&]() { child.OnDraw(figure_queue, draw_region); });
 	}
 protected:
-	virtual void OnChildRedraw(WndObject& child) {}
-	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) {}
 	virtual Rect GetRedrawRegion() { return region_infinite; }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) {}
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) {}
 
 	// message
 private:

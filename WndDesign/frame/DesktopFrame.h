@@ -72,7 +72,7 @@ private:
 	void RecreateLayer();
 private:
 	void Redraw(Rect redraw_region);
-	virtual void OnChildRedraw(WndObject& child) override;
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 	void Draw();
 
 	// message
