@@ -19,40 +19,45 @@ class SplitLayout<Vertical, First> : public WndType<Assigned, Assigned> {
 public:
 	using child_ptr_first = child_ptr<Assigned, Auto>;
 	using child_ptr_second = child_ptr<Assigned, Assigned>;
+
 public:
 	SplitLayout(child_ptr_first first, child_ptr_second second) : first(std::move(first)), second(std::move(second)) {
 		RegisterChild(this->first);
 		RegisterChild(this->second);
 	}
+	
+	// child
 protected:
 	child_ptr_first first;
 	child_ptr_second second;
-private:
+
+	// layout
+protected:
 	Size size;
 	uint height_first = 0;
 	uint height_second = 0;
-private:
+protected:
 	Rect GetRegionFirst() const { return Rect(point_zero, Size(size.width, height_first)); }
 	Rect GetRegionSecond() const { return Rect(Point(0, (int)height_first), Size(size.width, height_second)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == first.get() ? GetRegionFirst() : GetRegionSecond(); }
-private:
+protected:
 	void UpdateHeightSecond() {
 		height_second = size.height > height_first ? size.height - height_first : 0;
 		UpdateChildSizeRef(second, GetRegionSecond().size);
 	}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
+	virtual void OnSizeRefUpdate(Size size_ref) override {
 		size = size_ref;
 		height_first = UpdateChildSizeRef(first, Size(size.width, length_min)).height;
 		UpdateHeightSecond();
-		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (&child == first.get() && height_first != child_size.height) {
 			height_first = child_size.height;
-			UpdateHeightSecond(); Redraw(GetRegionSecond());
+			UpdateHeightSecond(); redraw_region = GetRegionSecond(); Redraw();
 		}
 	}
+	virtual Size GetSize() override { return size; }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
@@ -63,11 +68,16 @@ protected:
 		if ((uint)point.y < height_second) { return second; }
 		return nullptr;
 	}
+
+	// paint
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
+	Rect redraw_region;
+protected:
+	virtual Rect GetRedrawRegion() override { return redraw_region; }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		Rect child_region = GetChildRegion(child);
-		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
-		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
+		redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
+		if (!redraw_region.IsEmpty()) { Redraw(); }
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(first, GetRegionFirst(), figure_queue, draw_region);
@@ -81,14 +91,19 @@ class SplitLayout<Horizontal, Second> : public WndType<Assigned, Assigned> {
 public:
 	using child_ptr_first = child_ptr<Assigned, Assigned>;
 	using child_ptr_second = child_ptr<Auto, Assigned>;
+
 public:
 	SplitLayout(child_ptr_first first, child_ptr_second second) : first(std::move(first)), second(std::move(second)) {
 		RegisterChild(this->first);
 		RegisterChild(this->second);
 	}
+
+	// child
 protected:
 	child_ptr_first first;
 	child_ptr_second second;
+
+	// layout
 private:
 	Size size;
 	uint width_first = 0;
@@ -103,18 +118,18 @@ private:
 		UpdateChildSizeRef(first, GetRegionFirst().size);
 	}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
+	virtual void OnSizeRefUpdate(Size size_ref) override {
 		size = size_ref;
 		width_second = UpdateChildSizeRef(second, Size(length_min, size.height)).width;
 		UpdateWidthFirst();
-		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (&child == second.get() && width_second != child_size.width) {
 			width_second = child_size.width;
-			UpdateWidthFirst(); Redraw(GetRegionFirst());
+			UpdateWidthFirst(); redraw_region = GetRegionFirst(); Redraw();
 		}
 	}
+	virtual Size GetSize() override { return size; }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
@@ -125,11 +140,16 @@ protected:
 		if ((uint)point.x < width_second) { return second; }
 		return nullptr;
 	}
+
+	// paint
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
+	Rect redraw_region;
+protected:
+	virtual Rect GetRedrawRegion() override { return redraw_region; }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		Rect child_region = GetChildRegion(child);
-		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
-		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
+		redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
+		if (!redraw_region.IsEmpty()) { Redraw(); }
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(first, GetRegionFirst(), figure_queue, draw_region);

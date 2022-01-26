@@ -17,12 +17,15 @@ template<>
 class ListLayout<Vertical> : public WndType<Assigned, Auto> {
 public:
 	using child_ptr = child_ptr<Assigned, Auto>;
+
 public:
 	template<class... Ts>
 	ListLayout(uint gap, Ts... child_args) : child_list(), gap(gap) {
 		child_list.reserve(sizeof...(Ts)); (child_list.emplace_back(std::move(child_args)), ...);
 		uint index = 0;	for (auto& info : child_list) { RegisterChild(info.child); SetChildData(info.child, index++); }
 	}
+
+	// child
 private:
 	struct ChildInfo {
 		child_ptr child;
@@ -42,8 +45,10 @@ public:
 		info.offset = size.height;
 		info.length = UpdateChildSizeRef(info.child, Size(size.width, length_min)).height;
 		size.height += info.length;
-		SizeUpdated(size);
+		SizeUpdated();
 	}
+
+	// layout
 private:
 	Size size;
 	uint gap;
@@ -57,7 +62,7 @@ private:
 		return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
 	}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
+	virtual void OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) {
 			size.width = size_ref.width;
 			size.height = 0;
@@ -68,7 +73,6 @@ protected:
 			}
 			size.height -= child_list.empty() ? 0 : gap;
 		}
-		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		uint64 index = GetChildData(child);
@@ -80,9 +84,10 @@ protected:
 				child_list[index].offset = size.height;
 				size.height += child_list[index].length;
 			}
-			SizeUpdated(size);
+			SizeUpdated();
 		}
 	}
+	virtual Size GetSize() override { return size; }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
@@ -93,11 +98,16 @@ protected:
 		if ((uint)point.y >= it->length) { return this; }
 		return it->child;
 	}
+
+	// paint
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
+	Rect redraw_region;
+protected:
+	virtual Rect GetRedrawRegion() override { return redraw_region; }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		Rect child_region = GetChildRegion(child);
-		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
-		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
+		redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
+		if (!redraw_region.IsEmpty()) { Redraw(); }
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
@@ -115,12 +125,15 @@ template<>
 class ListLayout<Horizontal> : public WndType<Auto, Assigned> {
 public:
 	using child_ptr = child_ptr<Auto, Assigned>;
+
 public:
 	template<class... Ts>
 	ListLayout(uint gap, Ts... child_args) : child_list(), gap(gap) {
 		child_list.reserve(sizeof...(Ts)); (child_list.emplace_back(std::move(child_args)), ...);
 		uint index = 0;	for (auto& info : child_list) { RegisterChild(info.child); SetChildData(info.child, index++); }
 	}
+
+	// child
 private:
 	struct ChildInfo {
 		child_ptr child;
@@ -140,8 +153,10 @@ public:
 		info.offset = size.width;
 		info.length = UpdateChildSizeRef(info.child, Size(length_min, size.height)).width;
 		size.width += info.length;
-		SizeUpdated(size);
+		SizeUpdated();
 	}
+
+	// layout
 private:
 	Size size;
 	uint gap;
@@ -155,7 +170,7 @@ private:
 		return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
 	}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
+	virtual void OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) {
 			size.height = size_ref.height;
 			size.width = 0;
@@ -166,7 +181,6 @@ protected:
 			}
 			size.width -= child_list.empty() ? 0 : gap;
 		}
-		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		uint64 index = GetChildData(child);
@@ -178,9 +192,10 @@ protected:
 				child_list[index].offset = size.width;
 				size.width += child_list[index].length;
 			}
-			SizeUpdated(size);
+			SizeUpdated();
 		}
 	}
+	virtual Size GetSize() override { return size; }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
@@ -191,11 +206,16 @@ protected:
 		if ((uint)point.x >= it->length) { return this; }
 		return it->child;
 	}
+
+	// paint
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
+	Rect redraw_region;
+protected:
+	virtual Rect GetRedrawRegion() override { return redraw_region; }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		Rect child_region = GetChildRegion(child);
-		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
-		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
+		redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
+		if (!redraw_region.IsEmpty()) { Redraw(); }
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }

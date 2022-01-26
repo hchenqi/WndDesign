@@ -14,6 +14,7 @@ template<>
 class BarLayout<Horizontal> : public WndType<Assigned, Auto> {
 public:
 	using child_ptr = child_ptr<Auto, Assigned>;
+
 public:
 	BarLayout(uint height, child_ptr left, child_ptr right, child_ptr center) :
 		left(std::move(left)), right(std::move(right)), center(std::move(center)), size(0, height) {
@@ -22,10 +23,14 @@ public:
 		width_right = UpdateChildSizeRef(this->right, size).width;
 		width_center = UpdateChildSizeRef(this->center, size).width;
 	}
+
+	// child
 protected:
 	child_ptr left;
 	child_ptr right;
 	child_ptr center;
+
+	// layout
 private:
 	Size size;
 	uint width_left = 0;
@@ -37,7 +42,7 @@ protected:
 	Rect GetRegionCenter() const { return Rect(Point(((int)size.width - (int)width_center) / 2, 0), Size(width_center, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == center.get() ? GetRegionCenter() : &child == right.get() ? GetRegionRight() : GetRegionLeft(); }
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; return size; }
+	virtual void OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (&child == center.get()) {
 			if (width_center != child_size.width) { width_center = child_size.width; }
@@ -47,6 +52,7 @@ protected:
 			if (width_left != child_size.width) { width_left = child_size.width; }
 		}
 	}
+	virtual Size GetSize() override { return size; }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override {
 		return GetChildRegion(child).point - point_zero;
@@ -58,11 +64,16 @@ protected:
 		}
 		return this;
 	}
+
+	// paint
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override {
+	Rect redraw_region;
+protected:
+	virtual Rect GetRedrawRegion() override { return redraw_region; }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		Rect child_region = GetChildRegion(child);
-		redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
-		if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
+		redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
+		if (!redraw_region.IsEmpty()) { Redraw(); }
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(left, GetRegionLeft(), figure_queue, draw_region);

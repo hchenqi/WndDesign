@@ -11,14 +11,17 @@ BEGIN_NAMESPACE(WndDesign)
 class FlowLayout : public WndType<Assigned, Auto> {
 public:
 	using child_ptr = child_ptr<Auto, Assigned>;
+
 public:
 	FlowLayout(uint row_height, uint column_gap, uint row_gap);
+
+	// style
 private:
 	uint row_height;
 	uint column_gap;
 	uint row_gap;
-private:
-	Size size;
+
+	// child
 private:
 	struct ChildInfo {
 		child_ptr child;
@@ -44,16 +47,27 @@ private:
 	auto HitTestColumn(row_index row, uint x) const;
 public:
 	void AppendChild(child_ptr child);
+
+
+	// layout
+private:
+	Size size;
 private:
 	bool UpdateLayout(child_index child_index);
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override;
+	virtual void OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
+	virtual Size GetSize() override { return size; }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override;
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;
+
+	// paint
+private:
+	Rect redraw_region;
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect redraw_region) override;
+	virtual Rect GetRedrawRegion() override { return redraw_region; }
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
 };
 

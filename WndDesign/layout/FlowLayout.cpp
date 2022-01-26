@@ -34,7 +34,7 @@ void FlowLayout::AppendChild(child_ptr child) {
 	child_index child_index = child_list.size();
 	ChildInfo& info = child_list.emplace_back(std::move(child));
 	info.width = UpdateChildSizeRef(info.child, Size(length_min, row_height)).width;
-	if (UpdateLayout(child_index)) { SizeUpdated(size); }
+	if (UpdateLayout(child_index)) { SizeUpdated(); }
 }
 
 bool FlowLayout::UpdateLayout(child_index child_index) {
@@ -54,16 +54,15 @@ bool FlowLayout::UpdateLayout(child_index child_index) {
 	}
 	row_list.push_back((uint)child_list.size());
 	uint height = child_list.empty() ? 0 : GetRowOffset(row) + row_height;
-	if (size.height == height) { Redraw(Rect(Point(0, (int)GetRowOffset(row_begin)), size_max)); return false; }
+	if (size.height == height) { redraw_region = Rect(Point(0, (int)GetRowOffset(row_begin)), size_max); Redraw(); return false; }
 	size.height = height; return true;
 }
 
-Size FlowLayout::OnSizeRefUpdate(Size size_ref) {
+void FlowLayout::OnSizeRefUpdate(Size size_ref) {
 	if (size.width != size_ref.width) {
 		size.width = size_ref.width;
 		UpdateLayout(0);
 	}
-	return size;
 }
 
 void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
@@ -72,7 +71,7 @@ void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 	ChildInfo& info = child_list[child_index];
 	if (info.width != child_size.width) {
 		info.width = child_size.width;
-		if (UpdateLayout(child_index)) { SizeUpdated(size); }
+		if (UpdateLayout(child_index)) { SizeUpdated(); }
 	}
 }
 
@@ -87,10 +86,10 @@ ref_ptr<WndObject> FlowLayout::HitTest(Point& point) {
 	return it->child;
 }
 
-void FlowLayout::OnChildRedraw(WndObject& child, Rect redraw_region) {
+void FlowLayout::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 	Rect child_region = GetChildRegion(child);
-	redraw_region = child_region.Intersect(redraw_region + (child_region.point - point_zero));
-	if (!redraw_region.IsEmpty()) { Redraw(redraw_region); }
+	redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
+	if (!redraw_region.IsEmpty()) { Redraw(); }
 }
 
 void FlowLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
@@ -105,6 +104,5 @@ void FlowLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 		}
 	}
 }
-
 
 END_NAMESPACE(WndDesign)
