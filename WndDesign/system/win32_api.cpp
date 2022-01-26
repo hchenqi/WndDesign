@@ -18,6 +18,9 @@ struct DesktopFrameApi : DesktopFrame {
 	DesktopFrame::SetStatus;
 	DesktopFrame::Destroy;
 	DesktopFrame::Draw;
+	DesktopFrame::LoseTrack;
+	DesktopFrame::LoseCapture;
+	DesktopFrame::DispatchMouseMsg;
 };
 
 BEGIN_NAMESPACE(Anonymous)
@@ -71,7 +74,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_MOUSEHWHEEL: mouse_msg.type = MouseMsg::WheelHorizontal; mouse_msg.point -= frame->GetRegion().point - point_zero; break;
 		default: return DefWindowProc(hwnd, msg, wparam, lparam);
 		}
-		desktop.DispatchMouseMsg(*frame, mouse_msg);
+		frame->DispatchMouseMsg(mouse_msg);
 		return 0;
 	}
 
@@ -121,8 +124,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			EndPaint(hwnd, &ps);
 		}break;
 		case WM_ERASEBKGND: return true;
-		case WM_MOUSELEAVE: is_mouse_tracked = false; desktop.LoseTrack(); break;
-		case WM_CAPTURECHANGED: desktop.LoseCapture(); break;
+		case WM_MOUSELEAVE: is_mouse_tracked = false; frame->LoseTrack(); break;
+		case WM_CAPTURECHANGED: frame->LoseCapture(); break;
 		case WM_KILLFOCUS: desktop.LoseFocus(); break;
 
 			// convert scroll message to mouse wheel message

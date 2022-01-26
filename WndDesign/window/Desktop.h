@@ -35,22 +35,9 @@ public:
 	void RecreateFrameLayer();
 
 	// mouse message
-private:
-	ref_ptr<DesktopFrame> frame_capture = nullptr;
-	ref_ptr<WndObject> wnd_capture = nullptr;
-	Point wnd_capture_offset;
 public:
 	void SetCapture(WndObject& wnd);
-	void ReleaseCapture(WndObject& wnd);
-	void LoseCapture();
-private:
-	std::vector<ref_ptr<WndObject>> wnd_track_stack;
-private:
-	void LoseTrack(std::vector<ref_ptr<WndObject>>::iterator wnd_track_index_begin);
-public:
-	void LoseTrack() { LoseTrack(wnd_track_stack.begin()); }
-public:
-	void DispatchMouseMsg(frame_ref frame, MouseMsg msg);
+	void ReleaseCapture();
 
 	// key message
 private:
@@ -58,7 +45,8 @@ private:
 	ref_ptr<WndObject> wnd_focus = nullptr;
 	ref_ptr<ImeApi> ime_focus = nullptr;
 public:
-	void SetFocus(WndObject& wnd);
+	void SetFocus(WndObject& frame, WndObject& wnd);
+	void ReleaseFocus(WndObject& wnd);
 	void LoseFocus();
 public:
 	void DispatchKeyMsg(frame_ref frame, KeyMsg msg);

@@ -89,10 +89,21 @@ private:
 	ref_ptr<WndObject> child_track = nullptr;
 	ref_ptr<WndObject> child_capture = nullptr;
 	ref_ptr<WndObject> child_focus = nullptr;
+private:
+	void SetChildTrack(WndObject& child);
+	void LoseTrack();
+	void SetChildCapture(WndObject& child);
+	void LoseCapture();
+	void SetChildFocus(WndObject& child);
+	void ReleaseChildFocus(WndObject& child);
 protected:
-	void SetCapture();
+	void SetCapture() { SetChildCapture(*this); }
 	void ReleaseCapture();
-	void SetFocus();
+	void SetFocus() { SetChildFocus(*this); }
+	void ResetFocus() { if (child_focus != nullptr) { SetChildFocus(*child_focus); } }
+	void ReleaseFocus() { ReleaseChildFocus(*this); }
+private:
+	void DispatchMouseMsg(MouseMsg msg);
 protected:
 	virtual void OnMouseMsg(MouseMsg msg) {}
 	virtual void OnKeyMsg(KeyMsg msg) {}
