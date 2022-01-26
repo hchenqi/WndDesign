@@ -17,7 +17,7 @@ DesktopFrame::DesktopFrame(Style style, child_ptr child) :
 	Base(std::move(child)), width(style.width), height(style.height) {
 	border = style.border;
 	Rect region = StyleHelper::CalculateRegion(style.width, style.height, style.position, Win32::GetDesktopSize());
-	point = region.point; Base::OnSizeRefUpdate(region.size);
+	point = region.point; Base::OnSizeRefUpdate(region.size); Base::GetSize();
 	hwnd = Win32::CreateWnd(region, style.title); Win32::SetWndUserData(hwnd, this);
 	RecreateLayer();
 }
@@ -40,7 +40,7 @@ void DesktopFrame::SetTitle(std::wstring title) { Win32::SetWndTitle(hwnd, title
 
 void DesktopFrame::SetSize(Size size) {
 	if (this->size != size) {
-		Base::OnSizeRefUpdate(size);
+		Base::OnSizeRefUpdate(size); Base::GetSize();
 		ResizeLayer();
 	}
 }
