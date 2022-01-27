@@ -74,7 +74,7 @@ public:
 private:
 	uint BeginGroup(Transform transform, Rect clip_region) {
 		uint group_begin_index = (uint)groups.size();
-		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), Transform::Translation((float)offset.x, (float)offset.y) * transform, clip_region });
+		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), transform * Transform::Translation((float)offset.x, (float)offset.y), clip_region });
 		offset_stack.push_back(offset); offset = vector_zero;
 		return group_begin_index;
 	}

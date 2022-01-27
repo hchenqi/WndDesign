@@ -38,7 +38,7 @@ void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect
 		}
 		if (group.IsBegin()) {
 			groups[group.group_end_index].prev_transform = transform;
-			device_context.SetTransform(AsD2DTransform(transform = transform * group.transform));
+			device_context.SetTransform(AsD2DTransform(transform = group.transform * transform));
 			device_context.PushAxisAlignedClip(Rect2RECT(group.clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
 		} else {
 			transform = group.prev_transform;
