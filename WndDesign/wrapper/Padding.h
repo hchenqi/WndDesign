@@ -21,8 +21,8 @@ private:
 
 	// layout
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { Wnd::OnSizeRefUpdate(ExtendSize(size_ref, -padding)); }
-	virtual Size GetSize() override { return ExtendSize(Wnd::GetSize(), padding); }
+	virtual void OnSizeRefUpdate(Size size_ref) override { Wnd::OnSizeRefUpdate(Extend(size_ref, -padding)); }
+	virtual Size GetSize() override { return Extend(Wnd::GetSize(), padding); }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return Wnd::GetChildOffset(child) + GetInnerOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {

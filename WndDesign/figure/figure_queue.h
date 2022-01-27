@@ -2,6 +2,7 @@
 
 #include "figure.h"
 #include "../common/uncopyable.h"
+#include "../geometry/transform.h"
 
 #include <vector>
 #include <memory>
@@ -16,9 +17,10 @@ private:
 	template<class T> using vector = std::vector<T>;
 	template<class T> using unique_ptr = std::unique_ptr<T>;
 
+	// offset
 private:
 	Vector offset = vector_zero;
-	vector<Vector> group_offset_stack;
+	vector<Vector> offset_stack;
 private:
 	void PushOffset(Vector offset) { this->offset += offset; }
 	void PopOffset(Vector offset) { PushOffset(-offset); }
@@ -27,6 +29,7 @@ public:
 		PushOffset(offset); func(); PopOffset(offset);
 	}
 
+	// figure
 private:
 	struct FigureItem {
 		Point offset;
@@ -47,20 +50,20 @@ public:
 		add(offset, std::make_unique<FigureType>(std::forward<Types>(args)...));
 	}
 
+	// group
 private:
 	struct FigureGroup {
 		union {
 			struct {  // as group begin
 				uint group_end_index;
 				uint figure_index;
-				Vector offset;
+				Transform transform;
 				Rect clip_region;
 			};
 			struct {  // as group end
 				uint null_index;  // == -1
 				uint figure_index;
-				mutable Vector prev_offset;
-				mutable Rect prev_clip_region;
+				mutable Transform prev_transform;
 			};
 		};
 		bool IsBegin() const { return group_end_index != (uint)-1; }
@@ -69,26 +72,29 @@ private:
 public:
 	const vector<FigureGroup>& GetFigureGroups() const { return groups; }
 private:
-	uint BeginGroup(Vector group_offset, Rect clip_region) {
+	uint BeginGroup(Transform transform, Rect clip_region) {
 		uint group_begin_index = (uint)groups.size();
-		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), group_offset + offset, clip_region });
-		group_offset_stack.push_back(offset); offset = vector_zero;
+		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), Transform::Translation((float)offset.x, (float)offset.y) * transform, clip_region });
+		offset_stack.push_back(offset); offset = vector_zero;
 		return group_begin_index;
 	}
 	void EndGroup(uint group_begin_index) {
 		if (group_begin_index >= groups.size() || groups[group_begin_index].group_end_index != -1) { throw std::invalid_argument("invalid group begin index"); }
 		groups[group_begin_index].group_end_index = (uint)groups.size();
-		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), vector_zero, region_empty });
-		offset = group_offset_stack.back(); group_offset_stack.pop_back();
+		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), Transform(), region_empty });
+		offset = offset_stack.back(); offset_stack.pop_back();
 	}
 public:
+	void Group(Transform group_transform, Rect clip_region, std::function<void(void)> func) {
+		uint begin = BeginGroup(group_transform, clip_region); func(); EndGroup(begin);
+	}
 	void Group(Vector group_offset, Rect clip_region, std::function<void(void)> func) {
-		uint begin = BeginGroup(group_offset, clip_region); func(); EndGroup(begin);
+		Group(Transform::Translation((float)group_offset.x, (float)group_offset.y), clip_region, func);
 	}
 
 public:
 	FigureQueue(std::function<void(FigureQueue&)> func) {
-		BeginGroup(vector_zero, region_empty); func(*this); EndGroup(0);
+		Group(vector_zero, region_infinite, [&]() { func(*this); });
 	}
 };
 

@@ -25,6 +25,8 @@ void Layer::Create(Size size) {
 
 void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect clip_region) {
 	ID2D1DeviceContext& device_context = GetD2DDeviceContext(); device_context.SetTarget(bitmap.Get());
+	Transform transform = Transform::Translation((float)offset.x, (float)offset.y);
+	device_context.SetTransform(AsD2DTransform(transform));
 	device_context.PushAxisAlignedClip(Rect2RECT(clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
 	device_context.Clear(Color2COLOR(color_transparent));
 	auto& groups = figure_queue.GetFigureGroups();
@@ -32,33 +34,16 @@ void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect
 	for (uint group_index = 1; group_index < groups.size(); ++group_index) {
 		auto& group = groups[group_index];
 		for (; figure_index < group.figure_index; ++figure_index) {
-			figures[figure_index].figure->DrawOn(static_cast<RenderTarget&>(device_context), figures[figure_index].offset + offset);
+			figures[figure_index].figure->DrawOn(static_cast<RenderTarget&>(device_context), figures[figure_index].offset);
 		}
 		if (group.IsBegin()) {
-			// For group begin:
-			// Calculate new coordinate offset and clip region.
-			Vector new_offset = offset + group.offset;
-			Rect new_clip_region = clip_region.Intersect(group.clip_region + new_offset);
-			// Jump to group end if new clip region is empty.
-			auto& group_end = groups[group.group_end_index];
-			if (new_clip_region.IsEmpty()) {
-				group_index = group.group_end_index;
-				figure_index = group_end.figure_index;
-				continue;
-			}
-			// Store old offset and clip region to group end.
-			group_end.prev_offset = offset;
-			group_end.prev_clip_region = clip_region;
-			// Set new offset and clip region.
-			offset = new_offset;
-			clip_region = new_clip_region;
-			device_context.PushAxisAlignedClip(Rect2RECT(clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
+			groups[group.group_end_index].prev_transform = transform;
+			device_context.SetTransform(AsD2DTransform(transform = transform * group.transform));
+			device_context.PushAxisAlignedClip(Rect2RECT(group.clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
 		} else {
-			// For group end:
-			// Restore previous offset and clip region.
-			offset = group.prev_offset;
-			clip_region = group.prev_clip_region;
+			transform = group.prev_transform;
 			device_context.PopAxisAlignedClip();
+			device_context.SetTransform(AsD2DTransform(transform));
 		}
 	}
 }

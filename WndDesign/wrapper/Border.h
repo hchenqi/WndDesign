@@ -34,8 +34,8 @@ protected:
 	Vector GetInnerOffset() const { return Vector(border._width, border._width); }
 	Rect GetInnerRegion() const { return Rect(Point(border._width, border._width), inner_size); }
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { Wnd::OnSizeRefUpdate(ExtendSize(size_ref, -(int)border._width)); }
-	virtual Size GetSize() override { return size = ExtendSize(inner_size = Wnd::GetSize(), (int)border._width); }
+	virtual void OnSizeRefUpdate(Size size_ref) override { Wnd::OnSizeRefUpdate(Extend(size_ref, -(int)border._width)); }
+	virtual Size GetSize() override { return size = Extend(inner_size = Wnd::GetSize(), (int)border._width); }
 protected:
 	virtual Vector GetChildOffset(WndObject& child) override { return Wnd::GetChildOffset(child) + GetInnerOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {

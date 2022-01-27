@@ -33,7 +33,7 @@ std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
 	Size desktop_size = Win32::GetDesktopSize();
 	auto [size_min, size_max] = StyleHelper::CalculateMinMaxSize(width, height, desktop_size);
 	Rect region_max(point_zero, size_max);
-	if (size_max == desktop_size) { region_max = ExtendRegion(region_max, border._width); }
+	if (size_max == desktop_size) { region_max = Extend(region_max, border._width); }
 	return { size_min, region_max };
 }
 

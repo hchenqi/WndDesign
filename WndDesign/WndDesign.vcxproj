@@ -173,6 +173,7 @@
     <ClInclude Include="figure\layer.h" />
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\text_block.h" />
+    <ClInclude Include="geometry\transform.h" />
     <ClInclude Include="frame\CenterFrame.h" />
     <ClInclude Include="frame\ClipFrame.h" />
     <ClInclude Include="frame\DesktopFrame.h" />
@@ -232,6 +233,7 @@
     <ClInclude Include="wrapper\Background.h" />
     <ClInclude Include="wrapper\Border.h" />
     <ClInclude Include="wrapper\Padding.h" />
+    <ClInclude Include="wrapper\ScaleTransform.h" />
     <ClInclude Include="wrapper\wrapper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -243,6 +245,7 @@
     <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />
     <ClCompile Include="figure\text_block.cpp" />
+    <ClCompile Include="geometry\transform.cpp" />
     <ClCompile Include="frame\DesktopFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_layer.cpp" />

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../geometry/geometry.h"
+#include "../geometry/transform.h"
 #include "../figure/color.h"
 
 #include <d2d1_1.h>
@@ -78,6 +79,20 @@ inline Rect RECT2Rect(D2D1_RECT_F rect) {
 		static_cast<uint>(static_cast<int>(rect.bottom) - static_cast<int>(rect.top))
 	);
 }
+
+
+inline const D2D1::Matrix3x2F& AsD2DTransform(const Transform& transform) {
+	return reinterpret_cast<const D2D1::Matrix3x2F&>(transform);
+}
+
+inline D2D1::Matrix3x2F& AsD2DTransform(Transform& transform) {
+	return const_cast<D2D1::Matrix3x2F&>(AsD2DTransform(static_cast<const Transform&>(transform)));
+}
+
+inline Transform AsTransform(D2D1::Matrix3x2F matrix) {
+	Transform transform; AsD2DTransform(transform) = matrix; return transform;
+}
+
 
 inline float Opacity2Float(uchar opacity) {
 	return opacity / (float)0xFF;
