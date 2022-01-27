@@ -22,7 +22,7 @@ private:
 			background = background == Color::Gray ? Color::White : Color::Gray;
 			Redraw();
 			break;
-		case MouseMsg::LeftDown: AeroSnapDraggingEffect(*this, msg.point); break;
+		case MouseMsg::LeftDown: AeroSnapDraggingEffect(*this); break;
 		}
 	}
 	virtual void OnKeyMsg(KeyMsg msg) override {

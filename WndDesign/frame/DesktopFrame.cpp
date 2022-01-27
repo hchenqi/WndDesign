@@ -101,7 +101,7 @@ void DesktopFrame::OnMouseMsg(MouseMsg msg) {
 		if (msg.type == MouseMsg::Move) {
 			SetCursor(GetBorderPositionCursor(border_position));
 		} else {
-			AeroSnapBorderResizingEffect(*this, msg.point, border_position);
+			AeroSnapBorderResizingEffect(*this, border_position);
 		}
 	}
 }

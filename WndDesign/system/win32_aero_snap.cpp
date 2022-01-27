@@ -12,14 +12,14 @@ struct DesktopFrameApi : DesktopFrame {
 };
 
 
-void AeroSnapDraggingEffect(WndObject& wnd, Point point) {
-	HANDLE hwnd = static_cast<DesktopFrameApi&>(desktop.GetDesktopFramePoint(wnd, point)).hwnd;
-	SendMessageW((HWND)hwnd, WM_NCLBUTTONDOWN, HTCAPTION, ((short)point.y << 16) | (short)point.x);
+void AeroSnapDraggingEffect(WndObject& wnd) {
+	HANDLE hwnd = static_cast<DesktopFrameApi&>(desktop.GetDesktopFrame(wnd)).hwnd;
+	SendMessageW((HWND)hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
 }
 
-void AeroSnapBorderResizingEffect(WndObject& wnd, Point point, BorderPosition border_position) {
-	HANDLE hwnd = static_cast<DesktopFrameApi&>(desktop.GetDesktopFramePoint(wnd, point)).hwnd;
-	SendMessageW((HWND)hwnd, WM_NCLBUTTONDOWN, (WPARAM)border_position, ((short)point.y << 16) | (short)point.x);
+void AeroSnapBorderResizingEffect(WndObject& wnd, BorderPosition border_position) {
+	HANDLE hwnd = static_cast<DesktopFrameApi&>(desktop.GetDesktopFrame(wnd)).hwnd;
+	SendMessageW((HWND)hwnd, WM_NCLBUTTONDOWN, (WPARAM)border_position, 0);
 }
 
 

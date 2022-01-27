@@ -88,7 +88,7 @@ private:
 	private:
 		virtual void OnMouseMsg(MouseMsg msg) override {
 			switch (mouse_tracker.Track(msg)) {
-			case MouseTrackMsg::LeftDown: AeroSnapDraggingEffect(*this, msg.point); break;
+			case MouseTrackMsg::LeftDown: AeroSnapDraggingEffect(*this); break;
 			case MouseTrackMsg::LeftDoubleClick: frame.MaximizeOrRestore(); break;
 			}
 		}
