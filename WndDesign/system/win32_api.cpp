@@ -12,6 +12,7 @@ BEGIN_NAMESPACE(WndDesign)
 struct DesktopFrameApi : DesktopFrame {
 	DesktopFrame::GetMinMaxRegion;
 	DesktopFrame::GetRegion;
+	DesktopFrame::SetScale;
 	DesktopFrame::SetSize;
 	DesktopFrame::SetPoint;
 	DesktopFrame::Status;
@@ -36,6 +37,8 @@ inline Rect RECT2Rect(RECT rect) {
 inline Size GetWorkAreaSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return RECT2Rect(rect).size; }
 
 Size desktop_size = GetWorkAreaSize();
+
+constexpr float dpi_default = 96.0f;
 
 inline bool IsMouseMsg(UINT msg) { return WM_MOUSEFIRST <= msg && msg <= WM_MOUSELAST; }
 inline bool IsKeyboardMsg(UINT msg) { return WM_KEYFIRST <= msg && msg <= WM_KEYLAST; }
@@ -128,6 +131,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_CAPTURECHANGED: frame->LoseCapture(); break;
 		case WM_KILLFOCUS: desktop.LoseFocus(); break;
 
+		case WM_DPICHANGED: frame->SetScale(LOWORD(wparam) / dpi_default); break;
+
 			// convert scroll message to mouse wheel message
 		case WM_HSCROLL:
 		case WM_VSCROLL:
@@ -211,6 +216,10 @@ void DestroyWnd(HANDLE hwnd) { DestroyWindow((HWND)hwnd); }
 
 void SetWndUserData(HANDLE hwnd, void* data) {
 	SetWindowLongPtrW((HWND)hwnd, GWLP_USERDATA, (LONG_PTR)data);
+}
+
+float GetWndDpiScale(HANDLE hwnd) {
+	return GetDpiForWindow((HWND)hwnd) / dpi_default;
 }
 
 void SetWndTitle(HANDLE hwnd, std::wstring title) {

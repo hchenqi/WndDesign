@@ -19,6 +19,8 @@ HANDLE CreateWnd(Rect region, std::wstring title);
 void DestroyWnd(HANDLE hwnd);
 void SetWndUserData(HANDLE hwnd, void* data);
 
+float GetWndDpiScale(HANDLE hwnd);
+
 void SetWndTitle(HANDLE hwnd, std::wstring title);
 void SetWndRegion(HANDLE hwnd, Rect region);
 

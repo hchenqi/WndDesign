@@ -1,16 +1,17 @@
 #pragma once
 
 #include "WndFrame.h"
-#include "../wrapper/Border.h"
 #include "../style/style.h"
 #include "../figure/desktop_layer.h"
 #include "../geometry/region.h"
+#include "../wrapper/Border.h"
+#include "../wrapper/ScaleTransform.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class DesktopFrame : private Decorate<WndFrame, Border> {
+class DesktopFrame : private Decorate<WndFrame, Border, ScaleTransform> {
 private:
 	friend class Desktop;
 	friend struct DesktopFrameApi;
@@ -40,11 +41,12 @@ protected:
 
 	// layout
 private:
-	Point point;
+	Rect region;
 private:
-	Rect GetRegion() { return Rect(point, size); }
+	Rect GetRegion() { return region; }
+	void SetScale(float scale) { scale_x = scale_y = scale; }
 	void SetSize(Size size);
-	void SetPoint(Point point) { this->point = point; }
+	void SetPoint(Point point) { region.point = point; }
 
 	// hwnd
 protected:
