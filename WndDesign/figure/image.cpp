@@ -103,10 +103,10 @@ void Image::CreateBitmap() const {
 void ImageFigure::DrawOn(RenderTarget& target, Point point) const {
 	target.DrawBitmap(
 		image.bitmap.Get(),
-		Rect2RECT(Rect(point, region.size)),
-		Opacity2Float(opacity),
+		AsD2DRect(Rect(point, region.size)),
+		OpacityAsFloat(opacity),
 		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-		Rect2RECT(region)
+		AsD2DRect(region)
 	);
 }
 

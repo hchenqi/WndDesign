@@ -7,7 +7,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-inline Rect RECT2Rect(RECT rect) {
+inline Rect AsRect(RECT rect) {
     return Rect(rect.left, rect.top, (uint)(rect.right - rect.left), (uint)(rect.bottom - rect.top));
 }
 
@@ -61,7 +61,7 @@ void Region::Xor(const Rect& region) { Xor(TempRegion(region)); }
 Rect Region::GetBoundingRect() const {
     RECT rect;
     GetRgnBox((HRGN)rgn, &rect);
-    return RECT2Rect(rect);
+    return AsRect(rect);
 }
 
 std::pair<Rect, std::vector<Rect>> Region::GetRects() const {
@@ -70,9 +70,9 @@ std::pair<Rect, std::vector<Rect>> Region::GetRects() const {
     GetRegionData((HRGN)rgn, size, (LPRGNDATA)buffer.data());
     RGNDATA& data = *(LPRGNDATA)buffer.data();
     static_assert(sizeof(RECT) == sizeof(Rect));
-    Rect bound = RECT2Rect(data.rdh.rcBound);
+    Rect bound = AsRect(data.rdh.rcBound);
     std::vector<Rect> regions((Rect*)(buffer.data() + data.rdh.dwSize), (Rect*)(buffer.data() + data.rdh.dwSize) + data.rdh.nCount);
-    for (auto& region : regions) { region = RECT2Rect(*reinterpret_cast<RECT*>(&region)); }
+    for (auto& region : regions) { region = AsRect(*reinterpret_cast<RECT*>(&region)); }
     return { bound , regions };
 }
 

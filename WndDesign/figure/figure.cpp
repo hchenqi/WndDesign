@@ -6,7 +6,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 const Size GetTargetSize(const RenderTarget& target) {
-	return SIZE2Size(target.GetSize());
+	return AsSize(target.GetSize());
 }
 
 

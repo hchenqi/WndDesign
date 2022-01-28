@@ -26,15 +26,15 @@ struct DesktopFrameApi : DesktopFrame {
 
 BEGIN_NAMESPACE(Anonymous)
 
-inline RECT Rect2RECT(Rect rect) {
+inline RECT AsWin32Rect(Rect rect) {
 	return { rect.left(), rect.top(), rect.right(), rect.bottom() };
 }
 
-inline Rect RECT2Rect(RECT rect) {
+inline Rect AsRect(RECT rect) {
 	return Rect(rect.left, rect.top, (uint)(rect.right - rect.left), (uint)(rect.bottom - rect.top));
 }
 
-inline Size GetWorkAreaSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return RECT2Rect(rect).size; }
+inline Size GetWorkAreaSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return AsRect(rect).size; }
 
 Size desktop_size = GetWorkAreaSize();
 
@@ -236,7 +236,7 @@ void MaximizeWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_MAXIMIZE); }
 void RestoreWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_RESTORE); }
 
 void InvalidateWndRegion(HANDLE hwnd, Rect region) {
-	RECT rect = Rect2RECT(region);
+	RECT rect = AsWin32Rect(region);
 	InvalidateRect((HWND)hwnd, &rect, false);
 }
 

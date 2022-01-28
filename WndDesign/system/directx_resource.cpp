@@ -180,7 +180,7 @@ IWICImagingFactory2& GetWICFactory() { return *directx_resource.wic_factory.Get(
 
 ID2D1SolidColorBrush& GetD2DSolidColorBrush(Color color) {
 	ID2D1SolidColorBrush& brush = GetD2DSolidColorBrush();
-	brush.SetColor(Color2COLOR(color));
+	brush.SetColor(AsD2DColor(color));
 	return brush;
 }
 

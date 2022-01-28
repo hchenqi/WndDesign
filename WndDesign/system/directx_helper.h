@@ -48,30 +48,30 @@ struct ImageSource : IWICFormatConverter {};
 struct TextLayout : IDWriteTextLayout4 {};
 
 
-inline D2D1_POINT_2F Point2POINT(Point point) {
+inline D2D1_POINT_2F AsD2DPoint(Point point) {
 	return D2D1::Point2F(static_cast<FLOAT>(point.x), static_cast<FLOAT>(point.y));
 }
 
-inline D2D1_SIZE_F Size2SIZE(Size size) {
+inline D2D1_SIZE_F AsD2DSize(Size size) {
 	return D2D1::SizeF(static_cast<FLOAT>(size.width), static_cast<FLOAT>(size.height));
 }
 
-inline D2D1_RECT_F Rect2RECT(Rect rect) {
+inline D2D1_RECT_F AsD2DRect(Rect rect) {
 	return D2D1::RectF(
 		static_cast<FLOAT>(rect.left()), static_cast<FLOAT>(rect.top()),
 		static_cast<FLOAT>(rect.right()), static_cast<FLOAT>(rect.bottom())
 	);
 }
 
-inline Point POINT2Point(D2D1_POINT_2F point) {
+inline Point AsPoint(D2D1_POINT_2F point) {
 	return Point(static_cast<uint>(point.x), static_cast<uint>(point.y));
 }
 
-inline Size SIZE2Size(D2D1_SIZE_F size) {
+inline Size AsSize(D2D1_SIZE_F size) {
 	return Size(static_cast<uint>(size.width), static_cast<uint>(size.height));
 }
 
-inline Rect RECT2Rect(D2D1_RECT_F rect) {
+inline Rect AsRect(D2D1_RECT_F rect) {
 	return Rect(
 		static_cast<int>(rect.left),
 		static_cast<int>(rect.top),
@@ -94,12 +94,12 @@ inline Transform AsTransform(D2D1::Matrix3x2F matrix) {
 }
 
 
-inline float Opacity2Float(uchar opacity) {
+inline float OpacityAsFloat(uchar opacity) {
 	return opacity / (float)0xFF;
 }
 
-inline D2D1_COLOR_F Color2COLOR(Color color) {
-	return D2D1::ColorF(color.AsUnsigned(), Opacity2Float(color.alpha));
+inline D2D1_COLOR_F AsD2DColor(Color color) {
+	return D2D1::ColorF(color.AsUnsigned(), OpacityAsFloat(color.alpha));
 }
 
 

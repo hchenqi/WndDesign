@@ -133,7 +133,7 @@ std::vector<TextBlockHitTestInfo> TextBlock::HitTestTextRange(uint text_position
 
 void TextBlockFigure::DrawOn(RenderTarget& target, Point point) const {
 	target.DrawTextLayout(
-		Point2POINT(point),
+		AsD2DPoint(point),
 		text_block.layout,
 		&GetD2DSolidColorBrush(font_color),
 		D2D1_DRAW_TEXT_OPTIONS_CLIP | D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT
