@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../common/core.h"
+#include "vector.h"
+#include "point.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -18,8 +19,16 @@ struct Transform {
 	static Transform Skew(float angle_x, float angle_y, float x, float y);
 	static Transform Skew(float angle_x, float angle_y) { return Skew(angle_x, angle_y, 0.0f, 0.0f); }
 
-	Transform operator*(const Transform& transform) const;
+	Transform() = default;
+	Transform(Vector vector) : Transform(Translation((float)vector.x, (float)vector.y)) {}
+
+	Transform Invert() const;
 };
+
+
+Transform operator*(const Transform& applied, const Transform& original);
+
+Point operator*(const Point& point, const Transform& transform);
 
 
 END_NAMESPACE(WndDesign)

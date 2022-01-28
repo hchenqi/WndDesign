@@ -27,8 +27,19 @@ Transform Transform::Skew(float angle_x, float angle_y, float x, float y) {
 }
 
 
-Transform Transform::operator*(const Transform& transform) const {
-	return AsTransform(AsD2DTransform(*this) * AsD2DTransform(transform));
+Transform Transform::Invert() const {
+	Transform temp = *this; 
+	if (!AsD2DTransform(temp).Invert()) { throw std::runtime_error("transform matrix is not invertible"); }
+	return temp;
+}
+
+
+Transform operator*(const Transform& applied, const Transform& original) {
+	return AsTransform(AsD2DTransform(applied) * AsD2DTransform(original));
+}
+
+Point operator*(const Point& point, const Transform& transform) {
+	return AsPoint(AsD2DPoint(point) * AsD2DTransform(transform));
 }
 
 
