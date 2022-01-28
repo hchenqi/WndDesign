@@ -19,11 +19,11 @@ protected:
 
 	// layout
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { Wnd::OnSizeRefUpdate(Scale(size_ref, 1 / scale_x, 1 / scale_y)); }
+	virtual void OnSizeRefUpdate(Size size_ref) override { Wnd::OnSizeRefUpdate(Scale(size_ref, 1.0f / scale_x, 1.0f / scale_y)); }
 	virtual Size GetSize() override { return Scale(Wnd::GetSize(), scale_x, scale_y); }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		Point child_point = Scale(point, 1 / scale_x, 1 / scale_y); ref_ptr<WndObject> child = Wnd::HitTest(child_point);
+		Point child_point = Scale(point, 1.0f / scale_x, 1.0f / scale_y); ref_ptr<WndObject> child = Wnd::HitTest(child_point);
 		return child == this ? this : (point = child_point, child);
 	}
 	virtual Transform GetChildTransform(WndObject& child) override { return Wnd::GetChildTransform(child) * Transform::Scale(scale_x, scale_y); }
@@ -32,14 +32,14 @@ protected:
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.Group(Transform::Scale(scale_x, scale_y), region_infinite, [&]() {
-			Wnd::OnDraw(figure_queue, Scale(draw_region, 1 / scale_x, 1 / scale_y));
+			Wnd::OnDraw(figure_queue, Scale(draw_region, 1.0f / scale_x, 1.0f / scale_y));
 		});
 	}
 	virtual Rect GetRedrawRegion() override { return Scale(Wnd::GetRedrawRegion(), scale_x, scale_y); }
 
 	// message
 protected:
-	virtual void OnMouseMsg(MouseMsg msg) override { msg.point = Scale(msg.point, 1 / scale_x, 1 / scale_y); Wnd::OnMouseMsg(msg); }
+	virtual void OnMouseMsg(MouseMsg msg) override { msg.point = Scale(msg.point, 1.0f / scale_x, 1.0f / scale_y); Wnd::OnMouseMsg(msg); }
 };
 
 

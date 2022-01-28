@@ -64,7 +64,7 @@ void EditBox::UpdateCaretRegion(const HitTestInfo& info) {
 	caret_region.size = Size(caret_width, info.geometry_region.size.height);
 	if (info.is_trailing_hit) {
 		caret_text_position += info.text_length;
-		caret_region.point.x += static_cast<int>(info.geometry_region.size.width);
+		caret_region.point.x += info.geometry_region.size.width;
 	}
 	RedrawCaretRegion();
 }

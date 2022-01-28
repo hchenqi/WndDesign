@@ -17,7 +17,7 @@ protected:
 	Size child_size;
 protected:
 	Vector GetChildOffset() const {
-		return Vector(((int)size.width - (int)child_size.width) / 2, ((int)size.height - (int)child_size.height) / 2);
+		return Vector((size.width - child_size.width) / 2, (size.height - child_size.height) / 2);
 	}
 protected:
 	virtual Transform GetChildTransform(WndObject& child) override { return GetChildOffset(); }

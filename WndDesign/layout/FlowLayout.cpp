@@ -5,40 +5,37 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-#pragma warning (disable : 26451)  // Arithmetic overflow : Using operator '+' on a 4 byte value and then casting the result to a 8 byte value.
-#pragma warning (disable : 4267)  // conversion from 'size_t' to 'WndDesign::uint', possible loss of data
 
-
-FlowLayout::FlowLayout(uint row_height, uint column_gap, uint row_gap) :
+FlowLayout::FlowLayout(float row_height, float column_gap, float row_gap) :
 	row_height(row_height), column_gap(column_gap), row_gap(row_gap), row_list({ 0 }) {
 }
 
 Rect FlowLayout::GetChildRegion(WndObject& child) const {
 	auto [row, column] = GetChildData(child); const ChildInfo& info = child_list[row_list[row] + column];
-	return Rect(Point((int)info.offset, (int)GetRowOffset(row)), Size(info.width, row_height));
+	return Rect(Point(info.offset, GetRowOffset(row)), Size(info.width, row_height));
 }
 
-uint FlowLayout::GetRowOffset(uint row) const { return row * (row_height + row_gap); }
+float FlowLayout::GetRowOffset(uint row) const { return row * (row_height + row_gap); }
 
-uint FlowLayout::GetRowNumber() const { return row_list.size() - 1; }
+uint FlowLayout::GetRowNumber() const { return (uint)row_list.size() - 1; }
 
-uint FlowLayout::HitTestRow(uint y) const { return y / (row_height + row_gap); }
+uint FlowLayout::HitTestRow(float y) const { return (uint)floorf(y / (row_height + row_gap)); }
 
-auto FlowLayout::HitTestColumn(row_index row, uint x) const {
-	static auto cmp = [](const ChildInfo& item, uint offset) { return offset >= item.offset; };
+auto FlowLayout::HitTestColumn(row_index row, float x) const {
+	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.offset; };
 	return std::lower_bound(child_list.begin() + row_list[row], child_list.begin() + row_list[row + 1], x, cmp) - 1;
 }
 
 void FlowLayout::AppendChild(child_ptr child) {
 	RegisterChild(child);
-	child_index child_index = child_list.size();
+	child_index child_index = (uint)child_list.size();
 	ChildInfo& info = child_list.emplace_back(std::move(child));
 	info.width = UpdateChildSizeRef(info.child, Size(length_min, row_height)).width;
 	if (UpdateLayout(child_index)) { SizeUpdated(); }
 }
 
 bool FlowLayout::UpdateLayout(child_index child_index) {
-	uint row = 0, column = 0, offset = 0;
+	uint row = 0, column = 0; float offset = 0;
 	if (child_index > 0) {
 		ChildInfo& prev = child_list[child_index - 1]; std::tie(row, column) = GetChildData(prev.child);
 		column++; offset = prev.offset + prev.width + column_gap;
@@ -53,8 +50,8 @@ bool FlowLayout::UpdateLayout(child_index child_index) {
 		offset += info.width + column_gap; column++;
 	}
 	row_list.push_back((uint)child_list.size());
-	uint height = child_list.empty() ? 0 : GetRowOffset(row) + row_height;
-	if (size.height == height) { redraw_region = Rect(Point(0, (int)GetRowOffset(row_begin)), size_max); Redraw(); return false; }
+	float height = child_list.empty() ? 0 : GetRowOffset(row) + row_height;
+	if (size.height == height) { redraw_region = Rect(Point(0, GetRowOffset(row_begin)), size_max); Redraw(); return false; }
 	size.height = height; return true;
 }
 
@@ -76,9 +73,9 @@ void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 }
 
 ref_ptr<WndObject> FlowLayout::HitTest(Point& point) {
-	if ((uint)point.x >= size.width || (uint)point.y >= size.height) { return nullptr; }
-	row_index row = HitTestRow(point.y); point.y -= GetRowOffset(row); if ((uint)point.y >= row_height) { return this; }
-	auto it = HitTestColumn(row, point.x); point.x -= (int)it->offset; if ((uint)point.x >= it->width) { return this; }
+	if (point.x >= size.width || point.y >= size.height) { return nullptr; }
+	row_index row = HitTestRow(point.y); point.y -= GetRowOffset(row); if (point.y >= row_height) { return this; }
+	auto it = HitTestColumn(row, point.x); point.x -= it->offset; if (point.x >= it->width) { return this; }
 	return it->child;
 }
 
@@ -94,12 +91,12 @@ void FlowLayout::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 
 void FlowLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
-	row_index row_begin = HitTestRow(draw_region.top()), row_end = HitTestRow(draw_region.bottom() - 1);
+	row_index row_begin = HitTestRow(draw_region.top()), row_end = HitTestRow(ceilf(draw_region.bottom()) - 1.0f);
 	for (row_index row = row_begin; row <= row_end; ++row) {
-		uint row_offset = GetRowOffset(row);
-		auto it_begin = HitTestColumn(row, draw_region.left()), it_end = HitTestColumn(row, draw_region.right() - 1);
+		float row_offset = GetRowOffset(row);
+		auto it_begin = HitTestColumn(row, draw_region.left()), it_end = HitTestColumn(row, ceilf(draw_region.right()) - 1.0f);
 		for (auto it = it_begin; it <= it_end; ++it) {
-			Rect child_region(Point((int)it->offset, (int)row_offset), Size(it->width, row_height));
+			Rect child_region(Point(it->offset, row_offset), Size(it->width, row_height));
 			DrawChild(it->child, child_region, figure_queue, draw_region);
 		}
 	}

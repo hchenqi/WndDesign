@@ -9,19 +9,19 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-constexpr uint length_max = 0x0FFFFFFF;
-constexpr uint length_min = 0;
+constexpr float length_max = 1e8f;
+constexpr float length_min = 0.0f;
 constexpr Size size_max = Size(length_max, length_max);
 constexpr Size size_min = Size(length_min, length_min);
 constexpr Size size_empty = size_min;
 
-constexpr int position_max = (int)length_max / 2;
-constexpr int position_min = -position_max;
+constexpr float position_max = length_max / 2;
+constexpr float position_min = -position_max;
 constexpr Point point_max = Point(position_max, position_max);
 constexpr Point point_min = Point(position_min, position_min);
-constexpr Point point_zero = Point(0, 0);
+constexpr Point point_zero = Point(0.0f, 0.0f);
 
-constexpr Vector vector_zero = Vector(0, 0);
+constexpr Vector vector_zero = Vector(0.0f, 0.0f);
 
 constexpr Rect region_empty = Rect(point_zero, size_empty);
 constexpr Rect region_infinite = Rect(point_min, size_max);

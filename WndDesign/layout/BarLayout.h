@@ -16,8 +16,8 @@ public:
 	using child_ptr = child_ptr<Auto, Assigned>;
 
 public:
-	BarLayout(uint height, child_ptr left, child_ptr right, child_ptr center) :
-		left(std::move(left)), right(std::move(right)), center(std::move(center)), size(0, height) {
+	BarLayout(float height, child_ptr left, child_ptr right, child_ptr center) :
+		left(std::move(left)), right(std::move(right)), center(std::move(center)), size(0.0f, height) {
 		RegisterChild(this->left); RegisterChild(this->right); RegisterChild(this->center);
 		width_left = UpdateChildSizeRef(this->left, size).width;
 		width_right = UpdateChildSizeRef(this->right, size).width;
@@ -33,13 +33,13 @@ protected:
 	// layout
 private:
 	Size size;
-	uint width_left = 0;
-	uint width_right = 0;
-	uint width_center = 0;
+	float width_left = 0.0f;
+	float width_right = 0.0f;
+	float width_center = 0.0f;
 protected:
-	Rect GetRegionLeft() const { return Rect(Point(0, 0), Size(width_left, size.height)); }
-	Rect GetRegionRight() const { return Rect(Point((int)size.width - (int)width_right, 0), Size(width_right, size.height)); }
-	Rect GetRegionCenter() const { return Rect(Point(((int)size.width - (int)width_center) / 2, 0), Size(width_center, size.height)); }
+	Rect GetRegionLeft() const { return Rect(Point(), Size(width_left, size.height)); }
+	Rect GetRegionRight() const { return Rect(Point(size.width - width_right, 0.0f), Size(width_right, size.height)); }
+	Rect GetRegionCenter() const { return Rect(Point((size.width - width_center) / 2, 0.0f), Size(width_center, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == center.get() ? GetRegionCenter() : &child == right.get() ? GetRegionRight() : GetRegionLeft(); }
 protected:
 	virtual void OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; }

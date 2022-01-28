@@ -7,11 +7,11 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 struct Vector {
-	int x;
-	int y;
+	float x;
+	float y;
 
-	explicit constexpr Vector() :x(0), y(0) {}
-	explicit constexpr Vector(int x, int y) : x(x), y(y) {}
+	explicit constexpr Vector() : x(), y() {}
+	explicit constexpr Vector(float x, float y) : x(x), y(y) {}
 
 	constexpr bool operator==(const Vector& vector) const { return x == vector.x && y == vector.y; }
 	constexpr bool operator!=(const Vector& vector) const { return x != vector.x || y != vector.y; }

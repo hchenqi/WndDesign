@@ -17,17 +17,17 @@ private:
 	class Frame : public ScrollFrame<Vertical> {
 		using ScrollFrame::ScrollFrame;
 		ScrollBox& GetScrollbox() const { return static_cast<ScrollBox&>(GetParent()); }
-		virtual void OnFrameOffsetUpdate(uint content_height, uint frame_height, int frame_offset) override {
+		virtual void OnFrameOffsetUpdate(float content_height, float frame_height, float frame_offset) override {
 			GetScrollbox().GetBar().UpdateScrollOffset(content_height, frame_height, frame_offset);
 		}
 	};
 	class Bar : public Scrollbar<Vertical> {
 		ScrollBox& GetScrollbox() const { return static_cast<ScrollBox&>(GetParent()); }
-		virtual void OnFrameOffsetChange(int scroll_offset) override {
+		virtual void OnFrameOffsetChange(float scroll_offset) override {
 			GetScrollbox().GetFrame().UpdateFrameOffset(scroll_offset);
 		}
 		virtual void OnMouseMsg(MouseMsg msg) override {
-			if (msg.type == MouseMsg::WheelVertical) { GetScrollbox().GetFrame().Scroll(-msg.wheel_delta); }
+			if (msg.type == MouseMsg::WheelVertical) { GetScrollbox().GetFrame().Scroll((float)-msg.wheel_delta); }
 		}
 	};
 private:

@@ -16,8 +16,8 @@ void DesktopLayer::Create(HANDLE hwnd, Size size) {
 	// Create swapchain.
 	ComPtr<IDXGISwapChain1> swap_chain;
 	DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = { 0 };
-	swap_chain_desc.Width = size.width;
-	swap_chain_desc.Height = size.height;
+	swap_chain_desc.Width = (uint)ceilf(size.width);
+	swap_chain_desc.Height = (uint)ceilf(size.height);
 	swap_chain_desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	swap_chain_desc.Stereo = false;
 	swap_chain_desc.SampleDesc.Count = 1;
@@ -47,7 +47,6 @@ void DesktopLayer::Create(HANDLE hwnd, Size size) {
 	GetDCompDevice().Commit();
 }
 
-
 void DesktopLayer::Destroy() {
 	SafeRelease(&comp_target);
 	DestroyBitmap();
@@ -73,12 +72,12 @@ void DesktopLayer::DestroyBitmap() {
 
 void DesktopLayer::Resize(Size size) {
 	DestroyBitmap();
-	hr << swap_chain->ResizeBuffers(0, size.width, size.height, DXGI_FORMAT_UNKNOWN, 0);
+	hr << swap_chain->ResizeBuffers(0, (uint)ceilf(size.width), (uint)ceilf(size.height), DXGI_FORMAT_UNKNOWN, 0);
 	CreateBitmap();
 }
 
 void DesktopLayer::Present(Rect rect) {
-	RECT dirty_rect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
+	RECT dirty_rect = { (int)floorf(rect.left()), (int)floorf(rect.top()), (int)ceilf(rect.right()), (int)ceilf(rect.bottom()) };
 	DXGI_PRESENT_PARAMETERS present_parameters = { 1, &dirty_rect };
 	hr << swap_chain->Present1(0, 0, &present_parameters);
 }

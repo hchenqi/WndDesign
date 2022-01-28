@@ -34,15 +34,15 @@ protected:
 	// layout
 protected:
 	Size size;
-	uint height_first = 0;
-	uint height_second = 0;
+	float height_first = 0.0f;
+	float height_second = 0.0f;
 protected:
 	Rect GetRegionFirst() const { return Rect(point_zero, Size(size.width, height_first)); }
-	Rect GetRegionSecond() const { return Rect(Point(0, (int)height_first), Size(size.width, height_second)); }
+	Rect GetRegionSecond() const { return Rect(Point(0.0f, height_first), Size(size.width, height_second)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == first.get() ? GetRegionFirst() : GetRegionSecond(); }
 protected:
 	void UpdateHeightSecond() {
-		height_second = size.height > height_first ? size.height - height_first : 0;
+		height_second = size.height > height_first ? size.height - height_first : 0.0f;
 		UpdateChildSizeRef(second, GetRegionSecond().size);
 	}
 protected:
@@ -60,9 +60,9 @@ protected:
 	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if ((uint)point.y < height_first) { return first; }
+		if (point.y < height_first) { return first; }
 		point.y -= height_first;
-		if ((uint)point.y < height_second) { return second; }
+		if (point.y < height_second) { return second; }
 		return nullptr;
 	}
 	virtual Transform GetChildTransform(WndObject& child) override {
@@ -106,15 +106,15 @@ protected:
 	// layout
 private:
 	Size size;
-	uint width_first = 0;
-	uint width_second = 0;
+	float width_first = 0.0f;
+	float width_second = 0.0f;
 private:
 	Rect GetRegionFirst() const { return Rect(point_zero, Size(width_first, size.height)); }
-	Rect GetRegionSecond() const { return Rect(Point((int)width_first, 0), Size(width_second, size.height)); }
+	Rect GetRegionSecond() const { return Rect(Point(width_first, 0.0f), Size(width_second, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == first.get() ? GetRegionFirst() : GetRegionSecond(); }
 private:
 	void UpdateWidthFirst() {
-		width_first = size.width > width_second ? size.width - width_second : 0;
+		width_first = size.width > width_second ? size.width - width_second : 0.0f;
 		UpdateChildSizeRef(first, GetRegionFirst().size);
 	}
 protected:
@@ -132,9 +132,9 @@ protected:
 	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if ((uint)point.x < width_first) { return first; }
+		if (point.x < width_first) { return first; }
 		point.x -= width_first;
-		if ((uint)point.x < width_second) { return second; }
+		if (point.x < width_second) { return second; }
 		return nullptr;
 	}
 	virtual Transform GetChildTransform(WndObject& child) override { 

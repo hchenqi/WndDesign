@@ -17,7 +17,7 @@ public:
 	// style
 private:
 	Style style;
-	uint width_ref = 0;
+	float width_ref = 0.0f;
 
 	// text
 protected:

@@ -95,7 +95,7 @@ void DesktopFrame::Draw() {
 }
 
 void DesktopFrame::OnMouseMsg(MouseMsg msg) {
-	msg.point = Scale(msg.point, 1 / scale_x, 1 / scale_y);
+	msg.point = Scale(msg.point, 1.0f / scale_x, 1.0f / scale_y);
 	if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
 		BorderPosition border_position = HitTestBorderPosition(size, border._width + border._radius, msg.point);
 		if (msg.type == MouseMsg::Move) {

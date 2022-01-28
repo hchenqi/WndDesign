@@ -74,7 +74,7 @@ public:
 private:
 	uint BeginGroup(Transform transform, Rect clip_region) {
 		uint group_begin_index = (uint)groups.size();
-		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), transform * Transform::Translation((float)offset.x, (float)offset.y), clip_region });
+		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), transform * offset, clip_region });
 		offset_stack.push_back(offset); offset = vector_zero;
 		return group_begin_index;
 	}
@@ -87,9 +87,6 @@ private:
 public:
 	void Group(Transform group_transform, Rect clip_region, std::function<void(void)> func) {
 		uint begin = BeginGroup(group_transform, clip_region); func(); EndGroup(begin);
-	}
-	void Group(Vector group_offset, Rect clip_region, std::function<void(void)> func) {
-		Group(Transform::Translation((float)group_offset.x, (float)group_offset.y), clip_region, func);
 	}
 
 public:

@@ -15,25 +15,25 @@ class Scrollbar;
 template<>
 class Scrollbar<Vertical> : public WndType<Auto, Assigned> {
 public:
-	Scrollbar(uint width = 20) : width(width) { RegisterChild(slider); }
+	Scrollbar(float width = 20.0f) : width(width) { RegisterChild(slider); }
 
 	// layout
 private:
-	uint width;
-	uint height = 0;
-	uint content_height = 0;
-	uint slider_height = 0;
-	int slider_offset = 0;
+	float width;
+	float height = 0.0f;
+	float content_height = 0.0f;
+	float slider_height = 0.0f;
+	float slider_offset = 0.0f;
 private:
 	bool IsShown() const { return slider_height < height; }
 private:
 	virtual void OnSizeRefUpdate(Size size_ref) override { height = size_ref.height; }
-	virtual Size GetSize() override { return Size(IsShown() ? width : 0, height); }
+	virtual Size GetSize() override { return Size(IsShown() ? width : 0.0f, height); }
 public:
-	void UpdateScrollOffset(uint content_height, uint frame_height, int frame_offset) {
+	void UpdateScrollOffset(float content_height, float frame_height, float frame_offset) {
 		bool is_shown = IsShown(); this->content_height = content_height;
-		slider_height = (uint)roundf((float)height * frame_height / content_height);
-		slider_offset = (int)roundf((float)height * frame_offset / content_height);
+		slider_height = height * frame_height / content_height;
+		slider_offset = height * frame_offset / content_height;
 		if (is_shown ^ IsShown()) { SizeUpdated(); }
 		Redraw();
 	}
@@ -43,7 +43,7 @@ private:
 		return this;
 	}
 private:
-	virtual void OnFrameOffsetChange(int scroll_offset) {}
+	virtual void OnFrameOffsetChange(float scroll_offset) {}
 
 	// paint
 private:
@@ -59,16 +59,16 @@ private:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		if (IsShown()) {
 			figure_queue.add(point_zero, new Rectangle(GetSize(), frame_color));
-			figure_queue.add(Point(0, slider_offset), new Rectangle(Size(width, slider_height), slider_color));
+			figure_queue.add(Point(0.0f, slider_offset), new Rectangle(Size(width, slider_height), slider_color));
 		}
 	}
 
 	// message
 private:
-	int mouse_down_offset = 0;
+	float mouse_down_offset = 0.0f;
 private:
-	void OnMousePress(int y) { mouse_down_offset = y - slider_offset; }
-	void OnMouseDrag(int y) { OnFrameOffsetChange((y - mouse_down_offset) * (int)content_height / (int)height); }
+	void OnMousePress(float y) { mouse_down_offset = y - slider_offset; }
+	void OnMouseDrag(float y) { OnFrameOffsetChange((y - mouse_down_offset) * content_height / height); }
 
 private:
 	struct Slider : public WndObject {

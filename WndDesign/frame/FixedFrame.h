@@ -13,10 +13,10 @@ class FixedFrame;
 template<>
 class FixedFrame<Auto, Auto> : public WndFrame, public LayoutType<Auto, Auto> {
 public:
-	FixedFrame(uint height, child_ptr<Auto, Assigned> child) : WndFrame(std::move(child)) {
+	FixedFrame(float height, child_ptr<Auto, Assigned> child) : WndFrame(std::move(child)) {
 		size = Size(UpdateChildSizeRef(this->child, size).width, height); SetChildData<uint>(this->child, child_auto_assigned);
 	}
-	FixedFrame(uint width, child_ptr<Assigned, Auto> child) : WndFrame(std::move(child)) {
+	FixedFrame(float width, child_ptr<Assigned, Auto> child) : WndFrame(std::move(child)) {
 		size = Size(width, UpdateChildSizeRef(this->child, size).height); SetChildData<uint>(this->child, child_assigned_auto);
 	}
 	FixedFrame(Size size, child_ptr<Assigned, Assigned> child) : WndFrame(std::move(child)) {
@@ -40,7 +40,7 @@ protected:
 template<>
 class FixedFrame<Auto, Assigned> : public WndFrame, public LayoutType<Auto, Assigned> {
 public:
-	FixedFrame(uint width, child_ptr<Assigned, Assigned> child) : WndFrame(std::move(child)) { size.width = width; }
+	FixedFrame(float width, child_ptr<Assigned, Assigned> child) : WndFrame(std::move(child)) { size.width = width; }
 protected:
 	virtual void OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) { size.height = size_ref.height; UpdateChildSizeRef(this->child, size); }
@@ -52,7 +52,7 @@ protected:
 template<>
 class FixedFrame<Assigned, Auto> : public WndFrame, public LayoutType<Assigned, Auto> {
 public:
-	FixedFrame(uint height, child_ptr<Assigned, Assigned> child) : WndFrame(std::move(child)) { size.height = height; }
+	FixedFrame(float height, child_ptr<Assigned, Assigned> child) : WndFrame(std::move(child)) { size.height = height; }
 protected:
 	virtual void OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) { size.width = size_ref.width; UpdateChildSizeRef(this->child, size); }

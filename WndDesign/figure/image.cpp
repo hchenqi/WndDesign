@@ -62,7 +62,9 @@ ComPtr<IWICFormatConverter> LoadImageFromMemory(void* address, size_t size) {
 
 
 inline Size GetImageSize(ImageSource& source) {
-	Size size; hr << source.GetSize(&size.width, &size.height); return size;
+	uint width, height;
+	hr << source.GetSize(&width, &height);
+	return Size((float)width, (float)height);
 }
 
 inline ComPtr<ID2D1Bitmap1> CreateD2DBitmapFromWicBitmap(IWICFormatConverter& converter) {

@@ -7,17 +7,16 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 struct Size {
-	uint width;
-	uint height;
+	float width;
+	float height;
 
-	explicit constexpr Size() : width(0), height(0) {}
-	explicit constexpr Size(uint width, uint height) : width(width), height(height) {}
+	explicit constexpr Size() : width(), height() {}
+	explicit constexpr Size(float width, float height) : width(width), height(height) {}
 
 	constexpr bool operator==(const Size& size) const { return width == size.width && height == size.height; }
 	constexpr bool operator!=(const Size& size) const { return width != size.width || height != size.height; }
 
-	constexpr bool IsEmpty() const { return width == 0 || height == 0; }
-	constexpr uint Area() const { return width * height; }
+	constexpr bool IsEmpty() const { return width == 0.0f || height == 0.0f; }
 };
 
 

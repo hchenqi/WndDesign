@@ -7,7 +7,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 constexpr Point ScalePointBySize(Point point, Size size) {
-	return Point(point.x * (int)size.width, point.y * (int)size.height);
+	return Point(point.x * size.width, point.y * size.height);
 }
 
 constexpr Size ScaleSizeBySize(Size old_size, Size size) {
@@ -19,14 +19,11 @@ constexpr Rect ScaleRectBySize(Rect region, Size size) {
 }
 
 
-constexpr int div_floor(int a, int b) { return a >= 0 ? a / b : (a - b + 1) / b; }
-constexpr int div_ceil(int a, int b) { return a <= 0 ? a / b : (a + b - 1) / b; }
-
 constexpr Rect RegionToOverlappingTileRange(Rect region, Size tile_size) {
 	if (tile_size.IsEmpty()) { return region_empty; }
-	Point point_begin(div_floor(region.left(), tile_size.width), div_floor(region.top(), tile_size.height));
-	Point point_end(div_ceil(region.right(), tile_size.width), div_ceil(region.bottom(), tile_size.height));
-	return Rect(point_begin, Size((uint)(point_end.x - point_begin.x), (uint)(point_end.y - point_begin.y)));
+	Point point_begin(floorf(region.left() / tile_size.width), floorf(region.top() / tile_size.height));
+	Point point_end(ceilf(region.right() / tile_size.width), ceilf(region.bottom() / tile_size.height));
+	return Rect(point_begin, Size(point_end.x - point_begin.x, point_end.y - point_begin.y));
 }
 
 

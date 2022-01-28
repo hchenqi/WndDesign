@@ -14,7 +14,7 @@ inline alloc_ptr<ID2D1Bitmap1> D2DCreateBitmap(Size size) {
 		D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
 	);
 	ComPtr<ID2D1Bitmap1> bitmap;
-	hr << GetD2DDeviceContext().CreateBitmap(D2D1::SizeU(size.width, size.height), nullptr, 0, &bitmap_properties, &bitmap);
+	hr << GetD2DDeviceContext().CreateBitmap(D2D1::SizeU((uint)ceilf(size.width), (uint)ceilf(size.height)), nullptr, 0, &bitmap_properties, &bitmap);
 	return bitmap.Detach();
 }
 
@@ -25,9 +25,9 @@ void Layer::Create(Size size) {
 
 void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect clip_region) {
 	ID2D1DeviceContext& device_context = GetD2DDeviceContext(); device_context.SetTarget(bitmap.Get());
-	Transform transform = Transform::Translation((float)offset.x, (float)offset.y);
+	Transform transform = offset;
 	device_context.SetTransform(AsD2DTransform(transform));
-	device_context.PushAxisAlignedClip(AsD2DRect(clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
+	device_context.PushAxisAlignedClip(AsD2DRect(clip_region), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	device_context.Clear(AsD2DColor(color_transparent));
 	auto& groups = figure_queue.GetFigureGroups();
 	auto& figures = figure_queue.GetFigures(); uint figure_index = 0;
@@ -39,7 +39,7 @@ void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect
 		if (group.IsBegin()) {
 			groups[group.group_end_index].prev_transform = transform;
 			device_context.SetTransform(AsD2DTransform(transform = group.transform * transform));
-			device_context.PushAxisAlignedClip(AsD2DRect(group.clip_region), D2D1_ANTIALIAS_MODE_ALIASED);
+			device_context.PushAxisAlignedClip(AsD2DRect(group.clip_region), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 		} else {
 			transform = group.prev_transform;
 			device_context.PopAxisAlignedClip();
@@ -53,7 +53,7 @@ void LayerFigure::DrawOn(RenderTarget& target, Point point) const {
 	target.DrawBitmap(
 		layer.bitmap.Get(),
 		AsD2DRect(Rect(point, region.size)),
-		1.0,
+		1.0f,
 		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 		AsD2DRect(region)
 	);

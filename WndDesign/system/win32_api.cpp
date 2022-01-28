@@ -26,13 +26,9 @@ struct DesktopFrameApi : DesktopFrame {
 
 BEGIN_NAMESPACE(Anonymous)
 
-inline RECT AsWin32Rect(Rect rect) {
-	return { rect.left(), rect.top(), rect.right(), rect.bottom() };
-}
+inline RECT AsWin32Rect(Rect rect) { return { (int)floorf(rect.left()), (int)floorf(rect.top()), (int)ceilf(rect.right()), (int)ceilf(rect.bottom()) }; }
 
-inline Rect AsRect(RECT rect) {
-	return Rect(rect.left, rect.top, (uint)(rect.right - rect.left), (uint)(rect.bottom - rect.top));
-}
+inline Rect AsRect(RECT rect) { return Rect((float)rect.left, (float)rect.top, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top)); }
 
 inline Size GetWorkAreaSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return AsRect(rect).size; }
 
@@ -52,7 +48,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	// mouse message
 	if (IsMouseMsg(msg)) {
 		MouseMsg mouse_msg;
-		mouse_msg.point = Point(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
+		mouse_msg.point = Point((float)GET_X_LPARAM(lparam), (float)GET_Y_LPARAM(lparam));
 		mouse_msg._key_state = (uchar)GET_KEYSTATE_WPARAM(wparam);;
 		mouse_msg.wheel_delta = GET_WHEEL_DELTA_WPARAM(wparam);
 		switch (msg) {
@@ -108,9 +104,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_GETMINMAXINFO: {
 			MINMAXINFO* min_max_info = reinterpret_cast<MINMAXINFO*>(lparam);
 			auto [size_min, region_max] = frame->GetMinMaxRegion();
-			min_max_info->ptMaxPosition = { region_max.point.x, region_max.point.y };
-			min_max_info->ptMaxSize = { (LONG)region_max.size.width, (LONG)region_max.size.height };
-			min_max_info->ptMinTrackSize = { (LONG)size_min.width, (LONG)size_min.height };
+			min_max_info->ptMaxPosition = { (int)floorf(region_max.point.x), (int)floorf(region_max.point.y) };
+			min_max_info->ptMaxSize = { (int)ceilf(region_max.size.width), (int)ceilf(region_max.size.height) };
+			min_max_info->ptMinTrackSize = { (int)floorf(size_min.width), (int)floorf(size_min.height) };
 			min_max_info->ptMaxTrackSize = min_max_info->ptMaxSize;
 		}break;
 		case WM_WINDOWPOSCHANGING: break;
@@ -206,7 +202,7 @@ HANDLE CreateWnd(Rect region, std::wstring title) {
 	RegisterWndClass();
 	HWND hwnd = CreateWindowExW(WS_EX_NOREDIRECTIONBITMAP, wnd_class_name, title.c_str(),
 								WS_POPUP | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_HSCROLL | WS_VSCROLL,
-								region.point.x, region.point.y, region.size.width, region.size.height,
+								(int)floorf(region.point.x), (int)floorf(region.point.y), (int)ceilf(region.size.width), (int)ceilf(region.size.height),
 								NULL, NULL, hInstance, NULL);
 	if (hwnd == NULL) { throw std::runtime_error("create window error"); }
 	return hwnd;
@@ -227,7 +223,7 @@ void SetWndTitle(HANDLE hwnd, std::wstring title) {
 }
 
 void SetWndRegion(HANDLE hwnd, Rect region) {
-	MoveWindow((HWND)hwnd, region.point.x, region.point.y, region.size.width, region.size.height, false);
+	MoveWindow((HWND)hwnd, (int)floorf(region.point.x), (int)floorf(region.point.y), (int)ceilf(region.size.width), (int)ceilf(region.size.height), false);
 }
 
 void ShowWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_SHOWDEFAULT); }

@@ -25,12 +25,12 @@ private:
 	struct TitleBarFrameStyle {
 		struct TitleBarStyle {
 		public:
-			uint _height = 30;
-			uint _max_title_length = 300;
+			float _height = 30.0f;
+			float _max_title_length = 300.0f;
 			Color _background = Color::DarkGray;
 		public:
-			constexpr TitleBarStyle& height(uint height) { _height = height; return *this; }
-			constexpr TitleBarStyle& maxt_title_length(uint maxt_title_length) { _max_title_length = maxt_title_length; return *this; }
+			constexpr TitleBarStyle& height(float height) { _height = height; return *this; }
+			constexpr TitleBarStyle& maxt_title_length(float maxt_title_length) { _max_title_length = maxt_title_length; return *this; }
 			constexpr TitleBarStyle& background(Color background) { _background = background; return *this; }
 		}title_bar;
 
@@ -40,7 +40,7 @@ public:
 	struct Style : DesktopFrame::Style, TitleBarFrameStyle {};
 
 public:
-	TitleBarFrame(Style style, child_ptr child, child_ptr_menu menu = new Placeholder<Auto, Assigned>(0)) : DesktopFrame{
+	TitleBarFrame(Style style, child_ptr child, child_ptr_menu menu = new Placeholder<Auto, Assigned>(0.0f)) : DesktopFrame{
 		style,
 		new SplitLayout<Vertical, First>{
 			new TitleBar(*this, style, std::move(menu)),
@@ -67,7 +67,7 @@ private:
 			style.title_bar._height,
 			std::move(menu),
 			new ListLayout<Horizontal>{
-				0,
+				0.0f,
 				new MinimizeButton(frame, style.title_bar._background),
 				new MaximizeButton(frame, style.title_bar._background),
 				new CloseButton(frame, style.title_bar._background)
@@ -104,7 +104,7 @@ private:
 
 	class ButtonBase : public Button<Auto, Assigned> {
 	public:
-		ButtonBase(TitleBarFrame& frame, Color background) : Button<Auto, Assigned>(50), frame(frame) {
+		ButtonBase(TitleBarFrame& frame, Color background) : Button<Auto, Assigned>(50.0f), frame(frame) {
 			this->background = this->background_normal = background;
 		}
 	protected:
@@ -117,7 +117,7 @@ private:
 	private:
 		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 			ButtonBase::OnDraw(figure_queue, draw_region);
-			figure_queue.add(Point(20, 15), new Rectangle(Size(10, 1), 1.0, Color::White));
+			figure_queue.add(Point(20.0f, 15.0f), new Rectangle(Size(10.0f, 1.0f), 1.0f, Color::White));
 		}
 	private:
 		virtual void OnClick() override { frame.Minimize(); }
@@ -130,10 +130,10 @@ private:
 		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 			ButtonBase::OnDraw(figure_queue, draw_region);
 			if (frame.IsMaximized()) {
-				figure_queue.add(Point(22, 10), new Rectangle(Size(8, 8), 1.0, Color::White));
-				figure_queue.add(Point(20, 12), new Rectangle(Size(8, 8), background, 1.0, Color::White));
+				figure_queue.add(Point(22.0f, 10.0f), new Rectangle(Size(8.0f, 8.0f), 1.0f, Color::White));
+				figure_queue.add(Point(20.0f, 12.0f), new Rectangle(Size(8.0f, 8.0f), background, 1.0f, Color::White));
 			} else {
-				figure_queue.add(Point(20, 10), new Rectangle(Size(10, 10), 1.0, Color::White));
+				figure_queue.add(Point(20.0f, 10.0f), new Rectangle(Size(10.0f, 10.0f), 1.0f, Color::White));
 			}
 		}
 	private:
@@ -146,8 +146,8 @@ private:
 	private:
 		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 			ButtonBase::OnDraw(figure_queue, draw_region);
-			figure_queue.add(Point(20, 10), new Line(Vector(10, 10), 1.0, Color::White));
-			figure_queue.add(Point(20, 20), new Line(Vector(10, -10), 1.0, Color::White));
+			figure_queue.add(Point(20.0f, 10.0f), new Line(Vector(10.0f, 10.0f), 1.0f, Color::White));
+			figure_queue.add(Point(20.0f, 20.0f), new Line(Vector(10.0f, -10.0f), 1.0f, Color::White));
 		}
 	private:
 		virtual void OnClick() override { frame.Destroy(); }

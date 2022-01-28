@@ -48,37 +48,17 @@ struct ImageSource : IWICFormatConverter {};
 struct TextLayout : IDWriteTextLayout4 {};
 
 
-inline D2D1_POINT_2F AsD2DPoint(Point point) {
-	return D2D1::Point2F(static_cast<FLOAT>(point.x), static_cast<FLOAT>(point.y));
-}
+inline D2D1_POINT_2F AsD2DPoint(Point point) { return { point.x, point.y }; }
 
-inline D2D1_SIZE_F AsD2DSize(Size size) {
-	return D2D1::SizeF(static_cast<FLOAT>(size.width), static_cast<FLOAT>(size.height));
-}
+inline D2D1_SIZE_F AsD2DSize(Size size) { return { size.width, size.height }; }
 
-inline D2D1_RECT_F AsD2DRect(Rect rect) {
-	return D2D1::RectF(
-		static_cast<FLOAT>(rect.left()), static_cast<FLOAT>(rect.top()),
-		static_cast<FLOAT>(rect.right()), static_cast<FLOAT>(rect.bottom())
-	);
-}
+inline D2D1_RECT_F AsD2DRect(Rect rect) { return { rect.left(), rect.top(), rect.right(), rect.bottom() }; }
 
-inline Point AsPoint(D2D1_POINT_2F point) {
-	return Point(static_cast<uint>(point.x), static_cast<uint>(point.y));
-}
+inline Point AsPoint(D2D1_POINT_2F point) { return Point(point.x, point.y); }
 
-inline Size AsSize(D2D1_SIZE_F size) {
-	return Size(static_cast<uint>(size.width), static_cast<uint>(size.height));
-}
+inline Size AsSize(D2D1_SIZE_F size) { return Size(size.width, size.height); }
 
-inline Rect AsRect(D2D1_RECT_F rect) {
-	return Rect(
-		static_cast<int>(rect.left),
-		static_cast<int>(rect.top),
-		static_cast<uint>(static_cast<int>(rect.right) - static_cast<int>(rect.left)),
-		static_cast<uint>(static_cast<int>(rect.bottom) - static_cast<int>(rect.top))
-	);
-}
+inline Rect AsRect(D2D1_RECT_F rect) { return Rect(Point(rect.left, rect.top), Size(rect.right - rect.left, rect.bottom - rect.top)); }
 
 
 inline const D2D1::Matrix3x2F& AsD2DTransform(const Transform& transform) {

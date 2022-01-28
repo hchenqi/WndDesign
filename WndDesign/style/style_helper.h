@@ -10,13 +10,13 @@ BEGIN_NAMESPACE(WndDesign)
 struct StyleHelper {
 public:
 	static constexpr Size CalculateSize(ValueTag width, ValueTag height, Size size_ref) {
-		return Size(width.ConvertToPixel(size_ref.width).AsUnsigned(), height.ConvertToPixel(size_ref.height).AsUnsigned());
+		return Size(width.ConvertToPixel(size_ref.width).value(), height.ConvertToPixel(size_ref.height).value());
 	}
 	static constexpr std::pair<Size, Size> CalculateMinMaxSize(LengthStyle width, LengthStyle height, Size size_ref) {
 		return { CalculateSize(width._min, height._min, size_ref), CalculateSize(width._max, height._max, size_ref) };
 	}
 private:
-	static constexpr uint clamp(uint length_normal, uint length_min, uint length_max) {
+	static constexpr float clamp(float length_normal, float length_min, float length_max) {
 		if (length_normal < length_min) { length_normal = length_min; }
 		if (length_normal > length_max) { length_normal = length_max; }
 		return length_normal;
@@ -25,17 +25,17 @@ private:
 		return Rect(horizontal.begin, vertical.begin, horizontal.length, vertical.length);
 	}
 	static constexpr bool IsPositionAuto(ValueTag position) { return position.IsAuto() || position.IsCenter(); }
-	static constexpr uint CalculatePosition(ValueTag position_low, ValueTag position_high, uint length, uint length_ref) {
+	static constexpr float CalculatePosition(ValueTag position_low, ValueTag position_high, float length, float length_ref) {
 		if (IsPositionAuto(position_low)) {
 			if (position_low.IsCenter()) {
-				position_low = px((((int)length_ref) - (int)length) / 2);
+				position_low = px((length_ref - length) / 2);
 			} else if (!position_high.IsAuto()) {
-				position_low = px((int)length_ref - position_high.AsSigned() - (int)length);
+				position_low = px(length_ref - position_high.value() - length);
 			}
 		}
-		return position_low.AsSigned();
+		return position_low.value();
 	}
-	static constexpr Interval CalculateLength(LengthStyle length, ValueTag position_low, ValueTag position_high, uint length_ref) {
+	static constexpr Interval CalculateLength(LengthStyle length, ValueTag position_low, ValueTag position_high, float length_ref) {
 		if (length_ref == 0) { return Interval(); }
 		ValueTag& length_normal = length._normal.ConvertToPixel(length_ref);
 		ValueTag& length_min = length._min.ConvertToPixel(length_ref);
@@ -46,12 +46,12 @@ private:
 			if (IsPositionAuto(position_low) || IsPositionAuto(position_high)) {
 				length_normal = length_max;
 			} else {
-				length_normal = px((int)length_ref - position_low.AsSigned() - position_high.AsSigned());
+				length_normal = px(length_ref - position_low.value() - position_high.value());
 			}
 		}
 		return Interval(
-			CalculatePosition(position_low, position_high, length_normal.AsUnsigned(), length_ref),
-			clamp(length_normal.AsUnsigned(), length_min.AsUnsigned(), length_max.AsUnsigned())
+			CalculatePosition(position_low, position_high, length_normal.value(), length_ref),
+			clamp(length_normal.value(), length_min.value(), length_max.value())
 		);
 	}
 public:

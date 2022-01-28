@@ -28,7 +28,7 @@ struct Rectangle : Figure {
 		size(size), fill_color(fill_color), border_width(border_width), border_color(border_color) {
 	}
 	Rectangle(Size size, Color fill_color) :
-		Rectangle(size, fill_color, 0, color_transparent) {
+		Rectangle(size, fill_color, 0.0f, color_transparent) {
 	}
 	Rectangle(Size size, float border_width, Color border_color) :
 		Rectangle(size, color_transparent, border_width, border_color) {
@@ -40,18 +40,18 @@ struct Rectangle : Figure {
 
 struct RoundedRectangle : Figure {
 	Size size;
-	uint radius;
+	float radius;
 	Color fill_color;
 	float border_width;
 	Color border_color;
 
-	RoundedRectangle(Size size, uint radius, Color fill_color, float border_width, Color border_color) :
+	RoundedRectangle(Size size, float radius, Color fill_color, float border_width, Color border_color) :
 		size(size), radius(radius), fill_color(fill_color), border_width(border_width), border_color(border_color) {
 	}
-	RoundedRectangle(Size size, uint radius, Color fill_color) :
-		RoundedRectangle(size, radius, fill_color, 0, color_transparent) {
+	RoundedRectangle(Size size, float radius, Color fill_color) :
+		RoundedRectangle(size, radius, fill_color, 0.0f, color_transparent) {
 	}
-	RoundedRectangle(Size size, uint radius, float border_width, Color border_color) :
+	RoundedRectangle(Size size, float radius, float border_width, Color border_color) :
 		RoundedRectangle(size, radius, color_transparent, border_width, border_color) {
 	}
 
@@ -60,19 +60,19 @@ struct RoundedRectangle : Figure {
 
 
 struct Ellipse : Figure {
-	uint radius_x;
-	uint radius_y;
+	float radius_x;
+	float radius_y;
 	Color fill_color;
 	float border_width;
 	Color border_color;
 
-	Ellipse(uint radius_x, uint radius_y, Color fill_color, float border_width, Color border_color) :
+	Ellipse(float radius_x, float radius_y, Color fill_color, float border_width, Color border_color) :
 		radius_x(radius_x), radius_y(radius_y), fill_color(fill_color), border_width(border_width), border_color(border_color) {
 	}
-	Ellipse(uint radius_x, uint radius_y, Color fill_color) :
-		Ellipse(radius_x, radius_y, fill_color, 0, color_transparent) {
+	Ellipse(float radius_x, float radius_y, Color fill_color) :
+		Ellipse(radius_x, radius_y, fill_color, 0.0f, color_transparent) {
 	}
-	Ellipse(uint radius_x, uint radius_y, float border_width, Color border_color) :
+	Ellipse(float radius_x, float radius_y, float border_width, Color border_color) :
 		Ellipse(radius_x, radius_y, color_transparent, border_width, border_color) {
 	}
 
@@ -81,13 +81,13 @@ struct Ellipse : Figure {
 
 
 struct Circle : public Ellipse {
-	Circle(uint radius, Color fill_color, float border_width, Color border_color) :
+	Circle(float radius, Color fill_color, float border_width, Color border_color) :
 		Ellipse(radius, radius, fill_color, border_width, border_color) {
 	}
-	Circle(uint radius, Color fill_color) :
-		Ellipse(radius, radius, fill_color, 0, color_transparent) {
+	Circle(float radius, Color fill_color) :
+		Ellipse(radius, radius, fill_color, 0.0f, color_transparent) {
 	}
-	Circle(uint radius, float border_width, Color border_color) :
+	Circle(float radius, float border_width, Color border_color) :
 		Ellipse(radius, radius, color_transparent, border_width, border_color) {
 	}
 };

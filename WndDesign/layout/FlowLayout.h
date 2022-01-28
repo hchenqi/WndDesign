@@ -13,20 +13,20 @@ public:
 	using child_ptr = child_ptr<Auto, Assigned>;
 
 public:
-	FlowLayout(uint row_height, uint column_gap, uint row_gap);
+	FlowLayout(float row_height, float column_gap, float row_gap);
 
 	// style
 private:
-	uint row_height;
-	uint column_gap;
-	uint row_gap;
+	float row_height;
+	float column_gap;
+	float row_gap;
 
 	// child
 private:
 	struct ChildInfo {
 		child_ptr child;
-		uint width = 0;
-		uint offset = 0;
+		float width = 0;
+		float offset = 0;
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
 	};
 	std::vector<ChildInfo> child_list;
@@ -41,10 +41,10 @@ private:
 	ChildData GetChildData(WndObject& child) const { return WndObject::GetChildData<ChildData>(child); }
 private:
 	Rect GetChildRegion(WndObject& child) const;
-	uint GetRowOffset(uint row) const;
+	float GetRowOffset(uint row) const;
 	uint GetRowNumber() const;
-	uint HitTestRow(uint y) const;
-	auto HitTestColumn(row_index row, uint x) const;
+	uint HitTestRow(float y) const;
+	auto HitTestColumn(row_index row, float x) const;
 public:
 	void AppendChild(child_ptr child);
 

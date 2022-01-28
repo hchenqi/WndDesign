@@ -6,86 +6,84 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class ValuePixel {
-private:
-	int value;
-
-public:
-	explicit constexpr ValuePixel(int value) : value(value) {}
-
-	constexpr ValuePixel operator-() const { return ValuePixel(-value); }
-
-	constexpr int AsSigned() const { return value; }
-	constexpr uint AsUnsigned() const { if (value < 0) { throw std::invalid_argument("invalid unsigned value"); } return value; }
-};
-
-
 class ValueTag {
 public:
-	enum class Tag { Pixel, Percent, Center, Auto, _Number };
-	static_assert(static_cast<uint>(Tag::_Number) <= 0b1000);
+	enum class Type { Pixel, Percent, Center, Auto, _Number };
 
 private:
-	uint value_tag;
-
-private:
-	constexpr int value() const { return static_cast<int>(value_tag) >> 3; }
-	constexpr Tag tag() const { return static_cast<Tag>(value_tag & 0b111); }
+	Type _type;
+	float _value;
 
 public:
-	explicit constexpr ValueTag(uint value, Tag tag) : value_tag((value << 3) | static_cast<uint>(tag)) {}
-	explicit constexpr ValueTag(int value, Tag tag) : ValueTag(static_cast<uint>(value), tag) {}
-	constexpr ValueTag(ValuePixel value) : ValueTag(value.AsSigned(), Tag::Pixel) {}
+	explicit constexpr ValueTag(Type type, float value) : _type(type), _value(value) {}
 
-	constexpr bool IsPixel() const { return tag() == Tag::Pixel; }
-	constexpr bool IsPercent() const { return tag() == Tag::Percent; }
-	constexpr bool IsCenter() const { return tag() == Tag::Center; }
-	constexpr bool IsAuto() const { return tag() == Tag::Auto; }
+	constexpr bool IsPixel() const { return _type == Type::Pixel; }
+	constexpr bool IsPercent() const { return _type == Type::Percent; }
+	constexpr bool IsCenter() const { return _type == Type::Center; }
+	constexpr bool IsAuto() const { return _type == Type::Auto; }
 
-	constexpr ValueTag operator-() const { return ValueTag(-value(), tag()); }
+	constexpr float value() const { return _value; }
 
-	constexpr int AsSigned() const { return value(); }
-	constexpr uint AsUnsigned() const { if (value() < 0) { throw std::invalid_argument("invalid unsigned value"); } return value(); }
+	constexpr ValueTag operator-() const { return ValueTag(_type, -_value); }
 
-	constexpr ValueTag& ConvertToPixel(uint length_ref) {
-		if (tag() == Tag::Percent) { *this = ValueTag(value() * static_cast<int>(length_ref) / 100, Tag::Pixel); }
-		return *this;
+	constexpr ValueTag& ConvertToPixel(float length_ref) {
+		if (_type == Type::Percent) { _value = length_ref * _value / 100.0f; _type = Type::Pixel; } return *this;
 	}
 };
 
 
 #pragma warning (push)
-#pragma warning (disable : 4455)   // literal suffix identifiers that do not start with an underscore are reserved.
-constexpr ValuePixel operator""px(unsigned long long number) {
-	return ValuePixel(static_cast<int>(number));
+#pragma warning (disable : 4455)  // literal suffix identifiers that do not start with an underscore are reserved.
+constexpr ValueTag operator""px(long double number) {
+	return ValueTag(ValueTag::Type::Pixel, (float)number);
 }
+
+constexpr ValueTag operator""px(unsigned long long number) {
+	return ValueTag(ValueTag::Type::Pixel, (float)number);
+}
+
+constexpr ValueTag operator""pct(long double number) {
+	return ValueTag(ValueTag::Type::Percent, (float)number);
+}
+
 constexpr ValueTag operator""pct(unsigned long long number) {
-	return ValueTag(static_cast<int>(number), ValueTag::Tag::Percent);
+	return ValueTag(ValueTag::Type::Percent, (float)number);
 }
 #pragma warning (pop)
 
 
-constexpr ValuePixel px(int number) {
-	return ValuePixel(number);
+constexpr ValueTag px(int number) {
+	return ValueTag(ValueTag::Type::Pixel, (float)number);
 }
-constexpr ValuePixel px(uint number) {
-	return ValuePixel(static_cast<int>(number));
+
+constexpr ValueTag px(uint number) {
+	return ValueTag(ValueTag::Type::Pixel, (float)number);
 }
+
+constexpr ValueTag px(float number) {
+	return ValueTag(ValueTag::Type::Pixel, number);
+}
+
 constexpr ValueTag pct(int number) {
-	return ValueTag(number, ValueTag::Tag::Percent);
+	return ValueTag(ValueTag::Type::Percent, (float)number);
 }
+
 constexpr ValueTag pct(uint number) {
-	return ValueTag(number, ValueTag::Tag::Percent);
+	return ValueTag(ValueTag::Type::Percent, (float)number);
+}
+
+constexpr ValueTag pct(float number) {
+	return ValueTag(ValueTag::Type::Percent, number);
 }
 
 
-constexpr ValueTag length_min_tag = ValueTag(length_min, ValueTag::Tag::Pixel);
-constexpr ValueTag length_max_tag = ValueTag(length_max, ValueTag::Tag::Pixel);
-constexpr ValueTag length_auto = ValueTag(0, ValueTag::Tag::Auto);
+constexpr ValueTag length_min_tag = ValueTag(ValueTag::Type::Pixel, length_min);
+constexpr ValueTag length_max_tag = ValueTag(ValueTag::Type::Pixel, length_max);
+constexpr ValueTag length_auto = ValueTag(ValueTag::Type::Auto, 0.0f);
 
-constexpr ValueTag position_min_tag = ValueTag(position_min, ValueTag::Tag::Pixel);
-constexpr ValueTag position_max_tag = ValueTag(position_max, ValueTag::Tag::Pixel);
-constexpr ValueTag position_center = ValueTag(0, ValueTag::Tag::Center);
+constexpr ValueTag position_min_tag = ValueTag(ValueTag::Type::Pixel, position_min);
+constexpr ValueTag position_max_tag = ValueTag(ValueTag::Type::Pixel, position_max);
+constexpr ValueTag position_center = ValueTag(ValueTag::Type::Center, 0.0f);
 constexpr ValueTag position_auto = length_auto;
 
 

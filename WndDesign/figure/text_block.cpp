@@ -23,7 +23,7 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 		static_cast<DWRITE_FONT_WEIGHT>(style.font._weight),
 		static_cast<DWRITE_FONT_STYLE>(style.font._style),
 		static_cast<DWRITE_FONT_STRETCH>(style.font._stretch),
-		static_cast<FLOAT>(style.font._size),
+		style.font._size,
 		style.font._locale.c_str(),
 		&format
 	);
@@ -32,7 +32,7 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	ComPtr<IDWriteTextLayout> layout_0;
 	ComPtr<IDWriteTextLayout4> layout_4;
 	hr << GetDWriteFactory().CreateTextLayout(
-		text.c_str(), static_cast<UINT>(text.length()),
+		text.c_str(), (uint)text.length(),
 		format.Get(), 0, 0, &layout_0
 	);
 	hr << layout_0.As(&layout_4);
@@ -41,7 +41,7 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	// font fallback
 	ComPtr<IDWriteFontFallbackBuilder> font_fallback_builder;
 	GetDWriteFactory().CreateFontFallbackBuilder(&font_fallback_builder);
-	
+
 	DWRITE_UNICODE_RANGE range = { 0, (uint)-1 };
 	std::vector<const wchar*> family_list; family_list.reserve(style.font._family_list.size());
 	for (auto& str : style.font._family_list) { family_list.push_back(str.c_str()); }
@@ -59,49 +59,44 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	layout->SetWordWrapping(static_cast<DWRITE_WORD_WRAPPING>(style.paragraph._word_wrap));
 	ValueTag line_height = style.paragraph._line_height;
 	if (line_height.IsPixel()) {
-		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_UNIFORM, static_cast<FLOAT>(line_height.AsUnsigned()), 0.7F * line_height.AsUnsigned());
+		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_UNIFORM, line_height.value(), 0.7f * line_height.value());
 	} else if (line_height.IsPercent()) {
-		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, line_height.AsUnsigned() / 100.0F, line_height.AsUnsigned() / 110.0F);
+		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, line_height.value() / 100.0f, line_height.value() / 110.0f);
 	} else {
-		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 0.0F, 0.0F);  // The last two parameters are ignored.
+		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 0.0f, 0.0f);  // The last two parameters are ignored.
 	}
 	ValueTag tab_size = style.paragraph._tab_size;
 	if (tab_size.IsPixel()) {
-		layout->SetIncrementalTabStop(static_cast<FLOAT>(tab_size.AsUnsigned()));
+		layout->SetIncrementalTabStop(tab_size.value());
 	} else if (tab_size.IsPercent()) {
-		layout->SetIncrementalTabStop(static_cast<FLOAT>(tab_size.AsUnsigned()) * style.font._size / 100.0F);
+		layout->SetIncrementalTabStop(tab_size.value() * style.font._size / 100.0f);
 	}
 }
 
 void TextBlock::UpdateSizeRef(Size size_ref) {
-	layout->SetMaxWidth(static_cast<FLOAT>(size_ref.width));
-	layout->SetMaxHeight(static_cast<FLOAT>(size_ref.height));
+	layout->SetMaxWidth(size_ref.width);
+	layout->SetMaxHeight(size_ref.height);
 }
 
 Size TextBlock::GetSize() const {
 	DWRITE_TEXT_METRICS metrics; layout->GetMetrics(&metrics);
-	return Size(
-		static_cast<uint>(ceil(metrics.widthIncludingTrailingWhitespace)),
-		static_cast<uint>(ceil(metrics.height))
-	);
+	return Size(metrics.widthIncludingTrailingWhitespace, metrics.height);
 }
 
 
 inline TextBlockHitTestInfo HitTestMetricsToInfo(const DWRITE_HIT_TEST_METRICS& metrics, bool is_inside, bool is_trailing_hit) {
-	Point left_top = Point((int)roundf(metrics.left), (int)roundf(metrics.top));
-	Point right_bottom = Point((int)roundf(metrics.left + metrics.width), (int)roundf(metrics.top + metrics.height));
 	return TextBlockHitTestInfo{
 		metrics.textPosition,
 		metrics.length,
 		is_inside,
 		is_trailing_hit,
-		Rect(left_top, Size(uint(right_bottom.x - left_top.x), uint(right_bottom.y - left_top.y)))
+		Rect(metrics.left, metrics.top, metrics.width, metrics.height)
 	};
 }
 
 TextBlockHitTestInfo TextBlock::HitTestPoint(Point point) const {
 	BOOL isTrailingHit; BOOL isInside; DWRITE_HIT_TEST_METRICS metrics;
-	layout->HitTestPoint(static_cast<FLOAT>(point.x), static_cast<FLOAT>(point.y), &isTrailingHit, &isInside, &metrics);
+	layout->HitTestPoint(point.x, point.y, &isTrailingHit, &isInside, &metrics);
 	return HitTestMetricsToInfo(metrics, (bool)isInside, (bool)isTrailingHit);
 }
 
@@ -117,14 +112,14 @@ std::vector<TextBlockHitTestInfo> TextBlock::HitTestTextRange(uint text_position
 	std::vector<DWRITE_HIT_TEST_METRICS> metrics;
 	do {
 		metrics.resize(actual_size);
-		layout->HitTestTextRange(text_position, text_length, 0, 0, metrics.data(), static_cast<UINT32>(metrics.size()), &actual_size);
+		layout->HitTestTextRange(text_position, text_length, 0, 0, metrics.data(), (uint)metrics.size(), &actual_size);
 	} while (actual_size > metrics.size());
 	metrics.resize(actual_size);
 	std::vector<TextBlockHitTestInfo> geometry_regions(metrics.size());
 	for (size_t i = 0; i < geometry_regions.size(); ++i) {
 		geometry_regions[i] = HitTestMetricsToInfo(metrics[i], true, false);
-		if (geometry_regions[i].geometry_region.size.width < 5) { 
-			geometry_regions[i].geometry_region.size.width = 5; 
+		if (geometry_regions[i].geometry_region.size.width < 5.0f) {
+			geometry_regions[i].geometry_region.size.width = 5.0f;
 		}
 	}
 	return geometry_regions;
