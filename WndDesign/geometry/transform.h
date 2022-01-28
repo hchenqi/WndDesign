@@ -28,7 +28,9 @@ struct Transform {
 
 Transform operator*(const Transform& applied, const Transform& original);
 
-Point operator*(const Point& point, const Transform& transform);
+Point operator*(Point point, const Transform& transform);
+
+inline Point& operator*=(Point& point, const Transform& transform) { return point = point * transform; }
 
 
 END_NAMESPACE(WndDesign)

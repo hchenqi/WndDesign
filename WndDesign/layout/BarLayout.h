@@ -54,15 +54,15 @@ protected:
 	}
 	virtual Size GetSize() override { return size; }
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override {
-		return GetChildRegion(child).point - point_zero;
-	}
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		using pair = std::pair<WndObject&, Rect>;
 		for (auto [child, child_region] : { pair{center, GetRegionCenter()}, pair{right, GetRegionRight()}, pair{left, GetRegionLeft()} }) {
 			if (child_region.Contains(point)) { point -= child_region.point - point_zero; return &child; }
 		}
 		return this;
+	}
+	virtual Transform GetChildTransform(WndObject& child) override {
+		return GetChildRegion(child).point - point_zero;
 	}
 
 	// paint

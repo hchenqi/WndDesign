@@ -37,15 +37,14 @@ protected:
 	virtual void OnSizeRefUpdate(Size size_ref) override { Wnd::OnSizeRefUpdate(Extend(size_ref, -(int)border._width)); }
 	virtual Size GetSize() override { return size = Extend(inner_size = Wnd::GetSize(), (int)border._width); }
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override { return Wnd::GetChildOffset(child) + GetInnerOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		if (PointInRoundedRectangle(point, GetInnerRegion(), border._radius)) {
-			Point child_point = point -  GetInnerOffset();
-			ref_ptr<WndObject> child = Wnd::HitTest(child_point);
+			Point child_point = point - GetInnerOffset(); ref_ptr<WndObject> child = Wnd::HitTest(child_point);
 			return child == this ? this : (point = child_point, child);
 		}
 		return this;
 	}
+	virtual Transform GetChildTransform(WndObject& child) override { return Wnd::GetChildTransform(child) * GetInnerOffset(); }
 
 	// paint
 protected:
@@ -63,11 +62,7 @@ protected:
 
 	// message
 protected:
-	virtual void OnMouseMsg(MouseMsg msg) override {
-		if (PointInRoundedRectangle(msg.point, GetInnerRegion(), border._radius)) {
-			msg.point -= GetInnerOffset(); Wnd::OnMouseMsg(msg);
-		}
-	}
+	virtual void OnMouseMsg(MouseMsg msg) override { msg.point -= GetInnerOffset(); Wnd::OnMouseMsg(msg); }
 };
 
 

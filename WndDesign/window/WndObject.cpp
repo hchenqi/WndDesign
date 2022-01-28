@@ -64,7 +64,7 @@ void WndObject::ReleaseCapture() { desktop.ReleaseCapture(); }
 
 void WndObject::DispatchMouseMsg(MouseMsg msg) {
 	if (child_capture == this) { return OnMouseMsg(msg); }
-	if (child_capture != nullptr) { msg.point -= GetChildOffset(*child_capture); return child_capture->DispatchMouseMsg(msg); }
+	if (child_capture != nullptr) { msg.point *= GetChildTransform(*child_capture).Invert(); return child_capture->DispatchMouseMsg(msg); }
 	ref_ptr<WndObject> child = HitTest(msg.point);
 	if (child == nullptr) { LoseTrack(); SetCursor(cursor); return; }
 	SetChildTrack(*child);

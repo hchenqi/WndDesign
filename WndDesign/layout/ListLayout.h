@@ -89,14 +89,14 @@ protected:
 	}
 	virtual Size GetSize() override { return size; }
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override {
-		return GetChildRegion(child).point - point_zero;
-	}
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		if ((uint)point.y >= size.height) { return nullptr; }
 		auto it = HitTestItem((uint)point.y); point.y -= (int)it->offset;
 		if ((uint)point.y >= it->length) { return this; }
 		return it->child;
+	}
+	virtual Transform GetChildTransform(WndObject& child) override {
+		return GetChildRegion(child).point - point_zero;
 	}
 
 	// paint
@@ -197,14 +197,14 @@ protected:
 	}
 	virtual Size GetSize() override { return size; }
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override {
-		return GetChildRegion(child).point - point_zero;
-	}
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		if ((uint)point.x >= size.width) { return nullptr; }
 		auto it = HitTestItem((uint)point.x); point.x -= (int)it->offset;
 		if ((uint)point.x >= it->length) { return this; }
 		return it->child;
+	}
+	virtual Transform GetChildTransform(WndObject& child) override {
+		return GetChildRegion(child).point - point_zero;
 	}
 
 	// paint

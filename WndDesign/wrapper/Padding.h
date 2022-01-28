@@ -24,12 +24,11 @@ protected:
 	virtual void OnSizeRefUpdate(Size size_ref) override { Wnd::OnSizeRefUpdate(Extend(size_ref, -padding)); }
 	virtual Size GetSize() override { return Extend(Wnd::GetSize(), padding); }
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override { return Wnd::GetChildOffset(child) + GetInnerOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		Point child_point = point - GetInnerOffset();
-		ref_ptr<WndObject> child = Wnd::HitTest(child_point);
+		Point child_point = point - GetInnerOffset(); ref_ptr<WndObject> child = Wnd::HitTest(child_point);
 		return child == this ? this : (point = child_point, child);
 	}
+	virtual Transform GetChildTransform(WndObject& child) override { return Wnd::GetChildTransform(child) * GetInnerOffset(); }
 
 	// paint
 protected:

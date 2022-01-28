@@ -59,8 +59,8 @@ protected:
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
 	virtual Size GetSize() override { return size; }
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override;
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;
+	virtual Transform GetChildTransform(WndObject& child) override;
 
 	// paint
 private:

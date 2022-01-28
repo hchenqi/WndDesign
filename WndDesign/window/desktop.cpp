@@ -38,7 +38,7 @@ DesktopFrame& Desktop::GetDesktopFramePoint(WndObject& wnd, Point& point) {
 	ref_ptr<WndObject> child = &wnd;
 	for (ref_ptr<WndObject> parent = child->parent; parent != &desktop; child = parent, parent = child->parent) {
 		if (parent == nullptr) { throw std::invalid_argument("window has no desktop frame"); }
-		point += parent->GetChildOffset(*child);
+		point *= parent->GetChildTransform(*child);
 	}
 	return static_cast<DesktopFrame&>(*child);
 }

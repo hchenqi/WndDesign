@@ -20,7 +20,7 @@ protected:
 		return Vector(((int)size.width - (int)child_size.width) / 2, ((int)size.height - (int)child_size.height) / 2);
 	}
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
+	virtual Transform GetChildTransform(WndObject& child) override { return GetChildOffset(); }
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		redraw_region = child_redraw_region + GetChildOffset(); Redraw();

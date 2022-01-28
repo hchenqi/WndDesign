@@ -65,8 +65,8 @@ protected:
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
 	virtual Size GetSize() { return size_empty; }
 protected:
-	virtual Vector GetChildOffset(WndObject& child) { return vector_zero; }
 	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
+	virtual Transform GetChildTransform(WndObject& child) { return Transform::Identity(); }
 
 	// paint
 protected:

@@ -57,8 +57,8 @@ protected:
 		}
 	}
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
+	virtual Transform GetChildTransform(WndObject& child) override { return GetChildOffset(); }
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		redraw_region = child_redraw_region + GetChildOffset(); Redraw();
@@ -120,8 +120,8 @@ protected:
 		}
 	}
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
+	virtual Transform GetChildTransform(WndObject& child) override { return GetChildOffset(); }
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		redraw_region = child_redraw_region + GetChildOffset(); Redraw();
@@ -182,8 +182,8 @@ protected:
 		}
 	}
 protected:
-	virtual Vector GetChildOffset(WndObject& child) override { return GetChildOffset(); }
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
+	virtual Transform GetChildTransform(WndObject& child) override { return GetChildOffset(); }
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		redraw_region = child_redraw_region + GetChildOffset(); Redraw();

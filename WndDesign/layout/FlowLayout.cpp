@@ -75,15 +75,15 @@ void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 	}
 }
 
-Vector FlowLayout::GetChildOffset(WndObject& child) {
-	return GetChildRegion(child).point - point_zero;
-}
-
 ref_ptr<WndObject> FlowLayout::HitTest(Point& point) {
 	if ((uint)point.x >= size.width || (uint)point.y >= size.height) { return nullptr; }
 	row_index row = HitTestRow(point.y); point.y -= GetRowOffset(row); if ((uint)point.y >= row_height) { return this; }
 	auto it = HitTestColumn(row, point.x); point.x -= (int)it->offset; if ((uint)point.x >= it->width) { return this; }
 	return it->child;
+}
+
+inline Transform FlowLayout::GetChildTransform(WndObject& child) {
+	return GetChildRegion(child).point - point_zero;
 }
 
 void FlowLayout::OnChildRedraw(WndObject& child, Rect child_redraw_region) {

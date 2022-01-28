@@ -38,7 +38,7 @@ Transform operator*(const Transform& applied, const Transform& original) {
 	return AsTransform(AsD2DTransform(applied) * AsD2DTransform(original));
 }
 
-Point operator*(const Point& point, const Transform& transform) {
+Point operator*(Point point, const Transform& transform) {
 	return AsPoint(AsD2DPoint(point) * AsD2DTransform(transform));
 }
 
