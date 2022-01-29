@@ -16,6 +16,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 DesktopFrame::DesktopFrame(Style style, child_ptr child) :
 	Base(std::move(child)), width(style.width), height(style.height) {
+	cursor = Cursor::Hide;
 	border = style.border;
 	hwnd = Win32::CreateWnd(region_empty, style.title);
 	scale_x = scale_y = Win32::GetWndDpiScale(hwnd);
@@ -83,7 +84,7 @@ void DesktopFrame::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 void DesktopFrame::Draw() {
 	Rect render_rect = invalid_region.GetBoundingRect(); if (render_rect.IsEmpty()) { return; }
 	BeginDraw();
-	FigureQueue figure_queue([&](FigureQueue& figure_queue) { Base::OnDraw(figure_queue, render_rect); });
+	FigureQueue figure_queue([&](FigureQueue& figure_queue) { OnDraw(figure_queue, render_rect); });
 	layer.DrawFigureQueue(figure_queue, vector_zero, render_rect);
 	try {
 		EndDraw();
