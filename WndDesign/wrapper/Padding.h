@@ -11,6 +11,7 @@ template<class Wnd>
 class Padding : public Wnd {
 public:
 	using Wnd::Wnd;
+	using Base = Padding;
 
 	// style
 protected:

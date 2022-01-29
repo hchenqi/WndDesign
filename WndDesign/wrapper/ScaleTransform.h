@@ -11,6 +11,7 @@ template<class Wnd>
 class ScaleTransform : public Wnd {
 public:
 	using Wnd::Wnd;
+	using Base = ScaleTransform;
 
 	// style
 protected:

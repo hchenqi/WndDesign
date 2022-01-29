@@ -7,18 +7,18 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 template<class Wnd, template<class Wnd> class Wrapper, template<class Wnd> class... Wrappers>
-class Decorate : public Decorate<Wrapper<Wnd>, Wrappers...> {
-public:
-	using Base = Decorate;
-	using Decorate<Wrapper<Wnd>, Wrappers...>::Decorate;
+struct _Decorate_Helper {
+	using type = typename _Decorate_Helper<Wrapper<Wnd>, Wrappers...>::type;
 };
 
 template<class Wnd, template<class Wnd> class Wrapper>
-class Decorate<Wnd, Wrapper> : public Wrapper<Wnd> {
-public:
-	using Base = Decorate;
-	using Wrapper<Wnd>::Wrapper;
+struct _Decorate_Helper<Wnd, Wrapper> {
+	using type = Wrapper<Wnd>;
 };
+
+
+template<class Wnd, template<class Wnd> class... Wrappers>
+using Decorate = typename _Decorate_Helper<Wnd, Wrappers...>::type;
 
 
 END_NAMESPACE(WndDesign)

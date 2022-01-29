@@ -12,6 +12,7 @@ template<class Wnd>
 class Border : public Wnd {
 public:
 	using Wnd::Wnd;
+	using Base = Border;
 
 	// style
 protected:

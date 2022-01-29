@@ -11,6 +11,7 @@ template<class Wnd>
 class SolidColorBackground : public Wnd {
 public:
 	using Wnd::Wnd;
+	using Base = SolidColorBackground;
 
 	// style
 protected:
