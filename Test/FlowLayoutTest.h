@@ -22,7 +22,7 @@ struct MainFrameStyle : TitleBarFrame::Style {
 		width.normal(800px).max(100pct);
 		height.normal(500px).max(100pct);
 		position.setHorizontalCenter().setVerticalCenter();
-		border.width(5).color(Color::Violet);
+		border.width(4).color(Color::Violet);
 		title.assign(L"FlowLayoutTest");
 		title_bar.background(Color::CadetBlue);
 		title_format.font.size(18);

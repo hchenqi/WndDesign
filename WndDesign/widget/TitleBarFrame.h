@@ -75,7 +75,7 @@ private:
 			new ClipFrame<Auto, Assigned>{
 				new MaxFrame{
 					style.title_bar._max_title_length,
-					new Title(frame, style)
+					new Title(frame, *this, style)
 				}
 			}
 		), frame(frame) {
@@ -92,65 +92,71 @@ private:
 			case MouseTrackMsg::LeftDoubleClick: frame.MaximizeOrRestore(); break;
 			}
 		}
-	};
 
-	class Title : public Decorate<TextBox, SolidColorBackground> {
-	public:
-		Title(TitleBarFrame& frame, const TitleBarFrame::Style& style) : Base(style.title_format, style.title) { 
-			frame.title = this; 
-			background = style.title_bar._background;
-		}
-	};
-
-	class ButtonBase : public Button<Auto, Assigned> {
-	public:
-		ButtonBase(TitleBarFrame& frame, Color background) : Button<Auto, Assigned>(50.0f), frame(frame) {
-			this->background = this->background_normal = background;
-		}
-	protected:
-		TitleBarFrame& frame;
-	};
-
-	class MinimizeButton : public ButtonBase {
-	public:
-		using ButtonBase::ButtonBase;
 	private:
-		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-			ButtonBase::OnDraw(figure_queue, draw_region);
-			figure_queue.add(Point(20.0f, 15.0f), new Rectangle(Size(10.0f, 1.0f), 1.0f, Color::White));
-		}
-	private:
-		virtual void OnClick() override { frame.Minimize(); }
-	};
-
-	class MaximizeButton : public ButtonBase {
-	public:
-		using ButtonBase::ButtonBase;
-	private:
-		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-			ButtonBase::OnDraw(figure_queue, draw_region);
-			if (frame.IsMaximized()) {
-				figure_queue.add(Point(22.0f, 10.0f), new Rectangle(Size(8.0f, 8.0f), 1.0f, Color::White));
-				figure_queue.add(Point(20.0f, 12.0f), new Rectangle(Size(8.0f, 8.0f), background, 1.0f, Color::White));
-			} else {
-				figure_queue.add(Point(20.0f, 10.0f), new Rectangle(Size(10.0f, 10.0f), 1.0f, Color::White));
+		class Title : public Decorate<TextBox, WndDesign::SolidColorBackground> {
+		public:
+			Title(TitleBarFrame& frame, TitleBar& title_bar, const TitleBarFrame::Style& style) :
+				Base(style.title_format, style.title), title_bar(title_bar) {
+				frame.title = this;
+				background = style.title_bar._background;
 			}
-		}
-	private:
-		virtual void OnClick() override { frame.MaximizeOrRestore(); }
-	};
+		private:
+			TitleBar& title_bar;
+		private:
+			virtual void OnMouseMsg(MouseMsg msg) { title_bar.OnMouseMsg(msg); }
+		};
 
-	class CloseButton : public ButtonBase {
-	public:
-		using ButtonBase::ButtonBase;
-	private:
-		virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
-			ButtonBase::OnDraw(figure_queue, draw_region);
-			figure_queue.add(Point(20.0f, 10.0f), new Line(Vector(10.0f, 10.0f), 1.0f, Color::White));
-			figure_queue.add(Point(20.0f, 20.0f), new Line(Vector(10.0f, -10.0f), 1.0f, Color::White));
-		}
-	private:
-		virtual void OnClick() override { frame.Destroy(); }
+		class ButtonBase : public Button<Auto, Assigned> {
+		public:
+			ButtonBase(TitleBarFrame& frame, Color background) : Button<Auto, Assigned>(50.0f), frame(frame) {
+				this->background = this->background_normal = background;
+			}
+		protected:
+			TitleBarFrame& frame;
+		};
+
+		class MinimizeButton : public ButtonBase {
+		public:
+			using ButtonBase::ButtonBase;
+		private:
+			virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
+				ButtonBase::OnDraw(figure_queue, draw_region);
+				figure_queue.add(Point(20.0f, 15.0f), new Rectangle(Size(10.0f, 1.0f), 1.0f, Color::White));
+			}
+		private:
+			virtual void OnClick() override { frame.Minimize(); }
+		};
+
+		class MaximizeButton : public ButtonBase {
+		public:
+			using ButtonBase::ButtonBase;
+		private:
+			virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
+				ButtonBase::OnDraw(figure_queue, draw_region);
+				if (frame.IsMaximized()) {
+					figure_queue.add(Point(22.0f, 10.0f), new Rectangle(Size(8.0f, 8.0f), 1.0f, Color::White));
+					figure_queue.add(Point(20.0f, 12.0f), new Rectangle(Size(8.0f, 8.0f), background, 1.0f, Color::White));
+				} else {
+					figure_queue.add(Point(20.0f, 10.0f), new Rectangle(Size(10.0f, 10.0f), 1.0f, Color::White));
+				}
+			}
+		private:
+			virtual void OnClick() override { frame.MaximizeOrRestore(); }
+		};
+
+		class CloseButton : public ButtonBase {
+		public:
+			using ButtonBase::ButtonBase;
+		private:
+			virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
+				ButtonBase::OnDraw(figure_queue, draw_region);
+				figure_queue.add(Point(20.0f, 10.0f), new Line(Vector(10.0f, 10.0f), 1.0f, Color::White));
+				figure_queue.add(Point(20.0f, 20.0f), new Line(Vector(10.0f, -10.0f), 1.0f, Color::White));
+			}
+		private:
+			virtual void OnClick() override { frame.Destroy(); }
+		};
 	};
 };
 
