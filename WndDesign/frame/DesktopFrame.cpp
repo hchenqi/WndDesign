@@ -19,7 +19,8 @@ DesktopFrame::DesktopFrame(Style style, child_ptr child) :
 	border = style.border;
 	hwnd = Win32::CreateWnd(region_empty, style.title);
 	scale_x = scale_y = Win32::GetWndDpiScale(hwnd);
-	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, Win32::GetDesktopSize());
+	Size desktop_size = Scale(Win32::GetDesktopSize(), 1.0f / scale_x, 1.0f / scale_y);
+	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop_size);
 	region = Scale(region, scale_x, scale_y);
 	Base::OnSizeRefUpdate(region.size); Base::GetSize();
 	Win32::SetWndRegion(hwnd, region);
@@ -34,7 +35,7 @@ DesktopFrame::~DesktopFrame() {
 }
 
 std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
-	Size desktop_size = Win32::GetDesktopSize();
+	Size desktop_size = Scale(Win32::GetDesktopSize(), 1.0f / scale_x, 1.0f / scale_y);
 	auto [size_min, size_max] = StyleHelper::CalculateMinMaxSize(width, height, desktop_size);
 	Rect region_max(point_zero, size_max);
 	if (size_max == desktop_size) { region_max = Extend(region_max, border._width); }

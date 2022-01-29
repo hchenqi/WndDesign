@@ -30,10 +30,6 @@ inline RECT AsWin32Rect(Rect rect) { return { (int)floorf(rect.left()), (int)flo
 
 inline Rect AsRect(RECT rect) { return Rect((float)rect.left, (float)rect.top, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top)); }
 
-inline Size GetWorkAreaSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return AsRect(rect).size; }
-
-Size desktop_size = GetWorkAreaSize();
-
 constexpr float dpi_default = 96.0f;
 
 inline bool IsMouseMsg(UINT msg) { return WM_MOUSEFIRST <= msg && msg <= WM_MOUSELAST; }
@@ -164,10 +160,6 @@ FrameIrrelevantMessages:
 	case WM_NCPAINT: break;
 	case WM_NCACTIVATE: return true;
 
-	case WM_SETTINGCHANGE:
-		if (wparam == SPI_SETWORKAREA) { desktop_size = GetWorkAreaSize(); break; }
-		[[fallthrough]];
-
 	default: return DefWindowProc(hwnd, msg, wparam, lparam);
 	}
 	return 0;
@@ -196,7 +188,7 @@ END_NAMESPACE(Anonymous)
 BEGIN_NAMESPACE(Win32)
 
 
-Size GetDesktopSize() { return desktop_size; }
+Size GetDesktopSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return AsRect(rect).size; }
 
 HANDLE CreateWnd(Rect region, std::wstring title) {
 	RegisterWndClass();
