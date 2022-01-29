@@ -5,11 +5,6 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-ImeApi::ImeApi(ref_ptr<WndObject> wnd) : wnd(*wnd) {
-	if (wnd == nullptr) { throw std::invalid_argument("invalid window pointer"); }
-	ImeEnable();
-}
-
 void ImeApi::ImeEnable() { desktop.ImeEnable(wnd, *this); }
 
 void ImeApi::ImeDisable() { desktop.ImeDisable(wnd); }
