@@ -26,7 +26,7 @@ public:
 	}
 
 	// child
-private:
+protected:
 	struct ChildInfo {
 		child_ptr child;
 		float offset = 0.0f;
@@ -34,7 +34,7 @@ private:
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
 	};
 	std::vector<ChildInfo> child_list;
-private:
+protected:
 	void SetChildData(WndObject& child, uint64 index) { WndObject::SetChildData<uint64>(child, index); }
 	uint64 GetChildData(WndObject& child) const { return WndObject::GetChildData<uint64>(child); }
 public:
@@ -49,10 +49,10 @@ public:
 	}
 
 	// layout
-private:
+protected:
 	Size size;
 	float gap;
-private:
+protected:
 	Rect GetChildRegion(WndObject& child) const {
 		uint64 index = GetChildData(child);
 		return Rect(Point(0.0f, child_list[index].offset), Size(size.width, child_list[index].length));
@@ -90,7 +90,7 @@ protected:
 	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (point.y >= size.height) { return nullptr; }
+		if (point.y < 0 || point.y >= size.height) { return nullptr; }
 		auto it = HitTestItem(point.y); point.y -= it->offset;
 		if (point.y >= it->length) { return this; }
 		return it->child;
@@ -134,7 +134,7 @@ public:
 	}
 
 	// child
-private:
+protected:
 	struct ChildInfo {
 		child_ptr child;
 		float offset = 0.0f;
@@ -142,7 +142,7 @@ private:
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
 	};
 	std::vector<ChildInfo> child_list;
-private:
+protected:
 	void SetChildData(WndObject& child, uint64 index) { WndObject::SetChildData<uint64>(child, index); }
 	uint64 GetChildData(WndObject& child) const { return WndObject::GetChildData<uint64>(child); }
 public:
@@ -157,10 +157,10 @@ public:
 	}
 
 	// layout
-private:
+protected:
 	Size size;
 	float gap;
-private:
+protected:
 	Rect GetChildRegion(WndObject& child) const {
 		uint64 index = GetChildData(child);
 		return Rect(Point(child_list[index].offset, 0.0f), Size(child_list[index].length, size.height));
@@ -198,7 +198,7 @@ protected:
 	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (point.x >= size.width) { return nullptr; }
+		if (point.x < 0 || point.x >= size.width) { return nullptr; }
 		auto it = HitTestItem(point.x); point.x -= it->offset;
 		if (point.x >= it->length) { return this; }
 		return it->child;
