@@ -48,7 +48,6 @@ private:
 public:
 	void AppendChild(child_ptr child);
 
-
 	// layout
 private:
 	Size size;
