@@ -6,6 +6,17 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
+struct ValuePixel {
+	float value;
+
+	explicit constexpr ValuePixel(float value) : value(value) {}
+
+	constexpr ValuePixel operator-() const { return ValuePixel(-value); }
+
+	constexpr operator float() const { return value; }
+};
+
+
 class ValueTag {
 public:
 	enum class Type { Pixel, Percent, Center, Auto, _Number };
@@ -16,6 +27,7 @@ private:
 
 public:
 	explicit constexpr ValueTag(Type type, float value) : _type(type), _value(value) {}
+	constexpr ValueTag(ValuePixel value) : ValueTag(Type::Pixel, value) {}
 
 	constexpr bool IsPixel() const { return _type == Type::Pixel; }
 	constexpr bool IsPercent() const { return _type == Type::Percent; }
@@ -34,12 +46,12 @@ public:
 
 #pragma warning (push)
 #pragma warning (disable : 4455)  // literal suffix identifiers that do not start with an underscore are reserved.
-constexpr ValueTag operator""px(long double number) {
-	return ValueTag(ValueTag::Type::Pixel, (float)number);
+constexpr ValuePixel operator""px(long double number) {
+	return ValuePixel((float)number);
 }
 
-constexpr ValueTag operator""px(unsigned long long number) {
-	return ValueTag(ValueTag::Type::Pixel, (float)number);
+constexpr ValuePixel operator""px(unsigned long long number) {
+	return ValuePixel((float)number);
 }
 
 constexpr ValueTag operator""pct(long double number) {
@@ -52,16 +64,16 @@ constexpr ValueTag operator""pct(unsigned long long number) {
 #pragma warning (pop)
 
 
-constexpr ValueTag px(int number) {
-	return ValueTag(ValueTag::Type::Pixel, (float)number);
+constexpr ValuePixel px(int number) {
+	return ValuePixel((float)number);
 }
 
-constexpr ValueTag px(uint number) {
-	return ValueTag(ValueTag::Type::Pixel, (float)number);
+constexpr ValuePixel px(uint number) {
+	return ValuePixel((float)number);
 }
 
-constexpr ValueTag px(float number) {
-	return ValueTag(ValueTag::Type::Pixel, number);
+constexpr ValuePixel px(float number) {
+	return ValuePixel(number);
 }
 
 constexpr ValueTag pct(int number) {
