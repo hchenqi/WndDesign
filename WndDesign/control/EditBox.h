@@ -46,15 +46,15 @@ public:
 private:
 	WordBreakIterator word_break_iterator;
 private:
-	uint GetCharacterLength(uint text_position) { return GetUTF16CharLength(text[text_position]); }
+	size_t GetCharacterLength(size_t text_position) { return GetUTF16CharLength(text[text_position]); }
 	void TextUpdated() { word_break_iterator.SetText(text); }
 public:
 	void SetText(std::wstring str) { TextBox::SetText(str); TextUpdated(); }
-	void InsertText(uint pos, wchar ch) { TextBox::InsertText(pos, ch); TextUpdated(); }
-	void InsertText(uint pos, std::wstring str) { TextBox::InsertText(pos, str); TextUpdated(); }
-	void ReplaceText(uint begin, uint length, wchar ch) { TextBox::ReplaceText(begin, length, ch); TextUpdated(); }
-	void ReplaceText(uint begin, uint length, std::wstring str) { TextBox::ReplaceText(begin, length, str); TextUpdated(); }
-	void DeleteText(uint begin, uint length) { TextBox::DeleteText(begin, length); TextUpdated(); }
+	void InsertText(size_t pos, wchar ch) { TextBox::InsertText(pos, ch); TextUpdated(); }
+	void InsertText(size_t pos, std::wstring str) { TextBox::InsertText(pos, str); TextUpdated(); }
+	void ReplaceText(size_t begin, size_t length, wchar ch) { TextBox::ReplaceText(begin, length, ch); TextUpdated(); }
+	void ReplaceText(size_t begin, size_t length, std::wstring str) { TextBox::ReplaceText(begin, length, str); TextUpdated(); }
+	void DeleteText(size_t begin, size_t length) { TextBox::DeleteText(begin, length); TextUpdated(); }
 
 	// layout
 protected:
@@ -86,20 +86,20 @@ private:
 	static constexpr float caret_width = 1.0f;
 	enum class CaretMoveDirection { Left, Right, Up, Down, Home, End };
 private:
-	uint caret_text_position = 0;
+	size_t caret_text_position = 0;
 	Rect caret_region = region_empty;
 private:
 	void UpdateCaretRegion(const HitTestInfo& info);
 private:
 	void SetCaret(Point point);
-	void SetCaret(uint text_position, bool is_trailing_hit);
+	void SetCaret(size_t text_position, bool is_trailing_hit);
 	void MoveCaret(CaretMoveDirection direction);
 
 	// selection
 private:
-	uint mouse_down_text_position = 0;
-	uint selection_begin = 0;
-	uint selection_end = 0;
+	size_t mouse_down_text_position = 0;
+	size_t selection_begin = 0;
+	size_t selection_end = 0;
 	std::vector<HitTestInfo> selection_info;
 	Rect selection_region_union;
 private:
@@ -121,8 +121,8 @@ private:
 
 	// ime input
 private:
-	uint ime_composition_begin = 0;
-	uint ime_composition_end = 0;
+	size_t ime_composition_begin = 0;
+	size_t ime_composition_end = 0;
 private:
 	virtual void OnImeCompositionBegin() override;
 	virtual void OnImeComposition(std::wstring str) override;

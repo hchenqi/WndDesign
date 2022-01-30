@@ -20,7 +20,7 @@ inline UTF16CharType GetUTF16CharType(wchar ch) {
 	return UTF16CharType::Single;
 }
 
-inline uint GetUTF16CharLength(wchar ch) {
+inline size_t GetUTF16CharLength(wchar ch) {
 	switch (GetUTF16CharType(ch)) {
 	case UTF16CharType::Single: return 1;
 	case UTF16CharType::SurrogateLow:
@@ -32,26 +32,26 @@ inline uint GetUTF16CharLength(wchar ch) {
 
 struct TextRange {
 public:
-	uint begin; uint length;
+	size_t begin; size_t length;
 public:
-	uint left() const { return begin; }
-	uint right() const { return begin + length; }
+	size_t left() const { return begin; }
+	size_t right() const { return begin + length; }
 	bool IsEmpty() const { return length == 0; }
-	bool Contains(uint pos) const { return pos >= left() && pos < right(); }
+	bool Contains(size_t pos) const { return pos >= left() && pos < right(); }
 };
 
 
 class WordBreakIterator : public Uncopyable {
 private:
 	alloc_ptr<void> iter;
-	ref_ptr<const wchar> str; uint length;
-	uint begin, end;
+	ref_ptr<const wchar> str; size_t length;
+	size_t begin, end;
 public:
 	WordBreakIterator();
 	~WordBreakIterator();
 public:
 	void SetText(const std::wstring& str);
-	TextRange Seek(uint pos);
+	TextRange Seek(size_t pos);
 	TextRange Next();
 	TextRange Prev();
 };

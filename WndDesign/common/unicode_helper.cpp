@@ -30,13 +30,13 @@ WordBreakIterator::~WordBreakIterator() {
 
 void WordBreakIterator::SetText(const std::wstring& str) {
 	ubrk_setText(AsUBreakIterator(iter), (const UChar*)str.c_str(), (uint)str.length(), &status); assert(U_SUCCESS(status));
-	this->str = str.c_str(); this->length = (uint)str.length();
+	this->str = str.c_str(); this->length = str.length();
 	begin = end = UBRK_DONE;
 }
 
-TextRange WordBreakIterator::Seek(uint pos) {
+TextRange WordBreakIterator::Seek(size_t pos) {
 	if (str == nullptr || pos >= length) { throw std::invalid_argument("invalid text position"); }
-	begin = ubrk_preceding(AsUBreakIterator(iter), pos + 1); assert(begin != UBRK_DONE);
+	begin = ubrk_preceding(AsUBreakIterator(iter), (uint)(pos + 1)); assert(begin != UBRK_DONE);
 	end = ubrk_next(AsUBreakIterator(iter)); assert(end != UBRK_DONE);
 	assert(end > begin);
 	return { begin, end - begin };
@@ -55,7 +55,7 @@ TextRange WordBreakIterator::Prev() {
 	if (str == nullptr || begin == -1) { throw std::invalid_argument("invalid text position"); }
 	if (begin == 0) { throw std::invalid_argument("cannot decrement iterator before begin"); }
 	end = begin;
-	begin = ubrk_preceding(AsUBreakIterator(iter), begin); assert(begin != UBRK_DONE);
+	begin = ubrk_preceding(AsUBreakIterator(iter), (uint)begin); assert(begin != UBRK_DONE);
 	assert(end > begin);
 	return { begin, end - begin };
 }

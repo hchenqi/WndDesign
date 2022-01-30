@@ -76,7 +76,7 @@ void EditBox::SetCaret(Point point) {
 	mouse_down_text_position = caret_text_position;
 }
 
-void EditBox::SetCaret(uint text_position, bool is_trailing_hit) {
+void EditBox::SetCaret(size_t text_position, bool is_trailing_hit) {
 	HitTestInfo info = text_block.HitTestTextPosition(text_position);
 	info.is_trailing_hit = is_trailing_hit;
 	UpdateCaretRegion(info); caret_state = CaretState::Show;
@@ -144,7 +144,7 @@ void EditBox::SelectWord() {
 }
 
 void EditBox::SelectParagraph() {
-	uint length = (uint)text.length();
+	size_t length = text.length();
 	selection_begin = caret_text_position - 1; selection_end = caret_text_position;
 	while (selection_begin < length && text[selection_begin] != L'\n') { selection_begin--; }
 	while (selection_end < length && text[selection_end] != L'\n') { selection_end++; }
@@ -154,7 +154,7 @@ void EditBox::SelectParagraph() {
 
 void EditBox::SelectAll() {
 	selection_begin = 0;
-	selection_end = (uint)text.length();
+	selection_end = text.length();
 	UpdateSelectionRegion(); HideCaret();
 }
 
@@ -180,10 +180,10 @@ void EditBox::Insert(std::wstring str) {
 	if (IsEditDisabled()) { return; }
 	if (HasSelection()) {
 		ReplaceText(selection_begin, selection_end - selection_begin, str);
-		SetCaret(selection_begin + (uint)str.length(), false);
+		SetCaret(selection_begin + str.length(), false);
 	} else {
 		InsertText(caret_text_position, str);
-		SetCaret(caret_text_position + (uint)str.length(), false);
+		SetCaret(caret_text_position + str.length(), false);
 	}
 }
 
@@ -195,7 +195,7 @@ void EditBox::Delete(bool is_backspace) {
 	} else {
 		if (is_backspace) {
 			if (caret_text_position == 0) { return; }
-			uint previous_caret_position = caret_text_position;
+			size_t previous_caret_position = caret_text_position;
 			SetCaret(caret_text_position - 1, false);
 			DeleteText(caret_text_position, previous_caret_position - caret_text_position);
 		} else {
@@ -223,7 +223,7 @@ void EditBox::OnImeCompositionBegin() {
 void EditBox::OnImeComposition(std::wstring str) {
 	if (IsEditDisabled()) { return; }
 	ReplaceText(ime_composition_begin, ime_composition_end - ime_composition_begin, str);
-	ime_composition_end = ime_composition_begin + (uint)str.length();
+	ime_composition_end = ime_composition_begin + str.length();
 	SetCaret(ime_composition_end, false);
 }
 

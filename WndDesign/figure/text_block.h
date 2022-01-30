@@ -25,8 +25,8 @@ public:
 	Size GetSize() const;
 public:
 	TextBlockHitTestInfo HitTestPoint(Point point) const;
-	TextBlockHitTestInfo HitTestTextPosition(uint text_position) const;
-	std::vector<TextBlockHitTestInfo> HitTestTextRange(uint text_position, uint text_length) const;
+	TextBlockHitTestInfo HitTestTextPosition(size_t text_position) const;
+	std::vector<TextBlockHitTestInfo> HitTestTextRange(size_t text_position, size_t text_length) const;
 };
 
 

@@ -28,11 +28,11 @@ private:
 	void TextUpdated() { text_block.SetText(style, text); UpdateSize(); redraw_region = region_infinite; SizeUpdated(); Redraw(); }
 public:
 	void SetText(std::wstring str) { text.assign(std::move(str)); TextUpdated(); }
-	void InsertText(uint pos, wchar ch) { text.insert(pos, 1, ch); TextUpdated(); }
-	void InsertText(uint pos, std::wstring str) { text.insert(pos, str); TextUpdated(); }
-	void ReplaceText(uint begin, uint length, wchar ch) { text.replace(begin, length, 1, ch); TextUpdated(); }
-	void ReplaceText(uint begin, uint length, std::wstring str) { text.replace(begin, length, str); TextUpdated(); }
-	void DeleteText(uint begin, uint length) { text.erase(begin, length); TextUpdated(); }
+	void InsertText(size_t pos, wchar ch) { text.insert(pos, 1, ch); TextUpdated(); }
+	void InsertText(size_t pos, std::wstring str) { text.insert(pos, str); TextUpdated(); }
+	void ReplaceText(size_t begin, size_t length, wchar ch) { text.replace(begin, length, 1, ch); TextUpdated(); }
+	void ReplaceText(size_t begin, size_t length, std::wstring str) { text.replace(begin, length, str); TextUpdated(); }
+	void DeleteText(size_t begin, size_t length) { text.erase(begin, length); TextUpdated(); }
 
 	// layout
 protected:
