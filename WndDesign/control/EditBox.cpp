@@ -217,7 +217,7 @@ void EditBox::OnImeCompositionBegin() {
 		ime_composition_end = ime_composition_begin;
 		ime_position = caret_region.RightBottom();
 	}
-	ImeSetPosition(ime_position);
+	ImeSetPosition(ime_position * GetChildTransform(*this));
 }
 
 void EditBox::OnImeComposition(std::wstring str) {
