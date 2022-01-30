@@ -83,7 +83,7 @@ private:
 
 	// caret position
 private:
-	static constexpr uint caret_width = 1;
+	static constexpr float caret_width = 1.0f;
 	enum class CaretMoveDirection { Left, Right, Up, Down, Home, End };
 private:
 	uint caret_text_position = 0;
