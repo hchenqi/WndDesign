@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../window/wnd_traits.h"
+#include "../frame/ScrollFrame.h"
 #include "../geometry/interval.h"
 #include "../figure/shape.h"
 
@@ -15,13 +15,23 @@ class Scrollbar;
 template<>
 class Scrollbar<Vertical> : public WndType<Auto, Assigned> {
 public:
+	using ScrollFrame = ScrollFrame<Vertical>;
+
+public:
 	Scrollbar(float width = 20.0f) : width(width) { RegisterChild(slider); }
+
+	// frame
+private:
+	ref_ptr<ScrollFrame> frame = nullptr;
+private:
+	ScrollFrame& GetScrollFrame() { if (frame == nullptr) { throw std::invalid_argument("invalid scroll frame"); } return *frame; }
+public:
+	void SetScrollFrame(ScrollFrame& frame) { this->frame = &frame; UpdateScrollOffset(); }
 
 	// layout
 private:
 	float width;
 	float height = 0.0f;
-	float content_height = 0.0f;
 	float slider_height = 0.0f;
 	float slider_offset = 0.0f;
 private:
@@ -30,10 +40,10 @@ private:
 	virtual void OnSizeRefUpdate(Size size_ref) override { height = size_ref.height; }
 	virtual Size GetSize() override { return Size(IsShown() ? width : 0.0f, height); }
 public:
-	void UpdateScrollOffset(float content_height, float frame_height, float frame_offset) {
-		bool is_shown = IsShown(); this->content_height = content_height;
-		slider_height = height * frame_height / content_height;
-		slider_offset = height * frame_offset / content_height;
+	void UpdateScrollOffset() {
+		bool is_shown = IsShown(); ScrollFrame& frame = GetScrollFrame();
+		slider_height = height * frame.GetFrameLength() / frame.GetChildLength();
+		slider_offset = height * frame.GetFrameOffset() / frame.GetChildLength();
 		if (is_shown ^ IsShown()) { SizeUpdated(); }
 		Redraw();
 	}
@@ -42,8 +52,6 @@ private:
 		if (Interval(slider_offset, slider_height).Contains(point.y)) { return &slider; }
 		return this;
 	}
-private:
-	virtual void OnFrameOffsetChange(float scroll_offset) {}
 
 	// paint
 private:
@@ -68,7 +76,11 @@ private:
 	float mouse_down_offset = 0.0f;
 private:
 	void OnMousePress(float y) { mouse_down_offset = y - slider_offset; }
-	void OnMouseDrag(float y) { OnFrameOffsetChange((y - mouse_down_offset) * content_height / height); }
+	void OnMouseDrag(float y) { GetScrollFrame().UpdateFrameOffset((y - mouse_down_offset) * GetScrollFrame().GetChildLength() / height); }
+private:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		if (msg.type == MouseMsg::WheelVertical) { GetScrollFrame().Scroll((float)-msg.wheel_delta); }
+	}
 
 private:
 	struct Slider : public WndObject {
@@ -92,6 +104,7 @@ private:
 			case MouseMsg::LeftDown: SetState(State::Press); GetScrollbar().OnMousePress(msg.point.y); SetCapture(); break;
 			case MouseMsg::Move: if (state == State::Press) { GetScrollbar().OnMouseDrag(msg.point.y); }break;
 			case MouseMsg::LeftUp: SetState(State::Hover); ReleaseCapture(); break;
+			case MouseMsg::WheelVertical: GetScrollbar().OnMouseMsg(msg); break;
 			}
 		}
 		virtual void OnNotifyMsg(NotifyMsg msg) override {
