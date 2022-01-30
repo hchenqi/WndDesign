@@ -29,7 +29,7 @@ protected:
 		Point child_point = point - GetInnerOffset(); ref_ptr<WndObject> child = Wnd::HitTest(child_point);
 		return child == this ? this : (point = child_point, child);
 	}
-	virtual Transform GetChildTransform(WndObject& child) override { return Wnd::GetChildTransform(child) * GetInnerOffset(); }
+	virtual Transform GetChildTransform(WndObject& child) const override { return Wnd::GetChildTransform(child) * GetInnerOffset(); }
 
 	// paint
 protected:

@@ -45,7 +45,7 @@ protected:
 		}
 		return this;
 	}
-	virtual Transform GetChildTransform(WndObject& child) override { return Wnd::GetChildTransform(child) * GetInnerOffset(); }
+	virtual Transform GetChildTransform(WndObject& child) const override { return Wnd::GetChildTransform(child) * GetInnerOffset(); }
 
 	// paint
 protected:

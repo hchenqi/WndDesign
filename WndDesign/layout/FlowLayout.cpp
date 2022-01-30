@@ -79,7 +79,7 @@ ref_ptr<WndObject> FlowLayout::HitTest(Point& point) {
 	return it->child;
 }
 
-inline Transform FlowLayout::GetChildTransform(WndObject& child) {
+Transform FlowLayout::GetChildTransform(WndObject& child) const {
 	return GetChildRegion(child).point - point_zero;
 }
 

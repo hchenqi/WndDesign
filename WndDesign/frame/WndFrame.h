@@ -20,7 +20,7 @@ protected:
 	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { return child; }
-	virtual Transform GetChildTransform(WndObject& child) override { return Transform::Identity(); }
+	virtual Transform GetChildTransform(WndObject& child) const override { return Transform::Identity(); }
 protected:
 	virtual Rect GetRedrawRegion() override { return redraw_region; }
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override { redraw_region = child_redraw_region; Redraw(); }

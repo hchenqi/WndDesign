@@ -27,7 +27,7 @@ protected:
 		Point child_point = Scale(point, 1.0f / scale_x, 1.0f / scale_y); ref_ptr<WndObject> child = Wnd::HitTest(child_point);
 		return child == this ? this : (point = child_point, child);
 	}
-	virtual Transform GetChildTransform(WndObject& child) override { return Wnd::GetChildTransform(child) * Transform::Scale(scale_x, scale_y); }
+	virtual Transform GetChildTransform(WndObject& child) const override { return Wnd::GetChildTransform(child) * Transform::Scale(scale_x, scale_y); }
 
 	// paint
 protected:

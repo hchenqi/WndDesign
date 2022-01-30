@@ -66,7 +66,7 @@ protected:
 	virtual Size GetSize() { return size_empty; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
-	virtual Transform GetChildTransform(WndObject& child) { return Transform::Identity(); }
+	virtual Transform GetChildTransform(WndObject& child) const { return Transform::Identity(); }
 
 	// paint
 protected:

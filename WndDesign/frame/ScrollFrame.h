@@ -64,7 +64,7 @@ protected:
 	}
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
-	virtual Transform GetChildTransform(WndObject& child) override { return GetChildOffset(); }
+	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 
 	// paint
 protected:

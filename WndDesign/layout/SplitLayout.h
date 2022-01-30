@@ -65,7 +65,7 @@ protected:
 		if (point.y < height_second) { return second; }
 		return nullptr;
 	}
-	virtual Transform GetChildTransform(WndObject& child) override {
+	virtual Transform GetChildTransform(WndObject& child) const override {
 		return GetChildRegion(child).point - point_zero;
 	}
 
@@ -137,7 +137,7 @@ protected:
 		if (point.x < width_second) { return second; }
 		return nullptr;
 	}
-	virtual Transform GetChildTransform(WndObject& child) override { 
+	virtual Transform GetChildTransform(WndObject& child) const override { 
 		return GetChildRegion(child).point - point_zero;
 	}
 

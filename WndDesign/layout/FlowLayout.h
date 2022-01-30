@@ -60,7 +60,7 @@ protected:
 	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;
-	virtual Transform GetChildTransform(WndObject& child) override;
+	virtual Transform GetChildTransform(WndObject& child) const override;
 
 	// paint
 private:

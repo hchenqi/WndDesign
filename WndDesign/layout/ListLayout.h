@@ -95,7 +95,7 @@ protected:
 		if (point.y >= it->length) { return this; }
 		return it->child;
 	}
-	virtual Transform GetChildTransform(WndObject& child) override {
+	virtual Transform GetChildTransform(WndObject& child) const override {
 		return GetChildRegion(child).point - point_zero;
 	}
 
@@ -203,7 +203,7 @@ protected:
 		if (point.x >= it->length) { return this; }
 		return it->child;
 	}
-	virtual Transform GetChildTransform(WndObject& child) override {
+	virtual Transform GetChildTransform(WndObject& child) const override {
 		return GetChildRegion(child).point - point_zero;
 	}
 

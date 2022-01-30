@@ -61,7 +61,7 @@ protected:
 		}
 		return this;
 	}
-	virtual Transform GetChildTransform(WndObject& child) override {
+	virtual Transform GetChildTransform(WndObject& child) const override {
 		return GetChildRegion(child).point - point_zero;
 	}
 
