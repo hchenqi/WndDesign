@@ -67,20 +67,15 @@ protected:
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
 	virtual Transform GetChildTransform(WndObject& child) const { return Transform::Identity(); }
+public:
+	Transform GetTransform(WndObject& descendent) const;
+	Point ConvertPoint(WndObject& descendent, Point point) const;
 
 	// paint
 protected:
 	void Redraw() { if (HasParent()) { GetParent().OnChildRedraw(*this, GetRedrawRegion()); } }
-	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) {
-		VerifyChild(child); if (draw_region.IsEmpty()) { return; }
-		Vector offset = child_offset - point_zero; draw_region -= offset;
-		figure_queue.Offset(offset, [&]() { child.OnDraw(figure_queue, draw_region); });
-	}
-	void DrawChild(WndObject& child, Rect child_region, FigureQueue& figure_queue, Rect draw_region) {
-		VerifyChild(child); draw_region = draw_region.Intersect(child_region); if (draw_region.IsEmpty()) { return; }
-		Vector offset = child_region.point - point_zero; draw_region -= offset;
-		figure_queue.Group(offset, draw_region, [&]() { child.OnDraw(figure_queue, draw_region); });
-	}
+	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region);
+	void DrawChild(WndObject& child, Rect child_region, FigureQueue& figure_queue, Rect draw_region);
 protected:
 	virtual Rect GetRedrawRegion() { return region_infinite; }
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) {}
@@ -111,6 +106,36 @@ protected:
 	virtual void OnKeyMsg(KeyMsg msg) {}
 	virtual void OnNotifyMsg(NotifyMsg msg) {}
 };
+
+
+inline Transform WndObject::GetTransform(WndObject& descendent) const {
+	Transform transform = Transform::Identity();
+	for (ref_ptr<WndObject> child = &descendent, parent = descendent.parent; child != this; child = parent, parent = child->parent) {
+		if (parent == nullptr) { throw std::invalid_argument("ancestor and descentent have no relation"); }
+		transform = transform * parent->GetChildTransform(*child);
+	}
+	return transform;
+}
+
+inline Point WndObject::ConvertPoint(WndObject& descendent, Point point) const {
+	for (ref_ptr<WndObject> child = &descendent, parent = descendent.parent; child != this; child = parent, parent = child->parent) {
+		if (parent == nullptr) { throw std::invalid_argument("ancestor and descentent have no relation"); }
+		point *= parent->GetChildTransform(*child);
+	}
+	return point;
+}
+
+inline void WndObject::DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) {
+	VerifyChild(child); if (draw_region.IsEmpty()) { return; }
+	Vector offset = child_offset - point_zero; draw_region -= offset;
+	figure_queue.Offset(offset, [&]() { child.OnDraw(figure_queue, draw_region); });
+}
+
+inline void WndObject::DrawChild(WndObject& child, Rect child_region, FigureQueue& figure_queue, Rect draw_region) {
+	VerifyChild(child); draw_region = draw_region.Intersect(child_region); if (draw_region.IsEmpty()) { return; }
+	Vector offset = child_region.point - point_zero; draw_region -= offset;
+	figure_queue.Group(offset, draw_region, [&]() { child.OnDraw(figure_queue, draw_region); });
+}
 
 
 END_NAMESPACE(WndDesign)
