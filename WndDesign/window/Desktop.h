@@ -45,7 +45,7 @@ private:
 	ref_ptr<WndObject> wnd_focus = nullptr;
 	ref_ptr<ImeApi> ime_focus = nullptr;
 public:
-	void SetFocus(WndObject& frame, WndObject& wnd);
+	void SetFocus(WndObject& wnd);
 	void ReleaseFocus(WndObject& wnd);
 	void LoseFocus();
 public:

@@ -17,7 +17,7 @@ private:
 protected:
 	WndObject() {}
 public:
-	virtual ~WndObject();
+	virtual ~WndObject() { if (HasParent()) { GetParent().UnregisterChild(*this); } ReleaseFocus(); }
 
 	// style
 protected:
@@ -40,7 +40,10 @@ protected:
 		if (child.HasParent()) { throw std::invalid_argument("window already has a parent"); } child.parent = this;
 	}
 	void UnregisterChild(WndObject& child) {
-		VerifyChild(child); child.parent = nullptr;
+		VerifyChild(child);
+		if (child_track == &child) { SetChildTrack(*this); }
+		if (child_capture == &child) { ReleaseCapture(); }
+		child.parent = nullptr;
 	}
 
 	// parent data
@@ -85,20 +88,16 @@ protected:
 private:
 	ref_ptr<WndObject> child_track = nullptr;
 	ref_ptr<WndObject> child_capture = nullptr;
-	ref_ptr<WndObject> child_focus = nullptr;
 private:
 	void SetChildTrack(WndObject& child);
 	void LoseTrack();
 	void SetChildCapture(WndObject& child);
 	void LoseCapture();
-	void SetChildFocus(WndObject& child);
-	void ReleaseChildFocus(WndObject& child);
 protected:
 	void SetCapture() { SetChildCapture(*this); }
 	void ReleaseCapture();
-	void SetFocus() { SetChildFocus(*this); }
-	void ResetFocus() { if (child_focus != nullptr) { SetChildFocus(*child_focus); } }
-	void ReleaseFocus() { ReleaseChildFocus(*this); }
+	void SetFocus();
+	void ReleaseFocus();
 private:
 	void DispatchMouseMsg(MouseMsg msg);
 protected:

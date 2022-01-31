@@ -6,13 +6,6 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-WndObject::~WndObject() {
-	if (!HasParent()) { return; }
-	if (child_track == this) { GetParent().SetChildTrack(GetParent()); }
-	if (child_capture == this) { ReleaseCapture(); }
-	if (child_focus == this) { ReleaseFocus(); }
-}
-
 void WndObject::SetChildTrack(WndObject& child) {
 	if (child_track == &child) { return; }
 	if (child_track == nullptr) {
@@ -47,20 +40,11 @@ void WndObject::LoseCapture() {
 	}
 }
 
-void WndObject::SetChildFocus(WndObject& child) {
-	child_focus = &child;
-	if (parent == &desktop) { return desktop.SetFocus(*this, child); }
-	if (HasParent()) { GetParent().SetChildFocus(child); }
-}
-
-void WndObject::ReleaseChildFocus(WndObject& child) {
-	if (child_focus != &child) { return; }
-	child_focus = nullptr;
-	if (parent == &desktop) { return desktop.ReleaseFocus(child); }
-	if (HasParent()) { GetParent().ReleaseChildFocus(child); }
-}
-
 void WndObject::ReleaseCapture() { desktop.ReleaseCapture(); }
+
+void WndObject::SetFocus() { desktop.SetFocus(*this); }
+
+void WndObject::ReleaseFocus() { desktop.ReleaseFocus(*this); }
 
 void WndObject::DispatchMouseMsg(MouseMsg msg) {
 	if (child_capture == this) { return OnMouseMsg(msg); }

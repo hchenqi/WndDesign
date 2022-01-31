@@ -57,8 +57,9 @@ void Desktop::ReleaseCapture() {
 	Win32::ReleaseCapture();
 }
 
-void Desktop::SetFocus(WndObject& root, WndObject& wnd) {
-	DesktopFrame& frame = static_cast<DesktopFrame&>(root);
+void Desktop::SetFocus(WndObject& wnd) {
+	if (wnd_focus == &wnd) { return; }
+	DesktopFrame& frame = GetDesktopFrame(wnd);
 	if (frame_focus != &frame) { Win32::SetFocus(frame.hwnd); }
 	if (wnd_focus != &wnd) { LoseFocus(); }
 	frame_focus = &frame; wnd_focus = &wnd; ime_focus = nullptr;
