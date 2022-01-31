@@ -69,16 +69,8 @@ void EditBox::UpdateCaretRegion(const HitTestInfo& info) {
 	RedrawCaretRegion();
 }
 
-void EditBox::SetCaret(Point point) {
-	HitTestInfo info = text_block.HitTestPoint(point);
-	UpdateCaretRegion(info); caret_state = CaretState::Show;
-	ClearSelection();
-	mouse_down_text_position = caret_text_position;
-}
-
-void EditBox::SetCaret(size_t text_position, bool is_trailing_hit) {
-	HitTestInfo info = text_block.HitTestTextPosition(text_position);
-	info.is_trailing_hit = is_trailing_hit;
+void EditBox::SetCaret(HitTestInfo info) {
+	SetFocus();
 	UpdateCaretRegion(info); caret_state = CaretState::Show;
 	ClearSelection();
 }
@@ -87,18 +79,18 @@ void EditBox::MoveCaret(CaretMoveDirection direction) {
 	switch (direction) {
 	case CaretMoveDirection::Left:
 		if (HasSelection()) {
-			SetCaret(selection_begin, false);
+			SetCaret(selection_begin);
 		} else {
 			if (caret_text_position > 0) {
-				SetCaret(caret_text_position - 1, false);
+				SetCaret(caret_text_position - 1);
 			}
 		}
 		break;
 	case CaretMoveDirection::Right:
 		if (HasSelection()) {
-			SetCaret(selection_end, false);
+			SetCaret(selection_end);
 		} else {
-			SetCaret(caret_text_position, true);
+			SetCaret(caret_text_position + GetCharacterLength(caret_text_position));
 		}
 		break;
 	case CaretMoveDirection::Up:
@@ -169,10 +161,10 @@ void EditBox::Insert(wchar ch) {
 	if (IsEditDisabled()) { return; }
 	if (HasSelection()) {
 		ReplaceText(selection_begin, selection_end - selection_begin, ch);
-		SetCaret(selection_begin + 1, false);
+		SetCaret(selection_begin + 1);
 	} else {
 		InsertText(caret_text_position, ch);
-		SetCaret(caret_text_position + 1, false);
+		SetCaret(caret_text_position + 1);
 	}
 }
 
@@ -180,10 +172,10 @@ void EditBox::Insert(std::wstring str) {
 	if (IsEditDisabled()) { return; }
 	if (HasSelection()) {
 		ReplaceText(selection_begin, selection_end - selection_begin, str);
-		SetCaret(selection_begin + str.length(), false);
+		SetCaret(selection_begin + str.length());
 	} else {
 		InsertText(caret_text_position, str);
-		SetCaret(caret_text_position + str.length(), false);
+		SetCaret(caret_text_position + str.length());
 	}
 }
 
@@ -191,12 +183,12 @@ void EditBox::Delete(bool is_backspace) {
 	if (IsEditDisabled()) { return; }
 	if (HasSelection()) {
 		DeleteText(selection_begin, selection_end - selection_begin);
-		SetCaret(selection_begin, false);
+		SetCaret(selection_begin);
 	} else {
 		if (is_backspace) {
 			if (caret_text_position == 0) { return; }
 			size_t previous_caret_position = caret_text_position;
-			SetCaret(caret_text_position - 1, false);
+			SetCaret(caret_text_position - 1);
 			DeleteText(caret_text_position, previous_caret_position - caret_text_position);
 		} else {
 			if (caret_text_position >= text.length()) { return; }
@@ -224,7 +216,7 @@ void EditBox::OnImeComposition(std::wstring str) {
 	if (IsEditDisabled()) { return; }
 	ReplaceText(ime_composition_begin, ime_composition_end - ime_composition_begin, str);
 	ime_composition_end = ime_composition_begin + str.length();
-	SetCaret(ime_composition_end, false);
+	SetCaret(ime_composition_end);
 }
 
 void EditBox::Cut() {
@@ -248,7 +240,7 @@ void EditBox::Paste() {
 
 void EditBox::OnMouseMsg(MouseMsg msg) {
 	switch (msg.type) {
-	case MouseMsg::LeftDown: SetFocus(); SetCaret(msg.point); SetCapture(); break;
+	case MouseMsg::LeftDown: SetCaret(msg.point); mouse_down_text_position = caret_text_position; SetCapture(); break;
 	case MouseMsg::LeftUp: ReleaseCapture(); break;
 	}
 	switch (mouse_tracker.Track(msg)) {

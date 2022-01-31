@@ -91,8 +91,9 @@ private:
 private:
 	void UpdateCaretRegion(const HitTestInfo& info);
 private:
-	void SetCaret(Point point);
-	void SetCaret(size_t text_position, bool is_trailing_hit);
+	void SetCaret(HitTestInfo info);
+	void SetCaret(Point point) { SetCaret(text_block.HitTestPoint(point)); }
+	void SetCaret(size_t text_position) { SetCaret(text_block.HitTestTextPosition(text_position)); }
 	void MoveCaret(CaretMoveDirection direction);
 
 	// selection
