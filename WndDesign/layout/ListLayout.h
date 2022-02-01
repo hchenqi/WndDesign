@@ -28,10 +28,15 @@ public:
 	// child
 protected:
 	struct ChildInfo {
+	public:
 		child_ptr child;
 		float offset = 0.0f;
 		float length = 0.0f;
+	public:
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
+	public:
+		float BeginOffset() const { return offset; }
+		float EndOffset() const { return offset + length; }
 	};
 	std::vector<ChildInfo> child_list;
 protected:
@@ -70,8 +75,8 @@ protected:
 	}
 protected:
 	void UpdateLayout(size_t index) {
-		size.height = index == 0 ? 0.0f : (index--, child_list[index].offset + child_list[index].length);
-		for (index++; index < child_list.size(); index++) {
+		size.height = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].EndOffset();
+		for (index; index < child_list.size(); index++) {
 			size.height += gap;
 			child_list[index].offset = size.height;
 			size.height += child_list[index].length;
@@ -147,10 +152,15 @@ public:
 	// child
 protected:
 	struct ChildInfo {
+	public:
 		child_ptr child;
 		float offset = 0.0f;
 		float length = 0.0f;
+	public:
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
+	public:
+		float BeginOffset() const { return offset; }
+		float EndOffset() const { return offset + length; }
 	};
 	std::vector<ChildInfo> child_list;
 protected:
@@ -189,8 +199,8 @@ protected:
 	}
 protected:
 	void UpdateLayout(size_t index) {
-		size.width = index == 0 ? 0.0f : (index--, child_list[index].offset + child_list[index].length);
-		for (index++; index < child_list.size(); index++) {
+		size.width = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].EndOffset();
+		for (index; index < child_list.size(); index++) {
 			size.width += gap;
 			child_list[index].offset = size.width;
 			size.width += child_list[index].length;
