@@ -9,7 +9,10 @@ BEGIN_NAMESPACE(WndDesign)
 
 BEGIN_NAMESPACE(Anonymous)
 
-std::unordered_map<HANDLE, Timer&> timer_sync_map;
+struct TimerSyncMap : public std::unordered_map<HANDLE, Timer&> {
+	~TimerSyncMap() { while (!empty()) { begin()->second.Stop(); } }
+}timer_sync_map;
+
 
 void TimerCallbackSync(HWND Arg1, UINT Arg2, UINT_PTR Arg3, DWORD Arg4) {
 	if (auto it = timer_sync_map.find(reinterpret_cast<HANDLE>(Arg3)); it != timer_sync_map.end()) {
