@@ -39,7 +39,7 @@ public:
 	constexpr ValueTag operator-() const { return ValueTag(_type, -_value); }
 
 	constexpr ValueTag& ConvertToPixel(float length_ref) {
-		if (_type == Type::Percent) { _value = length_ref * _value / 100.0f; _type = Type::Pixel; } return *this;
+		if (_type == Type::Percent) { _value = length_ref * (_value / 100.0f); _type = Type::Pixel; } return *this;
 	}
 };
 
