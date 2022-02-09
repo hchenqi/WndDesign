@@ -6,7 +6,8 @@
 //#include "ListLayoutTest.h"
 //#include "ImageBoxTest.h"
 //#include "BarLayoutTest.h"
-#include "FlowLayoutTest.h"
+//#include "FlowLayoutTest.h"
+#include "OverlapLayoutTest.h"
 
 
 #pragma comment(lib, "WndDesign.lib")

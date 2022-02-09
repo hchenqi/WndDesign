@@ -173,6 +173,7 @@
     <ClInclude Include="figure\layer.h" />
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\text_block.h" />
+    <ClInclude Include="frame\OverlapFrame.h" />
     <ClInclude Include="geometry\transform.h" />
     <ClInclude Include="frame\CenterFrame.h" />
     <ClInclude Include="frame\ClipFrame.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="layout\BarLayout.h" />
     <ClInclude Include="layout\FlowLayout.h" />
     <ClInclude Include="layout\ListLayout.h" />
+    <ClInclude Include="layout\OverlapLayout.h" />
     <ClInclude Include="layout\SplitLayout.h" />
     <ClInclude Include="message\key_msg.h" />
     <ClInclude Include="message\message.h" />
@@ -245,11 +247,13 @@
     <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />
     <ClCompile Include="figure\text_block.cpp" />
+    <ClCompile Include="frame\OverlapFrame.cpp" />
     <ClCompile Include="geometry\transform.cpp" />
     <ClCompile Include="frame\DesktopFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_layer.cpp" />
     <ClCompile Include="layout\FlowLayout.cpp" />
+    <ClCompile Include="layout\OverlapLayout.cpp" />
     <ClCompile Include="message\timer.cpp" />
     <ClCompile Include="system\clipboard.cpp" />
     <ClCompile Include="system\cursor.cpp" />

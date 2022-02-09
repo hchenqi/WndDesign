@@ -23,7 +23,7 @@ public:
 
 	// frame
 private:
-	std::vector<Desktop::frame_ptr> frame_list;
+	std::vector<frame_ptr> frame_list;
 public:
 	void AddChild(frame_ptr frame);
 	void RemoveChild(DesktopFrame& frame);

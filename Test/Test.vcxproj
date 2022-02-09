@@ -25,6 +25,7 @@
     <ClInclude Include="FlowLayoutTest.h" />
     <ClInclude Include="ImageBoxTest.h" />
     <ClInclude Include="ListLayoutTest.h" />
+    <ClInclude Include="OverlapLayoutTest.h" />
     <ClInclude Include="ScrollBoxTest.h" />
     <ClInclude Include="SplitLayoutTest.h" />
     <ClInclude Include="TextBoxTest.h" />

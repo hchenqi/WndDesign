@@ -15,7 +15,7 @@ public:
 	static constexpr std::pair<Size, Size> CalculateMinMaxSize(LengthStyle width, LengthStyle height, Size size_ref) {
 		return { CalculateSize(width._min, height._min, size_ref), CalculateSize(width._max, height._max, size_ref) };
 	}
-private:
+public:
 	static constexpr float clamp(float length_normal, float length_min, float length_max) {
 		if (length_normal < length_min) { length_normal = length_min; }
 		if (length_normal > length_max) { length_normal = length_max; }
@@ -49,10 +49,8 @@ private:
 				length_normal = px(length_ref - position_low.value() - position_high.value());
 			}
 		}
-		return Interval(
-			CalculatePosition(position_low, position_high, length_normal.value(), length_ref),
-			clamp(length_normal.value(), length_min.value(), length_max.value())
-		);
+		float length_result = clamp(length_normal.value(), length_min.value(), length_max.value());
+		return Interval(CalculatePosition(position_low, position_high, length_result, length_ref), length_result);
 	}
 public:
 	static constexpr Rect CalculateRegion(LengthStyle width, LengthStyle height, PositionStyle position, Size size_ref) {
