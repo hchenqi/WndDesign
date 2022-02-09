@@ -106,10 +106,11 @@ protected:
 	}
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (point.y < 0.0f || point.y >= size.height) { return nullptr; }
-		auto it = HitTestItem(point.y); point.y -= it->offset;
-		if (point.y >= it->length) { return this; }
-		return it->child;
+		float offset = point.y;
+		if (offset < 0.0f || offset >= size.height) { return nullptr; }
+		auto it = HitTestItem(offset); offset -= it->offset;
+		if (offset >= it->length) { return this; }
+		point.y = offset; return it->child;
 	}
 	virtual Transform GetChildTransform(WndObject& child) const override {
 		return GetChildRegion(child).point - point_zero;
@@ -226,10 +227,11 @@ protected:
 	}
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (point.x < 0.0f || point.x >= size.width) { return nullptr; }
-		auto it = HitTestItem(point.x); point.x -= it->offset;
-		if (point.x >= it->length) { return this; }
-		return it->child;
+		float offset = point.x;
+		if (offset < 0.0f || offset >= size.width) { return nullptr; }
+		auto it = HitTestItem(offset); offset -= it->offset;
+		if (offset >= it->length) { return this; }
+		point.x = offset; return it->child;
 	}
 	virtual Transform GetChildTransform(WndObject& child) const override {
 		return GetChildRegion(child).point - point_zero;
