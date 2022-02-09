@@ -14,6 +14,7 @@ class _CenterFrame_Base : public WndFrame {
 protected:
 	_CenterFrame_Base(child_ptr<> child) : WndFrame(std::move(child)) {}
 protected:
+	Size size;
 	Size child_size;
 protected:
 	Vector GetChildOffset() const {
@@ -23,7 +24,7 @@ protected:
 	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
-		redraw_region = child_redraw_region + GetChildOffset(); Redraw();
+		Redraw(child_redraw_region + GetChildOffset());
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		return DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
@@ -38,8 +39,8 @@ public:
 	CenterFrame(child_ptr<Auto, Assigned> child) : _CenterFrame_Base(std::move(child)) {}
 	CenterFrame(child_ptr<Auto, Auto> child) : _CenterFrame_Base(std::move(child)) {}
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override {
-		if (size != size_ref) { size = size_ref; child_size = UpdateChildSizeRef(child, size); }
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
+		if (size != size_ref) { size = size_ref; child_size = UpdateChildSizeRef(child, size); } return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { this->child_size = child_size; }
 };
@@ -53,10 +54,10 @@ public:
 		size.height = child_size.height;
 	}
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		this->child_size = child_size;
-		if (size.height != child_size.height) { size.height = child_size.height; SizeUpdated(); }
+		if (size.height != child_size.height) { size.height = child_size.height; SizeUpdated(size); }
 	}
 };
 
@@ -69,10 +70,10 @@ public:
 		size.width = child_size.width;
 	}
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		this->child_size = child_size;
-		if (size.width != child_size.width) { size.width = child_size.width; SizeUpdated(); }
+		if (size.width != child_size.width) { size.width = child_size.width; SizeUpdated(size); }
 	}
 };
 

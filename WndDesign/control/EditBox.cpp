@@ -6,10 +6,11 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void EditBox::OnSizeRefUpdate(Size size_ref) {
-	TextBox::OnSizeRefUpdate(size_ref);
+Size EditBox::OnSizeRefUpdate(Size size_ref) {
+	Size size = TextBox::OnSizeRefUpdate(size_ref);
 	UpdateCaretRegion(text_block.HitTestTextPosition(caret_text_position));
 	UpdateSelectionRegion();
+	return size;
 }
 
 void EditBox::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
@@ -209,7 +210,7 @@ void EditBox::OnImeCompositionBegin() {
 		ime_composition_end = ime_composition_begin;
 		ime_position = caret_region.RightBottom();
 	}
-	ImeSetPosition(ime_position * GetChildTransform(*this));
+	ImeSetPosition(ime_position);
 }
 
 void EditBox::OnImeComposition(std::wstring str) {

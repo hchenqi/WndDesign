@@ -17,9 +17,9 @@ public:
 protected:
 	Size size;
 public:
-	void SetSize(Size size) { if (this->size != size) { this->size = size; SizeUpdated(); } }
+	void SetSize(Size size) { if (this->size != size) { SizeUpdated(this->size = size); } }
 protected:
-	virtual Size GetSize() override { return size; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { return size; }
 };
 
 
@@ -30,10 +30,9 @@ public:
 protected:
 	Size size;
 public:
-	void SetWidth(float width) { if (size.width != width) { size.width = width; SizeUpdated(); } }
+	void SetWidth(float width) { if (size.width != width) { size.width = width; SizeUpdated(size); } }
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; }
-	virtual Size GetSize() override { return size; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; return size; }
 };
 
 
@@ -44,21 +43,14 @@ public:
 protected:
 	Size size;
 public:
-	void SetHeight(float height) { if (size.height != height) { size.height = height; SizeUpdated(); } }
+	void SetHeight(float height) { if (size.height != height) { size.height = height; SizeUpdated(size); } }
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; }
-	virtual Size GetSize() override { return size; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; return size; }
 };
 
 
 template<>
-class Placeholder<Assigned, Assigned> : public WndType<Assigned, Assigned> {
-protected:
-	Size size;
-protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { size = size_ref; }
-	virtual Size GetSize() override { return size; }
-};
+class Placeholder<Assigned, Assigned> : public WndType<Assigned, Assigned> {};
 
 
 END_NAMESPACE(WndDesign)

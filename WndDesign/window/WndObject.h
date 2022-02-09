@@ -61,26 +61,24 @@ protected:
 
 	// layout
 protected:
-	Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); child.OnSizeRefUpdate(size_ref); return child.GetSize(); }
-	void SizeUpdated() { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, GetSize()); } }
+	Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
+	void SizeUpdated(Size size) { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) {}
+	virtual Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
-	virtual Size GetSize() { return size_empty; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
 	virtual Transform GetChildTransform(WndObject& child) const { return Transform::Identity(); }
 public:
-	Transform GetTransform(WndObject& descendent) const;
-	Point ConvertPoint(WndObject& descendent, Point point) const;
+	Transform GetDescendentTransform(WndObject& descendent) const;
+	Point ConvertDescendentPoint(WndObject& descendent, Point point) const;
 
 	// paint
 protected:
-	void Redraw() { if (HasParent()) { GetParent().OnChildRedraw(*this, GetRedrawRegion()); } }
+	void Redraw(Rect redraw_region) { if (HasParent() && !redraw_region.IsEmpty()) { GetParent().OnChildRedraw(*this, redraw_region); } }
 	void DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region);
 	void DrawChild(WndObject& child, Rect child_region, FigureQueue& figure_queue, Rect draw_region);
 protected:
-	virtual Rect GetRedrawRegion() { return region_infinite; }
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) {}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) {}
 
@@ -107,7 +105,7 @@ protected:
 };
 
 
-inline Transform WndObject::GetTransform(WndObject& descendent) const {
+inline Transform WndObject::GetDescendentTransform(WndObject& descendent) const {
 	Transform transform = Transform::Identity();
 	for (ref_ptr<WndObject> child = &descendent, parent = descendent.parent; child != this; child = parent, parent = child->parent) {
 		if (parent == nullptr) { throw std::invalid_argument("ancestor and descentent have no relation"); }
@@ -116,7 +114,7 @@ inline Transform WndObject::GetTransform(WndObject& descendent) const {
 	return transform;
 }
 
-inline Point WndObject::ConvertPoint(WndObject& descendent, Point point) const {
+inline Point WndObject::ConvertDescendentPoint(WndObject& descendent, Point point) const {
 	for (ref_ptr<WndObject> child = &descendent, parent = descendent.parent; child != this; child = parent, parent = child->parent) {
 		if (parent == nullptr) { throw std::invalid_argument("ancestor and descentent have no relation"); }
 		point *= parent->GetChildTransform(*child);

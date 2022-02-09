@@ -1,30 +1,32 @@
 #pragma once
 
-#include "WndFrame.h"
+#include "ScaleFrame.h"
+#include "BorderFrame.h"
 #include "../style/style.h"
 #include "../figure/desktop_layer.h"
 #include "../geometry/region.h"
-#include "../wrapper/Border.h"
-#include "../wrapper/ScaleTransform.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class DesktopFrame : private Decorate<WndFrame, Border, ScaleTransform> {
+class DesktopFrame : protected ScaleFrame<Assigned, Assigned> {
 private:
 	friend class Desktop;
 	friend struct DesktopFrameApi;
 
 public:
-	using child_ptr = child_ptr<Assigned, Assigned>;
-
-public:
 	struct Style {
-		LengthStyle width, height;
+		LengthStyle width;
+		LengthStyle height;
 		PositionStyle position;
-		Border::Style border;
+		Border border;
 		std::wstring title;
+
+		Style() : Style(LengthStyle(), LengthStyle(), PositionStyle(), Border(), L"") {}
+		Style(LengthStyle width, LengthStyle height, PositionStyle position, Border border, std::wstring title) :
+			width(width), height(height), position(position), border(border), title(title) {
+		}
 	};
 
 public:
@@ -39,12 +41,28 @@ private:
 protected:
 	void SetTitle(std::wstring title);
 
+	// border
+protected:
+	class BorderFrame : public WndDesign::BorderFrame<Assigned, Assigned> {
+	public:
+		BorderFrame(Border border, child_ptr child) : WndDesign::BorderFrame<Assigned, Assigned>(border, std::move(child)), border_copy(border) {}
+	protected:
+		Border border_copy;
+	public:
+		void Hide() { border = {}; }
+		void Restore() { border = border_copy; }
+	protected:
+		virtual void OnMouseMsg(MouseMsg msg) override;
+	};
+protected:
+	BorderFrame& GetBorder() { return static_cast<BorderFrame&>(*child); }
+
 	// layout
 private:
 	Rect region;
 private:
 	Rect GetRegion() { return region; }
-	void SetScale(float scale) { scale_x = scale_y = scale; }
+	void SetScale(float value) { scale.x = scale.y = value; }
 	void SetSize(Size size);
 	void SetPoint(Point point) { region.point = point; }
 
@@ -55,7 +73,7 @@ protected:
 protected:
 	enum class Status { Normal, Minimized, Maximized } status = Status::Normal;
 private:
-	void SetStatus(Status status) { this->status = status; }
+	void SetStatus(Status status);
 protected:
 	void Show();
 	void Minimize();
@@ -72,12 +90,7 @@ private:
 	void RecreateLayer();
 private:
 	void Redraw(Rect redraw_region);
-	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 	void Draw();
-
-	// message
-private:
-	virtual void OnMouseMsg(MouseMsg msg) override;
 };
 
 

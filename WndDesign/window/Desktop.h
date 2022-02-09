@@ -16,7 +16,6 @@ class DesktopFrame;
 class Desktop : public WndObject {
 public:
 	using frame_ptr = std::unique_ptr<DesktopFrame>;
-	using frame_ref = DesktopFrame&;
 
 public:
 	Desktop();
@@ -27,12 +26,16 @@ private:
 	std::vector<Desktop::frame_ptr> frame_list;
 public:
 	void AddChild(frame_ptr frame);
-	void RemoveChild(frame_ref frame);
+	void RemoveChild(DesktopFrame& frame);
 public:
 	DesktopFrame& GetDesktopFrame(WndObject& wnd);
 	DesktopFrame& GetDesktopFramePoint(WndObject& wnd, Point& point);
 public:
 	void RecreateFrameLayer();
+
+	// paint
+private:
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 
 	// mouse message
 public:
@@ -49,7 +52,7 @@ public:
 	void ReleaseFocus(WndObject& wnd);
 	void LoseFocus();
 public:
-	void DispatchKeyMsg(frame_ref frame, KeyMsg msg);
+	void DispatchKeyMsg(DesktopFrame& frame, KeyMsg msg);
 
 	// ime message
 private:

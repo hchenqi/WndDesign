@@ -20,7 +20,7 @@ private:
 		case MouseMsg::RightDown:
 			SetFocus();
 			background = background == Color::Gray ? Color::White : Color::Gray;
-			Redraw();
+			Redraw(region_infinite);
 			break;
 		case MouseMsg::LeftDown: AeroSnapDraggingEffect(*this); break;
 		}

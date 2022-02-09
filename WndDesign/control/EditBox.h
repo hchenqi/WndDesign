@@ -58,7 +58,7 @@ public:
 
 	// layout
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override;
+	virtual Size OnSizeRefUpdate(Size size_ref) override;
 
 	// paint
 protected:
@@ -75,7 +75,7 @@ private:
 	ushort caret_blink_time = 0;
 private:
 	bool IsCaretVisible() const { return caret_state == CaretState::Show || caret_state == CaretState::BlinkShow; }
-	void RedrawCaretRegion() { redraw_region = caret_region; Redraw(); }
+	void RedrawCaretRegion() { Redraw(caret_region); }
 private:
 	void HideCaret();
 	void StartBlinkingCaret();
@@ -105,7 +105,7 @@ private:
 	Rect selection_region_union;
 private:
 	void UpdateSelectionRegion();
-	void RedrawSelectionRegion() { redraw_region = selection_region_union; Redraw(); }
+	void RedrawSelectionRegion() { Redraw(selection_region_union); }
 private:
 	bool HasSelection() const { return selection_end > selection_begin; }
 	void DoSelection(Point mouse_move_position);

@@ -31,7 +31,7 @@ void FlowLayout::AppendChild(child_ptr child) {
 	child_index child_index = (uint)child_list.size();
 	ChildInfo& info = child_list.emplace_back(std::move(child));
 	info.width = UpdateChildSizeRef(info.child, Size(length_min, row_height)).width;
-	if (UpdateLayout(child_index)) { SizeUpdated(); }
+	if (UpdateLayout(child_index)) { SizeUpdated(size); }
 }
 
 bool FlowLayout::UpdateLayout(child_index child_index) {
@@ -51,15 +51,16 @@ bool FlowLayout::UpdateLayout(child_index child_index) {
 	}
 	row_list.push_back((uint)child_list.size());
 	float height = child_list.empty() ? 0 : GetRowOffset(row) + row_height;
-	if (size.height == height) { redraw_region = Rect(Point(0, GetRowOffset(row_begin)), size_max); Redraw(); return false; }
+	if (size.height == height) { Redraw(Rect(Point(0, GetRowOffset(row_begin)), size_max)); return false; }
 	size.height = height; return true;
 }
 
-void FlowLayout::OnSizeRefUpdate(Size size_ref) {
+Size FlowLayout::OnSizeRefUpdate(Size size_ref) {
 	if (size.width != size_ref.width) {
 		size.width = size_ref.width;
 		UpdateLayout(0);
 	}
+	return size;
 }
 
 void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
@@ -68,7 +69,7 @@ void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 	ChildInfo& info = child_list[child_index];
 	if (info.width != child_size.width) {
 		info.width = child_size.width;
-		if (UpdateLayout(child_index)) { SizeUpdated(); }
+		if (UpdateLayout(child_index)) { SizeUpdated(size); }
 	}
 }
 
@@ -85,8 +86,7 @@ Transform FlowLayout::GetChildTransform(WndObject& child) const {
 
 void FlowLayout::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 	Rect child_region = GetChildRegion(child);
-	redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
-	if (!redraw_region.IsEmpty()) { Redraw(); }
+	Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
 }
 
 void FlowLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {

@@ -107,8 +107,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_WINDOWPOSCHANGING: break;
 		case WM_WINDOWPOSCHANGED: return DefWindowProc(hwnd, msg, wparam, lparam);
 		case WM_MOVE: frame->SetPoint(Point((short)LOWORD(lparam), (short)HIWORD(lparam))); break;
-		case WM_SIZE: frame->SetSize(Size(LOWORD(lparam), HIWORD(lparam)));
-			frame->SetStatus(static_cast<DesktopFrameApi::Status>(wparam <= 2 ? wparam : 2)); break;
+		case WM_SIZE: frame->SetStatus(static_cast<DesktopFrameApi::Status>(wparam <= 2 ? wparam : 2));
+			frame->SetSize(Size(LOWORD(lparam), HIWORD(lparam))); break;
 
 			// notifications
 		case WM_PAINT: {

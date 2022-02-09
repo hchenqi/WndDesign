@@ -13,11 +13,12 @@ public:
 	}
 protected:
 	float width_max;
+	Size size;
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override {}
+	virtual Size OnSizeRefUpdate(Size size_ref) override { return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		child_size.width = min(width_max, child_size.width);
-		if (size != child_size) { size = child_size; SizeUpdated(); }
+		if (size != child_size) { size = child_size; SizeUpdated(size); }
 	}
 };
 

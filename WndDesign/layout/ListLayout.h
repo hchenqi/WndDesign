@@ -81,10 +81,10 @@ protected:
 			child_list[index].offset = size.height;
 			size.height += child_list[index].length;
 		}
-		SizeUpdated();
+		SizeUpdated(size);
 	}
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.width != size_ref.width) {
 			size.width = size_ref.width;
 			size.height = 0.0f;
@@ -95,6 +95,7 @@ protected:
 			}
 			size.height -= child_list.empty() ? 0.0f : gap;
 		}
+		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		size_t index = GetChildData(child);
@@ -103,7 +104,6 @@ protected:
 			UpdateLayout(index + 1);
 		}
 	}
-	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		if (point.y < 0.0f || point.y >= size.height) { return nullptr; }
@@ -117,13 +117,9 @@ protected:
 
 	// paint
 protected:
-	Rect redraw_region;
-protected:
-	virtual Rect GetRedrawRegion() override { return redraw_region; }
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		Rect child_region = GetChildRegion(child);
-		redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
-		if (!redraw_region.IsEmpty()) { Redraw(); }
+		Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
@@ -205,10 +201,10 @@ protected:
 			child_list[index].offset = size.width;
 			size.width += child_list[index].length;
 		}
-		SizeUpdated();
+		SizeUpdated(size);
 	}
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size.height != size_ref.height) {
 			size.height = size_ref.height;
 			size.width = 0.0f;
@@ -219,6 +215,7 @@ protected:
 			}
 			size.width -= child_list.empty() ? 0.0f : gap;
 		}
+		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		size_t index = GetChildData(child);
@@ -227,7 +224,6 @@ protected:
 			UpdateLayout(index + 1);
 		}
 	}
-	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		if (point.x < 0.0f || point.x >= size.width) { return nullptr; }
@@ -241,13 +237,9 @@ protected:
 
 	// paint
 protected:
-	Rect redraw_region;
-protected:
-	virtual Rect GetRedrawRegion() override { return redraw_region; }
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		Rect child_region = GetChildRegion(child);
-		redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
-		if (!redraw_region.IsEmpty()) { Redraw(); }
+		Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }

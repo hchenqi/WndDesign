@@ -42,7 +42,7 @@ protected:
 	Rect GetRegionCenter() const { return Rect(Point((size.width - width_center) / 2, 0.0f), Size(width_center, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == center.get() ? GetRegionCenter() : &child == right.get() ? GetRegionRight() : GetRegionLeft(); }
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (&child == center.get()) {
 			if (width_center != child_size.width) { width_center = child_size.width; }
@@ -52,7 +52,6 @@ protected:
 			if (width_left != child_size.width) { width_left = child_size.width; }
 		}
 	}
-	virtual Size GetSize() override { return size; }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
 		using pair = std::pair<WndObject&, Rect>;
@@ -67,13 +66,9 @@ protected:
 
 	// paint
 protected:
-	Rect redraw_region;
-protected:
-	virtual Rect GetRedrawRegion() override { return redraw_region; }
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
 		Rect child_region = GetChildRegion(child);
-		redraw_region = child_region.Intersect(child_redraw_region + (child_region.point - point_zero));
-		if (!redraw_region.IsEmpty()) { Redraw(); }
+		Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(left, GetRegionLeft(), figure_queue, draw_region);

@@ -17,6 +17,7 @@ protected:
 
 	// layout
 protected:
+	Size size;
 	Size child_size;
 	Point frame_offset;
 public:
@@ -32,7 +33,7 @@ public:
 		frame_offset.x = child_size.width <= size.width ? 0.0f : clamp(offset.x, Interval(0.0f, child_size.width - size.width));
 		frame_offset.y = child_size.height <= size.height ? 0.0f : clamp(offset.y, Interval(0.0f, child_size.height - size.height));
 		OnFrameOffsetUpdate();
-		redraw_region = region_infinite; Redraw();
+		Redraw(region_infinite);
 	}
 	void Scroll(Vector offset) {
 		if (offset == vector_zero) { return; }
@@ -49,12 +50,13 @@ protected:
 
 	// layout
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			size = size_ref;
 			child_size = UpdateChildSizeRef(child, Size(length_max, length_max));
 			UpdateFrameOffset(frame_offset);
 		}
+		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (this->child_size != child_size) {
@@ -69,7 +71,7 @@ protected:
 	// paint
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
-		redraw_region = child_redraw_region + GetChildOffset(); Redraw();
+		Redraw(child_redraw_region + GetChildOffset());
 	}
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
@@ -117,7 +119,7 @@ public:
 
 	// layout
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			if (size.width != size_ref.width) {
 				child_size.height = UpdateChildSizeRef(child, Size(size_ref.width, length_max)).height;
@@ -125,6 +127,7 @@ protected:
 			size = size_ref;
 			UpdateFrameOffset(frame_offset.y);
 		}
+		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (this->child_size.height != child_size.height) {
@@ -164,7 +167,7 @@ public:
 
 	// layout
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override {
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			if (size.height != size_ref.height) {
 				child_size.width = UpdateChildSizeRef(child, Size(length_max, size_ref.height)).width;
@@ -172,6 +175,7 @@ protected:
 			size = size_ref;
 			UpdateFrameOffset(frame_offset.x);
 		}
+		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (this->child_size.width != child_size.width) {

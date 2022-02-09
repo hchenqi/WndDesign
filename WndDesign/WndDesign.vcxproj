@@ -231,9 +231,9 @@
     <ClInclude Include="window\wnd_traits.h" />
     <ClInclude Include="window\WndObject.h" />
     <ClInclude Include="wrapper\Background.h" />
-    <ClInclude Include="wrapper\Border.h" />
-    <ClInclude Include="wrapper\Padding.h" />
-    <ClInclude Include="wrapper\ScaleTransform.h" />
+    <ClInclude Include="frame\BorderFrame.h" />
+    <ClInclude Include="frame\PaddingFrame.h" />
+    <ClInclude Include="frame\ScaleFrame.h" />
     <ClInclude Include="wrapper\wrapper.h" />
   </ItemGroup>
   <ItemGroup>

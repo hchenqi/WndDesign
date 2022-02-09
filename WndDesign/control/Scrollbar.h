@@ -36,16 +36,16 @@ private:
 	float slider_offset = 0.0f;
 private:
 	bool IsShown() const { return slider_height < height; }
+	Size GetSize() const { return Size(IsShown() ? width : 0.0f, height); }
 private:
-	virtual void OnSizeRefUpdate(Size size_ref) override { height = size_ref.height; }
-	virtual Size GetSize() override { return Size(IsShown() ? width : 0.0f, height); }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { height = size_ref.height; return GetSize(); }
 public:
 	void UpdateScrollOffset() {
 		bool is_shown = IsShown(); ScrollFrame& frame = GetScrollFrame();
 		slider_height = height * frame.GetFrameLength() / frame.GetChildLength();
 		slider_offset = height * frame.GetFrameOffset() / frame.GetChildLength();
-		if (is_shown ^ IsShown()) { SizeUpdated(); }
-		Redraw();
+		if (is_shown ^ IsShown()) { SizeUpdated(GetSize()); }
+		Redraw(region_infinite);
 	}
 private:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
@@ -62,7 +62,7 @@ private:
 private:
 	Color slider_color = slider_color_normal;
 private:
-	void SetSliderColor(Color color) { slider_color = color; Redraw(); }
+	void SetSliderColor(Color color) { slider_color = color; Redraw(region_infinite); }
 private:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		if (IsShown()) {

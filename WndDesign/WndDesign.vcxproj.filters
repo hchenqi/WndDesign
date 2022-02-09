@@ -237,10 +237,10 @@
     <ClInclude Include="wrapper\wrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wrapper\Border.h">
+    <ClInclude Include="frame\BorderFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wrapper\Padding.h">
+    <ClInclude Include="frame\PaddingFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="geometry\helper.h">
@@ -249,7 +249,7 @@
     <ClInclude Include="style\cursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wrapper\ScaleTransform.h">
+    <ClInclude Include="frame\ScaleFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="geometry\transform.h">

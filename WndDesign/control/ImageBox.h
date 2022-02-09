@@ -10,10 +10,12 @@ BEGIN_NAMESPACE(WndDesign)
 class ImageBox : public WndType<Auto, Auto> {
 public:
 	ImageBox(std::wstring image_file) : image(image_file) {}
-private:
+protected:
 	Image image;
 protected:
-	virtual Size GetSize() override { return image.GetSize(); }
+	Size GetSize() { return image.GetSize(); }
+protected:
+	virtual Size OnSizeRefUpdate(Size size_ref) override { return GetSize(); }
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		draw_region = draw_region.Intersect(Rect(point_zero, GetSize())); if (draw_region.IsEmpty()) { return; }
@@ -25,14 +27,13 @@ protected:
 class ImageRepeatBox : public WndType<Assigned, Assigned> {
 public:
 	ImageRepeatBox(std::wstring image_file, Point offset = point_zero) : image(image_file), offset(offset - point_zero) {}
-private:
+protected:
 	Image image;
 	Vector offset;
-private:
+protected:
 	Size size;
 protected:
-	virtual void OnSizeRefUpdate(Size size_ref) override { size = size_ref; }
-	virtual Size GetSize() override { return size; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { return size = size_ref; }
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		figure_queue.add(draw_region.point, new ImageRepeatFigure(image, Rect(draw_region.point + offset, draw_region.size)));

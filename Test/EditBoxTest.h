@@ -2,9 +2,9 @@
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/frame/ScrollFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
+#include "WndDesign/frame/PaddingFrame.h"
 #include "WndDesign/control/EditBox.h"
 #include "WndDesign/wrapper/Background.h"
-#include "WndDesign/wrapper/Padding.h"
 
 
 using namespace WndDesign;
@@ -21,16 +21,18 @@ struct MainFrameStyle : DesktopFrame::Style {
 };
 
 
-class MyEditBox : public Decorate<EditBox, SolidColorBackground, Padding> {
+class MyEditBox : public Decorate<EditBox, SolidColorBackground> {
 private:
 	struct Style : EditBox::Style {
 		Style() {
 			font.family(L"Calibri", L"DengXian").size(20);
 		}
 	};
+protected:
+	MyEditBox() : Base(Style(), L"Hello World!") {}
 public:
-	MyEditBox() : Base(Style(), L"Hello World!") {
-		padding = Margin(100);
+	static auto Create() {
+		return new ClipFrame<Assigned, Auto>(new PaddingFrame(Padding(100), new MyEditBox()));
 	}
 };
 
@@ -40,9 +42,7 @@ int main() {
 		new DesktopFrame{
 			MainFrameStyle(),
 			new ScrollFrame{
-				new ClipFrame<Assigned, Auto>{
-					new MyEditBox()
-				}
+				MyEditBox::Create()
 			}
 		}
 	);

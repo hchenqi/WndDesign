@@ -15,15 +15,14 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 DesktopFrame::DesktopFrame(Style style, child_ptr child) :
-	Base(std::move(child)), width(style.width), height(style.height) {
+	ScaleFrame({}, new BorderFrame(style.border, std::move(child))), width(style.width), height(style.height) {
 	cursor = Cursor::Hide;
-	border = style.border;
 	hwnd = Win32::CreateWnd(region_empty, style.title);
-	scale_x = scale_y = Win32::GetWndDpiScale(hwnd);
-	Size desktop_size = Scale(Win32::GetDesktopSize(), 1.0f / scale_x, 1.0f / scale_y);
+	scale.x = scale.y = Win32::GetWndDpiScale(hwnd);
+	Size desktop_size = Scale(Win32::GetDesktopSize(), 1.0f / scale.x, 1.0f / scale.y);
 	region = StyleHelper::CalculateRegion(style.width, style.height, style.position, desktop_size);
-	region = Scale(region, scale_x, scale_y);
-	Base::OnSizeRefUpdate(region.size); Base::GetSize();
+	region = Scale(region, scale.x, scale.y);
+	OnSizeRefUpdate(region.size);
 	Win32::SetWndRegion(hwnd, region);
 	Win32::SetWndUserData(hwnd, this);
 	RecreateLayer();
@@ -36,11 +35,9 @@ DesktopFrame::~DesktopFrame() {
 }
 
 std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
-	Size desktop_size = Scale(Win32::GetDesktopSize(), 1.0f / scale_x, 1.0f / scale_y);
+	Size desktop_size = Scale(Win32::GetDesktopSize(), 1.0f / scale.x, 1.0f / scale.y);
 	auto [size_min, size_max] = StyleHelper::CalculateMinMaxSize(width, height, desktop_size);
-	Rect region_max(point_zero, size_max);
-	if (size_max == desktop_size) { region_max = Extend(region_max, border._width); }
-	return { Scale(size_min, scale_x, scale_y), Scale(region_max, scale_x, scale_y) };
+	return { Scale(size_min, scale.x, scale.y), Rect(point_zero, Scale(size_max, scale.x, scale.y)) };
 }
 
 void DesktopFrame::SetTitle(std::wstring title) { Win32::SetWndTitle(hwnd, title); }
@@ -48,8 +45,16 @@ void DesktopFrame::SetTitle(std::wstring title) { Win32::SetWndTitle(hwnd, title
 void DesktopFrame::SetSize(Size size) {
 	if (region.size != size) {
 		region.size = size;
-		Base::OnSizeRefUpdate(size); Base::GetSize();
+		OnSizeRefUpdate(region.size);
 		ResizeLayer();
+	}
+}
+
+void DesktopFrame::SetStatus(Status status) { 
+	this->status = status; 
+	switch (status) {
+	case Status::Normal: GetBorder().Restore(); break;
+	case Status::Maximized: GetBorder().Hide(); break;
 	}
 }
 
@@ -77,10 +82,6 @@ void DesktopFrame::Redraw(Rect redraw_region) {
 	Win32::InvalidateWndRegion(hwnd, redraw_region);
 }
 
-void DesktopFrame::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
-	Redraw(Scale(child_redraw_region + GetInnerOffset(), scale_x, scale_y));
-}
-
 void DesktopFrame::Draw() {
 	Rect render_rect = invalid_region.GetBoundingRect(); if (render_rect.IsEmpty()) { return; }
 	BeginDraw();
@@ -96,8 +97,7 @@ void DesktopFrame::Draw() {
 	layer.Present(render_rect);
 }
 
-void DesktopFrame::OnMouseMsg(MouseMsg msg) {
-	msg.point = Scale(msg.point, 1.0f / scale_x, 1.0f / scale_y);
+void DesktopFrame::BorderFrame::OnMouseMsg(MouseMsg msg) {
 	if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
 		BorderPosition border_position = HitTestBorderPosition(size, border._width + border._radius, msg.point);
 		if (msg.type == MouseMsg::Move) {

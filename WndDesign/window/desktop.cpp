@@ -19,7 +19,7 @@ void Desktop::AddChild(frame_ptr frame) {
 	frame_list.back()->Show();
 }
 
-void Desktop::RemoveChild(frame_ref frame) {
+void Desktop::RemoveChild(DesktopFrame& frame) {
 	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
 	if (it == frame_list.end()) { throw std::invalid_argument("invalid desktop frame"); }
 	frame_list.erase(it);
@@ -47,6 +47,10 @@ void Desktop::RecreateFrameLayer() {
 	for (auto& frame : frame_list) {
 		frame->RecreateLayer();
 	}
+}
+
+void Desktop::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
+	static_cast<DesktopFrame&>(child).Redraw(child_redraw_region);
 }
 
 void Desktop::SetCapture(WndObject& wnd) {
@@ -84,7 +88,7 @@ void Desktop::LoseFocus() {
 	}
 }
 
-void Desktop::DispatchKeyMsg(frame_ref frame, KeyMsg msg) {
+void Desktop::DispatchKeyMsg(DesktopFrame& frame, KeyMsg msg) {
 	if (wnd_focus != nullptr) {
 		wnd_focus->OnKeyMsg(msg);
 	}

@@ -20,7 +20,7 @@ protected:
 
 	// paint
 private:
-	void SetBackgroundColor(Color color) { if (this->background != color) { this->background = color; this->Redraw(); } }
+	void SetBackgroundColor(Color color) { if (this->background != color) { this->background = color; this->Redraw(region_infinite); } }
 
 	// message
 private:

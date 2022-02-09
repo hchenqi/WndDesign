@@ -6,9 +6,9 @@
 #include "WndDesign/control/EditBox.h"
 #include "WndDesign/frame/MaxFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
+#include "WndDesign/frame/BorderFrame.h"
+#include "WndDesign/frame/PaddingFrame.h"
 #include "WndDesign/wrapper/Background.h"
-#include "WndDesign/wrapper/Border.h"
-#include "WndDesign/wrapper/Padding.h"
 
 #include <cmath>
 #include <ctime>
@@ -34,26 +34,26 @@ class MyFlowLayout : public Decorate<FlowLayout, SolidColorBackground> {
 public:
 	MyFlowLayout() : Base(25, 10, 5) { AppendChild(new AddButton); }
 private:
-	class Item : public Decorate<ClipFrame<Auto, Assigned>, Padding, Border> {
-	public:
+	static auto Create(std::wstring text, Color border_color) {
 		struct EditBoxStyle : public EditBox::Style {
 			EditBoxStyle() {
 				paragraph.line_height(90pct);
 				font.family(L"Segoe UI").size(18);
 			}
 		};
-	public:
-		Item(std::wstring text, Color border_color) :
-			Base(
-				new MaxFrame{
-					length_max,
-					new EditBox(EditBoxStyle(), text)
+		return new BorderFrame{
+			Border(3px, 12px, border_color),
+			new PaddingFrame{
+				Padding(5, 0),
+				new ClipFrame<Auto, Assigned>{
+					new MaxFrame{
+						length_max,
+						new EditBox(EditBoxStyle(), text)
+					}
 				}
-			) {
-			border.width(3).radius(12).color(border_color);
-			padding = Margin(5, 0);
-		}
-	};
+			}
+		};
+	}
 	class AddButton : public Button<Auto, Assigned> {
 	public:
 		AddButton() : Button(60) {}
@@ -73,7 +73,7 @@ private:
 		}
 	private:
 		virtual void OnClick() override {
-			GetFlowLayout().AppendChild(new Item(NextName(), GetRandomColor()));
+			GetFlowLayout().AppendChild(Create(NextName(), GetRandomColor()));
 		}
 	};
 };
