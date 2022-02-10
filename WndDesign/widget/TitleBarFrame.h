@@ -21,8 +21,8 @@ public:
 	using child_ptr = DesktopFrame::child_ptr;
 	using child_ptr_menu = WndDesign::child_ptr<Auto, Assigned>;
 
-private:
-	struct TitleBarFrameStyle {
+public:
+	struct Style : DesktopFrame::Style {
 		struct TitleBarStyle {
 		public:
 			float _height = 30.0f;
@@ -36,8 +36,6 @@ private:
 
 		TextBox::Style title_format;
 	};
-public:
-	struct Style : DesktopFrame::Style, TitleBarFrameStyle {};
 
 public:
 	TitleBarFrame(Style style, child_ptr child, child_ptr_menu menu = new Placeholder<Auto, Assigned>(0.0f)) : DesktopFrame{
@@ -52,14 +50,14 @@ public:
 private:
 	ref_ptr<TextBox> title = nullptr;
 public:
-	void SetTitle(std::wstring str) { title->SetText(str); }
+	void SetTitle(std::wstring str) { title->SetText(str); DesktopFrame::SetTitle(str); }
 
-private:
+protected:
 	bool IsMaximized() const { return status == Status::Maximized; }
 	void MaximizeOrRestore() { if (status == Status::Normal) { Maximize(); } else if (status == Status::Maximized) { Restore(); } }
 
-private:
-	class TitleBar : public Decorate<BarLayout<Horizontal>, SolidColorBackground> {
+protected:
+	class TitleBar : public Decorate<BarLayout, SolidColorBackground> {
 	public:
 		using Style = TitleBarFrame::Style;
 	public:
