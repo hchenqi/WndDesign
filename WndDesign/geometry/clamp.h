@@ -7,6 +7,12 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
+constexpr float clamp(float length_normal, float length_min, float length_max) {
+	if (length_normal < length_min) { length_normal = length_min; }
+	if (length_normal > length_max) { length_normal = length_max; }
+	return length_normal;
+}
+
 constexpr float clamp(float number, Interval range) {
 	if (number < range.left()) { return range.left(); }
 	if (number >= range.right()) { return range.right() - 1; }

@@ -34,35 +34,35 @@ protected:
 	// layout
 protected:
 	Size size;
-	float height_first = 0.0f;
-	float height_second = 0.0f;
+	float length_first = 0.0f;
+	float length_second = 0.0f;
 protected:
-	Rect GetRegionFirst() const { return Rect(point_zero, Size(size.width, height_first)); }
-	Rect GetRegionSecond() const { return Rect(Point(0.0f, height_first), Size(size.width, height_second)); }
+	Rect GetRegionFirst() const { return Rect(point_zero, Size(size.width, length_first)); }
+	Rect GetRegionSecond() const { return Rect(Point(0.0f, length_first), Size(size.width, length_second)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == first.get() ? GetRegionFirst() : GetRegionSecond(); }
 protected:
-	void UpdateHeightSecond() {
-		height_second = size.height > height_first ? size.height - height_first : 0.0f;
+	void UpdateLayout() {
+		length_second = max(0.0f, size.height - length_first);
 		UpdateChildSizeRef(second, GetRegionSecond().size);
 	}
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size = size_ref;
-		height_first = UpdateChildSizeRef(first, Size(size.width, length_min)).height;
-		UpdateHeightSecond();
+		length_first = UpdateChildSizeRef(first, Size(size.width, length_min)).height;
+		UpdateLayout();
 		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
-		if (&child == first.get() && height_first != child_size.height) {
-			height_first = child_size.height;
-			UpdateHeightSecond(); Redraw(GetRegionSecond());
+		if (&child == first.get() && length_first != child_size.height) {
+			length_first = child_size.height;
+			UpdateLayout(); Redraw(GetRegionSecond());
 		}
 	}
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (point.y < height_first) { return first; }
-		point.y -= height_first;
-		if (point.y < height_second) { return second; }
+		if (point.y < length_first) { return first; }
+		point.y -= length_first;
+		if (point.y < length_second) { return second; }
 		return nullptr;
 	}
 	virtual Transform GetChildTransform(WndObject& child) const override {
@@ -102,35 +102,35 @@ protected:
 	// layout
 private:
 	Size size;
-	float width_first = 0.0f;
-	float width_second = 0.0f;
+	float length_first = 0.0f;
+	float length_second = 0.0f;
 private:
-	Rect GetRegionFirst() const { return Rect(point_zero, Size(width_first, size.height)); }
-	Rect GetRegionSecond() const { return Rect(Point(width_first, 0.0f), Size(width_second, size.height)); }
+	Rect GetRegionFirst() const { return Rect(point_zero, Size(length_first, size.height)); }
+	Rect GetRegionSecond() const { return Rect(Point(length_first, 0.0f), Size(length_second, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == first.get() ? GetRegionFirst() : GetRegionSecond(); }
 private:
-	void UpdateWidthFirst() {
-		width_first = size.width > width_second ? size.width - width_second : 0.0f;
+	void UpdateLayout() {
+		length_first = max(0.0f, size.width - length_second);
 		UpdateChildSizeRef(first, GetRegionFirst().size);
 	}
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size = size_ref;
-		width_second = UpdateChildSizeRef(second, Size(length_min, size.height)).width;
-		UpdateWidthFirst();
+		length_second = UpdateChildSizeRef(second, Size(length_min, size.height)).width;
+		UpdateLayout();
 		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
-		if (&child == second.get() && width_second != child_size.width) {
-			width_second = child_size.width;
-			UpdateWidthFirst(); Redraw(GetRegionFirst());
+		if (&child == second.get() && length_second != child_size.width) {
+			length_second = child_size.width;
+			UpdateLayout(); Redraw(GetRegionFirst());
 		}
 	}
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (point.x < width_first) { return first; }
-		point.x -= width_first;
-		if (point.x < width_second) { return second; }
+		if (point.x < length_first) { return first; }
+		point.x -= length_first;
+		if (point.x < length_second) { return second; }
 		return nullptr;
 	}
 	virtual Transform GetChildTransform(WndObject& child) const override {

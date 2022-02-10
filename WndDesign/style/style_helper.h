@@ -1,7 +1,7 @@
 #pragma once
 
 #include "style.h"
-#include "../geometry/interval.h"
+#include "../geometry/clamp.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -16,11 +16,6 @@ public:
 		return { CalculateSize(width._min, height._min, size_ref), CalculateSize(width._max, height._max, size_ref) };
 	}
 public:
-	static constexpr float clamp(float length_normal, float length_min, float length_max) {
-		if (length_normal < length_min) { length_normal = length_min; }
-		if (length_normal > length_max) { length_normal = length_max; }
-		return length_normal;
-	}
 	static constexpr Rect MakeRectFromInterval(Interval horizontal, Interval vertical) {
 		return Rect(horizontal.begin, vertical.begin, horizontal.length, vertical.length);
 	}

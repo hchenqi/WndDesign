@@ -34,7 +34,7 @@ public:
 	constexpr bool IsCenter() const { return _type == Type::Center; }
 	constexpr bool IsAuto() const { return _type == Type::Auto; }
 
-	constexpr float value() const { return _value; }
+	constexpr float& value() { return _value; }
 
 	constexpr ValueTag operator-() const { return ValueTag(_type, -_value); }
 
