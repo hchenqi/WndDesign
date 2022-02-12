@@ -9,15 +9,12 @@ BEGIN_NAMESPACE(WndDesign)
 
 BEGIN_NAMESPACE(Anonymous)
 
-constexpr Scale scale(1024.0f);
-
 inline RECT AsWin32Rect(Rect rect) {
-	rect = rect * scale;
 	return { (int)roundf(rect.left()), (int)roundf(rect.top()), (int)roundf(rect.right()), (int)roundf(rect.bottom()) };
 }
 
 inline Rect AsRect(RECT rect) {
-	return Rect((float)rect.left, (float)rect.top, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top)) * scale.Invert();
+	return Rect((float)rect.left, (float)rect.top, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
 }
 
 
@@ -47,8 +44,7 @@ void Region::Set(Rect region) {
 }
 
 void Region::Translate(Vector vector) {
-	vector = vector * scale;
-	OffsetRgn((HRGN)rgn, (int)vector.x, (int)vector.y);
+	OffsetRgn((HRGN)rgn, (int)roundf(vector.x), (int)roundf(vector.y));
 }
 
 void Region::Union(const Region& region) {

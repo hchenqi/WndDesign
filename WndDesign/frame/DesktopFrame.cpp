@@ -74,7 +74,7 @@ void DesktopFrame::RecreateLayer() {
 }
 
 void DesktopFrame::Redraw(Rect redraw_region) {
-	redraw_region = redraw_region.Intersect(Rect(point_zero, region.size));
+	redraw_region = Extend(redraw_region, 0.1f).Intersect(Rect(point_zero, region.size));
 	invalid_region.Union(redraw_region);
 	Win32::InvalidateWndRegion(hwnd, redraw_region);
 }
