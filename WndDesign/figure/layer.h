@@ -27,8 +27,10 @@ public:
 struct LayerFigure : Figure {
 	const Layer& layer;
 	Rect region;
+	Size size;
 
-	LayerFigure(const Layer& layer, Rect region) : layer(layer), region(region) {}
+	LayerFigure(const Layer& layer, Rect region) : LayerFigure(layer, region, region.size) {}
+	LayerFigure(const Layer& layer, Rect region, Size size) : layer(layer), region(region), size(size) {}
 
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };

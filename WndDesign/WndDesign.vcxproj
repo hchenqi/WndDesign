@@ -248,6 +248,7 @@
     <ClCompile Include="figure\layer.cpp" />
     <ClCompile Include="figure\shape.cpp" />
     <ClCompile Include="figure\text_block.cpp" />
+    <ClCompile Include="frame\LayerFrame.cpp" />
     <ClCompile Include="frame\OverlapFrame.cpp" />
     <ClCompile Include="geometry\transform.cpp" />
     <ClCompile Include="frame\DesktopFrame.cpp" />

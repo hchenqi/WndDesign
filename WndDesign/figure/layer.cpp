@@ -25,8 +25,7 @@ void Layer::Create(Size size) {
 
 void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect clip_region) {
 	ID2D1DeviceContext& device_context = GetD2DDeviceContext(); device_context.SetTarget(bitmap.Get());
-	Transform transform = offset;
-	device_context.SetTransform(AsD2DTransform(transform));
+	device_context.SetTransform(AsD2DTransform(offset));
 	device_context.PushAxisAlignedClip(AsD2DRect(clip_region), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	device_context.Clear(AsD2DColor(color_transparent));
 	auto& groups = figure_queue.GetFigureGroups();
@@ -37,13 +36,11 @@ void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect
 			figures[figure_index].figure->DrawOn(static_cast<RenderTarget&>(device_context), figures[figure_index].offset);
 		}
 		if (group.IsBegin()) {
-			groups[group.group_end_index].prev_transform = transform;
-			device_context.SetTransform(AsD2DTransform(transform = group.transform * transform));
+			device_context.SetTransform(AsD2DTransform(group.transform * offset));
 			device_context.PushAxisAlignedClip(AsD2DRect(group.clip_region), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 		} else {
-			transform = group.prev_transform;
 			device_context.PopAxisAlignedClip();
-			device_context.SetTransform(AsD2DTransform(transform));
+			device_context.SetTransform(AsD2DTransform(group.transform * offset));
 		}
 	}
 }
@@ -52,7 +49,7 @@ void Layer::DrawFigureQueue(const FigureQueue& figure_queue, Vector offset, Rect
 void LayerFigure::DrawOn(RenderTarget& target, Point point) const {
 	target.DrawBitmap(
 		layer.bitmap.Get(),
-		AsD2DRect(Rect(point, region.size)),
+		AsD2DRect(Rect(point, size)),
 		1.0f,
 		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 		AsD2DRect(region)

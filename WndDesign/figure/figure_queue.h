@@ -21,13 +21,18 @@ private:
 private:
 	Vector offset = vector_zero;
 	vector<Vector> offset_stack;
-private:
-	void PushOffset(Vector offset) { this->offset += offset; }
-	void PopOffset(Vector offset) { PushOffset(-offset); }
 public:
 	void Offset(Vector offset, std::function<void(void)> func) {
-		PushOffset(offset); func(); PopOffset(offset);
+		this->offset += offset; 
+		func();
+		this->offset -= offset;
 	}
+
+	// transform
+private:
+	Transform transform;
+public:
+	Scale GetScale() const { return transform.GetScale(); }
 
 	// figure
 private:
@@ -63,7 +68,7 @@ private:
 			struct {  // as group end
 				uint null_index;  // == -1
 				uint figure_index;
-				mutable Transform prev_transform;
+				Transform prev_transform;
 			};
 		};
 		bool IsBegin() const { return group_end_index != (uint)-1; }
@@ -71,22 +76,16 @@ private:
 	vector<FigureGroup> groups;
 public:
 	const vector<FigureGroup>& GetFigureGroups() const { return groups; }
-private:
-	uint BeginGroup(Transform transform, Rect clip_region) {
-		uint group_begin_index = (uint)groups.size();
-		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), transform * offset, clip_region });
-		offset_stack.push_back(offset); offset = vector_zero;
-		return group_begin_index;
-	}
-	void EndGroup(uint group_begin_index) {
-		if (group_begin_index >= groups.size() || groups[group_begin_index].group_end_index != -1) { throw std::invalid_argument("invalid group begin index"); }
-		groups[group_begin_index].group_end_index = (uint)groups.size();
-		groups.push_back(FigureGroup{ (uint)-1, (uint)figures.size(), Transform(), region_empty });
-		offset = offset_stack.back(); offset_stack.pop_back();
-	}
 public:
 	void Group(Transform group_transform, Rect clip_region, std::function<void(void)> func) {
-		uint begin = BeginGroup(group_transform, clip_region); func(); EndGroup(begin);
+		uint group_begin_index = (uint)groups.size();
+		Transform prev_transform = transform;
+		groups.push_back({ (uint)-1, (uint)figures.size(), transform = group_transform * offset * transform, clip_region });
+		offset_stack.push_back(offset); offset = vector_zero;
+		func();
+		groups[group_begin_index].group_end_index = (uint)groups.size();
+		groups.push_back({ (uint)-1, (uint)figures.size(), transform = prev_transform, region_empty });
+		offset = offset_stack.back(); offset_stack.pop_back();
 	}
 
 public:
