@@ -7,7 +7,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-template<class Wnd>
+template<class Wnd, Color color = Color::White>
 class SolidColorBackground : public Wnd {
 public:
 	using Wnd::Wnd;
@@ -15,8 +15,7 @@ public:
 
 	// style
 protected:
-	using Style = Color;
-	Style background = Color::White;
+	Color background = color;
 
 	// paint
 protected:
