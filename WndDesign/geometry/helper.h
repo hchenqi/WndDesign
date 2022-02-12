@@ -2,6 +2,7 @@
 
 #include "geometry.h"
 #include "margin.h"
+#include "scale.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -27,20 +28,27 @@ constexpr Rect Extend(Rect region, Margin margin) {
 }
 
 
-constexpr Vector Scale(Vector vector, float scale_x, float scale_y) {
-	return Vector(vector.x * scale_x, vector.y * scale_y);
+constexpr Vector operator*(Vector vector, Scale scale) {
+	return Vector(vector.x * scale.x, vector.y * scale.y);
 }
 
-constexpr Point Scale(Point point, float scale_x, float scale_y) {
-	return Point(point.x * scale_x, point.y * scale_y);
+constexpr Point operator*(Point point, Scale scale) {
+	return Point(point.x * scale.x, point.y * scale.y);
 }
 
-constexpr Size Scale(Size size, float scale_x, float scale_y) {
-	return Size(size.width * scale_x, size.height * scale_y);
+constexpr Size operator*(Size size, Scale scale) {
+	return Size(size.width * scale.x, size.height * scale.y);
 }
 
-constexpr Rect Scale(Rect rect, float scale_x, float scale_y) {
-	return Rect(Scale(rect.point, scale_x, scale_y), Scale(rect.size, scale_x, scale_y));
+constexpr Rect operator*(Rect rect, Scale scale) {
+	return Rect(rect.point * scale, rect.size * scale);
+}
+
+
+inline Rect ceil(Rect rect) {
+	float x = floorf(rect.left()), y = floorf(rect.top());
+	float width = ceilf(rect.right()) - x, height = ceilf(rect.bottom()) - y;
+	return Rect(x, y, width, height);
 }
 
 

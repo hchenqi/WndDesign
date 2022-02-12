@@ -2,6 +2,7 @@
 
 #include "vector.h"
 #include "point.h"
+#include "scale.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -12,17 +13,21 @@ struct Transform {
 
 	static Transform Identity();
 	static Transform Translation(Vector offset);
-	static Transform Scale(float scale_x, float scale_y, Point center);
-	static Transform Scale(float scale_x, float scale_y) { return Scale(scale_x, scale_y, Point()); }
+	static Transform Scale(WndDesign::Scale scale, Point center);
+	static Transform Scale(WndDesign::Scale scale) { return Scale(scale, Point()); }
 	static Transform Rotation(float angle, Point center);
 	static Transform Rotation(float angle) { return Rotation(angle, Point()); }
 	static Transform Skew(float angle_x, float angle_y, Point center);
 	static Transform Skew(float angle_x, float angle_y) { return Skew(angle_x, angle_y, Point()); }
 
-	Transform() = default;
+	Transform() : Transform(Identity()) {}
 	Transform(Vector vector) : Transform(Translation(vector)) {}
+	Transform(WndDesign::Scale scale) : Transform(Scale(scale)) {}
 
 	Transform Invert() const;
+
+	WndDesign::Scale GetScale() const;
+	bool IsAxisAligned() const;
 };
 
 

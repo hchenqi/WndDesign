@@ -1,4 +1,5 @@
 #include "region.h"
+#include "helper.h"
 
 #include <Windows.h>
 #include <windowsx.h>
@@ -6,19 +7,30 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
+BEGIN_NAMESPACE(Anonymous)
+
+constexpr Scale scale(1024.0f);
+
+inline RECT AsWin32Rect(Rect rect) {
+	rect = rect * scale;
+	return { (int)roundf(rect.left()), (int)roundf(rect.top()), (int)roundf(rect.right()), (int)roundf(rect.bottom()) };
+}
 
 inline Rect AsRect(RECT rect) {
-	return Rect((float)rect.left, (float)rect.top, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top));
+	return Rect((float)rect.left, (float)rect.top, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top)) * scale.Invert();
 }
 
 
-static Region& TempRegion(Rect rect) {
-	static Region region; region.Set(rect); return region;
-}
+Region region_temp;
+
+inline Region& TempRegion(Rect rect) { region_temp.Set(rect); return region_temp; }
+
+END_NAMESPACE(Anonymous)
 
 
-Region::Region(Rect region) :
-	rgn(CreateRectRgn((int)floorf(region.left()), (int)floorf(region.top()), (int)ceilf(region.right()), (int)ceilf(region.bottom()))) {
+Region::Region(Rect region) {
+	RECT rect = AsWin32Rect(region);
+	rgn = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom);
 }
 
 Region::~Region() {
@@ -30,11 +42,13 @@ bool Region::IsEmpty() const {
 }
 
 void Region::Set(Rect region) {
-	SetRectRgn((HRGN)rgn, (int)floorf(region.left()), (int)floorf(region.top()), (int)ceilf(region.right()), (int)ceilf(region.bottom()));
+	RECT rect = AsWin32Rect(region);
+	SetRectRgn((HRGN)rgn, rect.left, rect.top, rect.right, rect.bottom);
 }
 
 void Region::Translate(Vector vector) {
-	OffsetRgn((HRGN)rgn, (int)roundf(vector.x), (int)roundf(vector.y));
+	vector = vector * scale;
+	OffsetRgn((HRGN)rgn, (int)vector.x, (int)vector.y);
 }
 
 void Region::Union(const Region& region) {

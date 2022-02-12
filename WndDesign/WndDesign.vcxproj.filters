@@ -261,6 +261,9 @@
     <ClInclude Include="layout\OverlapLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="geometry\scale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">

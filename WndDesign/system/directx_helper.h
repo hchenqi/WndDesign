@@ -61,16 +61,12 @@ inline Size AsSize(D2D1_SIZE_F size) { return Size(size.width, size.height); }
 inline Rect AsRect(D2D1_RECT_F rect) { return Rect(Point(rect.left, rect.top), Size(rect.right - rect.left, rect.bottom - rect.top)); }
 
 
-inline const D2D1::Matrix3x2F& AsD2DTransform(const Transform& transform) {
+inline D2D1::Matrix3x2F AsD2DTransform(Transform transform) {
 	return reinterpret_cast<const D2D1::Matrix3x2F&>(transform);
 }
 
-inline D2D1::Matrix3x2F& AsD2DTransform(Transform& transform) {
-	return const_cast<D2D1::Matrix3x2F&>(AsD2DTransform(static_cast<const Transform&>(transform)));
-}
-
 inline Transform AsTransform(D2D1::Matrix3x2F matrix) {
-	Transform transform; AsD2DTransform(transform) = matrix; return transform;
+	return reinterpret_cast<const Transform&>(matrix);
 }
 
 

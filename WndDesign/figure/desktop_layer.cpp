@@ -77,7 +77,7 @@ void DesktopLayer::Resize(Size size) {
 }
 
 void DesktopLayer::Present(Rect rect) {
-	RECT dirty_rect = { (int)floorf(rect.left()), (int)floorf(rect.top()), (int)ceilf(rect.right()), (int)ceilf(rect.bottom()) };
+	RECT dirty_rect = { (int)rect.left(), (int)rect.top(), (int)rect.right(), (int)rect.bottom() };
 	DXGI_PRESENT_PARAMETERS present_parameters = { 1, &dirty_rect };
 	hr << swap_chain->Present1(0, 0, &present_parameters);
 }
