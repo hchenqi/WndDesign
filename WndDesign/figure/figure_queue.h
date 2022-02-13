@@ -22,8 +22,8 @@ private:
 	Vector offset = vector_zero;
 	vector<Vector> offset_stack;
 public:
-	void Offset(Vector offset, std::function<void(void)> func) {
-		this->offset += offset; 
+	void Offset(Vector offset, std::function<void()> func) {
+		this->offset += offset;
 		func();
 		this->offset -= offset;
 	}
@@ -60,31 +60,28 @@ private:
 	struct FigureGroup {
 		union {
 			struct {  // as group begin
-				uint group_end_index;
 				uint figure_index;
 				Transform transform;
 				Rect clip_region;
 			};
 			struct {  // as group end
-				uint null_index;  // == -1
 				uint figure_index;
 				Transform prev_transform;
 			};
 		};
-		bool IsBegin() const { return group_end_index != (uint)-1; }
+		bool IsBegin() const { return !clip_region.IsEmpty(); }
 	};
 	vector<FigureGroup> groups;
 public:
 	const vector<FigureGroup>& GetFigureGroups() const { return groups; }
 public:
-	void Group(Transform group_transform, Rect clip_region, std::function<void(void)> func) {
-		uint group_begin_index = (uint)groups.size();
+	void Group(Transform group_transform, Rect clip_region, std::function<void()> func) {
+		if (clip_region.IsEmpty()) { return; }
 		Transform prev_transform = transform;
-		groups.push_back({ (uint)-1, (uint)figures.size(), transform = group_transform * offset * transform, clip_region });
+		groups.push_back({ (uint)figures.size(), transform = group_transform * offset * transform, clip_region });
 		offset_stack.push_back(offset); offset = vector_zero;
 		func();
-		groups[group_begin_index].group_end_index = (uint)groups.size();
-		groups.push_back({ (uint)-1, (uint)figures.size(), transform = prev_transform, region_empty });
+		groups.push_back({ (uint)figures.size(), transform = prev_transform, region_empty });
 		offset = offset_stack.back(); offset_stack.pop_back();
 	}
 
