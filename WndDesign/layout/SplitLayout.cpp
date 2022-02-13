@@ -6,8 +6,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 SplitLayout<Vertical, First>::SplitLayout(child_ptr_first first, child_ptr_second second) :
 	first(std::move(first)), second(std::move(second)) {
-	RegisterChild(this->first);
-	RegisterChild(this->second);
+	RegisterChild(this->first); RegisterChild(this->second);
 }
 
 void SplitLayout<Vertical, First>::UpdateLayout() {
@@ -16,9 +15,11 @@ void SplitLayout<Vertical, First>::UpdateLayout() {
 }
 
 Size SplitLayout<Vertical, First>::OnSizeRefUpdate(Size size_ref) {
-	size = size_ref;
-	length_first = UpdateChildSizeRef(first, Size(size.width, length_min)).height;
-	UpdateLayout();
+	if (size != size_ref) {
+		size = size_ref;
+		length_first = UpdateChildSizeRef(first, Size(size.width, length_min)).height;
+		UpdateLayout();
+	}
 	return size;
 }
 
@@ -53,8 +54,7 @@ void SplitLayout<Vertical, First>::OnDraw(FigureQueue& figure_queue, Rect draw_r
 
 SplitLayout<Vertical, Second>::SplitLayout(child_ptr_first first, child_ptr_second second) :
 	first(std::move(first)), second(std::move(second)) {
-	RegisterChild(this->first);
-	RegisterChild(this->second);
+	RegisterChild(this->first); RegisterChild(this->second);
 }
 
 void SplitLayout<Vertical, Second>::UpdateLayout() {
@@ -63,9 +63,11 @@ void SplitLayout<Vertical, Second>::UpdateLayout() {
 }
 
 Size SplitLayout<Vertical, Second>::OnSizeRefUpdate(Size size_ref) {
-	size = size_ref;
-	length_second = UpdateChildSizeRef(second, Size(size.width, length_min)).height;
-	UpdateLayout();
+	if (size != size_ref) {
+		size = size_ref;
+		length_second = UpdateChildSizeRef(second, Size(size.width, length_min)).height;
+		UpdateLayout();
+	}
 	return size;
 }
 
@@ -100,8 +102,7 @@ void SplitLayout<Vertical, Second>::OnDraw(FigureQueue& figure_queue, Rect draw_
 
 SplitLayout<Horizontal, First>::SplitLayout(child_ptr_first first, child_ptr_second second) :
 	first(std::move(first)), second(std::move(second)) {
-	RegisterChild(this->first);
-	RegisterChild(this->second);
+	RegisterChild(this->first); RegisterChild(this->second);
 }
 
 void SplitLayout<Horizontal, First>::UpdateLayout() {
@@ -110,9 +111,11 @@ void SplitLayout<Horizontal, First>::UpdateLayout() {
 }
 
 Size SplitLayout<Horizontal, First>::OnSizeRefUpdate(Size size_ref) {
-	size = size_ref;
-	length_first = UpdateChildSizeRef(first, Size(length_min, size.height)).width;
-	UpdateLayout();
+	if (size != size_ref) {
+		size = size_ref;
+		length_first = UpdateChildSizeRef(first, Size(length_min, size.height)).width;
+		UpdateLayout();
+	}
 	return size;
 }
 
@@ -147,8 +150,7 @@ void SplitLayout<Horizontal, First>::OnDraw(FigureQueue& figure_queue, Rect draw
 
 SplitLayout<Horizontal, Second>::SplitLayout(child_ptr_first first, child_ptr_second second) :
 	first(std::move(first)), second(std::move(second)) {
-	RegisterChild(this->first);
-	RegisterChild(this->second);
+	RegisterChild(this->first); RegisterChild(this->second);
 }
 
 void SplitLayout<Horizontal, Second>::UpdateLayout() {
@@ -157,9 +159,11 @@ void SplitLayout<Horizontal, Second>::UpdateLayout() {
 }
 
 Size SplitLayout<Horizontal, Second>::OnSizeRefUpdate(Size size_ref) {
-	size = size_ref;
-	length_second = UpdateChildSizeRef(second, Size(length_min, size.height)).width;
-	UpdateLayout();
+	if (size != size_ref) {
+		size = size_ref;
+		length_second = UpdateChildSizeRef(second, Size(length_min, size.height)).width;
+		UpdateLayout();
+	}
 	return size;
 }
 
