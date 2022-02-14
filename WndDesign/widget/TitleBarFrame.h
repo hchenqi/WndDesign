@@ -44,11 +44,11 @@ public:
 			new TitleBar(*this, style, std::move(menu)),
 			std::move(child)
 		}
-	} {
+	}, title(title) {
 	}
 
 private:
-	ref_ptr<TextBox> title = nullptr;
+	ref_ptr<TextBox> title;
 public:
 	void SetTitle(std::wstring str) { title->SetText(str); DesktopFrame::SetTitle(str); }
 
