@@ -65,11 +65,13 @@ void DesktopFrame::Destroy() { desktop.RemoveChild(*this); }
 
 void DesktopFrame::ResizeLayer() {
 	layer.Resize(region.size);
+	invalid_region.Clear();
 	Redraw(region_infinite);
 }
 
 void DesktopFrame::RecreateLayer() {
 	layer.Create(hwnd, region.size);
+	invalid_region.Clear();
 	Redraw(region_infinite);
 }
 

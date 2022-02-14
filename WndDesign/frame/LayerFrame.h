@@ -16,8 +16,6 @@ protected:
 protected:
 	Size size;
 protected:
-	void UpdateLayout();
-protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
 
