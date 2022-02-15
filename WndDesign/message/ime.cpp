@@ -5,11 +5,13 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void ImeApi::ImeEnable() { desktop.ImeEnable(wnd, *this); }
+void Ime::Enable(WndObject& wnd) { desktop.ImeEnable(wnd); }
 
-void ImeApi::ImeDisable() { desktop.ImeDisable(wnd); }
+void Ime::Disable(WndObject& wnd) { desktop.ImeDisable(wnd); }
 
-void ImeApi::ImeSetPosition(Point point) { desktop.ImeSetPosition(wnd, point); }
+void Ime::SetPosition(WndObject& wnd, Point point) { desktop.ImeSetPosition(wnd, point); }
+
+std::wstring Ime::GetString() {	return desktop.ImeGetString(); }
 
 
 END_NAMESPACE(WndDesign)

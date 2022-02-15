@@ -33,7 +33,7 @@ inline Rect AsRect(RECT rect) { return Rect((float)rect.left, (float)rect.top, (
 constexpr float dpi_default = 96.0f;
 
 inline bool IsMouseMsg(UINT msg) { return WM_MOUSEFIRST <= msg && msg <= WM_MOUSELAST; }
-inline bool IsKeyboardMsg(UINT msg) { return WM_KEYFIRST <= msg && msg <= WM_KEYLAST; }
+inline bool IsKeyboardMsg(UINT msg) { return WM_KEYFIRST <= msg && msg <= WM_IME_KEYLAST; }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	static bool is_mouse_tracked = false;
@@ -82,19 +82,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_KEYDOWN: key_msg.type = KeyMsg::KeyDown; break;
 		case WM_KEYUP: key_msg.type = KeyMsg::KeyUp; break;
 		case WM_CHAR: key_msg.type = KeyMsg::Char; break;
+		case WM_IME_STARTCOMPOSITION: key_msg.type = KeyMsg::ImeBegin; break;
+		case WM_IME_COMPOSITION: key_msg.type = KeyMsg::ImeString; desktop.ImeSetString(ImeGetString(hwnd, (uint)lparam)); break;
+		case WM_IME_ENDCOMPOSITION: key_msg.type = KeyMsg::ImeEnd; break;
 		default: return DefWindowProc(hwnd, msg, wparam, lparam);
 		}
-		desktop.DispatchKeyMsg(*frame, key_msg);
+		desktop.DispatchKeyMsg(key_msg);
 		return 0;
 	}
 
 	{
 		switch (msg) {
-			// ime message
-		case WM_IME_STARTCOMPOSITION: desktop.OnImeCompositionBegin(); break;
-		case WM_IME_COMPOSITION: desktop.OnImeComposition(ImeGetString(hwnd, (uint)lparam)); break;
-		case WM_IME_ENDCOMPOSITION: desktop.OnImeCompositionEnd(); break;
-
 			// region message
 		case WM_GETMINMAXINFO: {
 			MINMAXINFO* min_max_info = reinterpret_cast<MINMAXINFO*>(lparam);

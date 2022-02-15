@@ -14,6 +14,9 @@ struct KeyMsg {
 		Char,
 		KeyDown,
 		KeyUp,
+		ImeBegin,
+		ImeString,
+		ImeEnd,
 	}type;
 	Key key;
 	wchar ch;

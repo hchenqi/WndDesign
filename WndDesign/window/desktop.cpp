@@ -66,9 +66,8 @@ void Desktop::SetFocus(WndObject& wnd) {
 	DesktopFrame& frame = GetDesktopFrame(wnd);
 	if (frame_focus != &frame) { Win32::SetFocus(frame.hwnd); }
 	if (wnd_focus != &wnd) { LoseFocus(); }
-	frame_focus = &frame; wnd_focus = &wnd; ime_focus = nullptr;
-	if (auto it = wnd_ime_map.find(&wnd); it != wnd_ime_map.end()) {
-		ime_focus = it->second;
+	frame_focus = &frame; wnd_focus = &wnd;
+	if (auto it = ime_enabled_wnd.find(&wnd); it != ime_enabled_wnd.end()) {
 		WndDesign::ImeEnable(frame.hwnd);
 	} else {
 		WndDesign::ImeDisable(frame.hwnd);
@@ -84,13 +83,7 @@ void Desktop::ReleaseFocus(WndObject& wnd) {
 void Desktop::LoseFocus() {
 	if (wnd_focus != nullptr) {
 		wnd_focus->OnNotifyMsg(NotifyMsg::LoseFocus);
-		frame_focus = nullptr; wnd_focus = nullptr; ime_focus = nullptr;
-	}
-}
-
-void Desktop::DispatchKeyMsg(DesktopFrame& frame, KeyMsg msg) {
-	if (wnd_focus != nullptr) {
-		wnd_focus->OnKeyMsg(msg);
+		frame_focus = nullptr; wnd_focus = nullptr;
 	}
 }
 

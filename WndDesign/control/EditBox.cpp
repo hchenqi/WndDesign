@@ -198,7 +198,7 @@ void EditBox::Delete(bool is_backspace) {
 	}
 }
 
-void EditBox::OnImeCompositionBegin() {
+void EditBox::OnImeBegin() {
 	if (IsEditDisabled()) { return; }
 	Point ime_position;
 	if (HasSelection()) {
@@ -210,10 +210,10 @@ void EditBox::OnImeCompositionBegin() {
 		ime_composition_end = ime_composition_begin;
 		ime_position = caret_region.RightBottom();
 	}
-	ImeSetPosition(ime_position);
+	ime.SetPosition(*this, ime_position);
 }
 
-void EditBox::OnImeComposition(std::wstring str) {
+void EditBox::OnImeString(std::wstring str) {
 	if (IsEditDisabled()) { return; }
 	ReplaceText(ime_composition_begin, ime_composition_end - ime_composition_begin, str);
 	ime_composition_end = ime_composition_begin + str.length();
@@ -287,6 +287,12 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 	case KeyMsg::Char:
 		if (is_ctrl_down) { break; }
 		if (!iswcntrl(msg.ch)) { Insert(msg.ch); };
+		break;
+	case KeyMsg::ImeBegin:
+		OnImeBegin();
+		break;
+	case KeyMsg::ImeString:
+		OnImeString(ime.GetString());
 		break;
 	}
 	StartBlinkingCaret();

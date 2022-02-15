@@ -10,7 +10,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class EditBox : public TextBox, private ImeApi {
+class EditBox : public TextBox {
 private:
 	struct EditBoxStyle {
 		struct EditStyle {
@@ -28,9 +28,10 @@ public:
 	struct Style : TextBox::Style, EditBoxStyle {};
 
 public:
-	EditBox(Style style, std::wstring text = L"") : TextBox(style, text), ImeApi(this), style(style) {
+	EditBox(Style style, std::wstring text = L"") : TextBox(style, text), style(style) {
 		cursor = Cursor::Text;
-		TextUpdated(); if (style.edit._disabled) { ImeDisable(); }
+		style.edit._disabled ? ime.Disable(*this) : ime.Enable(*this);
+		TextUpdated();
 	}
 	~EditBox() {}
 
@@ -125,9 +126,8 @@ private:
 	size_t ime_composition_begin = 0;
 	size_t ime_composition_end = 0;
 private:
-	virtual void OnImeCompositionBegin() override;
-	virtual void OnImeComposition(std::wstring str) override;
-	virtual void OnImeCompositionEnd() override {}
+	void OnImeBegin();
+	void OnImeString(std::wstring str);
 
 	// clipboard
 private:

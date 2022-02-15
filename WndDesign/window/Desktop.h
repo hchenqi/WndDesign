@@ -1,11 +1,10 @@
 #pragma once
 
 #include "WndObject.h"
-#include "../message/ime.h"
 
 #include <memory>
 #include <vector>
-#include <unordered_map>
+#include <unordered_set>
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -46,25 +45,24 @@ public:
 private:
 	ref_ptr<DesktopFrame> frame_focus = nullptr;
 	ref_ptr<WndObject> wnd_focus = nullptr;
-	ref_ptr<ImeApi> ime_focus = nullptr;
 public:
 	void SetFocus(WndObject& wnd);
 	void ReleaseFocus(WndObject& wnd);
 	void LoseFocus();
 public:
-	void DispatchKeyMsg(DesktopFrame& frame, KeyMsg msg);
+	void DispatchKeyMsg(KeyMsg msg) { if (wnd_focus != nullptr) { wnd_focus->OnKeyMsg(msg); } }
 
-	// ime message
+	// ime
 private:
-	std::unordered_map<ref_ptr<WndObject>, ref_ptr<ImeApi>> wnd_ime_map;
+	std::unordered_set<ref_ptr<WndObject>> ime_enabled_wnd;
+	std::wstring ime_string;
 public:
-	void ImeEnable(WndObject& wnd, ImeApi& ime) { wnd_ime_map.emplace(&wnd, &ime); }
-	void ImeDisable(WndObject& wnd) { wnd_ime_map.erase(&wnd); }
+	void ImeEnable(WndObject& wnd) { ime_enabled_wnd.emplace(&wnd); }
+	void ImeDisable(WndObject& wnd) { ime_enabled_wnd.erase(&wnd); }
 	void ImeSetPosition(WndObject& wnd, Point point);
 public:
-	void OnImeCompositionBegin() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionBegin(); } }
-	void OnImeComposition(std::wstring str) { if (ime_focus != nullptr) { ime_focus->OnImeComposition(str); } }
-	void OnImeCompositionEnd() { if (ime_focus != nullptr) { ime_focus->OnImeCompositionEnd(); } }
+	void ImeSetString(std::wstring str) { ime_string = str; }
+	std::wstring ImeGetString() { return std::move(ime_string); }
 
 	// global
 public:
