@@ -127,7 +127,8 @@ private:
 	size_t ime_composition_end = 0;
 private:
 	void OnImeBegin();
-	void OnImeString(std::wstring str);
+	void OnImeString();
+	void OnImeEnd();
 
 	// clipboard
 private:

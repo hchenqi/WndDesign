@@ -213,11 +213,16 @@ void EditBox::OnImeBegin() {
 	ime.SetPosition(*this, ime_position);
 }
 
-void EditBox::OnImeString(std::wstring str) {
+void EditBox::OnImeString() {
 	if (IsEditDisabled()) { return; }
+	std::wstring str = ime.GetString();
 	ReplaceText(ime_composition_begin, ime_composition_end - ime_composition_begin, str);
 	ime_composition_end = ime_composition_begin + str.length();
-	SetCaret(ime_composition_end);
+	SetCaret(ime_composition_begin + ime.GetCursorPosition());
+}
+
+void EditBox::OnImeEnd() {
+	if (caret_text_position != ime_composition_end) { SetCaret(ime_composition_end); }
 }
 
 void EditBox::Cut() {
@@ -288,12 +293,9 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 		if (is_ctrl_down) { break; }
 		if (!iswcntrl(msg.ch)) { Insert(msg.ch); };
 		break;
-	case KeyMsg::ImeBegin:
-		OnImeBegin();
-		break;
-	case KeyMsg::ImeString:
-		OnImeString(ime.GetString());
-		break;
+	case KeyMsg::ImeBegin: OnImeBegin(); break;
+	case KeyMsg::ImeString: OnImeString(); break;
+	case KeyMsg::ImeEnd: OnImeEnd(); break;
 	}
 	StartBlinkingCaret();
 }

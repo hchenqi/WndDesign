@@ -83,7 +83,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_KEYUP: key_msg.type = KeyMsg::KeyUp; break;
 		case WM_CHAR: key_msg.type = KeyMsg::Char; break;
 		case WM_IME_STARTCOMPOSITION: key_msg.type = KeyMsg::ImeBegin; break;
-		case WM_IME_COMPOSITION: key_msg.type = KeyMsg::ImeString; desktop.ImeSetString(ImeGetString(hwnd, (uint)lparam)); break;
+		case WM_IME_COMPOSITION: key_msg.type = KeyMsg::ImeString; ImeUpdateString(hwnd, (uint)lparam); break;
 		case WM_IME_ENDCOMPOSITION: key_msg.type = KeyMsg::ImeEnd; break;
 		default: return DefWindowProc(hwnd, msg, wparam, lparam);
 		}

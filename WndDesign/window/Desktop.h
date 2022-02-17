@@ -55,14 +55,10 @@ public:
 	// ime
 private:
 	std::unordered_set<ref_ptr<WndObject>> ime_enabled_wnd;
-	std::wstring ime_string;
 public:
 	void ImeEnable(WndObject& wnd) { ime_enabled_wnd.emplace(&wnd); }
 	void ImeDisable(WndObject& wnd) { ime_enabled_wnd.erase(&wnd); }
 	void ImeSetPosition(WndObject& wnd, Point point);
-public:
-	void ImeSetString(std::wstring str) { ime_string = str; }
-	std::wstring ImeGetString() { return std::move(ime_string); }
 
 	// global
 public:
