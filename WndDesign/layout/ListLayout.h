@@ -39,6 +39,8 @@ protected:
 	};
 	std::vector<ChildInfo> child_list;
 protected:
+	using child_iter = std::vector<ChildInfo>::iterator;
+protected:
 	void SetChildData(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	size_t GetChildData(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
 public:
@@ -53,7 +55,7 @@ protected:
 protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(0.0f, child_list[index].offset), Size(size.width, child_list[index].length)); }
 	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildData(child)); }
-	auto HitTestItem(float offset) const;
+	child_iter HitTestItem(float offset);
 protected:
 	void UpdateLayout(size_t index);
 protected:
@@ -97,6 +99,8 @@ protected:
 	};
 	std::vector<ChildInfo> child_list;
 protected:
+	using child_iter = std::vector<ChildInfo>::iterator;
+protected:
 	void SetChildData(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	size_t GetChildData(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
 public:
@@ -111,7 +115,7 @@ protected:
 protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(child_list[index].offset, 0.0f), Size(child_list[index].length, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildData(child)); }
-	auto HitTestItem(float offset) const;
+	child_iter HitTestItem(float offset);
 protected:
 	void UpdateLayout(size_t index);
 protected:

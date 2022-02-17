@@ -25,7 +25,7 @@ void ListLayout<Vertical>::EraseChild(size_t begin, size_t count) {
 	UpdateLayout(begin);
 }
 
-auto ListLayout<Vertical>::HitTestItem(float offset) const {
+ListLayout<Vertical>::child_iter ListLayout<Vertical>::HitTestItem(float offset) {
 	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.offset; };
 	return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
 }
@@ -107,7 +107,7 @@ void ListLayout<Horizontal>::EraseChild(size_t begin, size_t count) {
 	UpdateLayout(begin);
 }
 
-auto ListLayout<Horizontal>::HitTestItem(float offset) const {
+ListLayout<Horizontal>::child_iter ListLayout<Horizontal>::HitTestItem(float offset) {
 	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.offset; };
 	return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
 }
