@@ -46,6 +46,10 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	std::vector<const wchar*> family_list; family_list.reserve(style.font._family_list.size());
 	for (auto& str : style.font._family_list) { family_list.push_back(str.c_str()); }
 	font_fallback_builder->AddMapping(&range, 1, family_list.data(), (uint)family_list.size());
+	
+	ComPtr<IDWriteFontFallback> system_font_fallback;
+	GetDWriteFactory().GetSystemFontFallback(&system_font_fallback);
+	font_fallback_builder->AddMappings(system_font_fallback.Get());
 
 	ComPtr<IDWriteFontFallback> font_fallback;
 	font_fallback_builder->CreateFontFallback(&font_fallback);
@@ -84,29 +88,27 @@ Size TextBlock::GetSize() const {
 }
 
 
-inline TextBlockHitTestInfo HitTestMetricsToInfo(const DWRITE_HIT_TEST_METRICS& metrics, bool is_inside, bool is_trailing_hit) {
-	return TextBlockHitTestInfo{
-		metrics.textPosition,
-		metrics.length,
-		is_inside,
-		is_trailing_hit,
+inline TextBlock::HitTestInfo HitTestMetricsToInfo(DWRITE_HIT_TEST_METRICS& metrics) {
+	return TextBlock::HitTestInfo{
+		metrics.textPosition, metrics.length,
 		Rect(metrics.left, metrics.top, metrics.width, metrics.height)
 	};
 }
 
-TextBlockHitTestInfo TextBlock::HitTestPoint(Point point) const {
+TextBlock::HitTestInfo TextBlock::HitTestPoint(Point point) const {
 	BOOL isTrailingHit; BOOL isInside; DWRITE_HIT_TEST_METRICS metrics;
 	layout->HitTestPoint(point.x, point.y, &isTrailingHit, &isInside, &metrics);
-	return HitTestMetricsToInfo(metrics, (bool)isInside, (bool)isTrailingHit);
+	if (isTrailingHit) { metrics.textPosition += metrics.length; metrics.left += metrics.width; }
+	return HitTestMetricsToInfo(metrics);
 }
 
-TextBlockHitTestInfo TextBlock::HitTestTextPosition(size_t text_position) const {
+TextBlock::HitTestInfo TextBlock::HitTestTextPosition(size_t text_position) const {
 	FLOAT x, y; DWRITE_HIT_TEST_METRICS metrics;
 	layout->HitTestTextPosition((uint)text_position, false, &x, &y, &metrics);
-	return HitTestMetricsToInfo(metrics, true, false);
+	return HitTestMetricsToInfo(metrics);
 }
 
-std::vector<TextBlockHitTestInfo> TextBlock::HitTestTextRange(size_t text_position, size_t text_length) const {
+std::vector<TextBlock::HitTestInfo> TextBlock::HitTestTextRange(size_t text_position, size_t text_length) const {
 	UINT32 line_cnt; layout->GetLineMetrics((DWRITE_LINE_METRICS1*)nullptr, 0, &line_cnt);
 	UINT32 actual_size = line_cnt;
 	std::vector<DWRITE_HIT_TEST_METRICS> metrics;
@@ -115,9 +117,9 @@ std::vector<TextBlockHitTestInfo> TextBlock::HitTestTextRange(size_t text_positi
 		layout->HitTestTextRange((uint)text_position, (uint)text_length, 0, 0, metrics.data(), (uint)metrics.size(), &actual_size);
 	} while (actual_size > metrics.size());
 	metrics.resize(actual_size);
-	std::vector<TextBlockHitTestInfo> geometry_regions(metrics.size());
+	std::vector<HitTestInfo> geometry_regions(metrics.size());
 	for (size_t i = 0; i < geometry_regions.size(); ++i) {
-		geometry_regions[i] = HitTestMetricsToInfo(metrics[i], true, false);
+		geometry_regions[i] = HitTestMetricsToInfo(metrics[i]);
 		if (geometry_regions[i].geometry_region.size.width < 5.0f) {
 			geometry_regions[i].geometry_region.size.width = 5.0f;
 		}

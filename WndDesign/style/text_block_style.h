@@ -132,13 +132,4 @@ struct TextBlockStyle {
 };
 
 
-struct TextBlockHitTestInfo {
-	uint text_position = 0;
-	uint text_length = 0;
-	bool is_inside = false;
-	bool is_trailing_hit = false;
-	Rect geometry_region = region_empty;
-};
-
-
 END_NAMESPACE(WndDesign)

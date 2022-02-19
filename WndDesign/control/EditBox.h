@@ -43,7 +43,7 @@ private:
 
 	// text
 public:
-	using HitTestInfo = TextBlockHitTestInfo;
+	using HitTestInfo = TextBlock::HitTestInfo;
 private:
 	WordBreakIterator word_break_iterator;
 private:

@@ -15,18 +15,25 @@ struct TextLayout;
 class TextBlock : Uncopyable {
 private:
 	friend struct TextBlockFigure;
-	alloc_ptr<TextLayout> layout;
 public:
 	TextBlock(const TextBlockStyle& style, const std::wstring& text) : layout(nullptr) { SetText(style, text); }
 	~TextBlock();
+protected:
+	alloc_ptr<TextLayout> layout;
 public:
 	void SetText(const TextBlockStyle& style, const std::wstring& text);
 	void UpdateSizeRef(Size size_ref);
 	Size GetSize() const;
 public:
-	TextBlockHitTestInfo HitTestPoint(Point point) const;
-	TextBlockHitTestInfo HitTestTextPosition(size_t text_position) const;
-	std::vector<TextBlockHitTestInfo> HitTestTextRange(size_t text_position, size_t text_length) const;
+	struct HitTestInfo {
+		uint text_position = 0;
+		uint text_length = 0;
+		Rect geometry_region = region_empty;
+	};
+public:
+	HitTestInfo HitTestPoint(Point point) const;
+	HitTestInfo HitTestTextPosition(size_t text_position) const;
+	std::vector<HitTestInfo> HitTestTextRange(size_t text_position, size_t text_length) const;
 };
 
 

@@ -61,12 +61,7 @@ void EditBox::BlinkCaret() {
 void EditBox::UpdateCaretRegion(const HitTestInfo& info) {
 	RedrawCaretRegion();
 	caret_text_position = info.text_position;
-	caret_region.point = info.geometry_region.point;
-	caret_region.size = Size(caret_width, info.geometry_region.size.height);
-	if (info.is_trailing_hit) {
-		caret_text_position += info.text_length;
-		caret_region.point.x += info.geometry_region.size.width;
-	}
+	caret_region = Rect(info.geometry_region.point, Size(caret_width, info.geometry_region.size.height));
 	RedrawCaretRegion();
 }
 
@@ -110,6 +105,7 @@ void EditBox::MoveCaret(CaretMoveDirection direction) {
 }
 
 void EditBox::UpdateSelectionRegion() {
+	HideCaret();
 	selection_info = text_block.HitTestTextRange(selection_begin, selection_end - selection_begin);
 	RedrawSelectionRegion();
 	selection_region_union = region_empty;
@@ -126,14 +122,14 @@ void EditBox::DoSelection(Point mouse_move_position) {
 	selection_end = caret_text_position;
 	if (selection_begin == selection_end) { ClearSelection(); return; }
 	if (selection_end < selection_begin) { std::swap(selection_begin, selection_end); }
-	UpdateSelectionRegion(); HideCaret();
+	UpdateSelectionRegion();
 }
 
 void EditBox::SelectWord() {
 	if (caret_text_position >= text.length()) { return; }
 	TextRange word_range = word_break_iterator.Seek(caret_text_position);
 	selection_begin = word_range.left(); selection_end = word_range.right();
-	UpdateSelectionRegion(); HideCaret();
+	UpdateSelectionRegion();
 }
 
 void EditBox::SelectParagraph() {
@@ -142,13 +138,12 @@ void EditBox::SelectParagraph() {
 	while (selection_begin < length && text[selection_begin] != L'\n') { selection_begin--; }
 	while (selection_end < length && text[selection_end] != L'\n') { selection_end++; }
 	selection_begin++; selection_end++;
-	UpdateSelectionRegion(); HideCaret();
+	UpdateSelectionRegion();
 }
 
 void EditBox::SelectAll() {
-	selection_begin = 0;
-	selection_end = text.length();
-	UpdateSelectionRegion(); HideCaret();
+	selection_begin = 0; selection_end = text.length();
+	UpdateSelectionRegion();
 }
 
 void EditBox::ClearSelection() {
