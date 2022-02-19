@@ -8,21 +8,35 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
+void ListLayout<Vertical>::UpdateIndex(size_t begin) {
+	for (size_t index = begin; index < child_list.size(); ++index) {
+		SetChildData(child_list[index].child, index);
+	}
+}
+
 void ListLayout<Vertical>::InsertChild(size_t index, child_ptr child) {
 	if (index > child_list.size()) { index = child_list.size(); }
-	RegisterChild(child); SetChildData(child, index);
 	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
+	RegisterChild(it->child);
 	it->length = UpdateChildSizeRef(it->child, Size(size.width, length_min)).height;
-	for (; it != child_list.end(); ++it) { SetChildData(it->child, it - child_list.begin()); }
-	UpdateLayout(index);
+	UpdateIndex(index); UpdateLayout(index);
+}
+
+void ListLayout<Vertical>::InsertChild(size_t index, std::vector<child_ptr> children) {
+	if (index > child_list.size()) { index = child_list.size(); }
+	auto it = child_list.insert(child_list.begin() + index, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
+	for (auto it_end = it + children.size(); it != it_end; ++it) {
+		RegisterChild(it->child);
+		it->length = UpdateChildSizeRef(it->child, Size(size.width, length_min)).height;
+	}
+	UpdateIndex(index); UpdateLayout(index);
 }
 
 void ListLayout<Vertical>::EraseChild(size_t begin, size_t count) {
 	if (begin > child_list.size() || count == 0) { return; }
 	size_t end = begin + count; if (end > child_list.size()) { end = child_list.size(); }
-	auto it = child_list.erase(child_list.begin() + begin, child_list.begin() + end);
-	for (; it != child_list.end(); ++it) { SetChildData(it->child, it - child_list.begin()); }
-	UpdateLayout(begin);
+	child_list.erase(child_list.begin() + begin, child_list.begin() + end);
+	UpdateIndex(begin); UpdateLayout(begin);
 }
 
 ListLayout<Vertical>::child_iter ListLayout<Vertical>::HitTestItem(float offset) {
@@ -90,21 +104,35 @@ void ListLayout<Vertical>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 }
 
 
+void ListLayout<Horizontal>::UpdateIndex(size_t begin) {
+	for (size_t index = begin; index < child_list.size(); ++index) {
+		SetChildData(child_list[index].child, index);
+	}
+}
+
 void ListLayout<Horizontal>::InsertChild(size_t index, child_ptr child) {
 	if (index > child_list.size()) { index = child_list.size(); }
-	RegisterChild(child); SetChildData(child, index);
 	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
+	RegisterChild(it->child);
 	it->length = UpdateChildSizeRef(it->child, Size(length_min, size.height)).width;
-	for (; it != child_list.end(); ++it) { SetChildData(it->child, it - child_list.begin()); }
-	UpdateLayout(index);
+	UpdateIndex(index); UpdateLayout(index);
+}
+
+void ListLayout<Horizontal>::InsertChild(size_t index, std::vector<child_ptr> children) {
+	if (index > child_list.size()) { index = child_list.size(); }
+	auto it = child_list.insert(child_list.begin() + index, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
+	for (auto it_end = it + children.size(); it != it_end; ++it) {
+		RegisterChild(it->child);
+		it->length = UpdateChildSizeRef(it->child, Size(length_min, size.height)).width;
+	}
+	UpdateIndex(index); UpdateLayout(index);
 }
 
 void ListLayout<Horizontal>::EraseChild(size_t begin, size_t count) {
 	if (begin > child_list.size() || count == 0) { return; }
 	size_t end = begin + count; if (end > child_list.size()) { end = child_list.size(); }
-	auto it = child_list.erase(child_list.begin() + begin, child_list.begin() + end);
-	for (; it != child_list.end(); ++it) { SetChildData(it->child, it - child_list.begin()); }
-	UpdateLayout(begin);
+	child_list.erase(child_list.begin() + begin, child_list.begin() + end);
+	UpdateIndex(begin); UpdateLayout(begin);
 }
 
 ListLayout<Horizontal>::child_iter ListLayout<Horizontal>::HitTestItem(float offset) {

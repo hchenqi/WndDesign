@@ -43,8 +43,10 @@ protected:
 protected:
 	void SetChildData(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	size_t GetChildData(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+	void UpdateIndex(size_t begin);
 public:
 	void InsertChild(size_t index, child_ptr child);
+	void InsertChild(size_t index, std::vector<child_ptr> children);
 	void EraseChild(size_t begin, size_t count);
 	void AppendChild(child_ptr child) { InsertChild(-1, std::move(child)); }
 
@@ -103,8 +105,10 @@ protected:
 protected:
 	void SetChildData(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	size_t GetChildData(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+	void UpdateIndex(size_t begin);
 public:
 	void InsertChild(size_t index, child_ptr child);
+	void InsertChild(size_t index, std::vector<child_ptr> children);
 	void EraseChild(size_t begin, size_t count);
 	void AppendChild(child_ptr child) { InsertChild(-1, std::move(child)); }
 
