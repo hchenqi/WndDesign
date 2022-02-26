@@ -10,7 +10,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 void ListLayout<Vertical>::UpdateIndex(size_t begin) {
 	for (size_t index = begin; index < child_list.size(); ++index) {
-		SetChildData(child_list[index].child, index);
+		SetChildIndex(child_list[index].child, index);
 	}
 }
 
@@ -69,7 +69,7 @@ Size ListLayout<Vertical>::OnSizeRefUpdate(Size size_ref) {
 }
 
 void ListLayout<Vertical>::OnChildSizeUpdate(WndObject& child, Size child_size) {
-	size_t index = GetChildData(child);
+	size_t index = GetChildIndex(child);
 	if (child_list[index].length != child_size.height) {
 		child_list[index].length = child_size.height;
 		UpdateLayout(index + 1);
@@ -106,7 +106,7 @@ void ListLayout<Vertical>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 
 void ListLayout<Horizontal>::UpdateIndex(size_t begin) {
 	for (size_t index = begin; index < child_list.size(); ++index) {
-		SetChildData(child_list[index].child, index);
+		SetChildIndex(child_list[index].child, index);
 	}
 }
 
@@ -165,7 +165,7 @@ Size ListLayout<Horizontal>::OnSizeRefUpdate(Size size_ref) {
 }
 
 void ListLayout<Horizontal>::OnChildSizeUpdate(WndObject& child, Size child_size) {
-	size_t index = GetChildData(child);
+	size_t index = GetChildIndex(child);
 	if (child_list[index].length != child_size.width) {
 		child_list[index].length = child_size.width;
 		UpdateLayout(index + 1);

@@ -21,7 +21,7 @@ public:
 	template<class... Ts>
 	ListLayout(float gap, Ts... child_args) : child_list(), gap(gap) {
 		child_list.reserve(sizeof...(Ts)); (child_list.emplace_back(std::move(child_args)), ...);
-		uint index = 0;	for (auto& info : child_list) { RegisterChild(info.child); SetChildData(info.child, index++); }
+		uint index = 0;	for (auto& info : child_list) { RegisterChild(info.child); SetChildIndex(info.child, index++); }
 	}
 
 	// child
@@ -41,8 +41,8 @@ protected:
 protected:
 	using child_iter = std::vector<ChildInfo>::iterator;
 protected:
-	void SetChildData(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
-	size_t GetChildData(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
+	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
 	void UpdateIndex(size_t begin);
 public:
 	void InsertChild(size_t index, child_ptr child);
@@ -56,7 +56,7 @@ protected:
 	float gap;
 protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(0.0f, child_list[index].offset), Size(size.width, child_list[index].length)); }
-	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildData(child)); }
+	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildIndex(child)); }
 	child_iter HitTestItem(float offset);
 protected:
 	void UpdateLayout(size_t index);
@@ -83,7 +83,7 @@ public:
 	template<class... Ts>
 	ListLayout(float gap, Ts... child_args) : child_list(), gap(gap) {
 		child_list.reserve(sizeof...(Ts)); (child_list.emplace_back(std::move(child_args)), ...);
-		uint index = 0;	for (auto& info : child_list) { RegisterChild(info.child); SetChildData(info.child, index++); }
+		uint index = 0;	for (auto& info : child_list) { RegisterChild(info.child); SetChildIndex(info.child, index++); }
 	}
 
 	// child
@@ -103,8 +103,8 @@ protected:
 protected:
 	using child_iter = std::vector<ChildInfo>::iterator;
 protected:
-	void SetChildData(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
-	size_t GetChildData(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
+	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
 	void UpdateIndex(size_t begin);
 public:
 	void InsertChild(size_t index, child_ptr child);
@@ -118,7 +118,7 @@ protected:
 	float gap;
 protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(child_list[index].offset, 0.0f), Size(child_list[index].length, size.height)); }
-	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildData(child)); }
+	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildIndex(child)); }
 	child_iter HitTestItem(float offset);
 protected:
 	void UpdateLayout(size_t index);
