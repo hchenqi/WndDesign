@@ -23,6 +23,9 @@ struct Rect {
 	constexpr float top() const { return point.y; }
 	constexpr float bottom() const { return point.y + size.height; }
 
+	constexpr Point LeftTop() const { return Point(left(), top()); }
+	constexpr Point LeftBottom() const { return Point(left(), bottom()); }
+	constexpr Point RightTop() const { return Point(right(), top()); }
 	constexpr Point RightBottom() const { return Point(right(), bottom()); }
 	constexpr Point Center() const { return Point(point.x + size.width / 2, point.y + size.height / 2); }
 
