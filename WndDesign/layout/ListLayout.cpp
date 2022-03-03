@@ -15,21 +15,23 @@ void ListLayout<Vertical>::UpdateIndex(size_t begin) {
 }
 
 void ListLayout<Vertical>::InsertChild(size_t index, child_ptr child) {
+	RegisterChild(child);
 	if (index > child_list.size()) { index = child_list.size(); }
 	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
-	RegisterChild(it->child);
+	UpdateIndex(index);
 	it->length = UpdateChildSizeRef(it->child, Size(size.width, length_min)).height;
-	UpdateIndex(index); UpdateLayout(index);
+	UpdateLayout(index);
 }
 
 void ListLayout<Vertical>::InsertChild(size_t index, std::vector<child_ptr> children) {
+	for (auto& child : children) { RegisterChild(child); }
 	if (index > child_list.size()) { index = child_list.size(); }
 	auto it = child_list.insert(child_list.begin() + index, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
+	UpdateIndex(index);
 	for (auto it_end = it + children.size(); it != it_end; ++it) {
-		RegisterChild(it->child);
 		it->length = UpdateChildSizeRef(it->child, Size(size.width, length_min)).height;
 	}
-	UpdateIndex(index); UpdateLayout(index);
+	UpdateLayout(index);
 }
 
 void ListLayout<Vertical>::EraseChild(size_t begin, size_t count) {
@@ -111,21 +113,23 @@ void ListLayout<Horizontal>::UpdateIndex(size_t begin) {
 }
 
 void ListLayout<Horizontal>::InsertChild(size_t index, child_ptr child) {
+	RegisterChild(child);
 	if (index > child_list.size()) { index = child_list.size(); }
 	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
-	RegisterChild(it->child);
+	UpdateIndex(index);
 	it->length = UpdateChildSizeRef(it->child, Size(length_min, size.height)).width;
-	UpdateIndex(index); UpdateLayout(index);
+	UpdateLayout(index);
 }
 
 void ListLayout<Horizontal>::InsertChild(size_t index, std::vector<child_ptr> children) {
+	for (auto& child : children) { RegisterChild(child); }
 	if (index > child_list.size()) { index = child_list.size(); }
 	auto it = child_list.insert(child_list.begin() + index, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
+	UpdateIndex(index);
 	for (auto it_end = it + children.size(); it != it_end; ++it) {
-		RegisterChild(it->child);
 		it->length = UpdateChildSizeRef(it->child, Size(length_min, size.height)).width;
 	}
-	UpdateIndex(index); UpdateLayout(index);
+	UpdateLayout(index);
 }
 
 void ListLayout<Horizontal>::EraseChild(size_t begin, size_t count) {
