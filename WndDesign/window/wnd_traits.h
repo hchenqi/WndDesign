@@ -43,6 +43,7 @@ class child_ptr<void, void> : public std::unique_ptr<WndObject> {
 private:
 	void VerifyNonNull() const { if (*this == nullptr) { throw std::invalid_argument("invalid child pointer"); } }
 public:
+	child_ptr() {}
 	child_ptr(std::unique_ptr<WndObject> ptr) : std::unique_ptr<WndObject>(std::move(ptr)) { VerifyNonNull(); }
 	child_ptr(alloc_ptr<WndObject> ptr) : child_ptr(std::unique_ptr<WndObject>(ptr)) {}
 	operator WndObject& () const { VerifyNonNull(); return **this; }
@@ -52,6 +53,7 @@ public:
 template<class WidthType, class HeightType>
 class child_ptr : public child_ptr<> {
 public:
+	child_ptr() {}
 	template<class ChildType, class = std::enable_if_t<std::is_same_v<layout_type<WidthType, HeightType>, typename ChildType::layout_type>>>
 	child_ptr(std::unique_ptr<ChildType> ptr) : child_ptr<>(std::move(ptr)) {}
 	template<class ChildType, class = std::enable_if_t<std::is_same_v<layout_type<WidthType, HeightType>, typename ChildType::layout_type>>>
