@@ -32,8 +32,10 @@ public:
 protected:
 	Size size;
 protected:
-	static constexpr uint child_relative = 0;
-	static constexpr uint child_auto = 1;
+	enum {
+		child_relative,
+		child_auto,
+	};
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size.width = size_ref.width;
@@ -58,8 +60,10 @@ public:
 protected:
 	Size size;
 protected:
-	static constexpr uint child_relative = 0;
-	static constexpr uint child_auto = 1;
+	enum {
+		child_relative,
+		child_auto,
+	};
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size.height = size_ref.height;

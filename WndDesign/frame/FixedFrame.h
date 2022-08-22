@@ -25,9 +25,11 @@ public:
 protected:
 	Size size;
 protected:
-	static constexpr uint child_auto_assigned = 0;
-	static constexpr uint child_assigned_auto = 1;
-	static constexpr uint child_assigned_assigned = 2;
+	enum {
+		child_auto_assigned,
+		child_assigned_auto,
+		child_assigned_assigned,
+	};
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
