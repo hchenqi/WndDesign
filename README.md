@@ -92,15 +92,11 @@ A window may have none, one, or multiple child windows, and each window may only
 
 All window objects, along with their child windows and parent windows, form a *window tree*, which is just like the DOM tree in web browsers.
 
-The window hierarchy of an example below may be like this:
+A runtime picture of the test example `FlowLayoutTest` is shown below along with its main window hierarchy components:
 
-![]()
+![](docs/example-picture.png)
 
-#### Desktop
-
-`Desktop` is the root window object who has no parent window. `Desktop` globally manages all windows and provides system interfaces.
-
-`DesktopFrame` is the direct child window of `Desktop` that also directly interacts with system.
+![](docs/example-hierarchy.png)
 
 #### Control, Frame and Layout
 
@@ -108,19 +104,29 @@ Controls, Frames and Layouts all derive from `WndObject` base class and play dif
 
 ![](docs/component.png)
 
-Controls are `WndObject` that has no child window, so they are leaf nodes in the *window tree*. Controls are the most basic components and are often used to handle user inputs or display simple figures, like `Button`, `TextBox`, `EditBox`, `ImageBox`, and `Placeholder`. A `Placeholder` only occupies a certain size and doesn't draw anything, which can also be useful to implement animations.
+Controls are `WndObject` that have no child window, so they are leaf nodes in the *window tree*, and serve as the most basic components. They are often used to handle user inputs or display simple figures, like `Button`, `TextBox`, `EditBox`, `ImageBox`, and `Placeholder`. A `Placeholder` only occupies a certain region and doesn't draw anything.
 
-Frames are `WndObject` that may have only one child window, and is often used to decorate a window with border, padding, or change the window's resize behaviour. Frames include `BorderFrame`, `PaddingFrame`, `ClipFrame`, `FixedFrame`, ... All Frames inherits `WndFrame` which inherits `WndObject` and implements all basic virtual functions to just connecting to its child window. A window wrapped only with `WndFrame` behaves the same way as if there is no WndFrame.
+Frames are `WndObject` that may have only one child window, and are often used to decorate a window with border, padding, or change the window's resizing or drawing behaviour. Frames include `BorderFrame`, `PaddingFrame`, `ClipFrame`, `FixedFrame`, `ScaleFrame`, etc. All Frames inherits `WndFrame` which is derived from `WndObject` and has implemented all basic virtual functions. A window wrapped only with `WndFrame` behaves the same way as the window itself.
 
-Layouts are `WndObject` that may contain multiple child windows. Layouts are used to display more complex data structures, for example, `SplitLayout` represent a pair of windows that may be placed in horizontal or vertical direction, `ListLayout` or `FlowLayout` a list of windows. `OverlapLayout` are just like the traditional Windows's window style, whose child windows are placed in order and may overlap on each other.
+Layouts are `WndObject` that may contain multiple child windows, which are used to display complex data structures. For example, `SplitLayout` represent a pair of windows that may be placed in horizontal or vertical direction, `ListLayout` or `FlowLayout` a list of windows. `OverlapLayout`'s child windows are placed in order and may overlap on each other.
 
 #### Wrapper
 
-Wrappers are decorator templates that inherites a window and override some of its virtual functions, often `OnDraw`, to decorate the window's displaying content. Currently there's only `SolidColorBackground` wrapper implemented to fill color in a window's background.
+Wrappers are decorator templates that inherite a window and override some of its virtual functions. For example, `SolidColorBackground` will override the window's `OnDraw` callback function to fill a solid color in its background before the window's content is drawn.
 
-Both Frames and Wrappers can be used to decorate a window, but the main difference between Frame and Wrapper is that Frames and their child windows are distinct window objects in the window tree, while Wrappers and its wrapped windows are exactly the same window. Frames' size can differ from the child window's size, but Wrappers' size should always be the same as the wrapped window.
+![](docs/wrapper.png)
 
-It' i's not advised to change a window's size with Wrapper, because it may cause the window resize logic not working properly. If you want to decorate the window which may change its size, consider using Frames.
+Both Frames and Wrappers can be used to decorate a window. A Frame and its child window are distinct window objects in the window tree, while a Wrapper and its wrapped window are exactly the same window object.
+
+#### Desktop
+
+`Desktop` is the root window object who has no parent window. `Desktop` globally manages all windows and provides system interfaces.
+
+![](docs/Desktop.png)
+
+`DesktopFrame` is the direct child window of `Desktop` that each owns a win32 `HWND` resource.
+
+`DesktopFrame` actually derives from `ScaleFrame` and contains a `BorderFrame` which then wraps the child window. `ScaleFrame` applies a scale transform to its descendent, which is used by `DesktopFrame` to handle DPI change. Previously `DesktopFrame` only derives from `BorderFrame` to add a border to the child window.
 
 ### Redraw
 
