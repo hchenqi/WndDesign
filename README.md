@@ -128,59 +128,45 @@ Both Frames and Wrappers can be used to decorate a window. A Frame and its child
 
 `DesktopFrame` actually derives from `ScaleFrame` and contains a `BorderFrame` which then wraps the child window. `ScaleFrame` applies a scale transform to its descendent, which is used by `DesktopFrame` to handle DPI change. Previously `DesktopFrame` only derives from `BorderFrame` to add a border to the child window.
 
-### Redraw
+### Layout
 
-Redraw happens when a window is created or its displaying contents have changed. A rectangle region of the window is invalidated and propogated to its parent windows til `DesktopWndFrame`. 
-
-All figures inherits `Figure` base class, and are rendered to a `RenderTarget` in a callback virtual function `DrawOn()`. 
-
-Rendering is finally implemented by Direct2D, a Windows built-in library. A `RenderTarget` is a kind of Direct2D object to create resources and perform actual drawing operations.
+The layout of a window is its size, along with its content or child window's size and position relative to the window.
 
 #### Geometry
 
 2D geometric operations such as point translation, vector addition, rectangle enlarging, size scaling, are frequently used throughout the project.
 
+All geometry structures use `float` to store length or position values. In fact, `int` and `uint` were used before, until high DPI display and scale transformation were taken into consideration. 
+
 ##### Point
+
+`Point` contains a pair of position values `x` and `y`. A `Point` is always relative to a fixed coordinate system. For example, a window's upper-left corner lies at `Point(100, 100)` relative to its parent window. An `Ellipse` figure is drawn on a `RenderTarget`, whose center is located at `Point(500, 300)` relative to the `RenderTarget`.
 
 ##### Vector
 
+`Vector` represents the difference between two `Point`s. It can be applied to a `Point` or a `Rect` as a translation transform. 
+
 ##### Size
 
-##### Rectangle
+`Size` contains a pair of values `width` and `height` that should never be negetive.
 
-##### Region
+##### Rect
 
-#### Figure
+`Point` and `Size` form a rectangle, namely `Rect`. `Rect` represents a rectangular region. An `Rect` is also relative to a coordinate system because its position is determined by `Point`.
 
-##### Shape
+#### Layout
 
-##### TextBlock
+Each window is aware of its own size and its content's layout. A window's content includes all its child windows' size and position, or its figure content's layout if it has no child window like `TextBox`. So a window's position relative to its parent window is always kept by its parent and never exposed to the window itself. Only one exception is between `OverlapLayout` and its child `OverlapFrame`, where `OverlapFrame` keeps the `Rect` region on its parent `OverlapLayout`, but this is only for design simplicity.
 
-##### Image
+A window's size may be dependent on its parent window's size or its content's size. For example, when you drag the side of a text editor to make it thinner, the text block's width is shortened exactly the same length as the window's width but its height is extended due to the reflow of the text.
 
-#### FigureQueue
-
-#### Layer
-
-### Reflow
-
-Reflow happens when a window's size is changed due to mouse dragging, content editing, or parent window's resizing. The layout of the window may be recalculated and the content may be further redrawed.
-
-Windows react differently to resize events. Some windows' size may change exactly according to mouse's current drag position and reorgnizes its content, like `FlowLayout`, while some windows' size may remain the same, and the content is clipped out of scene or a scrollbar is displayed.
-
-The rather complex example `FlowLayoutTest` shows different reactions to resize events. The 
-
-![]()
+There are two functions designed to handle all reflow conditions: `OnSizeRefUpdate()` and `OnChildSizeChange()`. A window receives `size_ref` from its parent window. This information, along with the window's current style, content and child windows, are all needed for its size calculation. After its current size is determined and returned to its parent window, the parent window's size will be finally determined.
 
 #### LayoutType
 
 `LayoutType` is used to indicate how a window's width or height will change relative to parent window's width or height. It is just a compile-time contract to help ensure child window and parent window's reflow behaviours are consistent. Actual size calculation still needs to be implemented.
 
 There are three kinds of layout types for both horizontal and virtical dimensions: `Assigned`, `Auto` and `Relative`.
-
-A window's size may be dependent on its parent window's size or its content's size. For example, when you drag the side of a text editor to make it thinner, the text block's width is shortened exactly the same length as the window's width but its height is extended due to the reflow of the text.
-
-There are two functions designed to handle all reflow conditions: `OnSizeRefUpdate()` and `OnChildSizeChange()`. A window receives `size_ref` from its parent window. This information, along with the window's current style, content and child windows, are all needed for its size calculation. After its current size is determined and returned to its parent window, the parent window's size will be finally determined.
 
 I will only talk about the honrizontal dimension `width` in below sections for simplicity. It is exactly the same for `height`.
 
@@ -194,20 +180,84 @@ If both width and height of a window are `Assigned`, the window will be expected
 
 ##### Relative
 
+#### Reflow
 
+Reflow happens when a window's size is changed due to mouse dragging, content editing, or parent window's resizing. The layout of the window may be recalculated and the content may be further redrawed.
+
+Windows react differently to resize events. Some windows' size may change exactly according to mouse's current drag position and reorgnizes its content, like `FlowLayout`, while some windows' size may remain the same, and the content is clipped out of scene or a scrollbar is displayed.
+
+The rather complex example `FlowLayoutTest` shows different reactions to resize events. The 
+
+![]()
+
+### Paint
+
+Each window can paint
+
+#### Figure
+
+All figures inherits `Figure` base class, and are rendered to a `RenderTarget` in a callback virtual function `DrawOn()`. 
+
+Rendering is finally implemented by Direct2D, a Windows built-in library. A `RenderTarget` is a kind of Direct2D object to create resources and perform actual drawing operations.
+
+##### Shape
+
+##### TextBlock
+
+##### Image
+
+#### Redraw
+
+Redraw happens when a window is created or its displaying contents have changed. A rectangle region of the window is invalidated and propogated to its parent windows til `DesktopFrame`. 
+
+##### FigureQueue
+
+A `FigureQueue` is a collection of `Figure`s. It will be passed to the window by reference in the `OnDraw()` callback function to collect `Figure`s the window wishes to draw. It can also apply translation or other complex transformations to a group of figures. `FigureQueue` is finally drawn on `Layer`.
+
+##### Layer
+
+`Layer` is where `Figure`s are rendered on. A `Layer` draws a `FigureQueue` at a time. `Layer` itself is also a kind of `Figure` that can be drawn on other `Layer`s.
+
+Each root level window, or `DesktopFrame` owns a `DesktopLayer` coupled with a `HWND` resource, and is directly managed by `Desktop`. All `Figure`s are finally drawn on `DesktopLayer` and presented on screen.
 
 ### Message Handling
 
+All messages, including `Timer` callback are synchornized, which means all messages are processed sequentially. The next message will only be dispatched after the current message is fully handled.
+
 #### Mouse Messages
+
+Mouse messages contain a message type, key state and current mouse position relative to the window.
+
+Mouse messages are first hit-tested with `HitTest()` callback function and then dispatched to the destination child window after a point transform.
+
+##### Mouse Track
+
+##### Mouse Capture
 
 #### Keyboard Messages
 
-#### Other Notifications
+#### Notification Messages
+
+Notification messages has no parameter, and currently only includes `MouseEnter`, `MouseHover`, `MouseLeave` and `LoseFocus` that are triggered by mouse or keyboard message dispatchers.
 
 #### Timer
 
-### Desktop
+`Timer` receives a callback function as its constructor argument, and can be set to invoke the callback periodically.
 
 ## Develop Guide
 
-Refer to CogNote repository.
+### Program Startup
+
+`WndDesign` static library already defined the win32 entrypoint `WinMain()` in `WndDesign\system\win_main.cpp`. It does some necessary initialization work and then calls the main function `int main()` that should be defined in user code.
+
+Typically in `main()` function, it is expected that the main frame is created and registered via `global.AddWnd()`, as all test examples show. Then `global.MessageLoop()` should be called to enter win32 message loop and wait for messages to process.
+
+### Window Definition
+
+Each window is defined as a class that inherites `WndObject`, overriding some of its virtual functions to implement custom sizing, drawing, or message processing logics.
+
+All virtual functions are callback functions driven by incoming messages.
+
+### Style Definition
+
+`ValueTag` allows 
