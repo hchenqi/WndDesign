@@ -12,83 +12,77 @@ A C++ GUI library
 
 ## Code Structure
 
-### Folder Hierarchy
-
 There are two projects under the `WndDesign` solution:
 * `WndDesign`: main source code, builds to a static library `WndDesign.lib`.
 * `Test`: test examples, builds to an executable application `Test.exe`.
 
-#### WndDesign
+### WndDesign
 
-Folder-level dependencies are roughly shown in the graph to help one form an overall impression, although precise dependencies should certainly be more complex.
+Folder-level dependencies are roughly shown in the graph to help one form an overall impression, although precise dependencies should be more complex.
 
 ![](docs/dependency.png)
 
 The main contents of each folder are also summarized below.
 
-##### common
+#### common
 
-Defines some basic macros, namespaces, and types.
+Defines some basic macros, namespaces, types, and helper functions.
 
-##### geometry
+#### geometry
 
 Defines basic 2D geometry objects and their operations, including `Point`, `Vector`, `Size` and `Rect`. 
 
-##### figure
+#### figure
 
-Defines some basic shapes including `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, and other figures like `TextBlock`, `Image` and `Layer`.
+Defines `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, `Image` and `TextBlock` that can be drawn on the screen.
 
-##### style
+#### style
 
-Defines styles that are used by `TextBlock` and other components.
+Defines styles that are used by `TextBlock` or other components.
 
-##### message
+#### message
 
-Defines `MouseMsg`, `KeyMsg`, `NotifyMsg` and `Timer` for message handling.
+Defines mouse, keyboard and timer messages.
 
-##### system
+#### system
 
-Includes `Win32`, `Direct2D` and `Direct3D` APIs for window rendering and message receiving.
+Provides `Win32` and `DirectX` interfaces for window rendering, message handling and other system interactions like clipboard or IME management.
 
-##### window
+#### window
 
-Defines the `WndObject` base class and `Desktop` root window object.
+Defines the `WndObject` base class and `Desktop` root window object. `WndObject` is the core component of this project.
 
-##### control
+#### control
 
-Defines some basic control components such as `Button`, `Textbox`, `ImageBox`, `Scrollbar`, etc.
+Defines some basic control components such as `Button`, `Textbox`, `ImageBox` and `Scrollbar`.
 
-##### frame
+#### frame
 
-Defines some basic frame components like `BorderFrame`, `PaddingFrame`, `ScrollFrame`, and so on.
+Defines some basic frame components like `BorderFrame`, `PaddingFrame`, `ScrollFrame`, `ScaleFrame`, and `LayerFrame`.
 
-##### layout
+#### layout
 
-Defines some layout components like `ListLayout`, `SplitLayout`, and `OverlapLayout`.
+Defines some layout components like `ListLayout`,c`FlowLayout`, `SplitLayout` and `OverlapLayout`.
 
-##### wrapper
+#### wrapper
 
 Defines some window decorators like `SolidColorBackground`.
 
-##### widget
+#### widget
 
 Provides some pre-defined complex window components that are combination of those basic window components. Currently includes `ScrollBox` and `TitleBarFrame`.
 
-#### Test
+### Test
 
-Defines some {Test}.h header files that serve as both test cases and develop examples.
-
-### Class Hierarchy
-
-`WndObject` is the base class for all windows including Controls, Frames, Layouts and `Desktop`.
+Defines some Test.h files that serve as both develop examples and test cases. Each test example can be tried out by removing the preceding comment mark `//` from its corresponding `#include<>` line.
 
 ## Concepts
 
 ### Window Hierarchy
 
-Window, or `WndObject`, is a basic unit that draws figures and handle messages.
+Window object, or `WndObject`, is a basic unit that draws figures and handle messages.
 
-A window may have none, one, or multiple child windows, and each window may only have one parent window.
+A window object may have none, one, or multiple child windows, and each window may only have one parent window.
 
 All window objects, along with their child windows and parent windows, form a *window tree*, which is just like the DOM tree in web browsers.
 
@@ -104,11 +98,11 @@ Controls, Frames and Layouts all derive from `WndObject` base class and play dif
 
 ![](docs/component.png)
 
-Controls are `WndObject` that have no child window, so they are leaf nodes in the *window tree*, and serve as the most basic components. They are often used to handle user inputs or display simple figures, like `Button`, `TextBox`, `EditBox`, `ImageBox`, and `Placeholder`. A `Placeholder` only occupies a certain region and doesn't draw anything.
+Controls are `WndObject` that have no child window, so they are leaf nodes in the *window tree*. They are often used to handle user inputs or display simple figures, like `Button`, `TextBox`, `EditBox`, `ImageBox`, and `Placeholder`. A `Placeholder` only occupies a region with a certain size and doesn't draw anything.
 
-Frames are `WndObject` that may have only one child window, and are often used to decorate a window with border, padding, or change the window's resizing or drawing behaviour. Frames include `BorderFrame`, `PaddingFrame`, `ClipFrame`, `FixedFrame`, `ScaleFrame`, etc. All Frames inherits `WndFrame` which is derived from `WndObject` and has implemented all basic virtual functions. A window wrapped only with `WndFrame` behaves the same way as the window itself.
+Frames are `WndObject` that each has only one child window. They are often used to decorate a window with border, padding, or change the window's resizing or drawing behaviour. Frames include `BorderFrame`, `PaddingFrame`, `ClipFrame`, `ScrollFrame`, `ScaleFrame`, `LayerFrame` etc. All Frames inherits class `WndFrame` which derives from and has implemented all basic virtual functions of `WndObject`. A window wrapped only with `WndFrame` behaves the same way as the window itself.
 
-Layouts are `WndObject` that may contain multiple child windows, which are used to display complex data structures. For example, `SplitLayout` represent a pair of windows that may be placed in horizontal or vertical direction, `ListLayout` or `FlowLayout` a list of windows. `OverlapLayout`'s child windows are placed in order and may overlap on each other.
+Layouts are `WndObject` that may contain multiple child windows, which are used to display complex data structures in different ways. For example, `SplitLayout` represent a pair of windows that may be placed in horizontal or vertical direction, `ListLayout` or `FlowLayout` a list of windows. `OverlapLayout`'s child windows are placed in order and one can overlap on another.
 
 #### Wrapper
 
@@ -126,7 +120,7 @@ Both Frames and Wrappers can be used to decorate a window. A Frame and its child
 
 `DesktopFrame` is the direct child window of `Desktop` that each owns a win32 `HWND` resource.
 
-`DesktopFrame` actually derives from `ScaleFrame` and contains a `BorderFrame` which then wraps the child window. `ScaleFrame` applies a scale transform to its descendent, which is used by `DesktopFrame` to handle DPI change. Previously `DesktopFrame` only derives from `BorderFrame` to add a border to the child window.
+`DesktopFrame` actually derives from `ScaleFrame` and contains a `BorderFrame` which then wraps the child window. `ScaleFrame` applies a scale transform to its descendent, which is used by `DesktopFrame` to handle DPI change. Previously `DesktopFrame` only derives from `BorderFrame` to add a resizable border to its child window.
 
 ### Layout
 
