@@ -74,9 +74,9 @@ Provides some pre-defined complex window components that are combination of thos
 
 ### Test
 
-Defines some Test.h files that serve as both develop examples and test cases. Each test example can be tried out by removing the preceding comment mark `//` from its corresponding `#include<>` line.
+Defines some Test.h files that serve as both develop examples and test cases. Each test example can be tried out by removing the preceding comment mark `//` from its corresponding `#include<>` line in `test.cpp`.
 
-## Concepts
+## Concepts and Implementation
 
 ### Window Hierarchy
 
@@ -86,7 +86,7 @@ A window object may have none, one, or multiple child windows, and each window m
 
 All window objects, along with their child windows and parent windows, form a *window tree*, which is just like the DOM tree in web browsers.
 
-A runtime picture of the test example `FlowLayoutTest` is shown below along with its main window hierarchy components:
+A runtime screenshot of the test example `FlowLayoutTest` is shown below along with its main window hierarchy components:
 
 ![](docs/example-picture.png)
 
@@ -122,43 +122,73 @@ Both Frames and Wrappers can be used to decorate a window. A Frame and its child
 
 `DesktopFrame` actually derives from `ScaleFrame` and contains a `BorderFrame` which then wraps the child window. `ScaleFrame` applies a scale transform to its descendent, which is used by `DesktopFrame` to handle DPI change. Previously `DesktopFrame` only derives from `BorderFrame` to add a resizable border to its child window.
 
+#### Client Region
+
+Unlike traditional win32 or web development, each window object is the minimum unit in the *window tree*. There is no such concept like client region, or css box model. The border, padding, margin or scrollbar of a window are usually implemented with Frames or Controls, which are all seperate window objects. Nevertheless, they can still produce the same effect through proper combination.
+
 ### Layout
 
-The layout of a window is its size, along with its content or child window's size and position relative to the window.
+The layout of a window is its size, along with its content or child window's size and position relative to the window. Here 'layout' does not refer to the layout components mentioned above.
 
 #### Geometry
 
-2D geometric operations such as point translation, vector addition, rectangle enlarging, size scaling, are frequently used throughout the project.
+2D geometric objects and their operations such as point translation, vector addition, rectangle enlarging and size scaling, are essential for layout calculation.
 
-All geometry structures use `float` to store length or position values. In fact, `int` and `uint` were used before, until high DPI display and scale transformation were taken into consideration. 
+All geometry objects use `float` to store position or length values. In fact, `int` and `uint` were adopted in the earlier versions, until high DPI display and scale transformation were introduced in the lastest version.
+
+Below is a picture showing the basic geometry information of a window and its child window:
+
+![](docs/geometry.png)
+
+##### Position and Length
+
+In simple 1D geometry, `position` is a signed value relative to the origin point, and `length` is an unsigned value indicating the length of a line segment.
 
 ##### Point
 
-`Point` contains a pair of position values `x` and `y`. A `Point` is always relative to a fixed coordinate system. For example, a window's upper-left corner lies at `Point(100, 100)` relative to its parent window. An `Ellipse` figure is drawn on a `RenderTarget`, whose center is located at `Point(500, 300)` relative to the `RenderTarget`.
+`Point` contains a pair of position values `x` and `y`. A `Point` is always relative to a certain coordinate system. The upper-left point of a window is usually taken as the origin point (0, 0).
 
-##### Vector
-
-`Vector` represents the difference between two `Point`s. It can be applied to a `Point` or a `Rect` as a translation transform. 
+For example, the child window's upper-left corner lies at `Point(200, 120)` in the parent window's coordinate system. And `Point(150, 50)` relative to the child window is `Point(350, 170)` relative to the parent.
 
 ##### Size
 
-`Size` contains a pair of values `width` and `height` that should never be negetive.
+`Size` contains a pair of length values `width` and `height` that should never be negetive.
 
 ##### Rect
 
-`Point` and `Size` form a rectangle, namely `Rect`. `Rect` represents a rectangular region. An `Rect` is also relative to a coordinate system because its position is determined by `Point`.
+`Point` and `Size` form a rectangle, namely `Rect`. `Rect` represents a rectangular region. An `Rect` is also relative to a coordinate system because its 2D position is determined by `Point`.
 
-#### Layout
+##### Vector
 
-Each window is aware of its own size and its content's layout. A window's content includes all its child windows' size and position, or its figure content's layout if it has no child window like `TextBox`. So a window's position relative to its parent window is always kept by its parent and never exposed to the window itself. Only one exception is between `OverlapLayout` and its child `OverlapFrame`, where `OverlapFrame` keeps the `Rect` region on its parent `OverlapLayout`, but this is only for design simplicity.
+`Vector` indicates the difference between two `Point`s. It can be applied to a `Point` or a `Rect` as a translation transform.
 
-A window's size may be dependent on its parent window's size or its content's size. For example, when you drag the side of a text editor to make it thinner, the text block's width is shortened exactly the same length as the window's width but its height is extended due to the reflow of the text.
+#### Layout Calculation
 
-There are two functions designed to handle all reflow conditions: `OnSizeRefUpdate()` and `OnChildSizeChange()`. A window receives `size_ref` from its parent window. This information, along with the window's current style, content and child windows, are all needed for its size calculation. After its current size is determined and returned to its parent window, the parent window's size will be finally determined.
+Layout calculation logic might be the most interesting and complicated part as it took me the most time to finally find a neat design solution.
+
+Each window is aware of its own size and its content layout. A window's content includes all its child windows and their sizes and positions, or its raw content if it has no child window, like `TextBox` or `ImageBox`. Child window's position relative to its parent window is always kept by the parent and never exposed to the child window itself.
+
+A window's size may be dependent on its parent window's size or its content size. For example, when you drag the border of a text editor to make it thinner, the text will probably be wrapped to a new line because the width is shortened, but its height is extended and a scrollbar may appear to be able to navigate to the hidden content. A similar behaviour happens on `FlowLayout`, as is shown below in the same `FlowLayoutTest` example:
+
+![](docs/layout-1.gif)
+
+![](docs/layout-2.gif)
+
+Re-calculating layout is also called the `reflow` process. Sometimes a window's width and height are both assigned by its parent window, so the parent window already knows its child window's size information. Sometimes parent window only assigns the width of its child, but requires the child to calculate its height and return it back. Sometimes the child window calculates its size independently and returns both width and height to its parent window.
+
+All these reflow conditions are handled by only two virtual functions, `OnSizeRefUpdate()` and `OnChildSizeUpdate()`.
+
+A window receives a size reference, or `size_ref` from its parent window when `OnSizeRefUpdate()` is called. This information, along with the window's style, content and child windows' size, are all needed for calculating its current size. After its size is determined, the parent window's size will be finally determined, and the grand-parent window's size, and so on.
+
+If a window's size is recalculated due to its content change, it will notify its parent window on its current size. Parent window's `OnChildSizeUpdate()` will be called and the parent window's size will in turn be recalculated and grand-parent window may be further informed.
+
+The animation below shows the size calculation order of the windows in a *window tree*. A blue node indicates the window's size is old, green means the size is calculating, and orange means the size is calculated. The window first updates all its child windows' size_ref and gets their updated sizes, then calculates its own size, and finally informs its parent window.
+
+![](docs/reflow.gif)
 
 #### LayoutType
 
-`LayoutType` is used to indicate how a window's width or height will change relative to parent window's width or height. It is just a compile-time contract to help ensure child window and parent window's reflow behaviours are consistent. Actual size calculation still needs to be implemented.
+`LayoutType` is just a compile-time contract used to indicate how a window's width or height will change relative to parent window's width or height, to help ensure the consistency between child window and parent window's reflow behaviour. Actual size calculation still needs to be implemented.
 
 There are three kinds of layout types for both horizontal and virtical dimensions: `Assigned`, `Auto` and `Relative`.
 
@@ -195,6 +225,8 @@ All figures inherits `Figure` base class, and are rendered to a `RenderTarget` i
 Rendering is finally implemented by Direct2D, a Windows built-in library. A `RenderTarget` is a kind of Direct2D object to create resources and perform actual drawing operations.
 
 ##### Shape
+
+An `Ellipse` figure is drawn on a `RenderTarget`, whose center is located at `Point(500, 300)` relative to the `RenderTarget`.
 
 ##### TextBlock
 
