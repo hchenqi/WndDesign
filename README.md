@@ -98,9 +98,17 @@ Controls, Frames and Layouts all derive from `WndObject` base class and play dif
 
 ![](docs/component.png)
 
+##### Control
+
 Controls are `WndObject` that have no child window, so they are leaf nodes in the *window tree*. They are often used to handle user inputs or display simple figures, like `Button`, `TextBox`, `EditBox`, `ImageBox`, and `Placeholder`. A `Placeholder` only occupies a region with a certain size and doesn't draw anything.
 
-Frames are `WndObject` that each has only one child window. They are often used to decorate a window with border, padding, or change the window's resizing or drawing behaviour. Frames include `BorderFrame`, `PaddingFrame`, `ClipFrame`, `ScrollFrame`, `ScaleFrame`, `LayerFrame` etc. All Frames inherits class `WndFrame` which derives from and has implemented all basic virtual functions of `WndObject`. A window wrapped only with `WndFrame` behaves the same way as the window itself.
+##### Frame
+
+Frames are `WndObject` that each owns only one child window. They are often used to decorate a window with border, padding, or change the window's resizing or drawing behaviour. Frames include `BorderFrame`, `PaddingFrame`, `ScaleFrame`, `ClipFrame`, `ScrollFrame`, `LayerFrame` etc.
+
+All Frames inherit class `WndFrame` which then inherits `WndObject`. `WndFrame` provides the simpliest implementation for managing a child window. A window wrapped only with `WndFrame` behaves the same way as the window itself.
+
+##### Layout
 
 Layouts are `WndObject` that may contain multiple child windows, which are used to display complex data structures in different ways. For example, `SplitLayout` represent a pair of windows that may be placed in horizontal or vertical direction, `ListLayout` or `FlowLayout` a list of windows. `OverlapLayout`'s child windows are placed in order and one can overlap on another.
 
@@ -118,7 +126,7 @@ Both Frames and Wrappers can be used to decorate a window. A Frame and its child
 
 ![](docs/Desktop.png)
 
-`DesktopFrame` is the direct child window of `Desktop` that each owns a win32 `HWND` resource.
+`DesktopFrame` is the direct child window of `Desktop` that each owns a win32 `HWND` resource. `DesktopFrame` is also called the *root-level* window in this documentation.
 
 `DesktopFrame` actually derives from `ScaleFrame` and contains a `BorderFrame` which then wraps the child window. `ScaleFrame` applies a scale transform to its descendent, which is used by `DesktopFrame` to handle DPI change. Previously `DesktopFrame` only derives from `BorderFrame` to add a resizable border to its child window.
 
@@ -134,7 +142,7 @@ The layout of a window is its size, along with its content or child window's siz
 
 2D geometric objects and their operations such as point translation, vector addition, rectangle enlarging and size scaling, are essential for layout calculation.
 
-All geometry objects use `float` to store position or length values. In fact, `int` and `uint` were adopted in the earlier versions, until high DPI display and scale transformation were introduced in the lastest version.
+All geometry objects use `float` to store position or length values. In fact, `int` and `uint` were adopted in earlier versions, until high DPI display and scale transformation were introduced in the lastest version.
 
 Below is a picture showing the basic geometry information of a window and its child window:
 
@@ -162,9 +170,9 @@ For example, the child window's upper-left corner lies at `Point(200, 120)` in t
 
 `Vector` indicates the difference between two `Point`s. It can be applied to a `Point` or a `Rect` as a translation transform.
 
-#### Layout Calculation
+#### Reflow
 
-Layout calculation logic might be the most interesting and complicated part as it took me the most time to finally find a neat design solution.
+Layout calculation logic might be the most interesting and complicated part as it took me the most time to finally find a neat design solution. Re-calculating layout is also called the `reflow` process.
 
 Each window is aware of its own size and its content layout. A window's content includes all its child windows and their sizes and positions, or its raw content if it has no child window, like `TextBox` or `ImageBox`. Child window's position relative to its parent window is always kept by the parent and never exposed to the child window itself.
 
@@ -174,9 +182,9 @@ A window's size may be dependent on its parent window's size or its content size
 
 ![](docs/layout-2.gif)
 
-Re-calculating layout is also called the `reflow` process. Sometimes a window's width and height are both assigned by its parent window, so the parent window already knows its child window's size information. Sometimes parent window only assigns the width of its child, but requires the child to calculate its height and return it back. Sometimes the child window calculates its size independently and returns both width and height to its parent window.
+Sometimes a window's width and height are both assigned by its parent window, so the parent window already knows its child window's size information. Sometimes parent window only assigns the width of its child, but requires the child to calculate its height and return it back. Sometimes the child window calculates its size independently and returns both width and height to its parent window.
 
-All these reflow conditions are handled by only two virtual functions, `OnSizeRefUpdate()` and `OnChildSizeUpdate()`.
+All these reflow conditions are handled by only two virtual functions, `OnSizeRefUpdate()` and `OnChildSizeUpdate()`. `OnSizeRefUpdate()` goes top-down, which is initiated by parent window calling `UpdateChildSizeRef()`, while `OnChildSizeUpdate()` goes bottom-up and is initiated by child window calling `SizeUpdated()`.
 
 A window receives a size reference, or `size_ref` from its parent window when `OnSizeRefUpdate()` is called. This information, along with the window's style, content and child windows' size, are all needed for calculating its current size. After its size is determined, the parent window's size will be finally determined, and the grand-parent window's size, and so on.
 
@@ -188,31 +196,47 @@ The animation below shows the size calculation order of the windows in a *window
 
 #### LayoutType
 
-`LayoutType` is just a compile-time contract used to indicate how a window's width or height will change relative to parent window's width or height, to help ensure the consistency between child window and parent window's reflow behaviour. Actual size calculation still needs to be implemented.
+`LayoutType` is a compile-time contract to indicate how a window's width or height will change relative to parent window's width or height, to help ensure the consistency of reflow behaviour between child and parent window. Actual size calculation still needs to be implemented.
 
-There are three kinds of layout types for both horizontal and virtical dimensions: `Assigned`, `Auto` and `Relative`.
-
-I will only talk about the honrizontal dimension `width` in below sections for simplicity. It is exactly the same for `height`.
+There are three kinds of layout traits for both horizontal and virtical dimensions: `Assigned`, `Auto` and `Relative`. A window can inherit 
 
 ##### Assigned
 
-If the width of a window is `Assigned` by its parent window, its actual width is expected to be the same as `size_ref.width` that parent window provides.
+If the width of a window is `Assigned` by its parent window, its actual width is expected to be the same as `size_ref.width` that parent window provides. So is the height.
 
-If both width and height of a window are `Assigned`, the window will be expected to never call `SizeChanged()` and its parent window will leave `OnChildSizeChange()` empty.
+If both width and height of a window are `Assigned`, the window will be expected to never call `SizeUpdated()` and its parent window will never respond to `OnChildSizeUpdate()`.
 
 ##### Auto
 
+If the width of a window is `Auto`, the window does not refer to `size_ref.width` but calculates the width independently. So is the height.
+
+If both width and height are `Auto`，the window's parent will call `UpdateChildSizeRef()` with an empty `size_ref` only for getting the child window's size, and the window will coorespondingly ignore `size_ref` and only return its size when `OnSizeRefUpdate()` is called. 
+
 ##### Relative
 
-#### Reflow
+If the width of a window is `Relative`, the window will calculate its width based on `size_ref.width` provided by its parent and return the actual width to its parent.
 
-Reflow happens when a window's size is changed due to mouse dragging, content editing, or parent window's resizing. The layout of the window may be recalculated and the content may be further redrawed.
+#### Examples
 
-Windows react differently to resize events. Some windows' size may change exactly according to mouse's current drag position and reorgnizes its content, like `FlowLayout`, while some windows' size may remain the same, and the content is clipped out of scene or a scrollbar is displayed.
+##### Placeholder
 
-The rather complex example `FlowLayoutTest` shows different reactions to resize events. The 
+`Placeholder` provides the simplest implementation of a window that handles size change events.
 
-![]()
+##### TextBox
+
+`TextBox` is a pre-defined control who has `LayoutType<Relative, Auto>` and implements left-to-right, top-to-bottom text layout. It will ignore `size_ref.height` and regard `size_ref.width` as the max width when calculating layout. It returns the actual width and height the text content occupies.
+
+##### ClipFrame
+
+Below is an animation showing a `TextBox` wrapped by `ClipFrame` in the `TextBoxTest` example. The outer gray rectangle outlines the region of `ClipFrame`, while the inner black rectangle outlines the region of `TextBox`.
+
+![](docs/TextBox-and-ClipFrame.gif)
+
+##### ScrollFrame
+
+##### SplitLayout
+
+##### ListLayout
 
 ### Paint
 
@@ -244,7 +268,7 @@ A `FigureQueue` is a collection of `Figure`s. It will be passed to the window by
 
 `Layer` is where `Figure`s are rendered on. A `Layer` draws a `FigureQueue` at a time. `Layer` itself is also a kind of `Figure` that can be drawn on other `Layer`s.
 
-Each root level window, or `DesktopFrame` owns a `DesktopLayer` coupled with a `HWND` resource, and is directly managed by `Desktop`. All `Figure`s are finally drawn on `DesktopLayer` and presented on screen.
+Each root-level window, or `DesktopFrame` owns a `DesktopLayer` coupled with a `HWND` resource, and is directly managed by `Desktop`. All `Figure`s are finally drawn on `DesktopLayer` and presented on screen.
 
 ### Message Handling
 
@@ -274,9 +298,13 @@ Notification messages has no parameter, and currently only includes `MouseEnter`
 
 ### Program Startup
 
-`WndDesign` static library already defined the win32 entrypoint `WinMain()` in `WndDesign\system\win_main.cpp`. It does some necessary initialization work and then calls the main function `int main()` that should be defined in user code.
+`WndDesign` static library already defined the win32 entrypoint `WinMain()` in `system\win_main.cpp`. It does some necessary initialization work and then calls the main function `int main()` that should be defined in user code.
 
-Typically in `main()` function, it is expected that the main frame is created and registered via `global.AddWnd()`, as all test examples show. Then `global.MessageLoop()` should be called to enter win32 message loop and wait for messages to process.
+Typically in user's `main()` function, it is expected that the main frame is created and registered via `global.AddWnd()`, as all test examples show. Then `global.MessageLoop()` should be called to enter win32 message loop and wait for messages to process.
+
+`Global` is actually a wrapper for `Desktop` and exposes only a few interfaces for managing root-level windows. `Desktop` is only used in the static library internally and not meant to be exposed to user.
+
+When the last root-level window is destroyed, the win32 message loop will break and the program ends. By explicitly calling `global.Terminate()` the program can also be ended.
 
 ### Window Definition
 
@@ -287,3 +315,10 @@ All virtual functions are callback functions driven by incoming messages.
 ### Style Definition
 
 `ValueTag` allows 
+
+### Child Window Management
+
+Each window can only be registered by one parent window. Only after registration can a window be added to the *window tree* to receive messages and display contents. Parent window registers a child window by its reference, `WndObject&`.
+
+Parent window can actually own the child window's resource with a `unique_ptr<WndObject>`. This technique is used across almost all examples, which makes it easier to define window tree.
+
