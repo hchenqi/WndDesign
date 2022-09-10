@@ -9,10 +9,10 @@ using namespace WndDesign;
 
 struct MainFrameStyle : DesktopFrame::Style {
 	MainFrameStyle() {
-		width.min(200px).normal(800px).max(100pct);
-		height.min(200px).normal(500px).max(100pct);
+		width.min(100px).normal(800px).max(100pct);
+		height.min(100px).normal(500px).max(100pct);
 		position.setHorizontalCenter().setVerticalCenter();
-		border.width(5).radius(10).color(Color::Violet);
+		border.width(5).color(Color::Gray);
 		title.assign(L"TextBoxTest");
 	}
 };
@@ -20,7 +20,7 @@ struct MainFrameStyle : DesktopFrame::Style {
 
 struct TextBoxStyle : TextBlockStyle {
 	TextBoxStyle() {
-		font.family(L"Segoe UI").size(100).color(Color::Lime);
+		font.family(L"Segoe UI").size(75).color(Color::Lime);
 	}
 };
 
@@ -30,7 +30,10 @@ int main() {
 		new DesktopFrame{
 			MainFrameStyle(),
 			new ClipFrame<>{
-				new TextBox(TextBoxStyle(), L"Hello World!")
+				new BorderFrame{
+					Border(1.0, Color::Black),
+					new TextBox(TextBoxStyle(), L"Hello World!")
+				}
 			}
 		}
 	);
