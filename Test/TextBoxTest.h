@@ -1,6 +1,7 @@
 #include "WndDesign/window/Global.h"
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
+#include "WndDesign/frame/InnerBorderFrame.h"
 #include "WndDesign/control/TextBox.h"
 
 
@@ -30,7 +31,7 @@ int main() {
 		new DesktopFrame{
 			MainFrameStyle(),
 			new ClipFrame<>{
-				new BorderFrame{
+				new InnerBorderFrame{
 					Border(1.0, Color::Black),
 					new TextBox(TextBoxStyle(), L"Hello World!")
 				}
