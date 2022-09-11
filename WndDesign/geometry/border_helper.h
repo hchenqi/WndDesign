@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../geometry/geometry.h"
-#include "../style/cursor.h"
+#include "geometry.h"
+#include "../style/cursor_style.h"
 
 
 BEGIN_NAMESPACE(WndDesign)

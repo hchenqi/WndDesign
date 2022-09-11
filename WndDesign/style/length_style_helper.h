@@ -1,13 +1,13 @@
 #pragma once
 
-#include "style.h"
+#include "length_style.h"
 #include "../geometry/clamp.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-struct StyleHelper {
+struct LengthStyleHelper {
 public:
 	static constexpr Size CalculateSize(ValueTag width, ValueTag height, Size size_ref) {
 		return Size(width.ConvertToPixel(size_ref.width).value(), height.ConvertToPixel(size_ref.height).value());

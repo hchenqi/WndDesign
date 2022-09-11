@@ -1,7 +1,7 @@
 #pragma once
 
 #include "WndFrame.h"
-#include "../style/style.h"
+#include "../style/length_style.h"
 
 
 BEGIN_NAMESPACE(WndDesign)

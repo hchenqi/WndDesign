@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../style/cursor.h"
+#include "../style/cursor_style.h"
 
 
 BEGIN_NAMESPACE(WndDesign)

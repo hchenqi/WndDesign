@@ -206,12 +206,13 @@
     <ClInclude Include="message\mouse_tracker.h" />
     <ClInclude Include="message\notify_msg.h" />
     <ClInclude Include="message\timer.h" />
-    <ClInclude Include="style\border_helper.h" />
-    <ClInclude Include="style\cursor.h" />
-    <ClInclude Include="style\style_helper.h" />
+    <ClInclude Include="geometry\border_helper.h" />
+    <ClInclude Include="style\border_style.h" />
+    <ClInclude Include="style\cursor_style.h" />
+    <ClInclude Include="style\length_style_helper.h" />
     <ClInclude Include="style\text_block_style.h" />
     <ClInclude Include="style\value_tag.h" />
-    <ClInclude Include="style\style.h" />
+    <ClInclude Include="style\length_style.h" />
     <ClInclude Include="system\clipboard.h" />
     <ClInclude Include="system\cursor.h" />
     <ClInclude Include="system\d2d_api.h" />

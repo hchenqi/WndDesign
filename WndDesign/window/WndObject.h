@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../common/uncopyable.h"
-#include "../style/cursor.h"
+#include "../style/cursor_style.h"
 #include "../geometry/geometry.h"
 #include "../figure/figure_queue.h"
 #include "../message/message.h"

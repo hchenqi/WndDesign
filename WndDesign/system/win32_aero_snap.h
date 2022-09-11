@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../style/border_helper.h"
+#include "../geometry/border_helper.h"
 
 
 BEGIN_NAMESPACE(WndDesign)

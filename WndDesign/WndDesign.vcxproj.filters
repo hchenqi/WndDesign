@@ -156,13 +156,13 @@
     <ClInclude Include="style\value_tag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="style\style.h">
+    <ClInclude Include="style\length_style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="style\style_helper.h">
+    <ClInclude Include="style\length_style_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="style\border_helper.h">
+    <ClInclude Include="geometry\border_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="window\desktop.h">
@@ -246,7 +246,7 @@
     <ClInclude Include="geometry\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="style\cursor.h">
+    <ClInclude Include="style\cursor_style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="frame\ScaleFrame.h">
@@ -262,6 +262,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="geometry\scale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="style\border_style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

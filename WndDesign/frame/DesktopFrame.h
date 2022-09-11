@@ -2,7 +2,7 @@
 
 #include "ScaleFrame.h"
 #include "BorderFrame.h"
-#include "../style/style.h"
+#include "../style/length_style.h"
 #include "../figure/desktop_layer.h"
 #include "../geometry/region.h"
 
