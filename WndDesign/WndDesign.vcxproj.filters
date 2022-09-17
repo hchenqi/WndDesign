@@ -255,9 +255,6 @@
     <ClInclude Include="geometry\transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="frame\OverlapFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="layout\OverlapLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -345,9 +342,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="geometry\transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="frame\OverlapFrame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="layout\OverlapLayout.cpp">

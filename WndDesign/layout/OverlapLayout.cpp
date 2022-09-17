@@ -7,26 +7,30 @@ BEGIN_NAMESPACE(WndDesign)
 
 void OverlapLayout::AddChild(frame_ptr frame) {
 	RegisterChild(*frame);
-	auto& frame_ref = *frame_list.emplace_back(std::move(frame));
-	frame_ref.UpdateLayout(UpdateChildSizeRef(frame_ref, size), size);
+	UpdateOverlapFrameChildSizeRef(*frame, size);
+	Redraw(frame_list.emplace_back(std::move(frame))->region);
 }
 
-void OverlapLayout::RemoveChild(frame_ref frame) {
+OverlapLayout::frame_ptr OverlapLayout::RemoveChild(frame_ref frame) {
 	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
-	if (it == frame_list.end()) { throw std::invalid_argument("invalid overlap frame"); }
-	Rect region = (*it)->region;
-	frame_list.erase(it);
-	Redraw(region);
+	if (it == frame_list.end()) { throw std::invalid_argument("invalid OverlapFrame reference"); }
+	frame_ptr ptr = std::move(*it); frame_list.erase(it);
+	Redraw(ptr->region);
+	UnregisterChild(*ptr);
+	return ptr;
 }
 
 Size OverlapLayout::OnSizeRefUpdate(Size size_ref) {
 	size = size_ref;
-	for (auto& frame : frame_list) { frame->UpdateLayout(UpdateChildSizeRef(*frame, size), size); }
+	for (auto& frame : frame_list) { UpdateOverlapFrameChildSizeRef(*frame, size); }
 	return size;
 }
 
-void OverlapLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
-	Redraw(AsFrame(child).UpdateLayout(child_size, size));
+void OverlapLayout::OnOverlapFrameChildRegionUpdate(WndObject& child, Rect child_region) {
+	frame_ref& frame = AsFrame(child);
+	Rect redraw_region = frame.region.Union(child_region);
+	frame.region = child_region;
+	Redraw(redraw_region);
 }
 
 ref_ptr<WndObject> OverlapLayout::HitTest(Point& point) {

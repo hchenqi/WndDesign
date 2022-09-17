@@ -174,7 +174,6 @@
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\text_block.h" />
     <ClInclude Include="frame\InnerBorderFrame.h" />
-    <ClInclude Include="frame\OverlapFrame.h" />
     <ClInclude Include="geometry\scale.h" />
     <ClInclude Include="geometry\transform.h" />
     <ClInclude Include="frame\CenterFrame.h" />
@@ -251,7 +250,6 @@
     <ClCompile Include="figure\shape.cpp" />
     <ClCompile Include="figure\text_block.cpp" />
     <ClCompile Include="frame\LayerFrame.cpp" />
-    <ClCompile Include="frame\OverlapFrame.cpp" />
     <ClCompile Include="geometry\transform.cpp" />
     <ClCompile Include="frame\DesktopFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />

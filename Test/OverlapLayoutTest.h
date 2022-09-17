@@ -20,19 +20,38 @@ struct MainFrameStyle : TitleBarFrame::Style {
 };
 
 
-class Container : public OverlapLayout {
+class MainWindow : public OverlapLayout {
 public:
-	Container() {
-		AddChild(new Frame(new BorderFrame(Border(5px, Color::Wheat), new Wnd(Color(Color::Indigo, 127)))));
-		AddChild(new Frame(new BorderFrame(Border(10px, 20px, Color::Goldenrod), new Wnd(Color(Color::GreenYellow, 63)))));
+	MainWindow() {}
+
+private:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		switch (msg.type) {
+		case MouseMsg::LeftDown: AddChild(new Frame(msg.point)); break;
+		}
 	}
 
 private:
 	class Frame : public OverlapFrame {
 	public:
-		Frame(child_ptr child) : OverlapFrame(PositionStyle(position_center, position_center), std::move(child)) {}
+		Frame(Point point) : OverlapFrame{
+			new BorderFrame{
+				Border(5px, Color::Wheat),
+				new Wnd(Color(Color::Indigo, 64))
+			}
+		}, region(point, Size(300, 300)) {
+			UpdateChildSizeRef(child, region.size);
+		}
+
+		// layout
+	private:
+		Rect region;
+	private:
+		virtual Rect OnOverlapFrameSizeRefUpdate(Size size_ref) override { return region; }
 	private:
 		virtual ref_ptr<WndObject> HitTest(Point& point) override { return this; }
+
+		// message
 	private:
 		MouseTracker mouse_tracker;
 	private:
@@ -42,23 +61,20 @@ private:
 			case MouseMsg::LeftUp: ReleaseCapture(); break;
 			}
 			switch (mouse_tracker.Track(msg)) {
-			case MouseTrackMsg::LeftDrag: {
-				Point position_new = GetRegion().point + (msg.point - mouse_tracker.mouse_down_position);
-				position.left(px(position_new.x)).top(px(position_new.y)); SizeUpdated(GetRegion().size);
-			}
+			case MouseTrackMsg::LeftDrag:
+				region.point += msg.point - mouse_tracker.mouse_down_position;
+				OverlapFrameRegionUpdated(region);
+				break;
+			case MouseTrackMsg::LeftDoubleClick:
+				GetParent().RemoveChild(*this);
+				break;
 			}
 		}
 	};
 
-	class Wnd : public Decorate<WndType<Relative, Relative>, SolidColorBackground> {
+	class Wnd : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground> {
 	public:
 		Wnd(Color background_color) { background = background_color; }
-	private:
-		virtual Size OnSizeRefUpdate(Size size_ref) override {
-			//width.normal(50pct).max(100pct);
-			//height.normal(500px).max(100pct);
-			return Size(size_ref.width / 2, size_ref.height >= 500px ? 500px : size_ref.height);
-		}
 	};
 };
 
@@ -67,7 +83,7 @@ int main() {
 	global.AddWnd(
 		new TitleBarFrame{
 			MainFrameStyle(),
-			new Container
+			new MainWindow
 		}
 	);
 	global.MessageLoop();

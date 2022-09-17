@@ -31,11 +31,10 @@ protected:
 	WndObject& GetParent() const { if (!HasParent()) { throw std::invalid_argument("window has no parent"); } return *parent; }
 
 	// child
-private:
+protected:
 	void VerifyChild(WndObject& child) const {
 		if (child.parent != this) { throw std::invalid_argument("invalid child window"); }
 	}
-protected:
 	void RegisterChild(WndObject& child) {
 		if (child.HasParent()) { throw std::invalid_argument("window already has a parent"); } child.parent = this;
 	}
