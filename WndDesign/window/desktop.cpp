@@ -6,12 +6,17 @@
 
 BEGIN_NAMESPACE(WndDesign)
 
-Desktop desktop;
+Desktop& desktop = Desktop::Get();
 
 
 Desktop::Desktop() {}
 
 Desktop::~Desktop() {}
+
+Desktop& Desktop::Get() {
+	static Desktop desktop;
+	return desktop;
+}
 
 void Desktop::AddChild(frame_ptr frame) {
 	RegisterChild(*frame);

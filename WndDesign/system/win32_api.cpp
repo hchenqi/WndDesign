@@ -24,20 +24,25 @@ struct DesktopFrameApi : DesktopFrame {
 	DesktopFrame::DispatchMouseMsg;
 };
 
+struct DesktopApi : Desktop {
+	Desktop::DispatchKeyMsg;
+	Desktop::LoseFocus;
+};
+
 BEGIN_NAMESPACE(Anonymous)
 
-inline RECT AsWin32Rect(Rect rect) { return { (int)floorf(rect.left()), (int)floorf(rect.top()), (int)ceilf(rect.right()), (int)ceilf(rect.bottom()) }; }
-
-inline Rect AsRect(RECT rect) { return Rect((float)rect.left, (float)rect.top, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top)); }
+bool is_mouse_tracked = false;
+DesktopApi& desktop = static_cast<DesktopApi&>(Desktop::Get());
 
 constexpr float dpi_default = 96.0f;
 
 inline bool IsMouseMsg(UINT msg) { return WM_MOUSEFIRST <= msg && msg <= WM_MOUSELAST; }
 inline bool IsKeyboardMsg(UINT msg) { return WM_KEYFIRST <= msg && msg <= WM_IME_KEYLAST; }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-	static bool is_mouse_tracked = false;
+inline RECT AsWin32Rect(Rect rect) { return { (int)floorf(rect.left()), (int)floorf(rect.top()), (int)ceilf(rect.right()), (int)ceilf(rect.bottom()) }; }
+inline Rect AsRect(RECT rect) { return Rect((float)rect.left, (float)rect.top, (float)(rect.right - rect.left), (float)(rect.bottom - rect.top)); }
 
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	ref_ptr<DesktopFrameApi> frame = reinterpret_cast<ref_ptr<DesktopFrameApi>>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 	if (frame == nullptr) { goto FrameIrrelevantMessages; }
 

@@ -13,23 +13,33 @@ class DesktopFrame;
 
 
 class Desktop : public WndObject {
-public:
+private:
+	friend class DesktopFrame;
+	friend class WndObject;
+	friend struct Ime;
+	friend struct DesktopApi;
+	friend struct Global;
+
+private:
 	using frame_ptr = std::unique_ptr<DesktopFrame>;
 
-public:
+private:
 	Desktop();
 	~Desktop();
+
+public:
+	static Desktop& Get();
 
 	// frame
 private:
 	std::vector<frame_ptr> frame_list;
-public:
+private:
 	void AddChild(frame_ptr frame);
 	void RemoveChild(DesktopFrame& frame);
-public:
+private:
 	DesktopFrame& GetDesktopFrame(WndObject& wnd);
 	DesktopFrame& GetDesktopFramePoint(WndObject& wnd, Point& point);
-public:
+private:
 	void RecreateFrameLayer();
 
 	// paint
@@ -37,7 +47,7 @@ private:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 
 	// mouse message
-public:
+private:
 	void SetCapture(WndObject& wnd);
 	void ReleaseCapture();
 
@@ -45,28 +55,28 @@ public:
 private:
 	ref_ptr<DesktopFrame> frame_focus = nullptr;
 	ref_ptr<WndObject> wnd_focus = nullptr;
-public:
+private:
 	void SetFocus(WndObject& wnd);
 	void ReleaseFocus(WndObject& wnd);
 	void LoseFocus();
-public:
+private:
 	void DispatchKeyMsg(KeyMsg msg) { if (wnd_focus != nullptr) { wnd_focus->OnKeyMsg(msg); } }
 
 	// ime
 private:
 	std::unordered_set<ref_ptr<WndObject>> ime_enabled_wnd;
-public:
+private:
 	void ImeEnable(WndObject& wnd) { ime_enabled_wnd.emplace(&wnd); }
 	void ImeDisable(WndObject& wnd) { ime_enabled_wnd.erase(&wnd); }
 	void ImeSetPosition(WndObject& wnd, Point point);
 
 	// global
-public:
+private:
 	void MessageLoop();
 	void Terminate();
 };
 
-extern Desktop desktop;
+extern Desktop& desktop;
 
 
 END_NAMESPACE(WndDesign)
