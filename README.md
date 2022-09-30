@@ -4,33 +4,33 @@ A C++ GUI library
 
 ## Quick Start
 
+*for Windows 10/11 systems only*
+
 * Install Visual Studio 2022, check **Desktop development with C++**.
 
 * Clone `WndDesign` source code.
 
-* Click open WndDesign.sln, set `Test` as startup project, build, and run.
+* Click open `WndDesign.sln`, set `Test` as startup project, build, and run.
 
 ## Code Structure
 
-There are two projects under the `WndDesign` solution:
+There are two projects contained within the `WndDesign` solution:
 * `WndDesign`: main source code, builds to a static library `WndDesign.lib`.
-* `Test`: test examples, builds to an executable application `Test.exe`.
+* `Test`: test examples, builds to an executable windows application `Test.exe`.
 
 ### WndDesign
 
-Folder-level dependencies are roughly shown in the graph to help one form an overall impression, although precise dependencies should be more complex.
+Folder-level dependencies are roughly shown in the graph below:
 
 ![](docs/dependency.png)
 
-The main contents of each folder are also summarized below.
-
 #### common
 
-Defines some basic macros, namespaces, types, and helper functions.
+Defines some basic macros, types, helper functions, and `namespace WndDesign`.
 
 #### geometry
 
-Defines basic 2D geometry objects and their operations, including `Point`, `Vector`, `Size` and `Rect`. 
+Defines basic 2D geometry objects and their operations, mainly including `Point`, `Vector`, `Size` and `Rect`. 
 
 #### figure
 
@@ -295,6 +295,22 @@ Notification messages has no parameter, and currently only includes `MouseEnter`
 `Timer` receives a callback function as its constructor argument, and can be set to invoke the callback periodically.
 
 ## Develop Guide
+
+### C++ Programming Style
+
+This project targets C++20, and all codes follow the conventions below:
+
+#### Namespaces
+
+Namespaces are declared with `BEGIN_NAMESPACE()` and `END_NAMESPACE()` macros. Anonymous namespace uses the empty `Anonymous` macro.
+
+#### Pointers
+
+Raw pointers `T*` are never explicitly used. They are used only when necessary and should be wrapped with either `ref_ptr<T>` or `alloc_ptr<T>` to indicate its ownership. Smart pointers like `std::unique_ptr<T>` or `std::shared_ptr<T>` should be used in most cases.
+
+#### Virtual Functions
+
+Virtual functions are defined with `virtual` keyword. Pure virtual functions ends with `pure` macro which expands to `= 0`. An overrided virtual function should also have `virtual` keyword and should be followed by the `override` specifier.
 
 ### Program Startup
 
