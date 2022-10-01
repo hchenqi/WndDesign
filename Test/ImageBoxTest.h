@@ -23,7 +23,7 @@ int main() {
 	global.AddWnd(
 		new DesktopFrame{
 			MainFrameStyle(),
-			new SplitLayout<Vertical, First>{
+			new SplitLayoutVertical{
 				new CenterFrame<Assigned, Auto>{
 					new ImageBox(L"R:\\1.jpg")
 				},

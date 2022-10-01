@@ -13,7 +13,7 @@ class ScrollBox;
 
 
 template<>
-class ScrollBox<Vertical> : public SplitLayout<Horizontal, Second> {
+class ScrollBox<Vertical> : public SplitLayoutHorizontal<Assigned, Assigned, Auto, Assigned> {
 protected:
 	using ScrollFrame = ScrollFrame<Vertical>;
 	using Scrollbar = Scrollbar<Vertical>;
@@ -22,7 +22,7 @@ public:
 	using child_ptr = ScrollFrame::child_ptr;
 
 public:
-	ScrollBox(child_ptr child) : SplitLayout{ new Frame(std::move(child)), new Scrollbar() } {
+	ScrollBox(child_ptr child) : SplitLayoutHorizontal{ new Frame(std::move(child)), new Scrollbar() } {
 		GetScrollbar().SetScrollFrame(GetScrollFrame());
 	}
 
@@ -34,8 +34,8 @@ protected:
 	};
 
 protected:
-	ScrollFrame& GetScrollFrame() const { return static_cast<ScrollFrame&>(*first); }
-	Scrollbar& GetScrollbar() const { return static_cast<Scrollbar&>(*second); }
+	ScrollFrame& GetScrollFrame() const { return static_cast<ScrollFrame&>(*child_first); }
+	Scrollbar& GetScrollbar() const { return static_cast<Scrollbar&>(*child_second); }
 };
 
 

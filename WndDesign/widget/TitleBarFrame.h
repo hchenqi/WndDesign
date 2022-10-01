@@ -40,7 +40,7 @@ public:
 public:
 	TitleBarFrame(Style style, child_ptr child, child_ptr_menu menu = new Placeholder<Auto, Assigned>(0.0f)) : DesktopFrame{
 		style,
-		new SplitLayout<Vertical, First>{
+		new SplitLayoutVertical{
 			new TitleBar(*this, style, std::move(menu)),
 			std::move(child)
 		}

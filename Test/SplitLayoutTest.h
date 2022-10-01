@@ -37,7 +37,7 @@ int main() {
 	global.AddWnd(
 		new DesktopFrame{
 			MainFrameStyle(),
-			new SplitLayout<Vertical, First>{
+			new SplitLayoutVertical{
 				new ClipFrame<Assigned, Auto>{
 					new EditBox(EditBoxStyle(), L"edit here...")
 				},
