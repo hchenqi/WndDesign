@@ -171,17 +171,17 @@ static const wchar_t wnd_class_name[] = L"WndDesignFrame";
 HINSTANCE hInstance = NULL;
 
 inline void RegisterWndClass() {
-	static bool has_wnd_class_registered = false;
-	if (!has_wnd_class_registered) {
+	static bool is_wnd_class_registered = false;
+	if (!is_wnd_class_registered) {
 		WNDCLASSEXW wcex = {};
 		wcex.cbSize = sizeof(WNDCLASSEXW);
 		wcex.lpfnWndProc = WndProc;
-		wcex.hInstance = (hInstance = GetModuleHandle(NULL));
+		wcex.hInstance = hInstance = GetModuleHandle(NULL);
 		wcex.lpszClassName = wnd_class_name;
 		wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 		ATOM res = RegisterClassExW(&wcex);
 		if (res == 0) { throw std::runtime_error("register class error"); }
-		has_wnd_class_registered = true;
+		is_wnd_class_registered = true;
 	}
 }
 
