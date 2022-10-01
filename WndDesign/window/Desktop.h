@@ -39,10 +39,10 @@ private:
 private:
 	DesktopFrame& GetDesktopFrame(WndObject& wnd);
 	DesktopFrame& GetDesktopFramePoint(WndObject& wnd, Point& point);
-private:
-	void RecreateFrameLayer();
 
 	// paint
+private:
+	void RecreateFrameLayer();
 private:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 

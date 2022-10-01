@@ -20,8 +20,9 @@ Desktop& Desktop::Get() {
 
 void Desktop::AddChild(frame_ptr frame) {
 	RegisterChild(*frame);
-	frame_list.push_back(std::move(frame));
-	frame_list.back()->Show();
+	frame->InitializeRegion(Win32::GetDesktopSize());
+	frame->Show();
+	frame_list.emplace_back(std::move(frame));
 }
 
 void Desktop::RemoveChild(DesktopFrame& frame) {

@@ -11,7 +11,7 @@ void OverlapLayout::AddChild(frame_ptr frame) {
 	Redraw(frame_list.emplace_back(std::move(frame))->region);
 }
 
-OverlapLayout::frame_ptr OverlapLayout::RemoveChild(frame_ref frame) {
+OverlapLayout::frame_ptr OverlapLayout::RemoveChild(OverlapFrame& frame) {
 	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
 	if (it == frame_list.end()) { throw std::invalid_argument("invalid OverlapFrame reference"); }
 	frame_ptr ptr = std::move(*it); frame_list.erase(it);
@@ -27,7 +27,7 @@ Size OverlapLayout::OnSizeRefUpdate(Size size_ref) {
 }
 
 void OverlapLayout::OnOverlapFrameChildRegionUpdate(WndObject& child, Rect child_region) {
-	frame_ref& frame = AsFrame(child);
+	OverlapFrame& frame = AsFrame(child);
 	Rect redraw_region = frame.region.Union(child_region);
 	frame.region = child_region;
 	Redraw(redraw_region);
@@ -45,6 +45,10 @@ ref_ptr<WndObject> OverlapLayout::HitTest(Point& point) {
 
 Transform OverlapLayout::GetChildTransform(WndObject& child) const {
 	return AsFrame(child).region.point - point_zero;
+}
+
+void OverlapLayout::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
+	Redraw(child_redraw_region + (AsFrame(child).region.point - point_zero));
 }
 
 void OverlapLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {

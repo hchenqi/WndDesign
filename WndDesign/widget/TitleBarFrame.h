@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../frame/DesktopFrame.h"
+#include "../frame/BorderFrame.h"
 #include "../frame/ClipFrame.h"
 #include "../frame/MaxFrame.h"
 #include "../layout/SplitLayout.h"
@@ -9,7 +10,9 @@
 #include "../control/TextBox.h"
 #include "../control/Button.h"
 #include "../wrapper/Background.h"
+#include "../style/length_style_helper.h"
 #include "../message/mouse_tracker.h"
+#include "../system/cursor.h"
 #include "../system/win32_aero_snap.h"
 
 
@@ -18,45 +21,104 @@ BEGIN_NAMESPACE(WndDesign)
 
 class TitleBarFrame : public DesktopFrame {
 public:
-	using child_ptr = DesktopFrame::child_ptr;
+	using child_ptr = WndDesign::child_ptr<Assigned, Assigned>;
 	using child_ptr_menu = WndDesign::child_ptr<Auto, Assigned>;
 
 public:
-	struct Style : DesktopFrame::Style {
-		struct TitleBarStyle {
-		public:
-			float _height = 30.0f;
-			float _max_title_length = 300.0f;
-			Color _background = Color::DarkGray;
-		public:
-			constexpr TitleBarStyle& height(float height) { _height = height; return *this; }
-			constexpr TitleBarStyle& maxt_title_length(float maxt_title_length) { _max_title_length = maxt_title_length; return *this; }
-			constexpr TitleBarStyle& background(Color background) { _background = background; return *this; }
-		}title_bar;
+	struct TitleBarStyle {
+	public:
+		float _height = 30.0f;
+		float _max_title_length = 300.0f;
+		Color _background = Color::DarkGray;
+	public:
+		constexpr TitleBarStyle& height(float height) { _height = height; return *this; }
+		constexpr TitleBarStyle& maxt_title_length(float maxt_title_length) { _max_title_length = maxt_title_length; return *this; }
+		constexpr TitleBarStyle& background(Color background) { _background = background; return *this; }
+	};
 
+	struct Style {
+		LengthStyle width;
+		LengthStyle height;
+		PositionStyle position;
+		Border border;
+		TitleBarStyle title_bar;
+		std::wstring title;
 		TextBox::Style title_format;
 	};
 
 public:
 	TitleBarFrame(Style style, child_ptr child, child_ptr_menu menu = new Placeholder<Auto, Assigned>(0.0f)) : DesktopFrame{
-		style,
-		new SplitLayoutVertical{
-			new TitleBar(*this, style, std::move(menu)),
-			std::move(child)
+		style.title,
+		new ResizeBorder{
+			style.border,
+			new SplitLayoutVertical{
+				new TitleBar(*this, style, std::move(menu)),
+				std::move(child)
+			}
 		}
-	}, title(title) {
+	}, style(style), title(title) {
 	}
 
+	// style
+private:
+	Style style;
 private:
 	ref_ptr<TextBox> title;
 public:
 	void SetTitle(std::wstring str) { title->SetText(str); DesktopFrame::SetTitle(str); }
 
-protected:
-	bool IsMaximized() const { return status == Status::Maximized; }
-	void MaximizeOrRestore() { if (status == Status::Normal) { Maximize(); } else if (status == Status::Maximized) { Restore(); } }
+	// layout
+private:
+	virtual std::pair<Size, Size> CalculateMinMaxSize(Size size_ref) override {
+		return LengthStyleHelper::CalculateMinMaxSize(style.width, style.height, size_ref);
+	}
+	virtual Rect OnDesktopFrameSizeRefUpdate(Size size_ref) override {
+		Rect region = LengthStyleHelper::CalculateRegion(style.width, style.height, style.position, size_ref);
+		UpdateChildSizeRef(child, region.size);
+		return region;
+	}
 
-protected:
+	// state
+private:
+	bool IsMaximized() { return GetState() == State::Maximized; }
+	void MaximizeOrRestore() { if (GetState() == State::Normal) { Maximize(); } else if (GetState() == State::Maximized) { Restore(); } }
+private:
+	virtual void OnStateChange(State state) {
+		switch (state) {
+		case State::Normal: GetBorder().Restore(); break;
+		case State::Maximized: GetBorder().Hide(); break;
+		}
+	}
+
+	// child
+private:
+	class ResizeBorder : public BorderFrame<Assigned, Assigned> {
+	public:
+		ResizeBorder(Border border, child_ptr child) : BorderFrame<Assigned, Assigned>(border, std::move(child)), border_copy(border) {
+			cursor = Cursor::Hide;
+		}
+	protected:
+		Border border_copy;
+	public:
+		void Hide() { border = {}; }
+		void Restore() { border = border_copy; }
+	protected:
+		virtual void OnMouseMsg(MouseMsg msg) override {
+			if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
+				BorderPosition border_position = HitTestBorderPosition(size, border._width + border._radius, msg.point);
+				if (msg.type == MouseMsg::Move) {
+					SetCursor(GetBorderPositionCursor(border_position));
+				}
+				else {
+					AeroSnapBorderResizingEffect(*this, border_position);
+				}
+			}
+		}
+	};
+private:
+	ResizeBorder& GetBorder() { return static_cast<ResizeBorder&>(*child); }
+
+private:
 	class TitleBar : public Decorate<BarLayout, SolidColorBackground> {
 	public:
 		using Style = TitleBarFrame::Style;

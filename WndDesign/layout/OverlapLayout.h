@@ -11,10 +11,7 @@ private:
 	friend class OverlapLayout;
 
 public:
-	using child_ptr = child_ptr<>;
-
-public:
-	OverlapFrame(child_ptr child) : WndFrame(std::move(child)) {}
+	OverlapFrame(child_ptr<Relative, Relative> child) : WndFrame(std::move(child)) {}
 	~OverlapFrame() {}
 
 	// parent
@@ -27,7 +24,8 @@ private:
 protected:
 	void OverlapFrameRegionUpdated(Rect region);
 protected:
-	virtual Rect OnOverlapFrameSizeRefUpdate(Size size_ref) { return Rect(point_zero, size_ref); }
+	virtual Rect OnOverlapFrameSizeRefUpdate(Size size_ref) { UpdateChildSizeRef(child, size_ref); return Rect(point_zero, size_ref); }
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {}
 private:
 	void SizeUpdated() {}  // never used
 	virtual Size OnSizeRefUpdate(Size size_ref) override final { return size_ref; }  // never used
@@ -40,7 +38,6 @@ private:
 
 public:
 	using frame_ptr = std::unique_ptr<OverlapFrame>;
-	using frame_ref = OverlapFrame&;
 
 public:
 	OverlapLayout() {}
@@ -50,17 +47,17 @@ public:
 protected:
 	std::vector<frame_ptr> frame_list;
 protected:
-	static frame_ref AsFrame(WndObject& child) { return static_cast<frame_ref>(child); }
+	static OverlapFrame& AsFrame(WndObject& child) { return static_cast<OverlapFrame&>(child); }
 public:
 	void AddChild(frame_ptr frame);
 	void AddChild(alloc_ptr<OverlapFrame> frame) { AddChild(frame_ptr(frame)); }
-	frame_ptr RemoveChild(frame_ref frame);
+	frame_ptr RemoveChild(OverlapFrame& frame);
 
 	// layout
 protected:
 	Size size = size_empty;
 protected:
-	void UpdateOverlapFrameChildSizeRef(frame_ref& frame, Size size_ref) { VerifyChild(frame); frame.region = frame.OnOverlapFrameSizeRefUpdate(size_ref); }
+	void UpdateOverlapFrameChildSizeRef(OverlapFrame& frame, Size size_ref) { VerifyChild(frame); frame.region = frame.OnOverlapFrameSizeRefUpdate(size_ref); }
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnOverlapFrameChildRegionUpdate(WndObject& child, Rect child_region);
@@ -73,6 +70,7 @@ private:
 
 	// paint
 protected:
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
 };
 

@@ -9,13 +9,21 @@
 using namespace WndDesign;
 
 
-struct MainFrameStyle : DesktopFrame::Style {
-	MainFrameStyle() {
-		width.normal(800px).max(100pct);
-		height.normal(500px).max(100pct);
-		position.setHorizontalCenter().setVerticalCenter();
-		border.width(5).color(Color::Violet);
-		title.assign(L"ListLayoutTest");
+class MainFrame : public DesktopFrame {
+public:
+	using DesktopFrame::DesktopFrame;
+private:
+	Size size = Size(800, 500);
+private:
+	virtual std::pair<Size, Size> CalculateMinMaxSize(Size size_ref) {
+		return { Size(100, 100), size_ref };
+	}
+	virtual Rect OnDesktopFrameSizeRefUpdate(Size size_ref) override {
+		Rect region;
+		region.size = UpdateChildSizeRef(child, size);
+		region.point.x = (size_ref.width - region.size.width) / 2;
+		region.point.y = (size_ref.height - region.size.height) / 2;
+		return region;
 	}
 };
 
@@ -42,8 +50,8 @@ struct EditBoxStyle2 : EditBox::Style {
 
 int main() {
 	global.AddWnd(
-		new DesktopFrame{
-			MainFrameStyle(),
+		new MainFrame{
+			L"ListLayoutTest",
 			new ScrollFrame{
 				new ListLayout<Vertical>{
 					100,

@@ -3,18 +3,51 @@
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/frame/InnerBorderFrame.h"
 #include "WndDesign/control/TextBox.h"
+#include "WndDesign/style/border_style.h"
+#include "WndDesign/geometry/helper.h"
+#include "WndDesign/system/cursor.h"
+#include "WndDesign/system/win32_aero_snap.h"
 
 
 using namespace WndDesign;
 
 
-struct MainFrameStyle : DesktopFrame::Style {
-	MainFrameStyle() {
-		width.min(100px).normal(800px).max(100pct);
-		height.min(100px).normal(500px).max(100pct);
-		position.setHorizontalCenter().setVerticalCenter();
-		border.width(5).color(Color::Gray);
-		title.assign(L"TextBoxTest");
+class MainFrame : public DesktopFrame {
+public:
+	using DesktopFrame::DesktopFrame;
+private:
+	Size size = Size(800, 500);
+private:
+	virtual std::pair<Size, Size> CalculateMinMaxSize(Size size_ref) {
+		return { Size(100, 100), size_ref };
+	}
+	virtual Rect OnDesktopFrameSizeRefUpdate(Size size_ref) override {
+		Rect region;
+		region.size = UpdateChildSizeRef(child, size);
+		region.point.x = (size_ref.width - region.size.width) / 2;
+		region.point.y = (size_ref.height - region.size.height) / 2;
+		return region;
+	}
+};
+
+
+class ResizeBorder : public InnerBorderFrame<Assigned, Assigned> {
+public:
+	ResizeBorder(child_ptr child) : InnerBorderFrame<Assigned, Assigned>(Border(5.0, Color(Color::Yellow, 127)), std::move(child)) {}
+private:
+	virtual ref_ptr<WndObject> HitTest(Point& point) override {
+		if (PointInRoundedRectangle(point, Extend(Rect(point_zero, size), -border._width), border._radius)) { return child; }
+		return this;
+	}
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
+			BorderPosition border_position = HitTestBorderPosition(size, border._width + border._radius, msg.point);
+			if (msg.type == MouseMsg::Move) {
+				SetCursor(GetBorderPositionCursor(border_position));
+			} else {
+				AeroSnapBorderResizingEffect(*this, border_position);
+			}
+		}
 	}
 };
 
@@ -28,12 +61,14 @@ struct TextBoxStyle : TextBlockStyle {
 
 int main() {
 	global.AddWnd(
-		new DesktopFrame{
-			MainFrameStyle(),
-			new ClipFrame<>{
-				new InnerBorderFrame{
-					Border(1.0, Color::Black),
-					new TextBox(TextBoxStyle(), L"Hello World!")
+		new MainFrame{
+			L"TextBoxTest",
+			new ResizeBorder{
+				new ClipFrame<>{
+					new InnerBorderFrame{
+						Border(1.0, Color::Black),
+						new TextBox(TextBoxStyle(), L"Hello World!")
+					}
 				}
 			}
 		}

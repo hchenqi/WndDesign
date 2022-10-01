@@ -8,6 +8,19 @@
 using namespace WndDesign;
 
 
+class MainFrame : public DesktopFrame {
+public:
+	using DesktopFrame::DesktopFrame;
+private:
+	Rect region = Rect(100, 100, 800, 500);
+private:
+	virtual Rect OnDesktopFrameSizeRefUpdate(Size size_ref) override {
+		region.size = UpdateChildSizeRef(child, region.size);
+		return region;
+	}
+};
+
+
 class EmptyWindow : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground> {
 public:
 	EmptyWindow() {
@@ -34,13 +47,6 @@ private:
 
 
 int main() {
-	DesktopFrame::Style style;
-	style.width.normal(800px).max(100pct);
-	style.height.normal(500px).max(100pct);
-	style.position.setHorizontalCenter().setVerticalCenter();
-	style.border.width(5).color(Color::Violet);
-	style.title.assign(L"DesktopFrameTest");
-
-	global.AddWnd(new DesktopFrame(style, new EmptyWindow()));
+	global.AddWnd(new MainFrame(L"DesktopFrameTest", new EmptyWindow()));
 	global.MessageLoop();
 }

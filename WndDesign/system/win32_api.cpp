@@ -15,8 +15,8 @@ struct DesktopFrameApi : DesktopFrame {
 	DesktopFrame::SetScale;
 	DesktopFrame::SetSize;
 	DesktopFrame::SetPoint;
-	DesktopFrame::Status;
-	DesktopFrame::SetStatus;
+	DesktopFrame::State;
+	DesktopFrame::SetState;
 	DesktopFrame::Destroy;
 	DesktopFrame::Draw;
 	DesktopFrame::LoseTrack;
@@ -101,7 +101,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 			// region message
 		case WM_GETMINMAXINFO: {
 			MINMAXINFO* min_max_info = reinterpret_cast<MINMAXINFO*>(lparam);
-			auto [size_min, region_max] = frame->GetMinMaxRegion();
+			auto [size_min, region_max] = frame->GetMinMaxRegion(Win32::GetDesktopSize());
 			min_max_info->ptMaxPosition = { (int)floorf(region_max.point.x), (int)floorf(region_max.point.y) };
 			min_max_info->ptMaxSize = { (int)ceilf(region_max.size.width), (int)ceilf(region_max.size.height) };
 			min_max_info->ptMinTrackSize = { (int)floorf(size_min.width), (int)floorf(size_min.height) };
@@ -110,7 +110,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_WINDOWPOSCHANGING: break;
 		case WM_WINDOWPOSCHANGED: return DefWindowProc(hwnd, msg, wparam, lparam);
 		case WM_MOVE: frame->SetPoint(Point((short)LOWORD(lparam), (short)HIWORD(lparam))); break;
-		case WM_SIZE: frame->SetStatus(static_cast<DesktopFrameApi::Status>(wparam <= 2 ? wparam : 2));
+		case WM_SIZE: frame->SetState(static_cast<DesktopFrameApi::State>(wparam <= 2 ? wparam : 2));
 			if (wparam != SIZE_MINIMIZED) { frame->SetSize(Size(LOWORD(lparam), HIWORD(lparam))); } break;
 
 			// notifications

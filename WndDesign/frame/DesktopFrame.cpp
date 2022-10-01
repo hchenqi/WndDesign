@@ -1,30 +1,25 @@
 #include "DesktopFrame.h"
 #include "../window/desktop.h"
-#include "../style/length_style_helper.h"
-#include "../geometry/border_helper.h"
 #include "../figure/desktop_layer.h"
-#include "../figure/shape.h"
+#include "../geometry/helper.h"
 #include "../system/win32_api.h"
-#include "../system/win32_aero_snap.h"
-#include "../system/cursor.h"
 #include "../system/d2d_api.h"
 #include "../system/directx_resource.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
+BEGIN_NAMESPACE(Anonymous)
 
-DesktopFrame::DesktopFrame(Style style, child_ptr child) :
-	ScaleFrame({}, new BorderFrame(style.border, std::move(child))), width(style.width), height(style.height) {
-	cursor = Cursor::Hide;
-	hwnd = Win32::CreateWnd(region_empty, style.title);
-	scale = Scale(Win32::GetWndDpiScale(hwnd));
-	Size desktop_size = Win32::GetDesktopSize() * scale.Invert();
-	region = LengthStyleHelper::CalculateRegion(style.width, style.height, style.position, desktop_size) * scale;
-	OnSizeRefUpdate(region.size);
-	Win32::SetWndRegion(hwnd, region);
+inline float RoundWin32Length(float length) { length = ceilf(length); return length < 14.0f ? 14.0f : length; }
+
+END_NAMESPACE(Anonymous)
+
+
+DesktopFrame::DesktopFrame(std::wstring title, child_ptr<> child) : WndFrame(std::move(child)) {
+	hwnd = Win32::CreateWnd(region_empty, title);
 	Win32::SetWndUserData(hwnd, this);
-	RecreateLayer();
+	scale = Scale(Win32::GetWndDpiScale(hwnd));
 }
 
 DesktopFrame::~DesktopFrame() {
@@ -33,28 +28,36 @@ DesktopFrame::~DesktopFrame() {
 	Win32::DestroyWnd(hwnd);
 }
 
-std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion() const {
-	Size desktop_size = Win32::GetDesktopSize() * scale.Invert();
-	auto [size_min, size_max] = LengthStyleHelper::CalculateMinMaxSize(width, height, desktop_size);
-	return { size_min * scale, Rect(point_zero, size_max * scale) };
-}
-
 void DesktopFrame::SetTitle(std::wstring title) { Win32::SetWndTitle(hwnd, title); }
 
 void DesktopFrame::SetSize(Size size) {
 	if (region.size != size) {
 		region.size = size;
-		OnSizeRefUpdate(region.size);
+		UpdateChildSizeRef(child, size * scale.Invert());
 		ResizeLayer();
 	}
 }
 
-void DesktopFrame::SetStatus(Status status) {
-	this->status = status;
-	switch (status) {
-	case Status::Normal: GetBorder().Restore(); break;
-	case Status::Maximized: GetBorder().Hide(); break;
+std::pair<Size, Rect> DesktopFrame::GetMinMaxRegion(Size size_ref) {
+	auto [size_min, size_max] = CalculateMinMaxSize(size_ref * scale.Invert());
+	return { size_min * scale, Rect(point_zero, size_max * scale) };
+}
+
+void DesktopFrame::InitializeRegion(Size size_ref) {
+	region = OnDesktopFrameSizeRefUpdate(size_ref * scale.Invert()) * scale;
+	region.size = Size(RoundWin32Length(region.size.width), RoundWin32Length(region.size.height));
+	Win32::SetWndRegion(hwnd, region);
+	RecreateLayer();
+}
+
+void DesktopFrame::DesktopFrameRegionUpdated(Rect region) {
+	region = region * scale;
+	region.size = Size(RoundWin32Length(region.size.width), RoundWin32Length(region.size.height));
+	if (this->region.size != region.size) {
+		this->region.size = region.size;
+		ResizeLayer();
 	}
+	Win32::SetWndRegion(hwnd, region);
 }
 
 void DesktopFrame::Show() { Win32::ShowWnd(hwnd); }
@@ -96,15 +99,14 @@ void DesktopFrame::Draw() {
 	layer.Present(render_rect);
 }
 
-void DesktopFrame::BorderFrame::OnMouseMsg(MouseMsg msg) {
-	if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
-		BorderPosition border_position = HitTestBorderPosition(size, border._width + border._radius, msg.point);
-		if (msg.type == MouseMsg::Move) {
-			SetCursor(GetBorderPositionCursor(border_position));
-		} else {
-			AeroSnapBorderResizingEffect(*this, border_position);
-		}
-	}
+void DesktopFrame::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
+	Redraw(child_redraw_region * scale);
+}
+
+void DesktopFrame::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
+	figure_queue.Group(scale, region_infinite, [&]() {
+		DrawChild(child, point_zero, figure_queue, draw_region * scale.Invert());
+	});
 }
 
 
