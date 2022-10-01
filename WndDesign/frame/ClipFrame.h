@@ -23,27 +23,20 @@ protected:
 template<>
 class ClipFrame<Assigned, Auto> : public WndFrame, public LayoutType<Assigned, Auto> {
 public:
-	ClipFrame(child_ptr<Relative, Auto> child) : WndFrame(std::move(child)) {
-		SetChildData<uint>(this->child, child_relative);
-	}
-	ClipFrame(child_ptr<Auto, Auto> child) : WndFrame(std::move(child)) {
-		size.height = UpdateChildSizeRef(this->child, Size()).height; SetChildData<uint>(this->child, child_auto);
-	}
+	ClipFrame(child_ptr<Relative, Auto> child) : WndFrame(std::move(child)) {}
 protected:
 	Size size;
 protected:
-	enum {
-		child_relative,
-		child_auto,
-	};
-protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size.width = size_ref.width;
-		if (GetChildData<uint>(child) == child_relative) { size.height = UpdateChildSizeRef(child, size).height; }
+		size.height = UpdateChildSizeRef(child, size).height;
 		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
-		if (size.height != child_size.height) { size.height = child_size.height; SizeUpdated(size); }
+		if (size.height != child_size.height) {
+			size.height = child_size.height;
+			SizeUpdated(size);
+		}
 	}
 };
 
@@ -51,27 +44,20 @@ protected:
 template<>
 class ClipFrame<Auto, Assigned> : public WndFrame, public LayoutType<Auto, Assigned> {
 public:
-	ClipFrame(child_ptr<Auto, Relative> child) : WndFrame(std::move(child)) {
-		SetChildData<uint>(this->child, child_relative);
-	}
-	ClipFrame(child_ptr<Auto, Auto> child) : WndFrame(std::move(child)) {
-		size.width = UpdateChildSizeRef(this->child, Size()).width; SetChildData<uint>(this->child, child_auto);
-	}
+	ClipFrame(child_ptr<Auto, Relative> child) : WndFrame(std::move(child)) {}
 protected:
 	Size size;
 protected:
-	enum {
-		child_relative,
-		child_auto,
-	};
-protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		size.height = size_ref.height;
-		if (GetChildData<uint>(child) == child_relative) { size.width = UpdateChildSizeRef(child, size).width; }
+		size.width = UpdateChildSizeRef(child, size).width;
 		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
-		if (size.width != child_size.width) { size.width = child_size.width; SizeUpdated(size); }
+		if (size.width != child_size.width) {
+			size.width = child_size.width;
+			SizeUpdated(size);
+		}
 	}
 };
 

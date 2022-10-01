@@ -8,56 +8,48 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-struct Assigned {};
 struct Relative {};
-struct Auto {};
+struct Assigned : Relative {};
+struct Auto : Relative {};
+
+template<class T> constexpr bool IsRelative = std::is_same_v<T, Relative>;
+template<class T> constexpr bool IsAssigned = std::is_same_v<T, Assigned>;
+template<class T> constexpr bool IsAuto = std::is_same_v<T, Auto>;
 
 template<class WidthType, class HeightType>
-struct layout_type {
-	template<class T, class... Ts>
-	static constexpr bool is_any_of_v = std::disjunction_v<std::is_same<T, Ts>...>;
-
-	template<class T>
-	static constexpr bool is_layout_type_v = is_any_of_v<T, Assigned, Relative, Auto>;
-
-	static_assert(is_layout_type_v<WidthType> && is_layout_type_v<HeightType>, "invalid layout type");
+struct LayoutType {
+	static_assert(std::is_base_of_v<Relative, WidthType> && std::is_base_of_v<Relative, HeightType>, "invalid layout type");
 
 	using width_type = WidthType;
 	using height_type = HeightType;
 };
 
 template<class WidthType, class HeightType>
-struct LayoutType {
-	using layout_type = layout_type<WidthType, HeightType>;
-};
-
-template<class WidthType, class HeightType>
 class WndType : public WndObject, public LayoutType<WidthType, HeightType> {};
 
 
-template<class WidthType = void, class HeightType = void>
+template<class WidthType = Relative, class HeightType = Relative>
 class child_ptr;
 
 template<>
-class child_ptr<void, void> : public std::unique_ptr<WndObject> {
-private:
-	void VerifyNonNull() const { if (*this == nullptr) { throw std::invalid_argument("invalid child pointer"); } }
+class child_ptr<Relative, Relative> : public std::unique_ptr<WndObject> {
 public:
 	child_ptr() {}
-	child_ptr(std::unique_ptr<WndObject> ptr) : std::unique_ptr<WndObject>(std::move(ptr)) { VerifyNonNull(); }
+	child_ptr(std::unique_ptr<WndObject> ptr) : std::unique_ptr<WndObject>(std::move(ptr)) {}
 	child_ptr(alloc_ptr<WndObject> ptr) : child_ptr(std::unique_ptr<WndObject>(ptr)) {}
-	operator WndObject& () const { VerifyNonNull(); return **this; }
-	operator ref_ptr<WndObject> () const { VerifyNonNull(); return get(); }
+public:
+	operator WndObject& () const { return **this; }
+	operator ref_ptr<WndObject> () const { return get(); }
 };
 
 template<class WidthType, class HeightType>
 class child_ptr : public child_ptr<> {
 public:
 	child_ptr() {}
-	template<class ChildType, class = std::enable_if_t<std::is_same_v<layout_type<WidthType, HeightType>, typename ChildType::layout_type>>>
+	template<class ChildType> requires (std::is_base_of_v<WidthType, typename ChildType::width_type> && std::is_base_of_v<HeightType, typename ChildType::height_type>)
 	child_ptr(std::unique_ptr<ChildType> ptr) : child_ptr<>(std::move(ptr)) {}
-	template<class ChildType, class = std::enable_if_t<std::is_same_v<layout_type<WidthType, HeightType>, typename ChildType::layout_type>>>
-	child_ptr(alloc_ptr<ChildType> ptr) : child_ptr<>(ptr) {}
+	template<class ChildType>
+	child_ptr(alloc_ptr<ChildType> ptr) : child_ptr(std::unique_ptr<ChildType>(ptr)) {}
 };
 
 
@@ -72,8 +64,8 @@ struct extract_layout_type<child_ptr<WidthType, HeightType>> {
 
 template<class ChildType>
 struct extract_layout_type<alloc_ptr<ChildType>> {
-	using width_type = typename ChildType::layout_type::width_type;
-	using height_type = typename ChildType::layout_type::height_type;
+	using width_type = typename ChildType::width_type;
+	using height_type = typename ChildType::height_type;
 };
 
 template<class ChildType>

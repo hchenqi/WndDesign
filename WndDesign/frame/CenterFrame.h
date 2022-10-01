@@ -35,13 +35,9 @@ protected:
 template<>
 class CenterFrame<Assigned, Assigned> : public _CenterFrame_Base, public LayoutType<Assigned, Assigned> {
 public:
-	CenterFrame(child_ptr<Assigned, Auto> child) : _CenterFrame_Base(std::move(child)) {}
-	CenterFrame(child_ptr<Auto, Assigned> child) : _CenterFrame_Base(std::move(child)) {}
-	CenterFrame(child_ptr<Auto, Auto> child) : _CenterFrame_Base(std::move(child)) {}
+	CenterFrame(child_ptr<Relative, Relative> child) : _CenterFrame_Base(std::move(child)) {}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
-		if (size != size_ref) { size = size_ref; child_size = UpdateChildSizeRef(child, size); } return size;
-	}
+	virtual Size OnSizeRefUpdate(Size size_ref) override { child_size = UpdateChildSizeRef(child, size = size_ref); return size; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { this->child_size = child_size; }
 };
 
@@ -49,12 +45,12 @@ protected:
 template<>
 class CenterFrame<Assigned, Auto> : public _CenterFrame_Base, public LayoutType<Assigned, Auto> {
 public:
-	CenterFrame(child_ptr<Auto, Auto> child) : _CenterFrame_Base(std::move(child)) {
-		child_size = UpdateChildSizeRef(this->child, Size());
-		size.height = child_size.height;
-	}
+	CenterFrame(child_ptr<Relative, Auto> child) : _CenterFrame_Base(std::move(child)) {}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { size.width = size_ref.width; return size; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
+		child_size = UpdateChildSizeRef(this->child, size_ref);
+		return size = Size(size_ref.width, child_size.height);
+	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		this->child_size = child_size;
 		if (size.height != child_size.height) { size.height = child_size.height; SizeUpdated(size); }
@@ -65,12 +61,12 @@ protected:
 template<>
 class CenterFrame<Auto, Assigned> : public _CenterFrame_Base, public LayoutType<Auto, Assigned> {
 public:
-	CenterFrame(child_ptr<Auto, Auto> child) : _CenterFrame_Base(std::move(child)) {
-		child_size = UpdateChildSizeRef(this->child, Size());
-		size.width = child_size.width;
-	}
+	CenterFrame(child_ptr<Auto, Relative> child) : _CenterFrame_Base(std::move(child)) {}
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { size.height = size_ref.height; return size; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
+		child_size = UpdateChildSizeRef(this->child, size_ref);
+		return size = Size(child_size.width, size_ref.height);
+	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		this->child_size = child_size;
 		if (size.width != child_size.width) { size.width = child_size.width; SizeUpdated(size); }
