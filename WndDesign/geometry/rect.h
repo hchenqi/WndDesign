@@ -2,6 +2,7 @@
 
 #include "point.h"
 #include "size.h"
+#include "interval.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -13,6 +14,7 @@ struct Rect {
 
 	explicit constexpr Rect() : point(), size() {}
 	explicit constexpr Rect(Point point, Size size) : point(point), size(size) {}
+	explicit constexpr Rect(Interval horizontal, Interval vertical) : point(horizontal.begin, vertical.begin), size(horizontal.length, vertical.length) {}
 	explicit constexpr Rect(float x, float y, float width, float height) : point(x, y), size(width, height) {}
 
 	constexpr bool operator==(const Rect& rect) const { return point == rect.point && size == rect.size; }
@@ -28,6 +30,9 @@ struct Rect {
 	constexpr Point RightTop() const { return Point(right(), top()); }
 	constexpr Point RightBottom() const { return Point(right(), bottom()); }
 	constexpr Point Center() const { return Point(point.x + size.width / 2, point.y + size.height / 2); }
+
+	constexpr Interval Horizontal() const { return Interval(point.x, size.width); }
+	constexpr Interval Vertical() const { return Interval(point.y, size.height); }
 
 	constexpr bool IsEmpty() const { return size.IsEmpty(); }
 

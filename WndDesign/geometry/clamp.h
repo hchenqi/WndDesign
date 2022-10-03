@@ -1,34 +1,33 @@
 #pragma once
 
-#include "geometry.h"
-#include "interval.h"
+#include "rect.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-constexpr float clamp(float length_normal, float length_min, float length_max) {
-	if (length_normal < length_min) { length_normal = length_min; }
-	if (length_normal > length_max) { length_normal = length_max; }
-	return length_normal;
+constexpr float clamp(float pos, float pos_min, float pos_max) {
+	if (pos < pos_min) { pos = pos_min; }
+	if (pos > pos_max) { pos = pos_max; }
+	return pos;
 }
 
 constexpr float clamp(float number, Interval range) {
-	if (number < range.left()) { return range.left(); }
-	if (number >= range.right()) { return range.right() - 1; }
-	return number;
+	return clamp(number, range.left(), range.right());
 }
 
-constexpr float clamp(Interval interval, Interval range) {
-	return clamp(clamp(interval.right(), range) - interval.length, range);
+constexpr Interval clamp(Interval interval, Interval range) {
+	interval.length = clamp(interval.length, 0, range.length);
+	interval.begin = clamp(interval.begin, range.begin, range.right() - interval.length);
+	return interval;
 }
 
 constexpr Point clamp(Point point, Rect region) {
 	return Point(clamp(point.x, Interval(region.point.x, region.size.width)), clamp(point.y, Interval(region.point.y, region.size.height)));
 }
 
-constexpr Point clamp(Rect rect, Rect region) {
-	return clamp(clamp(rect.RightBottom(), region) - Vector(rect.size.width, rect.size.height), region);
+constexpr Rect clamp(Rect rect, Rect region) {
+	return Rect(clamp(rect.Horizontal(), region.Horizontal()), clamp(rect.Vertical(), region.Vertical()));
 }
 
 

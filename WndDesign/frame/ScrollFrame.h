@@ -43,7 +43,7 @@ public:
 		Scroll(point - clamp(point, Rect(frame_offset, size)));
 	}
 	void ScrollIntoView(Rect rect) {
-		Scroll(rect.point - clamp(rect, Rect(frame_offset, size)));
+		Scroll(rect.point - clamp(rect, Rect(frame_offset, size)).point);
 	}
 protected:
 	virtual void OnFrameOffsetUpdate() {}
