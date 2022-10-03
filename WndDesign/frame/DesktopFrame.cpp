@@ -79,16 +79,14 @@ void DesktopFrame::RecreateLayer() {
 	Redraw(region_infinite);
 }
 
-void DesktopFrame::Redraw(Rect redraw_region) {
-	redraw_region = Extend(redraw_region, 0.5f).Intersect(Rect(point_zero, region.size));
-	invalid_region.Union(redraw_region);
-	Win32::InvalidateWndRegion(hwnd, redraw_region);
-}
-
-void DesktopFrame::Draw() {
+void DesktopFrame::OnDraw() {
 	Rect render_rect = ceil(invalid_region.GetBoundingRect()); if (render_rect.IsEmpty()) { return; }
 	BeginDraw();
-	FigureQueue figure_queue([&](FigureQueue& figure_queue) { OnDraw(figure_queue, render_rect); });
+	FigureQueue figure_queue([&](FigureQueue& figure_queue) {
+		figure_queue.Group(scale, region_infinite, [&]() {
+			OnDraw(figure_queue, render_rect * scale.Invert());
+		});
+	});
 	layer.DrawFigureQueue(figure_queue, vector_zero, render_rect);
 	try {
 		EndDraw();
@@ -100,14 +98,10 @@ void DesktopFrame::Draw() {
 	layer.Present(render_rect);
 }
 
-void DesktopFrame::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
-	Redraw(child_redraw_region * scale);
-}
-
-void DesktopFrame::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
-	figure_queue.Group(scale, region_infinite, [&]() {
-		DrawChild(child, point_zero, figure_queue, draw_region * scale.Invert());
-	});
+void DesktopFrame::Redraw(Rect redraw_region) {
+	redraw_region = Extend(redraw_region * scale, 0.5f).Intersect(Rect(point_zero, region.size));
+	invalid_region.Union(redraw_region);
+	Win32::InvalidateWndRegion(hwnd, redraw_region);
 }
 
 

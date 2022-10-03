@@ -10,15 +10,15 @@
 BEGIN_NAMESPACE(WndDesign)
 
 struct DesktopFrameApi : DesktopFrame {
-	DesktopFrame::GetMinMaxRegion;
 	DesktopFrame::GetRegion;
 	DesktopFrame::SetScale;
 	DesktopFrame::SetSize;
 	DesktopFrame::SetPoint;
+	DesktopFrame::GetMinMaxRegion;
 	DesktopFrame::State;
 	DesktopFrame::SetState;
 	DesktopFrame::Destroy;
-	DesktopFrame::Draw;
+	DesktopFrame::OnDraw;
 	DesktopFrame::LoseTrack;
 	DesktopFrame::LoseCapture;
 	DesktopFrame::DispatchMouseMsg;
@@ -117,7 +117,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_PAINT: {
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hwnd, &ps);
-			frame->Draw();
+			frame->OnDraw();
 			EndPaint(hwnd, &ps);
 		}break;
 		case WM_ERASEBKGND: return true;
@@ -131,7 +131,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_VSCROLL: {
 			short wheel_delta = 0;
 			short key_state = 0;
-			Point cursor_position = Win32::GetCursorPosWithWndDpi(hwnd);
+			Point cursor_position = Win32::GetCursorPos();
 			if (GetAsyncKeyState(VK_SHIFT)) { key_state |= MK_SHIFT; }
 			if (GetAsyncKeyState(VK_CONTROL)) { key_state |= MK_CONTROL; }
 			switch (LOWORD(wparam)) {
