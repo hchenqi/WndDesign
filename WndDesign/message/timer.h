@@ -19,7 +19,7 @@ public:
 	~Timer() { Stop(); }
 public:
 	bool IsSet() const { return timer != nullptr; }
-	void Set(uint period);
+	void Set(uint period);  // in milliseconds
 	void Stop();
 };
 
