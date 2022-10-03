@@ -27,6 +27,7 @@ void SetWndRegion(HANDLE hwnd, Rect region);
 void SetWndStyleTool(HANDLE hwnd);
 
 void ShowWnd(HANDLE hwnd);
+void HideWnd(HANDLE hwnd);
 void MinimizeWnd(HANDLE hwnd);
 void MaximizeWnd(HANDLE hwnd);
 void RestoreWnd(HANDLE hwnd);

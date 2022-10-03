@@ -53,6 +53,7 @@ private:
 	State state = State::Normal;
 protected:
 	void Show();
+	void Hide();
 	void Minimize();
 	void Maximize();
 	void Restore();

@@ -232,6 +232,7 @@ void SetWndStyleTool(HANDLE hwnd) {
 }
 
 void ShowWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_SHOWDEFAULT); }
+void HideWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_HIDE); }
 void MinimizeWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_MINIMIZE); }
 void MaximizeWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_MAXIMIZE); }
 void RestoreWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_RESTORE); }
