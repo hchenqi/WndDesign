@@ -128,14 +128,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 			// convert scroll message to mouse wheel message
 		case WM_HSCROLL:
-		case WM_VSCROLL:
-		{
-			POINT cursor_position;
-			GetCursorPos(&cursor_position);
+		case WM_VSCROLL: {
+			short wheel_delta = 0;
 			short key_state = 0;
+			Point cursor_position = Win32::GetCursorPosWithWndDpi(hwnd);
 			if (GetAsyncKeyState(VK_SHIFT)) { key_state |= MK_SHIFT; }
 			if (GetAsyncKeyState(VK_CONTROL)) { key_state |= MK_CONTROL; }
-			short wheel_delta = 0;
 			switch (LOWORD(wparam)) {
 			case SB_LINEUP: case SB_PAGEUP: wheel_delta = WHEEL_DELTA; break;
 			case SB_LINEDOWN: case SB_PAGEDOWN: wheel_delta = -WHEEL_DELTA; break;
@@ -193,6 +191,11 @@ BEGIN_NAMESPACE(Win32)
 
 Size GetDesktopSize() { RECT rect; SystemParametersInfoW(SPI_GETWORKAREA, 0, &rect, 0); return AsRect(rect).size; }
 
+Point GetCursorPos() {
+	POINT cursor_position; GetCursorPos(&cursor_position);
+	return Point((float)cursor_position.x, (float)cursor_position.y);
+}
+
 HANDLE CreateWnd(Rect region, std::wstring title) {
 	RegisterWndClass();
 	HWND hwnd = CreateWindowExW(WS_EX_NOREDIRECTIONBITMAP, wnd_class_name, title.c_str(),
@@ -214,9 +217,8 @@ float GetWndDpiScale(HANDLE hwnd) {
 }
 
 Point GetCursorPosWithWndDpi(HANDLE hwnd) {
-	POINT cursor_position; GetCursorPos(&cursor_position);
-	float dpi = GetWndDpiScale(hwnd);
-	return Point(cursor_position.x / dpi, cursor_position.y / dpi);
+	Point point = GetCursorPos(); float dpi = GetWndDpiScale(hwnd);
+	return Point(point.x / dpi, point.y / dpi);
 }
 
 void SetWndTitle(HANDLE hwnd, std::wstring title) {

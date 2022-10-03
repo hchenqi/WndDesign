@@ -14,6 +14,7 @@ BEGIN_NAMESPACE(Win32)
 
 
 Size GetDesktopSize();
+Point GetCursorPosition();
 
 HANDLE CreateWnd(Rect region, std::wstring title);
 void DestroyWnd(HANDLE hwnd);
