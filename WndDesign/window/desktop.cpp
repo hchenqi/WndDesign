@@ -18,11 +18,11 @@ Desktop& Desktop::Get() {
 	return desktop;
 }
 
-void Desktop::AddChild(frame_ptr frame) {
+DesktopFrame& Desktop::AddChild(frame_ptr frame) {
 	RegisterChild(*frame);
 	frame->InitializeRegion(Win32::GetDesktopSize());
 	frame->Show();
-	frame_list.emplace_back(std::move(frame));
+	return *frame_list.emplace_back(std::move(frame));
 }
 
 void Desktop::RemoveChild(DesktopFrame& frame) {

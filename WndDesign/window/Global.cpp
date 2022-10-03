@@ -8,8 +8,8 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void Global::AddWnd(std::unique_ptr<DesktopFrame> frame) { desktop.AddChild(std::move(frame));}
-void Global::AddWnd(alloc_ptr<DesktopFrame> frame) { AddWnd(std::unique_ptr<DesktopFrame>(frame)); }
+DesktopFrame& Global::AddWnd(std::unique_ptr<DesktopFrame> frame) { return desktop.AddChild(std::move(frame));}
+DesktopFrame& Global::AddWnd(alloc_ptr<DesktopFrame> frame) { return AddWnd(std::unique_ptr<DesktopFrame>(frame)); }
 void Global::RemoveWnd(DesktopFrame& frame) { desktop.RemoveChild(frame); }
 
 DesktopFrame& Global::GetDesktopFrame(WndObject& wnd) { return desktop.GetDesktopFrame(wnd); }

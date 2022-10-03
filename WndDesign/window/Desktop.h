@@ -34,7 +34,7 @@ public:
 private:
 	std::vector<frame_ptr> frame_list;
 private:
-	void AddChild(frame_ptr frame);
+	DesktopFrame& AddChild(frame_ptr frame);
 	void RemoveChild(DesktopFrame& frame);
 private:
 	DesktopFrame& GetDesktopFrame(WndObject& wnd);
