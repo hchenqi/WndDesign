@@ -60,9 +60,11 @@ protected:
 protected:
 	void Show();
 	void Hide();
+	void SetForeground();
 	void Minimize();
 	void Maximize();
 	void Restore();
+protected:
 	void Destroy();
 
 	// paint

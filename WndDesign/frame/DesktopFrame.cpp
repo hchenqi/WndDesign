@@ -62,6 +62,7 @@ void DesktopFrame::DesktopFrameRegionUpdated(Rect region) {
 
 void DesktopFrame::Show() { Win32::ShowWnd(hwnd); }
 void DesktopFrame::Hide() { Win32::HideWnd(hwnd); }
+void DesktopFrame::SetForeground() { Win32::SetForegroundWnd(hwnd); }
 void DesktopFrame::Minimize() { Win32::MinimizeWnd(hwnd); }
 void DesktopFrame::Maximize() { Win32::MaximizeWnd(hwnd); }
 void DesktopFrame::Restore() { Win32::RestoreWnd(hwnd); }
