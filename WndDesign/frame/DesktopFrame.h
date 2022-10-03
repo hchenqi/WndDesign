@@ -65,8 +65,10 @@ protected:
 	virtual void OnStateChange(State state) {}
 
 	// paint
-private:
+public:
 	using HANDLE = void*;
+	HANDLE GetHWND() const { return hwnd; }
+private:
 	HANDLE hwnd = nullptr;
 	DesktopLayer layer;
 	Region invalid_region;
