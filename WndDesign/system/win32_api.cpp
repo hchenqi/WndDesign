@@ -212,12 +212,22 @@ float GetWndDpiScale(HANDLE hwnd) {
 	return GetDpiForWindow((HWND)hwnd) / dpi_default;
 }
 
+Point GetCursorPosWithWndDpi(HANDLE hwnd) {
+	POINT cursor_position; GetCursorPos(&cursor_position);
+	float dpi = GetWndDpiScale(hwnd);
+	return Point(cursor_position.x / dpi, cursor_position.y / dpi);
+}
+
 void SetWndTitle(HANDLE hwnd, std::wstring title) {
 	SetWindowTextW((HWND)hwnd, title.c_str());
 }
 
 void SetWndRegion(HANDLE hwnd, Rect region) {
 	MoveWindow((HWND)hwnd, (int)floorf(region.point.x), (int)floorf(region.point.y), (int)ceilf(region.size.width), (int)ceilf(region.size.height), false);
+}
+
+void SetWndStyleTool(HANDLE hwnd) {
+	SetWindowLong((HWND)hwnd, GWL_EXSTYLE, GetWindowLong((HWND)hwnd, GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
 }
 
 void ShowWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_SHOWDEFAULT); }

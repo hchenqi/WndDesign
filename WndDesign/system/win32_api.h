@@ -20,9 +20,11 @@ void DestroyWnd(HANDLE hwnd);
 void SetWndUserData(HANDLE hwnd, void* data);
 
 float GetWndDpiScale(HANDLE hwnd);
+Point GetCursorPosWithWndDpi(HANDLE hwnd);
 
 void SetWndTitle(HANDLE hwnd, std::wstring title);
 void SetWndRegion(HANDLE hwnd, Rect region);
+void SetWndStyleTool(HANDLE hwnd);
 
 void ShowWnd(HANDLE hwnd);
 void MinimizeWnd(HANDLE hwnd);
