@@ -123,7 +123,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		case WM_ERASEBKGND: return true;
 		case WM_MOUSELEAVE: is_mouse_tracked = false; frame->LoseTrack(); break;
 		case WM_CAPTURECHANGED: frame->LoseCapture(); break;
-		case WM_KILLFOCUS: desktop.LoseFocus(); break;
 
 		case WM_DPICHANGED: frame->SetScale(LOWORD(wparam) / dpi_default); break;
 
@@ -156,6 +155,8 @@ FrameIrrelevantMessages:
 	switch (msg) {
 	case WM_CREATE: break;
 	case WM_DESTROY: if (frame != nullptr) { frame->Destroy(); }  break;
+
+	case WM_KILLFOCUS: desktop.LoseFocus(); break;
 
 	case WM_NCCALCSIZE: break;
 	case WM_NCHITTEST: return HTCLIENT;
