@@ -4,13 +4,13 @@ A C++ GUI library
 
 ## Quick Start
 
-*for Windows 10/11 systems only*
+*for Windows 10/11 only*
 
 * Install Visual Studio 2022, check **Desktop development with C++**.
 
 * Clone `WndDesign` source code.
 
-* Click open `WndDesign.sln`, set `Test` as startup project, build, and run.
+* Open `WndDesign.sln`, set `Test` as startup project, build, and run.
 
 ## Documentation
 
