@@ -12,89 +12,17 @@ A C++ GUI library
 
 * Click open `WndDesign.sln`, set `Test` as startup project, build, and run.
 
-## Code Structure
-
-There are two projects contained within the `WndDesign` solution:
-* `WndDesign`: main source code, builds to a static library `WndDesign.lib`.
-* `Test`: test examples, builds to an executable windows application `Test.exe`.
-
-### WndDesign
-
-Folder-level dependencies are roughly shown in the graph below:
-
-![](docs/dependency.png)
-
-The content of each folder is summarized as follows:
-
-#### common
-
-Defines some basic macros, types, helper functions, and `namespace WndDesign`.
-
-#### geometry
-
-Defines basic 2D geometry objects, `Point`, `Vector`, `Size` and `Rect`.
-
-#### figure
-
-Defines `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, `Image` and `TextBlock` that can be drawn on the screen.
-
-#### style
-
-Defines styles of a window.
-
-#### message
-
-Defines mouse, keyboard and timer messages.
-
-#### system
-
-Defines `Win32` and `DirectX` system interfaces.
-
-#### window
-
-Defines the `WndObject` base class and `Desktop` root window object.
-
-#### control
-
-Defines control components like `Button`, `Textbox`, `ImageBox` and `Scrollbar`.
-
-#### frame
-
-Defines frame components like `BorderFrame`, `PaddingFrame`, `ScrollFrame`, `ScaleFrame`, and `LayerFrame`.
-
-#### layout
-
-Defines layout components like `ListLayout`, `FlowLayout`, `SplitLayout` and `OverlapLayout`.
-
-#### wrapper
-
-Defines window decorators like `SolidColorBackground`.
-
-#### widget
-
-Defines complex window components including `ScrollBox` and `TitleBarFrame`.
-
-### Test
-
-Defines test examples for most components in `WndDesign` project.
-
 ## Concepts
 
 ### Window Tree
 
 #### WndObject
 
-A window, or `WndObject`, is the basic unit that draws figures and handle messages.
+A window, or `WndObject`, is the basic unit that draws figures and handles messages.
 
 Each `WndObject` may have none, one, or multiple child windows, and each `WndObject` may have only one parent window.
 
 All `WndObject` with child windows and parent windows form a *window tree*.
-
-A *window tree* example with its runtime screenshot:
-
-![](docs/window-tree.png)
-
-![](docs/window-tree-screenshot.png)
 
 #### Control, Frame and Layout
 
@@ -104,19 +32,19 @@ Controls, Frames and Layouts are all `WndObject` but they play different roles i
 
 ##### Control
 
-Controls are `WndObject` that have no child window, so they are always leaf nodes in the *window tree*. Controls include `Button`, `TextBox`, `EditBox`, `ImageBox`, `Scrollbar` and `Placeholder`. They are often used to handle user inputs or display simple figures.
+Controls have no child window, so they are always leaf nodes in the *window tree*. Controls include `Button`, `TextBox`, `EditBox`, `ImageBox`, `Scrollbar` and `Placeholder`. They are often used to handle user inputs or display simple figures.
 
 ##### Frame
 
-Frames are `WndObject` that have one child window. Frames include `BorderFrame`, `PaddingFrame`, `ScaleFrame`, `ClipFrame`, `ScrollFrame` and `LayerFrame`. They are often used to decorate a window with border or padding, or change the window's resizing or drawing behaviour.
+Frames have one child window. Frames include `BorderFrame`, `PaddingFrame`, `ScaleFrame`, `ClipFrame`, `ScrollFrame` and `LayerFrame`. They are often used to decorate a window with border or padding, or change the window's resizing or drawing behaviour.
 
 ##### Layout
 
-Layouts are `WndObject` that may have multiple child windows. Layouts include `SplitLayout`, `ListLayout`, `FlowLayout`, `BarLayout` and `OverlapLayout`. They are often used to display complex data structures.
+Layouts may have multiple child windows. Layouts include `SplitLayout`, `ListLayout`, `FlowLayout`, `BarLayout` and `OverlapLayout`. They are often used to display complex data structures.
 
 #### Desktop
 
-`Desktop` is the root `WndObject` in the *window tree*.
+`Desktop` is the root window in the *window tree*.
 
 ![](docs/Desktop.png)
 
@@ -156,7 +84,7 @@ The layout of a `WndObject` is how its contents or child windows are organized a
 
 #### Layout Type
 
-Layout type indicates how a window's width or height will change according to its parent window's width or height. It is just a compile time contract.
+Layout type indicates how a window's width or height will change according to its parent window's width or height.
 
 There are three kinds of layout types for both horizontal and virtical dimensions, `Assigned`, `Auto` and `Relative`.
 
@@ -174,44 +102,8 @@ Indicates the width or height of a window is dependent on its parent window but 
 
 ### Figure
 
-`Figure` can be drawn on a window.
+Figures are what a window can display on the screen. `Figure` includes `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, `Image` and `TextBlock`.
 
-All figures inherits `Figure` base class, and are rendered to a `RenderTarget` in a callback virtual function `DrawOn()`. 
+### Message
 
-Rendering is finally implemented by Direct2D, a Windows built-in library. A `RenderTarget` is a kind of Direct2D object to create resources and perform actual drawing operations.
-
-#### Redraw
-
-Redraw happens when a window is created or its displaying contents have changed. A rectangle region of the window is invalidated and propogated to its parent windows til `DesktopFrame`. 
-
-##### FigureQueue
-
-A `FigureQueue` is a collection of `Figure`s. It will be passed to the window by reference in the `OnDraw()` callback function to collect `Figure`s the window wishes to draw. It can also apply translation or other complex transformations to a group of figures. `FigureQueue` is finally drawn on `Layer`.
-
-##### Layer
-
-`Layer` is where `Figure`s are rendered on. A `Layer` draws a `FigureQueue` at a time. `Layer` itself is also a kind of `Figure` that can be drawn on other `Layer`s.
-
-Each `DesktopFrame` owns a `DesktopLayer` coupled with a `HWND` resource, and is directly managed by `Desktop`. All `Figure`s are finally drawn on `DesktopLayer` and presented on screen.
-
-### Message Handling
-
-All messages, including `Timer` callback are synchornized, which means all messages are processed sequentially. The next message will only be dispatched after the current message is fully handled.
-
-#### Mouse Messages
-
-Mouse messages contain a message type, key state and current mouse position relative to the window.
-
-Mouse messages are first hit-tested with `HitTest()` callback function and then dispatched to the destination child window after a point transform.
-
-##### Mouse Track
-
-##### Mouse Capture
-
-#### Keyboard Messages
-
-#### Notification Messages
-
-Notification messages has no parameter, and currently only includes `MouseEnter`, `MouseHover`, `MouseLeave` and `LoseFocus` that are triggered by mouse or keyboard message dispatchers.
-
-
+Messages are what a window may respond to for handling user input or timer alerts. Messages include mouse messages like `LeftDown` and `RightUp`, keyboard messages like `KeyDown` and `KeyUp`, and notification messages like `MouseLeave` and `LoseFocus`.
