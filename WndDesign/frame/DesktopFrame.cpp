@@ -51,7 +51,7 @@ void DesktopFrame::InitializeRegion(Size size_ref) {
 }
 
 void DesktopFrame::DesktopFrameRegionUpdated(Rect region) {
-	region = region * scale;
+	region *= scale;
 	region.size = Size(RoundWin32Length(region.size.width), RoundWin32Length(region.size.height));
 	if (this->region.size != region.size) {
 		this->region.size = region.size;
@@ -81,7 +81,7 @@ void DesktopFrame::RecreateLayer() {
 }
 
 void DesktopFrame::OnDraw() {
-	Rect render_rect = ceil(invalid_region.GetBoundingRect()); if (render_rect.IsEmpty()) { return; }
+	Rect render_rect = invalid_region.GetBoundingRect(); if (render_rect.IsEmpty()) { return; }
 	BeginDraw();
 	FigureQueue figure_queue([&](FigureQueue& figure_queue) {
 		figure_queue.Group(scale, region_infinite, [&]() {

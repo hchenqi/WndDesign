@@ -31,7 +31,7 @@ void _LayerFrame_Base::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 		invalid_region.Set(Rect(point_zero, layer_size));
 	} else {
 		Region render_region(redraw_region); render_region.Intersect(invalid_region);
-		redraw_region = ceil(render_region.GetBoundingRect());
+		redraw_region = render_region.GetBoundingRect();
 	}
 	if (!redraw_region.IsEmpty()) {
 		FigureQueue figure_queue([&](FigureQueue& figure_queue) {

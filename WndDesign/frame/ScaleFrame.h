@@ -24,7 +24,7 @@ protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return UpdateChildSizeRef(child, size_ref * scale.Invert()) * scale; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(child_size * scale); }
 protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override { point = point * scale.Invert(); return child; }
+	virtual ref_ptr<WndObject> HitTest(Point& point) override { point *= scale.Invert(); return child; }
 	virtual Transform GetChildTransform(WndObject& child) const override { return scale; }
 
 	// paint

@@ -40,7 +40,7 @@ protected:
 	virtual Rect OnDesktopFrameSizeRefUpdate(Size size_ref) { UpdateChildSizeRef(child, size_ref); return Rect(point_zero, size_ref); }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {}
 private:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override final { point = point * scale.Invert(); return child; }
+	virtual ref_ptr<WndObject> HitTest(Point& point) override final { point *= scale.Invert(); return child; }
 	virtual Transform GetChildTransform(WndObject& child) const override final { return scale; }
 private:
 	void SizeUpdated() {}  // never used

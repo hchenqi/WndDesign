@@ -4,10 +4,13 @@
 #include "vector.h"
 #include "size.h"
 #include "rect.h"
+#include "scale.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
+
+constexpr Vector vector_zero = Vector(0.0f, 0.0f);
 
 constexpr float length_max = 1e8f;
 constexpr float length_min = 0.0f;
@@ -21,23 +24,32 @@ constexpr Point point_max = Point(position_max, position_max);
 constexpr Point point_min = Point(position_min, position_min);
 constexpr Point point_zero = Point(0.0f, 0.0f);
 
-constexpr Vector vector_zero = Vector(0.0f, 0.0f);
-
 constexpr Rect region_empty = Rect(point_zero, size_empty);
 constexpr Rect region_infinite = Rect(point_min, size_max);
 
 
-constexpr Point operator+(Point begin_point, Vector vector) { return Point(begin_point.x + vector.x, begin_point.y + vector.y); }
-constexpr Point operator-(Point end_point, Vector vector) { return Point(end_point.x - vector.x, end_point.y - vector.y); }
-constexpr Vector operator-(Point end_point, Point begin_point) { return Vector(end_point.x - begin_point.x, end_point.y - begin_point.y); }
+constexpr Vector operator-(Point end, Point begin) { return Vector(end.x - begin.x, end.y - begin.y); }
+
+constexpr Point operator+(Point point, Vector vector) { return Point(point.x + vector.x, point.y + vector.y); }
+constexpr Point operator-(Point point, Vector vector) { return Point(point.x - vector.x, point.y - vector.y); }
+constexpr Point& operator+=(Point& point, Vector vector) { return point = point + vector; }
+constexpr Point& operator-=(Point& point, Vector vector) { return point = point - vector; }
 
 constexpr Rect operator+(Rect rect, Vector vector) { return Rect(rect.point + vector, rect.size); }
 constexpr Rect operator-(Rect rect, Vector vector) { return Rect(rect.point - vector, rect.size); }
+constexpr Rect& operator+=(Rect& rect, Vector vector) { return rect = rect + vector; }
+constexpr Rect& operator-=(Rect& rect, Vector vector) { return rect = rect - vector; }
 
-constexpr Point& operator+=(Point& point, Vector offset) { return point = point + offset; }
-constexpr Point& operator-=(Point& point, Vector offset) { return point = point - offset; }
-constexpr Rect& operator+=(Rect& rect, Vector offset) { return rect = rect + offset; }
-constexpr Rect& operator-=(Rect& rect, Vector offset) { return rect = rect - offset; }
+
+constexpr Vector operator*(Vector vector, Scale scale) { return Vector(vector.x * scale.x, vector.y * scale.y); }
+constexpr Size operator*(Size size, Scale scale) { return Size(size.width * scale.x, size.height * scale.y); }
+constexpr Point operator*(Point point, Scale scale) { return Point(point.x * scale.x, point.y * scale.y); }
+constexpr Rect operator*(Rect rect, Scale scale) { return Rect(rect.point * scale, rect.size * scale); }
+
+constexpr Vector& operator*=(Vector& vector, Scale scale) { return vector = vector * scale; }
+constexpr Size& operator*=(Size& size, Scale scale) { return size = size * scale; }
+constexpr Point& operator*=(Point& point, Scale scale) { return point = point * scale; }
+constexpr Rect& operator*=(Rect& rect, Scale scale) { return rect = rect * scale; }
 
 
 END_NAMESPACE(WndDesign)
