@@ -6,7 +6,7 @@ A C++ GUI library
 
 *for Windows 10/11 only*
 
-* Install Visual Studio 2022, check **Desktop development with C++**.
+* Install Visual Studio 2022, with **Desktop development with C++** selected.
 
 * Clone `WndDesign` source code.
 
@@ -21,3 +21,5 @@ A C++ GUI library
 * [Implementation](docs/implementation.md)
 
 * [Develop Guide](docs/develop-guide.md)
+
+* [History](docs/history.md)

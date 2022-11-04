@@ -4,41 +4,39 @@
 
 ### WndObject
 
-A window, or `WndObject`, is the basic unit that draws figures and handles messages.
+A window, or `WndObject`, is the basic unit for drawing and message handling.
 
-Each `WndObject` may have none, one, or multiple child windows, and each `WndObject` may have only one parent window.
+Each window may have no, one, or multiple child windows and only one parent window.
 
-All `WndObject` with child windows and parent windows form a *window tree*.
+All windows form a *window tree*.
 
 ### Control, Frame and Layout
 
-Controls, Frames and Layouts are all `WndObject` but they play different roles in the *window tree*.
+Controls, Frames and Layouts are the three kinds of windows that play different roles in the *window tree*.
 
-![](images/component.png)
+![](images/control-frame-layout.png)
 
 #### Control
 
-Controls have no child window, so they are always leaf nodes in the *window tree*. Controls include `Button`, `TextBox`, `EditBox`, `ImageBox`, `Scrollbar` and `Placeholder`. They are often used to handle user inputs or display simple figures.
+Controls have no child window, so they are always leaf nodes in the *window tree*. Controls include `Button`, `TextBox`, `EditBox`, `ImageBox`, `Scrollbar`, `Placeholder`, etc. They are often used to handle user inputs or draw simple figures.
 
 #### Frame
 
-Frames have one child window. Frames include `BorderFrame`, `PaddingFrame`, `ScaleFrame`, `ClipFrame`, `ScrollFrame` and `LayerFrame`. They are often used to decorate a window with border or padding, or change the window's resizing or drawing behaviour.
+Frames have one child window. Frames include `BorderFrame`, `PaddingFrame`, `ScaleFrame`, `ClipFrame`, `ScrollFrame`, `LayerFrame`, etc. They are often used to decorate a window with border, padding, or other resizing or drawing effects.
 
 #### Layout
 
-Layouts may have multiple child windows. Layouts include `SplitLayout`, `ListLayout`, `FlowLayout`, `BarLayout` and `OverlapLayout`. They are often used to display complex data structures.
+Layouts may have multiple child windows. Layouts include `SplitLayout`, `ListLayout`, `FlowLayout`, `BarLayout`, `OverlapLayout`, etc. They are often used to display complex data structures.
 
 ### Desktop
 
-`Desktop` is the root window in the *window tree*.
+`Desktop` is the root node in the *window tree*, and `DesktopFrame` is the direct child window of `Desktop`. Each `DesktopFrame` displays an overlapped window on the desktop.
 
-![](images/Desktop.png)
-
-`DesktopFrame` is the direct child window of `Desktop`. Each `DesktopFrame` displays an overlapped window on desktop.
+![](images/Desktop-DesktopFrame.png)
 
 ## Window Layout
 
-The layout of a `WndObject` is how its contents or child windows are organized and how their relative positions and sizes are calculated.
+The layout of a window is how its contents or child windows are organized and how their relative positions and sizes are calculated.
 
 ### 1D Geometry
 
@@ -54,7 +52,7 @@ The layout of a `WndObject` is how its contents or child windows are organized a
 
 #### Point
 
-`Point` is a pair of position values `x` and `y`, which is always relative to a specific window. The upper-left corner of a window is usually taken as the origin point (0, 0).
+`Point` is a pair of position values `x` and `y` relative to an origin point. The upper-left corner of a window is usually taken as the origin point (0, 0).
 
 #### Size
 
@@ -62,7 +60,7 @@ The layout of a `WndObject` is how its contents or child windows are organized a
 
 #### Rect
 
-`Rect` is a pair of `Point` and `Size` that represents a rectangular region. It is also relative to a specific window.
+`Rect` is a pair of `Point` and `Size` that represents a rectangular region relative to an origin point.
 
 #### Vector
 
@@ -86,10 +84,10 @@ Indicates the width or height of a window is independent of its parent window, a
 
 Indicates the width or height of a window is dependent on its parent window but is not strictly assigned by its parent window. 
 
-## Figure
+## Drawing
 
-Figures are what a window can display on the screen. `Figure` includes `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, `Image` and `TextBlock`.
+A window draws Figures. Figures include `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, `Image`, `TextBlock`, etc.
 
-## Message
+## Message Handling
 
-Messages are what a window may respond to for handling user input or timer alerts. Messages include mouse messages like `LeftDown` and `RightUp`, keyboard messages like `KeyDown` and `KeyUp`, and notification messages like `MouseLeave` and `LoseFocus`.
+A window may respond to user input or timer alerts. User input messages include mouse messages like `LeftDown` and `RightUp`, keyboard messages like `KeyDown` and `KeyUp`, and notification messages like `MouseLeave` and `LoseFocus`.
