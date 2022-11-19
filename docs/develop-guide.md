@@ -36,24 +36,12 @@ When the last `DesktopFrame` is destroyed, or `global.Terminate()` is called, th
 
 ### Window Definition
 
-Each window type is defined by a class that inherites from `WndObject`, overriding some of its virtual functions to implement custom layout calculating, drawing or message handling logics.
+Each window type is defined by a class that inherits from `WndObject`, overriding some of its virtual functions to implement custom layout calculating, drawing or message handling logics.
 
-### Child Window Definition
+### Child Window Definition and Management
 
-A child window class can be defined in a separate class or in its parent window class, dependending on whether the child window is used exclusively by its parent window or shared by many different types of windows.
+A child window type can be defined in a separate class or in its parent window class, depending on whether the type is used exclusively by its parent window or shared across different types of windows.
 
-### Child Window Management
+A child window object can be managed by its parent window through member object, reference or `child_ptr`, which is an alias for `std::unique_ptr<WndObject>`. The last way is most commonly used, since it requires neither additional dependencies for the parent window to construct the child, nor the need to manually destruct the child window when the parent is destructed, although the other two approaches also have their use scenarios.
 
-A window can manage its child window by object, reference or `child_ptr`.
-
-## Window Layout
-
-### Style Definition
-
-Some windows or figures use styles to .
-
-`ValueTag` allows
-
-## Drawing
-
-## Message Handling
+The child window registration has nothing to do with keeping the child window resource. Parent windows, especially Layouts, use their internal data structures to manage child windows' resources. In most cases, the parent window maintains a `unique_ptr<WndObject>` to the child window, so that the child window resource can be automatically released when parent window destructs.

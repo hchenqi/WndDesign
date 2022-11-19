@@ -34,9 +34,7 @@ Layouts may have multiple child windows. Layouts include `SplitLayout`, `ListLay
 
 ![](images/Desktop-DesktopFrame.png)
 
-## Window Layout
-
-The layout of a window is how its contents or child windows are organized and how their relative positions and sizes are calculated.
+## Geometry
 
 ### 1D Geometry
 
@@ -66,11 +64,11 @@ The layout of a window is how its contents or child windows are organized and ho
 
 `Vector` is the difference between two `Point`s. It can be applied to a `Point` or a `Rect` as a translation transform.
 
-### Layout Type
+## Window Layout
 
-Layout type indicates how a window's width or height will change according to its parent window's width or height.
+The layout of a window is how its contents or child windows are organized, that is, how their relative positions and sizes are calculated.
 
-There are three kinds of layout types for both horizontal and virtical dimensions, `Assigned`, `Auto` and `Relative`.
+There are three kinds of layout types that indicate how a window's width or height will change according to its parent window's width or height: `Assigned`, `Auto` and `Relative`.
 
 #### Assigned
 
@@ -86,8 +84,8 @@ Indicates the width or height of a window is dependent on its parent window but 
 
 ## Drawing
 
-A window draws Figures. Figures include `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, `Image`, `TextBlock`, etc.
+A window draws figures in its rectangular region. Figures include `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, `Image`, `TextBlock`, etc.
 
 ## Message Handling
 
-A window may respond to user input or timer alerts. User input messages include mouse messages like `LeftDown` and `RightUp`, keyboard messages like `KeyDown` and `KeyUp`, and notification messages like `MouseLeave` and `LoseFocus`.
+A window may respond to user input or timer messages. User input messages include mouse messages like `LeftDown` and `RightUp`, keyboard messages like `KeyDown` and `KeyUp`, and notification messages like `MouseLeave` and `LoseFocus`.

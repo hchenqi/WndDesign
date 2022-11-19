@@ -1,14 +1,12 @@
 # Code Structure
 
-There are two projects contained within the `WndDesign` solution:
-
-* `WndDesign`: main source code, builds to a static library `WndDesign.lib`.
-
-* `Test`: test examples, builds to an executable windows application `Test.exe`.
+There are two projects contained within the `WndDesign` solution: `WndDesign` and `Test`.
 
 ## WndDesign
 
-Folder-level dependencies are roughly shown in the graph below:
+Contains the main source code and builds to a static library `WndDesign.lib`.
+
+The folder-level dependencies are roughly shown in the graph below:
 
 ![](images/dependency.png)
 
@@ -28,7 +26,7 @@ Defines `Line`, `Rectangle`, `RoundedRectangle`, `Ellipse`, `Image` and `TextBlo
 
 ### style
 
-Defines styles of a window.
+Defines styles of some specific types of figures or windows.
 
 ### message
 
@@ -60,8 +58,8 @@ Defines window decorators like `SolidColorBackground`.
 
 ### widget
 
-Defines complex window components including `ScrollBox` and `TitleBarFrame`.
+Defines complex window components that are built upon those simple components, currently including `ScrollBox` and `TitleBarFrame`.
 
 ## Test
 
-Defines test examples for most components in `WndDesign` project.
+References `WndDesign` project, defines use examples for some components and builds to an executable application `Test.exe`.
