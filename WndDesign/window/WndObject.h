@@ -107,7 +107,7 @@ protected:
 inline Transform WndObject::GetDescendentTransform(WndObject& descendent) const {
 	Transform transform = Transform::Identity();
 	for (ref_ptr<WndObject> child = &descendent, parent = descendent.parent; child != this; child = parent, parent = child->parent) {
-		if (parent == nullptr) { throw std::invalid_argument("ancestor and descentent have no relation"); }
+		if (parent == nullptr) { throw std::invalid_argument("invalid descendent window"); }
 		transform = transform * parent->GetChildTransform(*child);
 	}
 	return transform;
@@ -115,7 +115,7 @@ inline Transform WndObject::GetDescendentTransform(WndObject& descendent) const 
 
 inline Point WndObject::ConvertDescendentPoint(WndObject& descendent, Point point) const {
 	for (ref_ptr<WndObject> child = &descendent, parent = descendent.parent; child != this; child = parent, parent = child->parent) {
-		if (parent == nullptr) { throw std::invalid_argument("ancestor and descentent have no relation"); }
+		if (parent == nullptr) { throw std::invalid_argument("invalid descendent window"); }
 		point *= parent->GetChildTransform(*child);
 	}
 	return point;
