@@ -74,7 +74,7 @@ void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 }
 
 ref_ptr<WndObject> FlowLayout::HitTest(Point& point) {
-	if (point.x >= size.width || point.y >= size.height) { return nullptr; }
+	if (!Rect(point_zero, size).Contains(point)) { return nullptr; }
 	row_index row = HitTestRow(point.y); point.y -= GetRowOffset(row); if (point.y >= row_height) { return this; }
 	auto it = HitTestColumn(row, point.x); point.x -= it->offset; if (point.x >= it->width) { return this; }
 	return it->child;
