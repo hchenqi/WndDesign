@@ -267,6 +267,9 @@
     <ClInclude Include="frame\InnerBorderFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="message\timeout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">

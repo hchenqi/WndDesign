@@ -205,6 +205,7 @@
     <ClInclude Include="message\mouse_msg.h" />
     <ClInclude Include="message\mouse_tracker.h" />
     <ClInclude Include="message\notify_msg.h" />
+    <ClInclude Include="message\timeout.h" />
     <ClInclude Include="message\timer.h" />
     <ClInclude Include="geometry\border_helper.h" />
     <ClInclude Include="style\border_style.h" />
