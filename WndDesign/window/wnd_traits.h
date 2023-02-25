@@ -48,7 +48,7 @@ public:
 	child_ptr() {}
 	template<class ChildType> requires (std::is_base_of_v<WidthType, typename ChildType::width_type> && std::is_base_of_v<HeightType, typename ChildType::height_type>)
 	child_ptr(std::unique_ptr<ChildType> ptr) : child_ptr<>(std::move(ptr)) {}
-	template<class ChildType>
+	template<class ChildType> requires (std::is_base_of_v<WidthType, typename ChildType::width_type> && std::is_base_of_v<HeightType, typename ChildType::height_type>)
 	child_ptr(alloc_ptr<ChildType> ptr) : child_ptr(std::unique_ptr<ChildType>(ptr)) {}
 };
 
