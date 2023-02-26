@@ -37,7 +37,7 @@ public:
 	CenterFrame(child_ptr<Relative, Relative> child) : _CenterFrame_Base(std::move(child)) {}
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { child_size = UpdateChildSizeRef(child, size = size_ref); return size; }
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { this->child_size = child_size; }
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { this->child_size = child_size; Redraw(region_infinite); }
 };
 
 
@@ -52,7 +52,11 @@ protected:
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		this->child_size = child_size;
-		if (size.height != child_size.height) { size.height = child_size.height; SizeUpdated(size); }
+		if (size.height != child_size.height) {
+			size.height = child_size.height; SizeUpdated(size);
+		} else {
+			Redraw(region_infinite);
+		}
 	}
 };
 
@@ -68,7 +72,11 @@ protected:
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		this->child_size = child_size;
-		if (size.width != child_size.width) { size.width = child_size.width; SizeUpdated(size); }
+		if (size.width != child_size.width) {
+			size.width = child_size.width; SizeUpdated(size);
+		} else {
+			Redraw(region_infinite);
+		}
 	}
 };
 

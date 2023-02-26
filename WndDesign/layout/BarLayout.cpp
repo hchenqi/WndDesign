@@ -16,11 +16,23 @@ Size BarLayout::OnSizeRefUpdate(Size size_ref) { size.width = size_ref.width; re
 
 void BarLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 	if (&child == center.get()) {
-		if (width_center != child_size.width) { width_center = child_size.width; }
+		if (width_center != child_size.width) {
+			Rect region_old = GetRegionCenter();
+			width_center = child_size.width;
+			Redraw(region_old.Union(GetRegionCenter()));
+		}
 	} else if (&child == right.get()) {
-		if (width_right != child_size.width) { width_right = child_size.width; }
+		if (width_right != child_size.width) {
+			Rect region_old = GetRegionRight();
+			width_right = child_size.width;
+			Redraw(region_old.Union(GetRegionRight()));
+		}
 	} else {
-		if (width_left != child_size.width) { width_left = child_size.width; }
+		if (width_left != child_size.width) {
+			Rect region_old = GetRegionLeft();
+			width_left = child_size.width;
+			Redraw(region_old.Union(GetRegionLeft()));
+		}
 	}
 }
 

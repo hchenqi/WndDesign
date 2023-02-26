@@ -16,7 +16,7 @@ public:
 	ClipFrame(child_ptr<> child) : WndFrame(std::move(child)) {}
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { UpdateChildSizeRef(child, size_ref); return size_ref; }
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {}
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { Redraw(region_infinite); }
 };
 
 
@@ -36,6 +36,8 @@ protected:
 		if (size.height != child_size.height) {
 			size.height = child_size.height;
 			SizeUpdated(size);
+		} else {
+			Redraw(region_infinite);
 		}
 	}
 };
@@ -57,6 +59,8 @@ protected:
 		if (size.width != child_size.width) {
 			size.width = child_size.width;
 			SizeUpdated(size);
+		} else {
+			Redraw(region_infinite);
 		}
 	}
 };
