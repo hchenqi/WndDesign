@@ -198,6 +198,7 @@
     <ClInclude Include="layout\BarLayout.h" />
     <ClInclude Include="layout\FlowLayout.h" />
     <ClInclude Include="layout\ListLayout.h" />
+    <ClInclude Include="layout\ListLayoutAuto.h" />
     <ClInclude Include="layout\OverlapLayout.h" />
     <ClInclude Include="layout\SplitLayout.h" />
     <ClInclude Include="message\key_msg.h" />
@@ -258,6 +259,7 @@
     <ClCompile Include="layout\BarLayout.cpp" />
     <ClCompile Include="layout\FlowLayout.cpp" />
     <ClCompile Include="layout\ListLayout.cpp" />
+    <ClCompile Include="layout\ListLayoutAuto.cpp" />
     <ClCompile Include="layout\OverlapLayout.cpp" />
     <ClCompile Include="message\timer.cpp" />
     <ClCompile Include="system\clipboard.cpp" />
