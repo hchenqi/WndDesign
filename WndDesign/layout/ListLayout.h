@@ -42,13 +42,18 @@ protected:
 	using child_iter = std::vector<ChildInfo>::iterator;
 protected:
 	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
-	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
 	void UpdateIndex(size_t begin);
 public:
+	size_t Length() const { return child_list.size(); }
+	WndObject& GetChild(size_t index) const { return child_list[index].child; }
+	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+public:
 	void InsertChild(size_t index, child_ptr child);
-	void InsertChild(size_t index, std::vector<child_ptr> children);
-	void EraseChild(size_t begin, size_t count);
+	void InsertChild(size_t begin, std::vector<child_ptr> children);
 	void AppendChild(child_ptr child) { InsertChild(-1, std::move(child)); }
+	void EraseChild(size_t begin, size_t count = 1);
+	child_ptr ExtractChild(size_t index);
+	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
 
 	// layout
 protected:
@@ -104,13 +109,18 @@ protected:
 	using child_iter = std::vector<ChildInfo>::iterator;
 protected:
 	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
-	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
 	void UpdateIndex(size_t begin);
 public:
+	size_t Length() const { return child_list.size(); }
+	WndObject& GetChild(size_t index) const { return child_list[index].child; }
+	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+public:
 	void InsertChild(size_t index, child_ptr child);
-	void InsertChild(size_t index, std::vector<child_ptr> children);
-	void EraseChild(size_t begin, size_t count);
+	void InsertChild(size_t begin, std::vector<child_ptr> children);
 	void AppendChild(child_ptr child) { InsertChild(-1, std::move(child)); }
+	void EraseChild(size_t begin, size_t count = 1);
+	child_ptr ExtractChild(size_t index);
+	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
 
 	// layout
 protected:

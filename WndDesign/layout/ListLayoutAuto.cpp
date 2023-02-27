@@ -8,34 +8,78 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void ListLayoutAuto<Vertical>::InsertChild(size_t index, child_ptr child) {
+void _ListLayoutAuto_Base::InsertChild(size_t& index, child_ptr& child) {
 	RegisterChild(child);
 	if (index > child_list.size()) { index = child_list.size(); }
 	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
 	UpdateIndex(index);
 	it->region.size = UpdateChildSizeRef(it->child, size_empty);
-	size.width = std::max(size.width, it->region.size.width);
+}
+
+void _ListLayoutAuto_Base::InsertChild(size_t& begin, std::vector<child_ptr>& children) {
+	for (auto& child : children) { RegisterChild(child); }
+	if (begin > child_list.size()) { begin = child_list.size(); }
+	auto it = child_list.insert(child_list.begin() + begin, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
+	UpdateIndex(begin);
+	for (auto it_end = it + children.size(); it < it_end; ++it) {
+		it->region.size = UpdateChildSizeRef(it->child, size_empty);
+	}
+}
+
+void _ListLayoutAuto_Base::EraseChild(size_t begin, size_t count) {
+	if (begin >= child_list.size() || count == 0) { return; }
+	count = std::min(count, child_list.size() - begin); size_t end = begin + count;
+	child_list.erase(child_list.begin() + begin, child_list.begin() + end);
+	UpdateIndex(begin);
+}
+
+_ListLayoutAuto_Base::child_ptr _ListLayoutAuto_Base::ExtractChild(size_t index) {
+	UnregisterChild(child_list[index].child);
+	return std::move(child_list[index].child);
+}
+
+std::vector<_ListLayoutAuto_Base::child_ptr> _ListLayoutAuto_Base::ExtractChild(size_t begin, size_t count) {
+	if (begin >= child_list.size() || count == 0) { return {}; }
+	count = std::min(count, child_list.size() - begin); size_t end = begin + count;
+	std::vector<child_ptr> ptr_list; ptr_list.reserve(count);
+	for (size_t index = begin; index < end; ++index) {
+		UnregisterChild(child_list[index].child);
+		ptr_list.emplace_back(std::move(child_list[index].child));
+	}
+	return ptr_list;
+}
+
+
+void ListLayoutAuto<Vertical>::InsertChild(size_t index, child_ptr child) {
+	_ListLayoutAuto_Base::InsertChild(index, child);
+	size.width = std::max(size.width, child_list[index].region.size.width);
 	UpdateLayout(index);
 }
 
-void ListLayoutAuto<Vertical>::InsertChild(size_t index, std::vector<child_ptr> children) {
-	for (auto& child : children) { RegisterChild(child); }
-	if (index > child_list.size()) { index = child_list.size(); }
-	auto it = child_list.insert(child_list.begin() + index, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
-	UpdateIndex(index);
-	for (auto it_end = it + children.size(); it != it_end; ++it) {
-		it->region.size = UpdateChildSizeRef(it->child, size_empty);
-		size.width = std::max(size.width, it->region.size.width);
+void ListLayoutAuto<Vertical>::InsertChild(size_t begin, std::vector<child_ptr> children) {
+	_ListLayoutAuto_Base::InsertChild(begin, children);
+	for (size_t index = begin, end = begin + children.size(); index < end; ++index) {
+		size.width = std::max(size.width, child_list[index].region.size.width);
 	}
-	UpdateLayout(index);
+	UpdateLayout(begin);
 }
 
 void ListLayoutAuto<Vertical>::EraseChild(size_t begin, size_t count) {
-	if (begin > child_list.size() || count == 0) { return; }
-	size_t end = begin + count; if (end > child_list.size()) { end = child_list.size(); }
-	child_list.erase(child_list.begin() + begin, child_list.begin() + end);
+	_ListLayoutAuto_Base::EraseChild(begin, count);
 	size.width = 0.0f; for (auto& child : child_list) { size.width = std::max(size.width, child.region.size.width); }
-	UpdateIndex(begin); UpdateLayout(begin);
+	UpdateLayout(begin);
+}
+
+ListLayoutAuto<Vertical>::child_ptr ListLayoutAuto<Vertical>::ExtractChild(size_t index) {
+	child_ptr ptr = _ListLayoutAuto_Base::ExtractChild(index);
+	EraseChild(index, 1);
+	return ptr;
+}
+
+std::vector<ListLayoutAuto<Vertical>::child_ptr> ListLayoutAuto<Vertical>::ExtractChild(size_t begin, size_t count) {
+	std::vector<child_ptr> ptr_list = _ListLayoutAuto_Base::ExtractChild(begin, count);
+	EraseChild(begin, count);
+	return ptr_list;
 }
 
 ListLayoutAuto<Vertical>::child_iter ListLayoutAuto<Vertical>::HitTestItem(float offset) {
@@ -87,33 +131,35 @@ void ListLayoutAuto<Vertical>::OnDraw(FigureQueue& figure_queue, Rect draw_regio
 
 
 void ListLayoutAuto<Horizontal>::InsertChild(size_t index, child_ptr child) {
-	RegisterChild(child);
-	if (index > child_list.size()) { index = child_list.size(); }
-	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
-	UpdateIndex(index);
-	it->region.size = UpdateChildSizeRef(it->child, size_empty);
-	size.height = std::max(size.height, it->region.size.height);
+	_ListLayoutAuto_Base::InsertChild(index, child);
+	size.height = std::max(size.height, child_list[index].region.size.height);
 	UpdateLayout(index);
 }
 
-void ListLayoutAuto<Horizontal>::InsertChild(size_t index, std::vector<child_ptr> children) {
-	for (auto& child : children) { RegisterChild(child); }
-	if (index > child_list.size()) { index = child_list.size(); }
-	auto it = child_list.insert(child_list.begin() + index, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
-	UpdateIndex(index);
-	for (auto it_end = it + children.size(); it != it_end; ++it) {
-		it->region.size = UpdateChildSizeRef(it->child, size_empty);
-		size.height = std::max(size.height, it->region.size.height);
+void ListLayoutAuto<Horizontal>::InsertChild(size_t begin, std::vector<child_ptr> children) {
+	_ListLayoutAuto_Base::InsertChild(begin, children);
+	for (size_t index = begin, end = begin + children.size(); index < end; ++index) {
+		size.height = std::max(size.height, child_list[index].region.size.height);
 	}
-	UpdateLayout(index);
+	UpdateLayout(begin);
 }
 
 void ListLayoutAuto<Horizontal>::EraseChild(size_t begin, size_t count) {
-	if (begin > child_list.size() || count == 0) { return; }
-	size_t end = begin + count; if (end > child_list.size()) { end = child_list.size(); }
-	child_list.erase(child_list.begin() + begin, child_list.begin() + end);
+	_ListLayoutAuto_Base::EraseChild(begin, count);
 	size.height = 0.0f; for (auto& child : child_list) { size.height = std::max(size.height, child.region.size.height); }
-	UpdateIndex(begin); UpdateLayout(begin);
+	UpdateLayout(begin);
+}
+
+ListLayoutAuto<Horizontal>::child_ptr ListLayoutAuto<Horizontal>::ExtractChild(size_t index) {
+	child_ptr ptr = _ListLayoutAuto_Base::ExtractChild(index);
+	EraseChild(index, 1);
+	return ptr;
+}
+
+std::vector<ListLayoutAuto<Horizontal>::child_ptr> ListLayoutAuto<Horizontal>::ExtractChild(size_t begin, size_t count) {
+	std::vector<child_ptr> ptr_list = _ListLayoutAuto_Base::ExtractChild(begin, count);
+	EraseChild(begin, count);
+	return ptr_list;
 }
 
 ListLayoutAuto<Horizontal>::child_iter ListLayoutAuto<Horizontal>::HitTestItem(float offset) {
