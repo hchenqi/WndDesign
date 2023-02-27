@@ -181,7 +181,7 @@
     <ClInclude Include="frame\DesktopFrame.h" />
     <ClInclude Include="frame\FixedFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
-    <ClInclude Include="frame\MaxFrame.h" />
+    <ClInclude Include="frame\MinMaxFrame.h" />
     <ClInclude Include="frame\ScrollFrame.h" />
     <ClInclude Include="frame\WndFrame.h" />
     <ClInclude Include="geometry\clamp.h" />
