@@ -14,6 +14,7 @@ public:
 	uchar alpha;
 
 public:
+	constexpr Color() : blue(), green(), red(), alpha() {}
 	constexpr Color(uint rgb, uchar alpha = 0xFF) :
 		blue(rgb & 0xFF), green((rgb >> 8) & 0xFF), red((rgb >> 16) & 0xFF), alpha(alpha) {
 	}
