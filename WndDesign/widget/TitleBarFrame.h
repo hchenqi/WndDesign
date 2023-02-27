@@ -3,7 +3,7 @@
 #include "../frame/DesktopFrame.h"
 #include "../frame/BorderFrame.h"
 #include "../frame/ClipFrame.h"
-#include "../frame/MaxFrame.h"
+#include "../frame/MinMaxFrame.h"
 #include "../layout/SplitLayout.h"
 #include "../layout/BarLayout.h"
 #include "../layout/ListLayout.h"
@@ -32,7 +32,7 @@ public:
 		Color _background = Color::DarkGray;
 	public:
 		constexpr TitleBarStyle& height(float height) { _height = height; return *this; }
-		constexpr TitleBarStyle& maxt_title_length(float maxt_title_length) { _max_title_length = maxt_title_length; return *this; }
+		constexpr TitleBarStyle& max_title_length(float max_title_length) { _max_title_length = max_title_length; return *this; }
 		constexpr TitleBarStyle& background(Color background) { _background = background; return *this; }
 	};
 
@@ -44,6 +44,18 @@ public:
 		TitleBarStyle title_bar;
 		std::wstring title;
 		TextBox::Style title_format;
+		Color background_color;
+
+		Style() {
+			width.normal(800px).min(200px).max(100pct);
+			height.normal(500px).min(200px).max(100pct);
+			position.setHorizontalCenter().setVerticalCenter();
+			border.width(4).radius(4).color(Color::CadetBlue);
+			title_bar.background(Color::CadetBlue);
+			title.assign(L"TitleBarFrame");
+			title_format.font.size(18px).color(Color::White);
+			background_color = Color::White;
+		}
 	};
 
 public:
@@ -78,6 +90,14 @@ private:
 		return region;
 	}
 
+	// paint
+private:
+	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
+		Rect child_region = GetBorder().GetChildRegion();
+		figure_queue.add(child_region.point, new Rectangle(child_region.size, style.background_color));
+		DrawChild(child, point_zero, figure_queue, draw_region);
+	}
+
 	// state
 private:
 	bool IsMaximized() { return GetState() == State::Maximized; }
@@ -97,6 +117,8 @@ private:
 		ResizeBorder(Border border, child_ptr child) : BorderFrame<Assigned, Assigned>(border, std::move(child)), border_copy(border) {
 			cursor = Cursor::Hide;
 		}
+	public:
+		BorderFrame::GetChildRegion;
 	protected:
 		Border border_copy;
 	public:
@@ -134,7 +156,7 @@ private:
 			},
 			new ClipFrame<Auto, Assigned>{
 				new MaxFrame{
-					style.title_bar._max_title_length,
+					Size(style.title_bar._max_title_length, length_max),
 					new Title(frame, *this, style)
 				}
 			}

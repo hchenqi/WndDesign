@@ -11,11 +11,8 @@ using namespace WndDesign;
 
 struct MainFrameStyle : TitleBarFrame::Style {
 	MainFrameStyle() {
-		width.normal(800px).max(100pct);
-		height.normal(500px).max(100pct);
-		position.setHorizontalCenter().setVerticalCenter();
-		border.width(5).color(Color::Violet);
 		title.assign(L"OverlapLayoutTest");
+		background_color = color_transparent;
 	}
 };
 

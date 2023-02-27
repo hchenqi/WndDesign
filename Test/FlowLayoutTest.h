@@ -4,7 +4,7 @@
 #include "WndDesign/layout/FlowLayout.h"
 #include "WndDesign/control/Button.h"
 #include "WndDesign/control/EditBox.h"
-#include "WndDesign/frame/MaxFrame.h"
+#include "WndDesign/frame/MinMaxFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/frame/BorderFrame.h"
 #include "WndDesign/frame/PaddingFrame.h"
@@ -16,13 +16,9 @@ using namespace WndDesign;
 
 struct MainFrameStyle : TitleBarFrame::Style {
 	MainFrameStyle() {
-		width.normal(560px).max(100pct);
-		height.normal(180px).max(100pct);
-		position.setHorizontalCenter().setVerticalCenter();
-		border.width(4).radius(4).color(Color::CadetBlue);
+		width.normal(560px);
+		height.normal(180px);
 		title.assign(L"FlowLayoutTest");
-		title_bar.background(Color::CadetBlue);
-		title_format.font.size(18).color(Color::White);
 	}
 };
 
@@ -60,7 +56,7 @@ private:
 						Padding(6, 0),
 						new ClipFrame<Auto, Assigned>{
 							new MaxFrame{
-								length_max,
+								size_max,
 								new EditBox(EditBoxStyle(), NextName())
 							}
 						}
