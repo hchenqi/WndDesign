@@ -10,13 +10,13 @@ BEGIN_NAMESPACE(WndDesign)
 
 class Timeout : private Timer {
 public:
-	Timeout() : Timer([&]() { Stop(); this->function(); Reset(); }) {}
+	Timeout() : Timer([&]() { if (function) { Reset()(); } if (!function) { Stop(); }}) {}
 	~Timeout() {}
 
 private:
 	std::function<void(void)> function;
 private:
-	void Reset() { std::function<void(void)> temp(std::move(function)); }
+	std::function<void(void)> Reset() { return std::move(function); }
 
 public:
 	void Set(std::function<void(void)> function, uint delay) { this->function = function; Timer::Set(delay); }  // in milliseconds
