@@ -24,4 +24,25 @@ protected:
 };
 
 
+class WndFrameMutable : public WndFrame {
+public:
+	WndFrameMutable(child_ptr<> child) : WndFrame(std::move(child)) {}
+private:
+	Size size_ref;
+public:
+	child_ptr<> Reset(child_ptr<> child) {
+		UnregisterChild(this->child);
+		child.swap(this->child);
+		RegisterChild(this->child);
+		SizeUpdated(UpdateChildSizeRef(this->child, size_ref));
+		return child;
+	}
+protected:
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
+		this->size_ref = size_ref;
+		return UpdateChildSizeRef(child, size_ref);
+	}
+};
+
+
 END_NAMESPACE(WndDesign)
