@@ -35,8 +35,10 @@ template<>
 class child_ptr<Relative, Relative> : public std::unique_ptr<WndObject> {
 public:
 	child_ptr() {}
-	child_ptr(std::unique_ptr<WndObject> ptr) : std::unique_ptr<WndObject>(std::move(ptr)) {}
-	child_ptr(alloc_ptr<WndObject> ptr) : child_ptr(std::unique_ptr<WndObject>(ptr)) {}
+	template<class ChildType>
+	child_ptr(std::unique_ptr<ChildType> ptr) : std::unique_ptr<WndObject>(ptr.release()) {}
+	template<class ChildType>
+	child_ptr(alloc_ptr<ChildType> ptr) : child_ptr(std::unique_ptr<ChildType>(ptr)) {}
 public:
 	operator WndObject& () const { return **this; }
 	operator ref_ptr<WndObject> () const { return get(); }
