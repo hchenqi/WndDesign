@@ -80,8 +80,8 @@ protected:
 	// message
 protected:
 	virtual void OnMouseMsg(MouseMsg msg) override {
-		if (msg.type == MouseMsg::WheelVertical) { Scroll(Vector((float)-msg.wheel_delta, 0.0f)); }
-		if (msg.type == MouseMsg::WheelHorizontal) { Scroll(Vector(0.0f, (float)-msg.wheel_delta)); }
+		if (msg.type == MouseMsg::WheelVertical) { Scroll(Vector(0.0f, (float)-msg.wheel_delta)); }
+		if (msg.type == MouseMsg::WheelHorizontal) { Scroll(Vector((float)msg.wheel_delta, 0.0f)); }
 	}
 };
 
