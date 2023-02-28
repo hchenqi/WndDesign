@@ -10,7 +10,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 class Timeout : private Timer {
 public:
-	Timeout() : Timer([&]() { if (function) { Reset()(); } if (!function) { Stop(); }}) {}
+	Timeout() : Timer([&]() { function ? Reset()() : Stop(); }) {}
 	~Timeout() {}
 
 private:
