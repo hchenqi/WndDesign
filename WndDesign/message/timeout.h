@@ -1,6 +1,7 @@
 #pragma once
 
 #include "timer.h"
+#include "../common/coroutine.h"
 
 #include <memory>
 
@@ -28,6 +29,11 @@ inline std::shared_ptr<Timeout> SetTimeout(std::function<void(void)> function, u
 	std::shared_ptr<Timeout> timeout(new Timeout());
 	timeout->Set([timeout, function]() { function(); }, delay);
 	return timeout;
+}
+
+
+inline Task<> StartTimeout(uint delay) {
+	return StartTask([=](resolver<> resolve) { SetTimeout([=]() { resolve(); }, delay); });
 }
 
 
