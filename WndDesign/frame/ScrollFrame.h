@@ -50,21 +50,6 @@ protected:
 
 	// layout
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override {
-		if (size != size_ref) {
-			size = size_ref;
-			child_size = UpdateChildSizeRef(child, Size(length_max, length_max));
-			UpdateFrameOffset(frame_offset);
-		}
-		return size;
-	}
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
-		if (this->child_size != child_size) {
-			this->child_size = child_size;
-			UpdateFrameOffset(frame_offset);
-		}
-	}
-protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
 	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 
@@ -92,7 +77,25 @@ public:
 	using child_ptr = child_ptr<Auto, Auto>;
 
 public:
-	ScrollFrame(child_ptr child) : _ScrollFrame_Base(std::move(child)) {}
+	ScrollFrame(child_ptr child) : _ScrollFrame_Base(std::move(child)) {
+		child_size = UpdateChildSizeRef(this->child, size_empty);
+	}
+
+	// layout
+protected:
+	virtual Size OnSizeRefUpdate(Size size_ref) override {
+		if (size != size_ref) {
+			size = size_ref;
+			UpdateFrameOffset(frame_offset);
+		}
+		return size;
+	}
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
+		if (this->child_size != child_size) {
+			this->child_size = child_size;
+			UpdateFrameOffset(frame_offset);
+		}
+	}
 };
 
 
@@ -212,7 +215,7 @@ struct deduce_scroll_frame_direction<Auto, Assigned> {
 
 
 template<class T>
-ScrollFrame(T)->ScrollFrame<typename deduce_scroll_frame_direction<extract_width_type<T>, extract_height_type<T>>::type>;
+ScrollFrame(T) -> ScrollFrame<typename deduce_scroll_frame_direction<extract_width_type<T>, extract_height_type<T>>::type>;
 
 
 END_NAMESPACE(WndDesign)
