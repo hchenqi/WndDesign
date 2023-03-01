@@ -78,14 +78,14 @@ private:
 
 
 template<class T = void>
-using resolver = std::function<void(T)>;
+using Continuation = std::function<void(T)>;
 
 template<class T>
 struct _Task_Awaitable;
 
 template<class T> requires (std::is_void_v<T>)
 struct _Task_Awaitable<T> {
-	std::function<void(resolver<T>)> task;
+	std::function<void(Continuation<T>)> task;
 	constexpr bool await_ready() { return false; }
 	void await_suspend(std::coroutine_handle<> continuation) { task(continuation); }
 	constexpr void await_resume() {}
@@ -93,7 +93,7 @@ struct _Task_Awaitable<T> {
 
 template<class T> requires (!std::is_void_v<T>)
 struct _Task_Awaitable<T> {
-	std::function<void(resolver<T>)> task;
+	std::function<void(Continuation<T>)> task;
 	T value;
 	constexpr bool await_ready() { return false; }
 	void await_suspend(std::coroutine_handle<> continuation) { task([this, continuation](T value) { this->value = std::move(value); continuation(); }); }
