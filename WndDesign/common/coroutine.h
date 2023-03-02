@@ -40,7 +40,7 @@ private:
 		ref_ptr<Task> task = nullptr;
 		std::coroutine_handle<> outer_continuation = nullptr;
 	public:
-		~promise() { if (task) { task->continuation = nullptr; } }
+		~promise() { if (task) { task->continuation = nullptr; } if (outer_continuation) { outer_continuation.destroy(); } }
 	public:
 		void SetTask(ref_ptr<Task> task) { this->task = task; }
 		void SetOuterContinuation(std::coroutine_handle<> outer_continuation) { this->outer_continuation = outer_continuation; }
@@ -61,7 +61,7 @@ private:
 		std::coroutine_handle<> outer_continuation = nullptr;
 		T value;
 	public:
-		~promise() { if (task) { task->continuation = nullptr; } }
+		~promise() { if (task) { task->continuation = nullptr; } if (outer_continuation) { outer_continuation.destroy(); } }
 	public:
 		void SetTask(ref_ptr<Task> task) { this->task = task; }
 		void SetOuterContinuation(std::coroutine_handle<> outer_continuation) { this->outer_continuation = outer_continuation; }
@@ -77,17 +77,36 @@ private:
 };
 
 
-template<class T = void>
-using Continuation = std::function<void(T)>;
-
 template<class T>
 struct _Task_Awaitable;
+
+
+template<class T = void>
+struct Continuation {
+public:
+	using value_type = T;
+private:
+	friend struct _Task_Awaitable<T>;
+private:
+	Continuation(std::function<void(T)> function, std::coroutine_handle<> continuation) : function(function), continuation(continuation) {}
+public:
+	Continuation() : Continuation(nullptr) {}
+	Continuation(nullptr_t) : function(nullptr), continuation(nullptr) {}
+private:
+	std::function<void(T)> function;
+	std::coroutine_handle<> continuation;
+public:
+	template<class U = T> requires(std::is_void_v<U>) void operator()() const { function(); }
+	template<class U = T> requires(!std::is_void_v<U>) void operator()(U value) const { function(std::move(value)); }
+	void Destroy() { continuation.destroy(); }
+};
+
 
 template<class T> requires (std::is_void_v<T>)
 struct _Task_Awaitable<T> {
 	std::function<void(Continuation<T>)> task;
 	constexpr bool await_ready() { return false; }
-	void await_suspend(std::coroutine_handle<> continuation) { task(continuation); }
+	void await_suspend(std::coroutine_handle<> continuation) { task(Continuation<T>(continuation, continuation)); }
 	constexpr void await_resume() {}
 };
 
@@ -96,9 +115,10 @@ struct _Task_Awaitable<T> {
 	std::function<void(Continuation<T>)> task;
 	T value;
 	constexpr bool await_ready() { return false; }
-	void await_suspend(std::coroutine_handle<> continuation) { task([this, continuation](T value) { this->value = std::move(value); continuation(); }); }
+	void await_suspend(std::coroutine_handle<> continuation) { task(Continuation<T>([this, continuation](T value) { this->value = std::move(value); continuation(); }, continuation)); }
 	T await_resume() { return std::move(value); }
 };
+
 
 template<class Func>
 struct _argument_type;
@@ -116,9 +136,10 @@ struct _argument_type<Func> {
 template<class Func>
 using _argument_type_t = typename _argument_type<Func>::type;
 
+
 template<class Func>
-Task<_argument_type_t<_argument_type_t<Func>>> StartTask(Func task) {
-	co_return co_await _Task_Awaitable<_argument_type_t<_argument_type_t<Func>>>{task};
+Task<typename _argument_type_t<Func>::value_type> StartTask(Func task) {
+	co_return co_await _Task_Awaitable<typename _argument_type_t<Func>::value_type>{ task };
 }
 
 
