@@ -56,25 +56,23 @@ void TextBlock::SetText(const TextBlockStyle& style, const std::wstring& text) {
 	layout->SetFontFallback(font_fallback.Get());
 
 	// paragraph style
+	ValueTag line_spacing = style.paragraph._line_spacing;
+	ValueTag baseline_spacing = style.paragraph._baseline_spacing;
+	ValueTag tab_size = style.paragraph._tab_size;
 	layout->SetTextAlignment(static_cast<DWRITE_TEXT_ALIGNMENT>(style.paragraph._text_align));
 	layout->SetParagraphAlignment(static_cast<DWRITE_PARAGRAPH_ALIGNMENT>(style.paragraph._paragraph_align));
 	layout->SetFlowDirection(static_cast<DWRITE_FLOW_DIRECTION>(style.paragraph._flow_direction));
 	layout->SetReadingDirection(static_cast<DWRITE_READING_DIRECTION>(style.paragraph._read_direction));
 	layout->SetWordWrapping(static_cast<DWRITE_WORD_WRAPPING>(style.paragraph._word_wrap));
-	ValueTag line_height = style.paragraph._line_height;
-	if (line_height.IsPixel()) {
-		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_UNIFORM, line_height.value(), 0.7f * line_height.value());
-	} else if (line_height.IsPercent()) {
-		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, line_height.value() / 100.0f, line_height.value() / 110.0f);
+	if (line_spacing.IsPixel()) {
+		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_UNIFORM, line_spacing.value(), baseline_spacing.ConvertToPixel(line_spacing.value()).value());
+	} else if (line_spacing.IsPercent()) {
+		line_spacing.ConvertToPixel(1.0f);
+		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, line_spacing.value(), baseline_spacing.ConvertToPixel(line_spacing.value()).value());
 	} else {
-		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 0.0f, 0.0f);  // The last two parameters are ignored.
+		layout->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 0.0f, 0.0f);
 	}
-	ValueTag tab_size = style.paragraph._tab_size;
-	if (tab_size.IsPixel()) {
-		layout->SetIncrementalTabStop(tab_size.value());
-	} else if (tab_size.IsPercent()) {
-		layout->SetIncrementalTabStop(tab_size.value() * style.font._size / 100.0f);
-	}
+	layout->SetIncrementalTabStop(tab_size.ConvertToPixel(style.font._size).value());
 }
 
 void TextBlock::UpdateSizeRef(Size size_ref) {
@@ -90,7 +88,7 @@ Size TextBlock::GetSize() const {
 
 inline TextBlock::HitTestInfo HitTestMetricsToInfo(DWRITE_HIT_TEST_METRICS& metrics) {
 	return TextBlock::HitTestInfo{
-		metrics.textPosition, metrics.length,
+		TextRange(metrics.textPosition, metrics.length),
 		Rect(metrics.left, metrics.top, metrics.width, metrics.height)
 	};
 }
@@ -102,27 +100,25 @@ TextBlock::HitTestInfo TextBlock::HitTestPoint(Point point) const {
 	return HitTestMetricsToInfo(metrics);
 }
 
-TextBlock::HitTestInfo TextBlock::HitTestTextPosition(size_t text_position) const {
+TextBlock::HitTestInfo TextBlock::HitTestPosition(size_t text_position) const {
 	FLOAT x, y; DWRITE_HIT_TEST_METRICS metrics;
 	layout->HitTestTextPosition((uint)text_position, false, &x, &y, &metrics);
 	return HitTestMetricsToInfo(metrics);
 }
 
-std::vector<TextBlock::HitTestInfo> TextBlock::HitTestTextRange(size_t text_position, size_t text_length) const {
+std::vector<TextBlock::HitTestInfo> TextBlock::HitTestRange(TextRange range) const {
 	UINT32 line_cnt; layout->GetLineMetrics((DWRITE_LINE_METRICS1*)nullptr, 0, &line_cnt);
 	UINT32 actual_size = line_cnt;
 	std::vector<DWRITE_HIT_TEST_METRICS> metrics;
 	do {
 		metrics.resize(actual_size);
-		layout->HitTestTextRange((uint)text_position, (uint)text_length, 0, 0, metrics.data(), (uint)metrics.size(), &actual_size);
+		layout->HitTestTextRange((uint)range.begin, (uint)range.length, 0, 0, metrics.data(), (uint)metrics.size(), &actual_size);
 	} while (actual_size > metrics.size());
 	metrics.resize(actual_size);
 	std::vector<HitTestInfo> geometry_regions(metrics.size());
 	for (size_t i = 0; i < geometry_regions.size(); ++i) {
 		geometry_regions[i] = HitTestMetricsToInfo(metrics[i]);
-		if (geometry_regions[i].geometry_region.size.width < 5.0f) {
-			geometry_regions[i].geometry_region.size.width = 5.0f;
-		}
+		if (geometry_regions[i].region.size.width < 5.0f) { geometry_regions[i].region.size.width = 5.0f; }
 	}
 	return geometry_regions;
 }

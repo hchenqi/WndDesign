@@ -29,7 +29,7 @@ public:
 private:
 	struct EditBoxStyle : public EditBox::Style {
 		EditBoxStyle() {
-			paragraph.line_height(90pct);
+			paragraph.line_spacing(90pct);
 			font.family(L"Segoe UI").size(17);
 		}
 	};

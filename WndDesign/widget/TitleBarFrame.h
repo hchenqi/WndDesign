@@ -77,7 +77,7 @@ private:
 private:
 	ref_ptr<TextBox> title;
 public:
-	void SetTitle(std::wstring str) { title->SetText(str); DesktopFrame::SetTitle(str); }
+	void SetTitle(std::wstring str) { title->Assign(str); DesktopFrame::SetTitle(str); }
 
 	// layout
 private:

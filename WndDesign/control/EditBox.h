@@ -17,7 +17,7 @@ private:
 		public:
 			Color _selection_color = Color(Color::DimGray, 0x7f);
 			Color _caret_color = Color::DimGray;
-			bool _disabled = false;  // can only select and copy
+			bool _disabled = false;  // can only select and copy if disabled
 		public:
 			constexpr EditStyle& selection_color(Color selection_color) { _selection_color = selection_color; return *this; }
 			constexpr EditStyle& caret_color(Color caret_color) { _caret_color = caret_color; return *this; }
@@ -28,11 +28,7 @@ public:
 	struct Style : TextBox::Style, EditBoxStyle {};
 
 public:
-	EditBox(Style style, std::wstring text = L"") : TextBox(style, text), style(style) {
-		cursor = Cursor::Text;
-		style.edit._disabled ? ime.Disable(*this) : ime.Enable(*this);
-		TextUpdated();
-	}
+	EditBox(Style style, std::wstring text = L"");
 	~EditBox() {}
 
 	// style
@@ -42,20 +38,17 @@ private:
 	bool IsEditDisabled() const { return style.edit._disabled; }
 
 	// text
-public:
+protected:
 	using HitTestInfo = TextBlock::HitTestInfo;
 private:
-	WordBreakIterator word_break_iterator;
+	mutable WordBreakIterator word_break_iterator;
 private:
-	size_t GetCharacterLength(size_t text_position) { return GetUTF16CharLength(text[text_position]); }
-	void TextUpdated() { word_break_iterator.SetText(text); }
-public:
-	void SetText(std::wstring str) { TextBox::SetText(str); TextUpdated(); }
-	void InsertText(size_t pos, wchar ch) { TextBox::InsertText(pos, ch); TextUpdated(); }
-	void InsertText(size_t pos, std::wstring str) { TextBox::InsertText(pos, str); TextUpdated(); }
-	void ReplaceText(size_t begin, size_t length, wchar ch) { TextBox::ReplaceText(begin, length, ch); TextUpdated(); }
-	void ReplaceText(size_t begin, size_t length, std::wstring str) { TextBox::ReplaceText(begin, length, str); TextUpdated(); }
-	void DeleteText(size_t begin, size_t length) { TextBox::DeleteText(begin, length); TextUpdated(); }
+	size_t GetCharacterLength(size_t position) const;
+	TextRange GetWordRange(size_t position) const;
+	TextRange GetParagraphRange(size_t position) const;
+	TextRange GetEntireRange() const { return TextRange(0, text.length()); }
+protected:
+	virtual void OnTextUpdate() override;
 
 	// layout
 protected:
@@ -76,7 +69,6 @@ private:
 	ushort caret_blink_time = 0;
 private:
 	bool IsCaretVisible() const { return caret_state == CaretState::Show || caret_state == CaretState::BlinkShow; }
-	void RedrawCaretRegion() { Redraw(caret_region); }
 private:
 	void HideCaret();
 	void StartBlinkingCaret();
@@ -87,44 +79,48 @@ private:
 	static constexpr float caret_width = 1.0f;
 	enum class CaretMoveDirection { Left, Right, Up, Down, Home, End };
 private:
-	size_t caret_text_position = 0;
+	size_t caret_position = 0;
 	Rect caret_region = region_empty;
 private:
-	void UpdateCaretRegion(const HitTestInfo& info);
+	void UpdateCaret(const HitTestInfo& info);
+	void UpdateCaret(size_t position) { UpdateCaret(text_block.HitTestPosition(position)); }
 private:
-	void SetCaret(HitTestInfo info);
+	void SetCaret(const HitTestInfo& info);
 	void SetCaret(Point point) { SetCaret(text_block.HitTestPoint(point)); }
-	void SetCaret(size_t text_position) { SetCaret(text_block.HitTestTextPosition(text_position)); }
+	void SetCaret(size_t position) { SetCaret(text_block.HitTestPosition(position)); }
 	void MoveCaret(CaretMoveDirection direction);
 
 	// selection
 private:
-	size_t mouse_down_text_position = 0;
-	size_t selection_begin = 0;
-	size_t selection_end = 0;
+	enum class SelectionMode { Character, Word, Paragraph };
+private:
+	SelectionMode selection_mode = SelectionMode::Character;
+	TextRange selection_initial_range;
+private:
+	TextRange selection_range;
 	std::vector<HitTestInfo> selection_info;
-	Rect selection_region_union;
+	Rect selection_region;
 private:
-	void UpdateSelectionRegion();
-	void RedrawSelectionRegion() { Redraw(selection_region_union); }
+	bool HasSelection() const { return !selection_range.IsEmpty(); }
+	void UpdateSelection(TextRange range);
 private:
-	bool HasSelection() const { return selection_end > selection_begin; }
-	void DoSelection(Point mouse_move_position);
 	void SelectWord();
 	void SelectParagraph();
-	void SelectAll();
-	void ClearSelection();
+	void SelectAll() { UpdateSelection(GetEntireRange()); }
+private:
+	void DoSelection(const HitTestInfo& info);
+	void DoSelection(Point current_point) { DoSelection(text_block.HitTestPoint(current_point)); }
+	void DoSelection(size_t current_position) { DoSelection(text_block.HitTestPosition(current_position)); }
 
 	// keyboard input
 private:
 	void Insert(wchar ch);
-	void Insert(std::wstring str);
+	void Insert(const std::wstring& str);
 	void Delete(bool is_backspace);
 
 	// ime input
 private:
-	size_t ime_composition_begin = 0;
-	size_t ime_composition_end = 0;
+	TextRange ime_composition_range;
 private:
 	void OnImeBegin();
 	void OnImeString();

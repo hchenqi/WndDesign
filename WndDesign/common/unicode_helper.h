@@ -1,6 +1,7 @@
 #pragma once
 
 #include "uncopyable.h"
+#include "../geometry/text_range.h"
 
 #include <string>
 
@@ -28,17 +29,6 @@ inline size_t GetUTF16CharLength(wchar ch) {
 	default: assert(false); return 0;
 	}
 }
-
-
-struct TextRange {
-public:
-	size_t begin; size_t length;
-public:
-	size_t left() const { return begin; }
-	size_t right() const { return begin + length; }
-	bool IsEmpty() const { return length == 0; }
-	bool Contains(size_t pos) const { return pos >= left() && pos < right(); }
-};
 
 
 class WordBreakIterator : public Uncopyable {

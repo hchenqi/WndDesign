@@ -279,6 +279,9 @@
     <ClInclude Include="common\function_traits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="geometry\text_range.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">

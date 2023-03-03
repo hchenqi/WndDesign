@@ -94,7 +94,8 @@ struct TextBlockStyle {
 		FlowDirection _flow_direction = FlowDirection::TopToBottom;
 		ReadDirection _read_direction = ReadDirection::LeftToRight;
 		WordWrap _word_wrap = WordWrap::Wrap;
-		ValueTag _line_height = 120pct;  // relative to font size
+		ValueTag _line_spacing = 110pct;
+		ValueTag _baseline_spacing = 90pct;
 		ValueTag _tab_size = 200pct;
 	public:
 		constexpr ParagraphFormat& text_align(TextAlign text_align) { _text_align = text_align; return *this; }
@@ -102,7 +103,8 @@ struct TextBlockStyle {
 		constexpr ParagraphFormat& flow_direction(FlowDirection text_direction) { _flow_direction = text_direction; return *this; }
 		constexpr ParagraphFormat& read_direction(ReadDirection read_direction) { _read_direction = read_direction; return *this; }
 		constexpr ParagraphFormat& word_wrap(WordWrap word_wrap) { _word_wrap = word_wrap; return *this; }
-		constexpr ParagraphFormat& line_height(ValueTag line_height) { _line_height = line_height; return *this; }
+		constexpr ParagraphFormat& line_spacing(ValueTag line_spacing) { _line_spacing = line_spacing; return *this; }
+		constexpr ParagraphFormat& baseline_spacing(ValueTag baseline_spacing) { _baseline_spacing = baseline_spacing; return *this; }
 		constexpr ParagraphFormat& tab_size(ValueTag tab_size) { _tab_size = tab_size; return *this; }
 	}paragraph;
 
@@ -113,9 +115,7 @@ struct TextBlockStyle {
 		FontWeight _weight = FontWeight::Normal;
 		FontStyle _style = FontStyle::Normal;
 		FontStretch _stretch = FontStretch::Normal;
-		bool _underline = false;
-		bool _strikeline = false;
-		float _size = 16.0f;
+		float _size = 16px;
 		Color _color = Color::Black;
 	public:
 		template<class... Ts, class = std::enable_if_t<sizeof...(Ts) >= 1>>
@@ -126,8 +126,6 @@ struct TextBlockStyle {
 		constexpr FontFormat& stretch(FontStretch stretch) { _stretch = stretch; return *this; }
 		constexpr FontFormat& size(float size) { _size = size; return *this; }
 		constexpr FontFormat& color(Color color) { _color = color; return *this; }
-		constexpr FontFormat& underline(bool underline) { _underline = underline; return *this; }
-		constexpr FontFormat& strikeline(bool strikeline) { _strikeline = strikeline; return *this; }
 	}font;
 };
 

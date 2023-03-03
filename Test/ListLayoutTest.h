@@ -30,7 +30,7 @@ private:
 
 struct TextBoxStyle : TextBox::Style {
 	TextBoxStyle() {
-		paragraph.line_height(200pct);
+		paragraph.line_spacing(200pct);
 		font.family(L"DengXian").size(20).color(Color::Moccasin);
 	}
 };

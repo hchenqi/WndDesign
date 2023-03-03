@@ -6,10 +6,36 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
+EditBox::EditBox(Style style, std::wstring text) : TextBox(style, text), style(style) {
+	cursor = Cursor::Text;
+	style.edit._disabled ? ime.Disable(*this) : ime.Enable(*this);
+	word_break_iterator.SetText(this->text);
+}
+
+size_t EditBox::GetCharacterLength(size_t position) const { return GetUTF16CharLength(text[position]); }
+
+TextRange EditBox::GetWordRange(size_t position) const {
+	if (text.length() == 0) { return text_range_empty; }
+	if (position >= text.length()) { position--; }
+	return word_break_iterator.Seek(position);
+}
+
+TextRange EditBox::GetParagraphRange(size_t position) const {
+	if (text.length() == 0) { return text_range_empty; }
+	size_t length = text.length(); if (position >= length) { position--; }
+	size_t begin = position - 1, end = position;
+	while (begin < length && text[begin] != L'\n') { begin--; }
+	while (end < length && text[end] != L'\n') { end++; }
+	begin++; end++;
+	return TextRange(begin, end - begin);
+}
+
+void EditBox::OnTextUpdate() { word_break_iterator.SetText(text); TextBox::OnTextUpdate(); }
+
 Size EditBox::OnSizeRefUpdate(Size size_ref) {
 	Size size = TextBox::OnSizeRefUpdate(size_ref);
-	UpdateCaretRegion(text_block.HitTestTextPosition(caret_text_position));
-	UpdateSelectionRegion();
+	UpdateCaret(caret_position);
+	UpdateSelection(selection_range);
 	return size;
 }
 
@@ -20,8 +46,9 @@ void EditBox::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	}
 	if (HasSelection()) {
 		for (auto& it : selection_info) {
-			auto& region = it.geometry_region; if (region.Intersect(draw_region).IsEmpty()) { continue; }
-			figure_queue.add(region.point, new Rectangle(region.size, style.edit._selection_color));
+			if (!it.region.Intersect(draw_region).IsEmpty()) {
+				figure_queue.add(it.region.point, new Rectangle(it.region.size, style.edit._selection_color));
+			}
 		}
 	}
 }
@@ -29,7 +56,7 @@ void EditBox::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 void EditBox::HideCaret() {
 	if (caret_state != CaretState::Hide) {
 		caret_state = CaretState::Hide;
-		RedrawCaretRegion();
+		Redraw(caret_region);
 	}
 }
 
@@ -55,38 +82,39 @@ void EditBox::BlinkCaret() {
 	case CaretState::BlinkShow: caret_state = CaretState::BlinkHide; break;
 	case CaretState::BlinkHide: caret_state = CaretState::BlinkShow; break;
 	}
-	RedrawCaretRegion();
+	Redraw(caret_region);
 }
 
-void EditBox::UpdateCaretRegion(const HitTestInfo& info) {
-	RedrawCaretRegion();
-	caret_text_position = info.text_position;
-	caret_region = Rect(info.geometry_region.point, Size(caret_width, info.geometry_region.size.height));
-	RedrawCaretRegion();
+void EditBox::UpdateCaret(const HitTestInfo& info) {
+	caret_position = info.range.begin;
+	Rect caret_region_old = caret_region; caret_region = Rect(info.region.point, Size(caret_width, info.region.size.height));
+	Redraw(caret_region_old.Union(caret_region));
 }
 
-void EditBox::SetCaret(HitTestInfo info) {
-	SetFocus();
-	UpdateCaretRegion(info); caret_state = CaretState::Show;
-	ClearSelection();
+void EditBox::SetCaret(const HitTestInfo& info) {
+	UpdateCaret(info);
+	caret_state = CaretState::Show;
+	UpdateSelection(text_range_empty);
+	selection_initial_range = TextRange(info.range.begin, 0);
+	selection_mode = SelectionMode::Character;
 }
 
 void EditBox::MoveCaret(CaretMoveDirection direction) {
 	switch (direction) {
 	case CaretMoveDirection::Left:
 		if (HasSelection()) {
-			SetCaret(selection_begin);
+			SetCaret(selection_range.left());
 		} else {
-			if (caret_text_position > 0) {
-				SetCaret(caret_text_position - 1);
+			if (caret_position > 0) {
+				SetCaret(caret_position - 1);
 			}
 		}
 		break;
 	case CaretMoveDirection::Right:
 		if (HasSelection()) {
-			SetCaret(selection_end);
+			SetCaret(selection_range.right());
 		} else {
-			SetCaret(caret_text_position + GetCharacterLength(caret_text_position));
+			SetCaret(caret_position + GetCharacterLength(caret_position));
 		}
 		break;
 	case CaretMoveDirection::Up:
@@ -104,91 +132,76 @@ void EditBox::MoveCaret(CaretMoveDirection direction) {
 	}
 }
 
-void EditBox::UpdateSelectionRegion() {
-	HideCaret();
-	selection_info = text_block.HitTestTextRange(selection_begin, selection_end - selection_begin);
-	RedrawSelectionRegion();
-	selection_region_union = region_empty;
-	for (auto& it : selection_info) {
-		selection_region_union = selection_region_union.Union(it.geometry_region);
-	}
-	RedrawSelectionRegion();
-}
-
-void EditBox::DoSelection(Point mouse_move_position) {
-	HitTestInfo info = text_block.HitTestPoint(mouse_move_position);
-	UpdateCaretRegion(info);
-	selection_begin = mouse_down_text_position;
-	selection_end = caret_text_position;
-	if (selection_begin == selection_end) { ClearSelection(); return; }
-	if (selection_end < selection_begin) { std::swap(selection_begin, selection_end); }
-	UpdateSelectionRegion();
+void EditBox::UpdateSelection(TextRange range) {
+	selection_range = range;
+	selection_range.IsEmpty() ? selection_info.clear() : (selection_info = text_block.HitTestRange(selection_range), void());
+	Rect selection_region_old = selection_region; selection_region = region_empty;
+	for (auto& it : selection_info) { selection_region = selection_region.Union(it.region); }
+	Redraw(selection_region_old.Union(selection_region));
 }
 
 void EditBox::SelectWord() {
-	if (caret_text_position >= text.length()) { return; }
-	TextRange word_range = word_break_iterator.Seek(caret_text_position);
-	selection_begin = word_range.left(); selection_end = word_range.right();
-	UpdateSelectionRegion();
+	UpdateSelection(GetWordRange(selection_initial_range.begin));
+	selection_mode = SelectionMode::Word;
+	selection_initial_range = selection_range;
+	UpdateCaret(selection_range.right());
 }
 
 void EditBox::SelectParagraph() {
-	size_t length = text.length();
-	selection_begin = caret_text_position - 1; selection_end = caret_text_position;
-	while (selection_begin < length && text[selection_begin] != L'\n') { selection_begin--; }
-	while (selection_end < length && text[selection_end] != L'\n') { selection_end++; }
-	selection_begin++; selection_end++;
-	UpdateSelectionRegion();
+	UpdateSelection(GetParagraphRange(selection_initial_range.begin));
+	selection_mode = SelectionMode::Paragraph;
+	selection_initial_range = selection_range;
+	UpdateCaret(selection_range.right());
 }
 
-void EditBox::SelectAll() {
-	selection_begin = 0; selection_end = text.length();
-	UpdateSelectionRegion();
-}
-
-void EditBox::ClearSelection() {
-	selection_begin = selection_end = 0;
-	selection_info.clear();
-	RedrawSelectionRegion();
-	selection_region_union = region_empty;
+void EditBox::DoSelection(const HitTestInfo& info) {
+	TextRange current_range;
+	switch (selection_mode) {
+	case SelectionMode::Character: current_range = TextRange(info.range.begin, 0); break;
+	case SelectionMode::Word: current_range = GetWordRange(info.range.begin); break;
+	case SelectionMode::Paragraph: current_range = GetParagraphRange(info.range.begin); break;
+	}
+	current_range = selection_initial_range.Union(current_range);
+	UpdateCaret(current_range.begin < selection_initial_range.begin ? current_range.left() : current_range.right());
+	UpdateSelection(current_range);
 }
 
 void EditBox::Insert(wchar ch) {
 	if (IsEditDisabled()) { return; }
 	if (HasSelection()) {
-		ReplaceText(selection_begin, selection_end - selection_begin, ch);
-		SetCaret(selection_begin + 1);
+		TextBox::Replace(selection_range, ch);
+		SetCaret(selection_range.begin + 1);
 	} else {
-		InsertText(caret_text_position, ch);
-		SetCaret(caret_text_position + 1);
+		TextBox::Insert(caret_position, ch);
+		SetCaret(caret_position + 1);
 	}
 }
 
-void EditBox::Insert(std::wstring str) {
+void EditBox::Insert(const std::wstring& str) {
 	if (IsEditDisabled()) { return; }
 	if (HasSelection()) {
-		ReplaceText(selection_begin, selection_end - selection_begin, str);
-		SetCaret(selection_begin + str.length());
+		TextBox::Replace(selection_range, str);
+		SetCaret(selection_range.begin + str.length());
 	} else {
-		InsertText(caret_text_position, str);
-		SetCaret(caret_text_position + str.length());
+		TextBox::Insert(caret_position, str);
+		SetCaret(caret_position + str.length());
 	}
 }
 
 void EditBox::Delete(bool is_backspace) {
 	if (IsEditDisabled()) { return; }
 	if (HasSelection()) {
-		DeleteText(selection_begin, selection_end - selection_begin);
-		SetCaret(selection_begin);
+		TextBox::Erase(selection_range);
+		SetCaret(selection_range.begin);
 	} else {
 		if (is_backspace) {
-			if (caret_text_position == 0) { return; }
-			size_t previous_caret_position = caret_text_position;
-			SetCaret(caret_text_position - 1);
-			DeleteText(caret_text_position, previous_caret_position - caret_text_position);
+			if (caret_position == 0) { return; }
+			size_t caret_position_old = caret_position;
+			SetCaret(caret_position - 1);
+			TextBox::Erase(TextRange(caret_position, caret_position_old - caret_position));
 		} else {
-			if (caret_text_position >= text.length()) { return; }
-			DeleteText(caret_text_position, GetCharacterLength(caret_text_position));
+			if (caret_position >= text.length()) { return; }
+			TextBox::Erase(TextRange(caret_position, GetCharacterLength(caret_position)));
 		}
 	}
 }
@@ -197,12 +210,10 @@ void EditBox::OnImeBegin() {
 	if (IsEditDisabled()) { return; }
 	Point ime_position;
 	if (HasSelection()) {
-		ime_composition_begin = selection_begin;
-		ime_composition_end = selection_end;
-		ime_position = selection_info.front().geometry_region.RightBottom();
+		ime_composition_range = selection_range;
+		ime_position = selection_info.front().region.RightBottom();
 	} else {
-		ime_composition_begin = caret_text_position;
-		ime_composition_end = ime_composition_begin;
+		ime_composition_range = TextRange(caret_position, 0);
 		ime_position = caret_region.RightBottom();
 	}
 	ime.SetPosition(*this, ime_position);
@@ -211,13 +222,13 @@ void EditBox::OnImeBegin() {
 void EditBox::OnImeString() {
 	if (IsEditDisabled()) { return; }
 	std::wstring str = ime.GetString();
-	ReplaceText(ime_composition_begin, ime_composition_end - ime_composition_begin, str);
-	ime_composition_end = ime_composition_begin + str.length();
-	SetCaret(ime_composition_begin + ime.GetCursorPosition());
+	TextBox::Replace(ime_composition_range, str);
+	ime_composition_range.length = str.length();
+	SetCaret(ime_composition_range.begin + ime.GetCursorPosition());
 }
 
 void EditBox::OnImeEnd() {
-	if (caret_text_position != ime_composition_end) { SetCaret(ime_composition_end); }
+	if (caret_position != ime_composition_range.right()) { SetCaret(ime_composition_range.right()); }
 }
 
 void EditBox::Cut() {
@@ -229,7 +240,7 @@ void EditBox::Cut() {
 
 void EditBox::Copy() {
 	if (HasSelection()) {
-		SetClipboardData(text.substr(selection_begin, selection_end - selection_begin));
+		SetClipboardData(text.substr(selection_range.begin, selection_range.length));
 	}
 }
 
@@ -241,10 +252,10 @@ void EditBox::Paste() {
 
 void EditBox::OnMouseMsg(MouseMsg msg) {
 	switch (msg.type) {
-	case MouseMsg::LeftDown: SetCaret(msg.point); mouse_down_text_position = caret_text_position; SetCapture(); break;
 	case MouseMsg::LeftUp: ReleaseCapture(); break;
 	}
 	switch (mouse_tracker.Track(msg)) {
+	case MouseTrackMsg::LeftDown: SetCaret(msg.point); SetFocus(); SetCapture(); break;
 	case MouseTrackMsg::LeftDoubleClick: SelectWord(); break;
 	case MouseTrackMsg::LeftTripleClick: SelectParagraph(); break;
 	case MouseTrackMsg::LeftDrag: DoSelection(msg.point); break;
@@ -296,9 +307,8 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 }
 
 void EditBox::OnNotifyMsg(NotifyMsg msg) {
-	TextBox::OnNotifyMsg(msg);
 	switch (msg) {
-	case NotifyMsg::LoseFocus: ClearSelection(); HideCaret(); break;
+	case NotifyMsg::LoseFocus: UpdateSelection(text_range_empty); HideCaret(); break;
 	}
 }
 

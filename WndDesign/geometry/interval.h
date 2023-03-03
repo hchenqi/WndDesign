@@ -37,4 +37,7 @@ struct Interval {
 };
 
 
+constexpr Interval interval_empty;
+
+
 END_NAMESPACE(WndDesign)

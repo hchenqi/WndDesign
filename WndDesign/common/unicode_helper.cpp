@@ -39,7 +39,7 @@ TextRange WordBreakIterator::Seek(size_t pos) {
 	begin = ubrk_preceding(AsUBreakIterator(iter), (uint)(pos + 1)); assert(begin != UBRK_DONE);
 	end = ubrk_next(AsUBreakIterator(iter)); assert(end != UBRK_DONE);
 	assert(end > begin);
-	return { begin, end - begin };
+	return TextRange(begin, end - begin);
 }
 
 TextRange WordBreakIterator::Next() {
@@ -48,7 +48,7 @@ TextRange WordBreakIterator::Next() {
 	begin = end;
 	end = ubrk_next(AsUBreakIterator(iter)); assert(end != UBRK_DONE);
 	assert(end > begin);
-	return { begin, end - begin };
+	return TextRange(begin, end - begin);
 }
 
 TextRange WordBreakIterator::Prev() {
@@ -57,7 +57,7 @@ TextRange WordBreakIterator::Prev() {
 	end = begin;
 	begin = ubrk_preceding(AsUBreakIterator(iter), (uint)begin); assert(begin != UBRK_DONE);
 	assert(end > begin);
-	return { begin, end - begin };
+	return TextRange(begin, end - begin);
 }
 
 

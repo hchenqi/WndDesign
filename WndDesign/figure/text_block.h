@@ -3,6 +3,7 @@
 #include "figure.h"
 #include "../common/uncopyable.h"
 #include "../style/text_block_style.h"
+#include "../geometry/text_range.h"
 
 #include <vector>
 
@@ -26,14 +27,13 @@ public:
 	Size GetSize() const;
 public:
 	struct HitTestInfo {
-		uint text_position = 0;
-		uint text_length = 0;
-		Rect geometry_region = region_empty;
+		TextRange range;
+		Rect region;
 	};
 public:
 	HitTestInfo HitTestPoint(Point point) const;
-	HitTestInfo HitTestTextPosition(size_t text_position) const;
-	std::vector<HitTestInfo> HitTestTextRange(size_t text_position, size_t text_length) const;
+	HitTestInfo HitTestPosition(size_t position) const;
+	std::vector<HitTestInfo> HitTestRange(TextRange range) const;
 };
 
 
