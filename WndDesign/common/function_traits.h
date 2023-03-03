@@ -14,6 +14,10 @@ struct function_traits : public function_traits<decltype(&Func::operator())> {};
 template<class Ret, class... Args>
 struct function_traits<Ret(Args...)> {
 	using argument_type_tuple = std::tuple<Args...>;
+
+	template<size_t index>
+	using argument_type = std::tuple_element_t<index, argument_type_tuple>;
+
 	using return_type = Ret;
 };
 

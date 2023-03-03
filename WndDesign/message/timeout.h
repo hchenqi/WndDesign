@@ -32,8 +32,8 @@ inline std::shared_ptr<Timeout> SetTimeout(std::function<void(void)> function, u
 }
 
 
-inline Task<> StartTimeout(uint delay) {
-	return StartTask([=](Continuation<> continuation) { SetTimeout([=]() { continuation(); }, delay); });
+inline TaskAwaitable<> SetTimeout(uint delay) {
+	return SetTask([=](Continuation<> continuation) { SetTimeout([=]() { continuation(); }, delay); });
 }
 
 
