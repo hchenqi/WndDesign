@@ -282,6 +282,9 @@
     <ClInclude Include="geometry\text_range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="layout\DivideLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">

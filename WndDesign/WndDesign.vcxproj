@@ -199,6 +199,7 @@
     <ClInclude Include="geometry\tiling.h" />
     <ClInclude Include="geometry\vector.h" />
     <ClInclude Include="layout\BarLayout.h" />
+    <ClInclude Include="layout\DivideLayout.h" />
     <ClInclude Include="layout\FlowLayout.h" />
     <ClInclude Include="layout\ListLayout.h" />
     <ClInclude Include="layout\ListLayoutAuto.h" />
