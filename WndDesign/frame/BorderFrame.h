@@ -20,6 +20,8 @@ public:
 	// style
 protected:
 	Border border;
+public:
+	void SetBorder(Border border) { this->border = border; Redraw(region_infinite); }
 
 	// layout
 protected:
