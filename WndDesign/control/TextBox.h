@@ -20,6 +20,8 @@ protected:
 	Style style;
 	std::wstring text;
 	TextBlock text_block;
+public:
+	const std::wstring& GetText() const { return text; }
 protected:
 	virtual void OnTextUpdate() { text_block.SetText(style, text); SizeUpdated(UpdateLayout()); Redraw(region_infinite); }
 public:
