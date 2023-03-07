@@ -66,7 +66,7 @@ ListLayout<Vertical>::child_iter ListLayout<Vertical>::HitTestItem(float offset)
 }
 
 void ListLayout<Vertical>::UpdateLayout(size_t index) {
-	size.height = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].EndOffset();
+	size.height = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].end();
 	for (index; index < child_list.size(); index++) {
 		size.height += gap;
 		child_list[index].offset = size.height;
@@ -183,7 +183,7 @@ ListLayout<Horizontal>::child_iter ListLayout<Horizontal>::HitTestItem(float off
 }
 
 void ListLayout<Horizontal>::UpdateLayout(size_t index) {
-	size.width = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].EndOffset();
+	size.width = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].end();
 	for (index; index < child_list.size(); index++) {
 		size.width += gap;
 		child_list[index].offset = size.width;

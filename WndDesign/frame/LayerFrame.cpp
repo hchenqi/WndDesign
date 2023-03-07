@@ -23,7 +23,7 @@ void _LayerFrame_Base::OnChildRedraw(WndObject& child, Rect child_redraw_region)
 
 void _LayerFrame_Base::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
-	if (Scale current_scale = figure_queue.GetScale(); scale != current_scale) { scale = current_scale; layer.Destroy(); }
+	if (Scale current_scale = figure_queue.GetTransform().GetScale(); scale != current_scale) { scale = current_scale; layer.Destroy(); }
 	Rect composite_region = draw_region * scale, redraw_region = composite_region;
 	if (layer.IsEmpty()) {
 		Size layer_size = size * scale;

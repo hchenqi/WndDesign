@@ -34,8 +34,8 @@ protected:
 	public:
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
 	public:
-		float BeginOffset() const { return offset; }
-		float EndOffset() const { return offset + length; }
+		float begin() const { return offset; }
+		float end() const { return offset + length; }
 	};
 	std::vector<ChildInfo> child_list;
 protected:
@@ -101,8 +101,8 @@ protected:
 	public:
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
 	public:
-		float BeginOffset() const { return offset; }
-		float EndOffset() const { return offset + length; }
+		float begin() const { return offset; }
+		float end() const { return offset + length; }
 	};
 	std::vector<ChildInfo> child_list;
 protected:

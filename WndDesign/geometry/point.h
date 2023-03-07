@@ -17,7 +17,7 @@ struct Point {
 	constexpr bool operator!=(const Point& point) const { return x != point.x || y != point.y; }
 
 	constexpr bool operator>(const Point& point) const { return x > point.x && y > point.y; }
-	constexpr bool operator<(const Point& point) const { return x < point.x&& y < point.y; }
+	constexpr bool operator<(const Point& point) const { return x < point.x && y < point.y; }
 	constexpr bool operator>=(const Point& point) const { return x >= point.x && y >= point.y; }
 	constexpr bool operator<=(const Point& point) const { return x <= point.x && y <= point.y; }
 };
