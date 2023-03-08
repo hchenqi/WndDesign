@@ -291,6 +291,9 @@
     <ClInclude Include="message\state.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="widget\RadioGroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">
