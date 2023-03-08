@@ -12,6 +12,8 @@ protected:
 	virtual ~WndFrame() override {}
 protected:
 	child_ptr<> child;
+public:
+	WndObject& GetChild() { return child; }
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return UpdateChildSizeRef(child, size_ref); }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { return SizeUpdated(child_size); }

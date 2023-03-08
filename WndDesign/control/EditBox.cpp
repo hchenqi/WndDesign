@@ -252,10 +252,10 @@ void EditBox::Paste() {
 
 void EditBox::OnMouseMsg(MouseMsg msg) {
 	switch (msg.type) {
+	case MouseMsg::LeftDown: SetCaret(msg.point); SetFocus(); SetCapture(); break;
 	case MouseMsg::LeftUp: ReleaseCapture(); break;
 	}
 	switch (mouse_tracker.Track(msg)) {
-	case MouseTrackMsg::LeftDown: SetCaret(msg.point); SetFocus(); SetCapture(); break;
 	case MouseTrackMsg::LeftDoubleClick: SelectWord(); break;
 	case MouseTrackMsg::LeftTripleClick: SelectParagraph(); break;
 	case MouseTrackMsg::LeftDrag: DoSelection(msg.point); break;

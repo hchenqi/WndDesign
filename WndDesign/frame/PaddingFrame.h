@@ -26,8 +26,10 @@ private:
 
 	// layout
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { return Extend(UpdateChildSizeRef(child, Extend(size_ref, -padding)), padding); }
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(Extend(child_size, padding)); }
+	Size size;
+protected:
+	virtual Size OnSizeRefUpdate(Size size_ref) override { return size = Extend(UpdateChildSizeRef(child, Extend(size_ref, -padding)), padding); }
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(size = Extend(child_size, padding)); }
 protected:
 	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
 	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
