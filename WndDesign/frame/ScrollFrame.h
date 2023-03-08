@@ -40,9 +40,11 @@ public:
 		UpdateFrameOffset(frame_offset + offset);
 	}
 	void ScrollIntoView(Point point) {
+		point = clamp(point, Rect(point_zero, child_size));
 		Scroll(point - clamp(point, Rect(frame_offset, size)));
 	}
 	void ScrollIntoView(Rect rect) {
+		rect = clamp(rect, Rect(point_zero, child_size));
 		Scroll(rect.point - clamp(rect, Rect(frame_offset, size)).point);
 	}
 protected:
