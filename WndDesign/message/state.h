@@ -16,30 +16,30 @@ public:
 	private:
 		friend class State;
 	public:
-		Watcher(State& state, std::function<void(const T&)> callback) : state(&state), callback(callback) { this->state->AddWatcher(*this); }
-		Watcher(Watcher& watcher, std::function<void(const T&)> callback) : state(watcher.state), callback(callback) { this->state->AddWatcher(*this); }
+		Watcher(const State& state, std::function<void(const T&)> callback) : state(&state), callback(callback) { state.AddWatcher(*this); }
 		~Watcher() { if (state) { state->RemoveWatcher(*this); } }
 	private:
-		ref_ptr<State> state;
+		ref_ptr<const State> state;
 		std::list<ref_ptr<Watcher>>::iterator index = {};
 		std::function<void(const T&)> callback;
 	private:
-		void Callback() { if (callback) { callback(Get()); } }
+		void Callback(const T& value) const { if (callback) { callback(value); } }
 	public:
-		const T& Get() const { return state->Get(); }
+		ref_ptr<const T> Get() const { return state ? &state->Get() : nullptr; }
 	};
+
 public:
-	State(T value = {}) : value(std::move(value)) {}
+	State(T value) : value(std::move(value)) {}
 	~State() { for (auto& watcher : watcher_list) { if (watcher) { watcher->state = nullptr; } } }
 private:
 	T value;
-	std::list<ref_ptr<Watcher>> watcher_list;
+	mutable std::list<ref_ptr<Watcher>> watcher_list;
 private:
-	void AddWatcher(Watcher& watcher) {
+	void AddWatcher(Watcher& watcher) const {
 		watcher_list.emplace_front(&watcher);
 		watcher.index = watcher_list.begin();
 	}
-	void RemoveWatcher(Watcher& watcher) {
+	void RemoveWatcher(Watcher& watcher) const {
 		*(watcher.index) = nullptr;
 		watcher.index = {};
 	}
@@ -51,12 +51,8 @@ public:
 		this->value = std::move(value);
 		for (auto it = watcher_list.begin(); it != watcher_list.end();) {
 			if (*it == nullptr) { it = watcher_list.erase(it); continue; }
-			(*it++)->Callback();
+			(*it++)->Callback(this->value);
 		}
-	}
-	const T& operator=(T value) {
-		Set(std::move(value));
-		return Get();
 	}
 };
 
