@@ -29,8 +29,8 @@ void ImeDisable(HANDLE hwnd) {
 
 void ImeSetPosition(HANDLE hwnd, Point point) {
 	HIMC imc = ImmGetContext((HWND)hwnd);
-	COMPOSITIONFORM cf = { CFS_POINT, { (int)point.x, (int)point.y } };
-	ImmSetCompositionWindow(imc, &cf);
+	CANDIDATEFORM cf = { 0, CFS_CANDIDATEPOS, { (int)point.x, (int)point.y }, {} };
+	ImmSetCandidateWindow(imc, &cf);
 	ImmReleaseContext((HWND)hwnd, imc);
 }
 
