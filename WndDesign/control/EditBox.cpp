@@ -94,7 +94,7 @@ void EditBox::UpdateCaret(const HitTestInfo& info) {
 void EditBox::SetCaret(const HitTestInfo& info) {
 	UpdateCaret(info);
 	caret_state = CaretState::Show;
-	UpdateSelection(text_range_empty);
+	ClearSelection();
 	selection_initial_range = TextRange(info.range.begin, 0);
 	selection_mode = SelectionMode::Character;
 }
@@ -154,7 +154,7 @@ void EditBox::SelectParagraph() {
 	UpdateCaret(selection_range.right());
 }
 
-void EditBox::DoSelection(const HitTestInfo& info) {
+void EditBox::DoSelect(const HitTestInfo& info) {
 	TextRange current_range;
 	switch (selection_mode) {
 	case SelectionMode::Character: current_range = TextRange(info.range.begin, 0); break;
@@ -258,7 +258,7 @@ void EditBox::OnMouseMsg(MouseMsg msg) {
 	switch (mouse_tracker.Track(msg)) {
 	case MouseTrackMsg::LeftDoubleClick: SelectWord(); break;
 	case MouseTrackMsg::LeftTripleClick: SelectParagraph(); break;
-	case MouseTrackMsg::LeftDrag: DoSelection(msg.point); break;
+	case MouseTrackMsg::LeftDrag: DoSelect(msg.point); break;
 	}
 	StartBlinkingCaret();
 }
@@ -308,7 +308,7 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 
 void EditBox::OnNotifyMsg(NotifyMsg msg) {
 	switch (msg) {
-	case NotifyMsg::LoseFocus: UpdateSelection(text_range_empty); HideCaret(); break;
+	case NotifyMsg::LoseFocus: ClearSelection(); HideCaret(); break;
 	}
 }
 
