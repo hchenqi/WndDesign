@@ -15,13 +15,16 @@ protected:
 	struct EditBoxStyle {
 		struct EditStyle {
 		public:
-			Color _selection_color = Color(Color::DimGray, 0x7f);
-			Color _caret_color = Color::DimGray;
 			bool _disabled = false;  // can only select and copy if disabled
+			Color _caret_color = Color::DimGray;
+			Color _selection_color = Color(Color::DimGray, 0x7f);
+			Color _ime_composition_underline_color = Color::DimGray;
 		public:
-			constexpr EditStyle& selection_color(Color selection_color) { _selection_color = selection_color; return *this; }
-			constexpr EditStyle& caret_color(Color caret_color) { _caret_color = caret_color; return *this; }
+			constexpr EditStyle& enable() { _disabled = false; return *this; }
 			constexpr EditStyle& disable() { _disabled = true; return *this; }
+			constexpr EditStyle& caret_color(Color color) { _caret_color = color; return *this; }
+			constexpr EditStyle& selection_color(Color color) { _selection_color = color; return *this; }
+			constexpr EditStyle& ime_composition_underline_color(Color color) { _ime_composition_underline_color = color; return *this; }
 		}edit;
 	};
 public:
@@ -60,22 +63,6 @@ protected:
 
 	// caret
 protected:
-	static constexpr ushort caret_blink_period = 500;  // 500ms
-	static constexpr ushort caret_blink_expire_time = 20000;  // 20s
-	enum class CaretState : ushort { Hide, Show, BlinkShow, BlinkHide };
-protected:
-	Timer caret_timer = Timer(std::bind(&EditBox::BlinkCaret, this));
-	CaretState caret_state = CaretState::Hide;
-	ushort caret_blink_time = 0;
-protected:
-	bool IsCaretVisible() const { return caret_state == CaretState::Show || caret_state == CaretState::BlinkShow; }
-protected:
-	void HideCaret();
-	void StartBlinkingCaret();
-	void BlinkCaret();
-
-	// caret position
-protected:
 	static constexpr float caret_width = 1.0f;
 	enum class CaretMoveDirection { Left, Right, Up, Down, Home, End };
 protected:
@@ -90,6 +77,22 @@ protected:
 	void SetCaret(size_t position) { SetCaret(text_block.HitTestPosition(position)); }
 	void MoveCaret(CaretMoveDirection direction);
 
+	// caret state
+protected:
+	static constexpr ushort caret_blink_period = 500;  // 500ms
+	static constexpr ushort caret_blink_expire_time = 20000;  // 20s
+	enum class CaretState : ushort { Hide, Show, BlinkShow, BlinkHide };
+protected:
+	Timer caret_timer = Timer(std::bind(&EditBox::BlinkCaret, this));
+	CaretState caret_state = CaretState::Hide;
+	ushort caret_blink_time = 0;
+protected:
+	bool IsCaretVisible() const { return caret_state == CaretState::Show || caret_state == CaretState::BlinkShow; }
+protected:
+	void HideCaret();
+	void StartBlinkingCaret();
+	void BlinkCaret();
+
 	// selection
 protected:
 	enum class SelectionMode { Character, Word, Paragraph };
@@ -98,8 +101,8 @@ protected:
 	TextRange selection_initial_range;
 protected:
 	TextRange selection_range;
-	std::vector<HitTestInfo> selection_info;
-	Rect selection_region;
+	std::vector<Rect> selection_region_list;
+	Rect selection_region_union;
 protected:
 	bool HasSelection() const { return !selection_range.IsEmpty(); }
 	void UpdateSelection(TextRange range);
@@ -121,7 +124,14 @@ protected:
 
 	// ime input
 protected:
+	static constexpr float ime_composition_underline_height = 1.0f;
+protected:
 	TextRange ime_composition_range;
+	std::vector<Rect> ime_composition_region_list;
+protected:
+	bool HasImeComposition() { return !ime_composition_range.IsEmpty(); }
+	void UpdateImeComposition(TextRange range);
+	void ClearImeComposition() { UpdateImeComposition(text_range_empty); }
 protected:
 	void OnImeBegin();
 	void OnImeString();

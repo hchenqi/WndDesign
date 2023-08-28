@@ -41,48 +41,19 @@ Size EditBox::OnSizeRefUpdate(Size size_ref) {
 
 void EditBox::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	TextBox::OnDraw(figure_queue, draw_region);
-	if (IsCaretVisible() && !caret_region.Intersect(draw_region).IsEmpty()) {
+	if (IsCaretVisible()) {
 		figure_queue.add(caret_region.point, new Rectangle(caret_region.size, style.edit._caret_color));
 	}
 	if (HasSelection()) {
-		for (auto& it : selection_info) {
-			if (!it.region.Intersect(draw_region).IsEmpty()) {
-				figure_queue.add(it.region.point, new Rectangle(it.region.size, style.edit._selection_color));
-			}
+		for (auto& rect : selection_region_list) {
+			figure_queue.add(rect.point, new Rectangle(rect.size, style.edit._selection_color));
 		}
 	}
-}
-
-void EditBox::HideCaret() {
-	if (caret_state != CaretState::Hide) {
-		caret_state = CaretState::Hide;
-		Redraw(caret_region);
-	}
-}
-
-void EditBox::StartBlinkingCaret() {
-	if (caret_state != CaretState::Hide) {
-		if (!caret_timer.IsSet()) {
-			caret_timer.Set(caret_blink_period);
+	if (HasImeComposition()) {
+		for (auto& rect : ime_composition_region_list) {
+			figure_queue.add(Point(rect.left(), rect.top() + rect.height() - ime_composition_underline_height), new Rectangle(Size(rect.width(), ime_composition_underline_height), style.edit._ime_composition_underline_color));
 		}
-		caret_blink_time = 0;
 	}
-}
-
-void EditBox::BlinkCaret() {
-	caret_blink_time += caret_blink_period;
-	if (caret_blink_time >= caret_blink_expire_time) {
-		caret_state = CaretState::Show;
-		caret_timer.Stop();
-		return;
-	}
-	switch (caret_state) {
-	case CaretState::Hide: caret_timer.Stop(); return;
-	case CaretState::Show:
-	case CaretState::BlinkShow: caret_state = CaretState::BlinkHide; break;
-	case CaretState::BlinkHide: caret_state = CaretState::BlinkShow; break;
-	}
-	Redraw(caret_region);
 }
 
 void EditBox::UpdateCaret(const HitTestInfo& info) {
@@ -95,7 +66,7 @@ void EditBox::SetCaret(const HitTestInfo& info) {
 	UpdateCaret(info);
 	caret_state = CaretState::Show;
 	ClearSelection();
-	selection_initial_range = TextRange(info.range.begin, 0);
+	selection_initial_range = TextRange(caret_position, 0);
 	selection_mode = SelectionMode::Character;
 }
 
@@ -132,12 +103,50 @@ void EditBox::MoveCaret(CaretMoveDirection direction) {
 	}
 }
 
+void EditBox::HideCaret() {
+	if (caret_state != CaretState::Hide) {
+		caret_state = CaretState::Hide;
+		Redraw(caret_region);
+	}
+}
+
+void EditBox::StartBlinkingCaret() {
+	if (caret_state != CaretState::Hide) {
+		if (!caret_timer.IsSet()) {
+			caret_timer.Set(caret_blink_period);
+		}
+		caret_blink_time = 0;
+	}
+}
+
+void EditBox::BlinkCaret() {
+	caret_blink_time += caret_blink_period;
+	if (caret_blink_time >= caret_blink_expire_time) {
+		caret_state = CaretState::Show;
+		caret_timer.Stop();
+		return;
+	}
+	switch (caret_state) {
+	case CaretState::Hide: caret_timer.Stop(); return;
+	case CaretState::Show:
+	case CaretState::BlinkShow: caret_state = CaretState::BlinkHide; break;
+	case CaretState::BlinkHide: caret_state = CaretState::BlinkShow; break;
+	}
+	Redraw(caret_region);
+}
+
 void EditBox::UpdateSelection(TextRange range) {
 	selection_range = range;
-	selection_range.IsEmpty() ? selection_info.clear() : (selection_info = text_block.HitTestRange(selection_range), void());
-	Rect selection_region_old = selection_region; selection_region = region_empty;
-	for (auto& it : selection_info) { selection_region = selection_region.Union(it.region); }
-	Redraw(selection_region_old.Union(selection_region));
+	selection_region_list.clear();
+	Rect selection_region_union_old = selection_region_union; selection_region_union = region_empty;
+	if (!selection_range.IsEmpty()) {
+		std::vector<HitTestInfo> selection_info = text_block.HitTestRange(selection_range); selection_region_list.reserve(selection_info.size());
+		for (auto& it : selection_info) {
+			selection_region_list.emplace_back(it.region);
+			selection_region_union = Rect::Union(selection_region_union, it.region);
+		}
+	}
+	Redraw(selection_region_union_old.Union(selection_region_union));
 }
 
 void EditBox::SelectWord() {
@@ -206,29 +215,39 @@ void EditBox::Delete(bool is_backspace) {
 	}
 }
 
+void EditBox::UpdateImeComposition(TextRange range) {
+	ime_composition_range = range;
+	ime_composition_region_list.clear();
+	if (!ime_composition_range.IsEmpty()) {
+		std::vector<HitTestInfo> ime_composition_info = text_block.HitTestRange(ime_composition_range); ime_composition_region_list.reserve(ime_composition_info.size());
+		for (auto& it : ime_composition_info) {
+			ime_composition_region_list.emplace_back(it.region);
+		}
+	}
+}
+
 void EditBox::OnImeBegin() {
 	if (IsEditDisabled()) { return; }
-	Point ime_position;
 	if (HasSelection()) {
-		ime_composition_range = selection_range;
-		ime_position = selection_info.front().region.RightBottom();
+		UpdateImeComposition(selection_range);
+		ime.SetPosition(*this, selection_region_list.front().RightBottom());
 	} else {
-		ime_composition_range = TextRange(caret_position, 0);
-		ime_position = caret_region.RightBottom();
+		UpdateImeComposition(TextRange(caret_position, 0));
+		ime.SetPosition(*this, caret_region.RightBottom());
 	}
-	ime.SetPosition(*this, ime_position);
 }
 
 void EditBox::OnImeString() {
 	if (IsEditDisabled()) { return; }
 	std::wstring str = ime.GetString();
 	TextBox::Replace(ime_composition_range, str);
-	ime_composition_range.length = str.length();
+	UpdateImeComposition(TextRange(ime_composition_range.begin, str.length()));
 	SetCaret(ime_composition_range.begin + ime.GetCursorPosition());
 }
 
 void EditBox::OnImeEnd() {
 	if (caret_position != ime_composition_range.right()) { SetCaret(ime_composition_range.right()); }
+	ClearImeComposition();
 }
 
 void EditBox::Cut() {
@@ -308,7 +327,7 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 
 void EditBox::OnNotifyMsg(NotifyMsg msg) {
 	switch (msg) {
-	case NotifyMsg::LoseFocus: ClearSelection(); HideCaret(); break;
+	case NotifyMsg::LoseFocus: HideCaret(); ClearSelection(); ClearImeComposition(); break;
 	}
 }
 
