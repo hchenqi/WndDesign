@@ -25,6 +25,9 @@ struct Rect {
 	constexpr float top() const { return point.y; }
 	constexpr float bottom() const { return point.y + size.height; }
 
+	constexpr float width() const { return size.width; }
+	constexpr float height() const { return size.height; }
+
 	constexpr Point LeftTop() const { return Point(left(), top()); }
 	constexpr Point LeftBottom() const { return Point(left(), bottom()); }
 	constexpr Point RightTop() const { return Point(right(), top()); }
@@ -53,6 +56,9 @@ struct Rect {
 		Point posh = Point(max(posh1.x, posh2.x), max(posh1.y, posh2.y));
 		return Rect(posl, Size(posh.x - posl.x, posh.y - posl.y));
 	}
+
+	static Rect Intersect(const Rect& rect1, const Rect& rect2) { return rect1.Intersect(rect2); }
+	static Rect Union(const Rect& rect1, const Rect& rect2) { return rect1.Union(rect2); }
 };
 
 

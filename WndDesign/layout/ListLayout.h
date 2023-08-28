@@ -25,28 +25,24 @@ public:
 	}
 
 	// child
-protected:
+private:
 	struct ChildInfo {
 	public:
 		child_ptr child;
-		float offset = 0.0f;
-		float length = 0.0f;
+		float offset;
+		float length;
 	public:
-		ChildInfo(child_ptr child) : child(std::move(child)) {}
-	public:
-		float begin() const { return offset; }
-		float end() const { return offset + length; }
+		ChildInfo(child_ptr child) : child(std::move(child)), offset(0.0f), length(0.0f) {}
 	};
 	std::vector<ChildInfo> child_list;
-protected:
-	using child_iter = std::vector<ChildInfo>::iterator;
-protected:
-	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
-	void UpdateIndex(size_t begin);
 public:
+	bool Empty() const { return child_list.empty(); }
 	size_t Length() const { return child_list.size(); }
 	WndObject& GetChild(size_t index) const { return child_list[index].child; }
 	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+private:
+	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
+	void UpdateIndex(size_t begin);
 public:
 	void InsertChild(size_t index, child_ptr child);
 	void InsertChild(size_t begin, std::vector<child_ptr> children);
@@ -59,12 +55,12 @@ public:
 protected:
 	Size size;
 	float gap;
+private:
+	void UpdateLayout(size_t index);
 protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(0.0f, child_list[index].offset), Size(size.width, child_list[index].length)); }
 	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildIndex(child)); }
-	child_iter HitTestItem(float offset);
-protected:
-	void UpdateLayout(size_t index);
+	size_t HitTestIndex(Point point);
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
@@ -96,17 +92,12 @@ protected:
 	struct ChildInfo {
 	public:
 		child_ptr child;
-		float offset = 0.0f;
-		float length = 0.0f;
+		float offset;
+		float length;
 	public:
-		ChildInfo(child_ptr child) : child(std::move(child)) {}
-	public:
-		float begin() const { return offset; }
-		float end() const { return offset + length; }
+		ChildInfo(child_ptr child) : child(std::move(child)), offset(0.0f), length(0.0f) {}
 	};
 	std::vector<ChildInfo> child_list;
-protected:
-	using child_iter = std::vector<ChildInfo>::iterator;
 protected:
 	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	void UpdateIndex(size_t begin);
@@ -126,12 +117,12 @@ public:
 protected:
 	Size size;
 	float gap;
+private:
+	void UpdateLayout(size_t index);
 protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(child_list[index].offset, 0.0f), Size(child_list[index].length, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildIndex(child)); }
-	child_iter HitTestItem(float offset);
-protected:
-	void UpdateLayout(size_t index);
+	size_t HitTestIndex(Point point);
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;

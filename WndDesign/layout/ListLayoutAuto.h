@@ -29,22 +29,17 @@ protected:
 		ChildInfo(child_ptr child) : child(std::move(child)) {}
 	};
 	std::vector<ChildInfo> child_list;
-protected:
-	using child_iter = std::vector<ChildInfo>::iterator;
-protected:
-	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
-	void UpdateIndex(size_t begin) {
-		for (size_t index = begin; index < child_list.size(); ++index) {
-			SetChildIndex(child_list[index].child, index);
-		}
-	}
 public:
+	bool Empty() const { return child_list.empty(); }
 	size_t Length() const { return child_list.size(); }
 	WndObject& GetChild(size_t index) const { return child_list[index].child; }
 	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+private:
+	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
+	void UpdateIndex(size_t begin);
 protected:
-	void InsertChild(size_t& index, child_ptr& child);
-	void InsertChild(size_t& begin, std::vector<child_ptr>& children);
+	size_t InsertChild(size_t index, child_ptr child);
+	size_t InsertChild(size_t begin, std::vector<child_ptr> children);
 	void EraseChild(size_t begin, size_t count);
 	child_ptr ExtractChild(size_t index);
 	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
@@ -57,15 +52,12 @@ protected:
 	Rect GetChildRegion(size_t index) const { return child_list[index].region; }
 	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildIndex(child)); }
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { return size; }
-	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildRegion(child).point - point_zero; }
+	virtual Size OnSizeRefUpdate(Size size_ref) override;
+	virtual Transform GetChildTransform(WndObject& child) const override;
 
 	// paint
 protected:
-	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override {
-		Rect child_region = GetChildRegion(child);
-		Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
-	}
+	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 };
 
 
@@ -81,6 +73,9 @@ public:
 	}
 
 	// child
+private:
+	_ListLayoutAuto_Base::ChildInfo;
+	_ListLayoutAuto_Base::child_list;
 public:
 	void InsertChild(size_t index, child_ptr child);
 	void InsertChild(size_t begin, std::vector<child_ptr> children);
@@ -90,9 +85,10 @@ public:
 	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
 
 	// layout
-protected:
-	child_iter HitTestItem(float offset);
+private:
 	void UpdateLayout(size_t index);
+protected:
+	size_t HitTestIndex(Point point);
 protected:
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;
@@ -115,6 +111,9 @@ public:
 	}
 
 	// child
+private:
+	_ListLayoutAuto_Base::ChildInfo;
+	_ListLayoutAuto_Base::child_list;
 public:
 	void InsertChild(size_t index, child_ptr child);
 	void InsertChild(size_t begin, std::vector<child_ptr> children);
@@ -124,9 +123,10 @@ public:
 	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
 
 	// layout
-protected:
-	child_iter HitTestItem(float offset);
+private:
 	void UpdateLayout(size_t index);
+protected:
+	size_t HitTestIndex(Point point);
 protected:
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
 	virtual ref_ptr<WndObject> HitTest(Point& point) override;

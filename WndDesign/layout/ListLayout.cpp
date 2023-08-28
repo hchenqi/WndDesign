@@ -42,6 +42,7 @@ void ListLayout<Vertical>::EraseChild(size_t begin, size_t count) {
 }
 
 ListLayout<Vertical>::child_ptr ListLayout<Vertical>::ExtractChild(size_t index) {
+	if (index >= child_list.size()) { throw std::invalid_argument("invalid child index"); }
 	UnregisterChild(child_list[index].child);
 	child_ptr ptr(std::move(child_list[index].child));
 	EraseChild(index, 1);
@@ -60,19 +61,19 @@ std::vector<ListLayout<Vertical>::child_ptr> ListLayout<Vertical>::ExtractChild(
 	return ptr_list;
 }
 
-ListLayout<Vertical>::child_iter ListLayout<Vertical>::HitTestItem(float offset) {
-	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.offset; };
-	return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
-}
-
 void ListLayout<Vertical>::UpdateLayout(size_t index) {
-	size.height = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].end();
+	size.height = index == 0 ? (Empty() ? 0.0f : -gap) : GetChildRegion(index - 1).bottom();
 	for (index; index < child_list.size(); index++) {
 		size.height += gap;
 		child_list[index].offset = size.height;
 		size.height += child_list[index].length;
 	}
 	SizeUpdated(size);
+}
+
+size_t ListLayout<Vertical>::HitTestIndex(Point point) {
+	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.offset; };
+	return std::lower_bound(child_list.begin(), child_list.end(), point.y, cmp) - child_list.begin() - 1;
 }
 
 Size ListLayout<Vertical>::OnSizeRefUpdate(Size size_ref) {
@@ -98,11 +99,10 @@ void ListLayout<Vertical>::OnChildSizeUpdate(WndObject& child, Size child_size) 
 }
 
 ref_ptr<WndObject> ListLayout<Vertical>::HitTest(Point& point) {
-	float offset = point.y;
-	if (offset < 0.0f || offset >= size.height) { return nullptr; }
-	auto it = HitTestItem(offset); offset -= it->offset;
-	if (offset >= it->length) { return this; }
-	point.y = offset; return it->child;
+	size_t index = HitTestIndex(point); if (index >= Length()) { return this; }
+	Rect child_region = GetChildRegion(index); if (!child_region.Contains(point)) { return this; }
+	point -= child_region.point - point_zero;
+	return &GetChild(index);
 }
 
 Transform ListLayout<Vertical>::GetChildTransform(WndObject& child) const {
@@ -116,12 +116,8 @@ void ListLayout<Vertical>::OnChildRedraw(WndObject& child, Rect child_redraw_reg
 
 void ListLayout<Vertical>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
-	auto it_begin = HitTestItem(draw_region.top());
-	auto it_end = HitTestItem(ceilf(draw_region.bottom()) - 1.0f);
-	for (auto it = it_begin; it <= it_end; ++it) {
-		Rect child_region(Point(0.0f, it->offset), Size(size.width, it->length));
-		DrawChild(it->child, child_region, figure_queue, draw_region);
-	}
+	size_t index_begin = HitTestIndex(draw_region.LeftTop()), index_end = HitTestIndex(draw_region.RightBottom());
+	for (size_t index = index_begin; index <= index_end; ++index) { DrawChild(GetChild(index), GetChildRegion(index), figure_queue, draw_region); }
 }
 
 
@@ -177,19 +173,19 @@ std::vector<ListLayout<Horizontal>::child_ptr> ListLayout<Horizontal>::ExtractCh
 	return children;
 }
 
-ListLayout<Horizontal>::child_iter ListLayout<Horizontal>::HitTestItem(float offset) {
-	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.offset; };
-	return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
-}
-
 void ListLayout<Horizontal>::UpdateLayout(size_t index) {
-	size.width = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].end();
+	size.width = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : GetChildRegion(index - 1).right();
 	for (index; index < child_list.size(); index++) {
 		size.width += gap;
 		child_list[index].offset = size.width;
 		size.width += child_list[index].length;
 	}
 	SizeUpdated(size);
+}
+
+size_t ListLayout<Horizontal>::HitTestIndex(Point point) {
+	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.offset; };
+	return std::lower_bound(child_list.begin(), child_list.end(), point.x, cmp) - child_list.begin() - 1;
 }
 
 Size ListLayout<Horizontal>::OnSizeRefUpdate(Size size_ref) {
@@ -215,11 +211,10 @@ void ListLayout<Horizontal>::OnChildSizeUpdate(WndObject& child, Size child_size
 }
 
 ref_ptr<WndObject> ListLayout<Horizontal>::HitTest(Point& point) {
-	float offset = point.x;
-	if (offset < 0.0f || offset >= size.width) { return nullptr; }
-	auto it = HitTestItem(offset); offset -= it->offset;
-	if (offset >= it->length) { return this; }
-	point.x = offset; return it->child;
+	size_t index = HitTestIndex(point); if (index >= Length()) { return this; }
+	Rect child_region = GetChildRegion(index); if (!child_region.Contains(point)) { return this; }
+	point -= child_region.point - point_zero;
+	return &GetChild(index);
 }
 
 Transform ListLayout<Horizontal>::GetChildTransform(WndObject& child) const {
@@ -233,12 +228,8 @@ void ListLayout<Horizontal>::OnChildRedraw(WndObject& child, Rect child_redraw_r
 
 void ListLayout<Horizontal>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
-	auto it_begin = HitTestItem(draw_region.left());
-	auto it_end = HitTestItem(ceilf(draw_region.right()) - 1.0f);
-	for (auto it = it_begin; it <= it_end; ++it) {
-		Rect child_region(Point(it->offset, 0.0f), Size(it->length, size.height));
-		DrawChild(it->child, child_region, figure_queue, draw_region);
-	}
+	size_t index_begin = HitTestIndex(draw_region.LeftTop()), index_end = HitTestIndex(draw_region.RightBottom());
+	for (size_t index = index_begin; index <= index_end; ++index) { DrawChild(GetChild(index), GetChildRegion(index), figure_queue, draw_region); }
 }
 
 

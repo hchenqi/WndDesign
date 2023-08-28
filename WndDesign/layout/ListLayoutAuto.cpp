@@ -8,15 +8,22 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void _ListLayoutAuto_Base::InsertChild(size_t& index, child_ptr& child) {
+void _ListLayoutAuto_Base::UpdateIndex(size_t begin) {
+	for (size_t index = begin; index < child_list.size(); ++index) {
+		SetChildIndex(child_list[index].child, index);
+	}
+}
+
+size_t _ListLayoutAuto_Base::InsertChild(size_t index, child_ptr child) {
 	RegisterChild(child);
 	if (index > child_list.size()) { index = child_list.size(); }
 	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
 	UpdateIndex(index);
 	it->region.size = UpdateChildSizeRef(it->child, size_empty);
+	return index;
 }
 
-void _ListLayoutAuto_Base::InsertChild(size_t& begin, std::vector<child_ptr>& children) {
+size_t _ListLayoutAuto_Base::InsertChild(size_t begin, std::vector<child_ptr> children) {
 	for (auto& child : children) { RegisterChild(child); }
 	if (begin > child_list.size()) { begin = child_list.size(); }
 	auto it = child_list.insert(child_list.begin() + begin, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
@@ -24,6 +31,7 @@ void _ListLayoutAuto_Base::InsertChild(size_t& begin, std::vector<child_ptr>& ch
 	for (auto it_end = it + children.size(); it < it_end; ++it) {
 		it->region.size = UpdateChildSizeRef(it->child, size_empty);
 	}
+	return begin;
 }
 
 void _ListLayoutAuto_Base::EraseChild(size_t begin, size_t count) {
@@ -49,16 +57,30 @@ std::vector<_ListLayoutAuto_Base::child_ptr> _ListLayoutAuto_Base::ExtractChild(
 	return ptr_list;
 }
 
+Size _ListLayoutAuto_Base::OnSizeRefUpdate(Size size_ref) {
+	return size;
+}
+
+Transform _ListLayoutAuto_Base::GetChildTransform(WndObject& child) const {
+	return GetChildRegion(child).point - point_zero;
+}
+
+void _ListLayoutAuto_Base::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
+	Rect child_region = GetChildRegion(child);
+	Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
+}
+
 
 void ListLayoutAuto<Vertical>::InsertChild(size_t index, child_ptr child) {
-	_ListLayoutAuto_Base::InsertChild(index, child);
+	index = _ListLayoutAuto_Base::InsertChild(index, std::move(child));
 	size.width = std::max(size.width, child_list[index].region.size.width);
 	UpdateLayout(index);
 }
 
 void ListLayoutAuto<Vertical>::InsertChild(size_t begin, std::vector<child_ptr> children) {
-	_ListLayoutAuto_Base::InsertChild(begin, children);
-	for (size_t index = begin, end = begin + children.size(); index < end; ++index) {
+	size_t length = children.size();
+	begin = _ListLayoutAuto_Base::InsertChild(begin, std::move(children));
+	for (size_t index = begin, end = begin + length; index < end; ++index) {
 		size.width = std::max(size.width, child_list[index].region.size.width);
 	}
 	UpdateLayout(begin);
@@ -82,19 +104,19 @@ std::vector<ListLayoutAuto<Vertical>::child_ptr> ListLayoutAuto<Vertical>::Extra
 	return ptr_list;
 }
 
-ListLayoutAuto<Vertical>::child_iter ListLayoutAuto<Vertical>::HitTestItem(float offset) {
-	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.region.point.y; };
-	return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
-}
-
 void ListLayoutAuto<Vertical>::UpdateLayout(size_t index) {
-	size.height = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].region.bottom();
+	size.height = index == 0 ? (Empty() ? 0.0f : -gap) : child_list[index - 1].region.bottom();
 	for (index; index < child_list.size(); index++) {
 		size.height += gap;
 		child_list[index].region.point.y = size.height;
 		size.height += child_list[index].region.size.height;
 	}
 	SizeUpdated(size);
+}
+
+size_t ListLayoutAuto<Vertical>::HitTestIndex(Point point) {
+	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.region.point.y; };
+	return std::lower_bound(child_list.begin(), child_list.end(), point.y, cmp) - child_list.begin() - 1;
 }
 
 void ListLayoutAuto<Vertical>::OnChildSizeUpdate(WndObject& child, Size child_size) {
@@ -116,29 +138,29 @@ void ListLayoutAuto<Vertical>::OnChildSizeUpdate(WndObject& child, Size child_si
 }
 
 ref_ptr<WndObject> ListLayoutAuto<Vertical>::HitTest(Point& point) {
-	float offset = point.y;
-	if (offset < 0.0f || offset >= size.height) { return nullptr; }
-	auto it = HitTestItem(offset); offset -= it->region.point.y;
-	if (offset >= it->region.size.height) { return this; }
-	point.y = offset; return it->child;
+	size_t index = HitTestIndex(point); if (index >= Length()) { return this; }
+	Rect child_region = GetChildRegion(index); if (!child_region.Contains(point)) { return this; }
+	point -= child_region.point - point_zero;
+	return &GetChild(index);
 }
 
 void ListLayoutAuto<Vertical>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
-	auto it_begin = HitTestItem(draw_region.top()), it_end = HitTestItem(ceilf(draw_region.bottom()) - 1.0f);
-	for (auto it = it_begin; it <= it_end; ++it) { DrawChild(it->child, it->region, figure_queue, draw_region); }
+	size_t index_begin = HitTestIndex(draw_region.LeftTop()), index_end = HitTestIndex(draw_region.RightBottom());
+	for (size_t index = index_begin; index <= index_end; ++index) { DrawChild(GetChild(index), GetChildRegion(index), figure_queue, draw_region); }
 }
 
 
 void ListLayoutAuto<Horizontal>::InsertChild(size_t index, child_ptr child) {
-	_ListLayoutAuto_Base::InsertChild(index, child);
+	index = _ListLayoutAuto_Base::InsertChild(index, std::move(child));
 	size.height = std::max(size.height, child_list[index].region.size.height);
 	UpdateLayout(index);
 }
 
 void ListLayoutAuto<Horizontal>::InsertChild(size_t begin, std::vector<child_ptr> children) {
-	_ListLayoutAuto_Base::InsertChild(begin, children);
-	for (size_t index = begin, end = begin + children.size(); index < end; ++index) {
+	size_t length = children.size();
+	begin = _ListLayoutAuto_Base::InsertChild(begin, std::move(children));
+	for (size_t index = begin, end = begin + length; index < end; ++index) {
 		size.height = std::max(size.height, child_list[index].region.size.height);
 	}
 	UpdateLayout(begin);
@@ -162,19 +184,19 @@ std::vector<ListLayoutAuto<Horizontal>::child_ptr> ListLayoutAuto<Horizontal>::E
 	return ptr_list;
 }
 
-ListLayoutAuto<Horizontal>::child_iter ListLayoutAuto<Horizontal>::HitTestItem(float offset) {
-	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.region.point.x; };
-	return std::lower_bound(child_list.begin(), child_list.end(), offset, cmp) - 1;
-}
-
 void ListLayoutAuto<Horizontal>::UpdateLayout(size_t index) {
-	size.width = index == 0 ? (child_list.size() == 0 ? 0.0f : -gap) : child_list[index - 1].region.right();
+	size.width = index == 0 ? (Empty() ? 0.0f : -gap) : child_list[index - 1].region.right();
 	for (index; index < child_list.size(); index++) {
 		size.width += gap;
 		child_list[index].region.point.x = size.width;
 		size.width += child_list[index].region.size.width;
 	}
 	SizeUpdated(size);
+}
+
+size_t ListLayoutAuto<Horizontal>::HitTestIndex(Point point) {
+	static auto cmp = [](const ChildInfo& item, float offset) { return offset >= item.region.point.x; };
+	return std::lower_bound(child_list.begin(), child_list.end(), point.x, cmp) - child_list.begin() - 1;
 }
 
 void ListLayoutAuto<Horizontal>::OnChildSizeUpdate(WndObject& child, Size child_size) {
@@ -196,17 +218,16 @@ void ListLayoutAuto<Horizontal>::OnChildSizeUpdate(WndObject& child, Size child_
 }
 
 ref_ptr<WndObject> ListLayoutAuto<Horizontal>::HitTest(Point& point) {
-	float offset = point.x;
-	if (offset < 0.0f || offset >= size.width) { return nullptr; }
-	auto it = HitTestItem(offset); offset -= it->region.point.x;
-	if (offset >= it->region.size.width) { return this; }
-	point.x = offset; return it->child;
+	size_t index = HitTestIndex(point); if (index >= Length()) { return this; }
+	Rect child_region = GetChildRegion(index); if (!child_region.Contains(point)) { return this; }
+	point -= child_region.point - point_zero;
+	return &GetChild(index);
 }
 
 void ListLayoutAuto<Horizontal>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
-	auto it_begin = HitTestItem(draw_region.left()), it_end = HitTestItem(ceilf(draw_region.right()) - 1.0f);
-	for (auto it = it_begin; it <= it_end; ++it) { DrawChild(it->child, it->region, figure_queue, draw_region); }
+	size_t index_begin = HitTestIndex(draw_region.LeftTop()), index_end = HitTestIndex(draw_region.RightBottom());
+	for (size_t index = index_begin; index <= index_end; ++index) { DrawChild(GetChild(index), GetChildRegion(index), figure_queue, draw_region); }
 }
 
 

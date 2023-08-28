@@ -34,6 +34,9 @@ struct Interval {
 		float left_min = min(left(), interval.left()), right_max = max(right(), interval.right());
 		return Interval(left_min, right_max - left_min);
 	}
+
+	static Interval Intersect(const Interval& interval1, const Interval& interval2) { return interval1.Intersect(interval2); }
+	static Interval Union(const Interval& interval1, const Interval& interval2) { return interval1.Union(interval2); }
 };
 
 
