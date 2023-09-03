@@ -2,11 +2,14 @@
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/frame/InnerBorderFrame.h"
+#include "WndDesign/frame/ScaleFrame.h"
 #include "WndDesign/control/TextBox.h"
 #include "WndDesign/style/border_style.h"
 #include "WndDesign/geometry/helper.h"
 #include "WndDesign/system/cursor.h"
 #include "WndDesign/system/win32_aero_snap.h"
+
+#include <cmath>
 
 
 using namespace WndDesign;
@@ -27,6 +30,23 @@ private:
 		region.point.x = (size_ref.width - region.size.width) / 2;
 		region.point.y = (size_ref.height - region.size.height) / 2;
 		return region;
+	}
+};
+
+
+class ScaleLayer : public ScaleFrame<Assigned, Assigned> {
+public:
+	ScaleLayer(child_ptr child) : ScaleFrame(Scale(1.0), std::move(child)) {}
+private:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (msg.ctrl && msg.type == MouseMsg::WheelVertical) {
+			return this;
+		}
+		return ScaleFrame::HitTest(msg);
+	}
+private:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		SetScale(scale * Scale(powf(1.1f, msg.wheel_delta / 120.0f)));
 	}
 };
 
@@ -64,11 +84,13 @@ int main() {
 	global.AddWnd(
 		new MainFrame{
 			L"TextBoxTest",
-			new ResizeBorder{
-				new ClipFrame<>{
-					new InnerBorderFrame{
-						Border(1.0, Color::Black),
-						new TextBox(TextBoxStyle(), L"Hello World!")
+			new ScaleLayer{
+				new ResizeBorder{
+					new ClipFrame<>{
+						new InnerBorderFrame{
+							Border(1.0, Color::Black),
+							new TextBox(TextBoxStyle(), L"Hello World!")
+						}
 					}
 				}
 			}

@@ -18,13 +18,21 @@ public:
 	// style
 protected:
 	Scale scale;
+protected:
+	void SetScale(Scale scale) {
+		this->scale = scale;
+		SizeUpdated(UpdateChildSizeRef(child, size_ref * scale.Invert()) * scale);
+		Redraw(region_infinite);
+	}
 
 	// layout
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { return UpdateChildSizeRef(child, size_ref * scale.Invert()) * scale; }
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(child_size * scale); }
+	Size size_ref;
 protected:
 	virtual Transform GetChildTransform(WndObject& child) const override { return scale; }
+protected:
+	virtual Size OnSizeRefUpdate(Size size_ref) override { return UpdateChildSizeRef(child, (this->size_ref = size_ref) * scale.Invert()) * scale; }
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(child_size * scale); }
 
 	// paint
 protected:
