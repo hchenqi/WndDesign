@@ -43,8 +43,8 @@ private:
 		return names[next >= 26 ? next : next++];
 	}
 private:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		ref_ptr<WndObject> wnd = Base::HitTest(point);
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		ref_ptr<WndObject> wnd = Base::HitTest(msg);
 		return wnd == nullptr ? this : wnd;
 	}
 	virtual void OnMouseMsg(MouseMsg msg) override {

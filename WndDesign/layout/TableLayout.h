@@ -144,6 +144,10 @@ protected:
 		if (!column_list.empty()) { size.width -= column_list.back().gridline_width(); }
 	}
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const override {
+		return GetChildRegion(child).point - point_zero;
+	}
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (this->size_ref != size_ref) {
 			this->size_ref = size_ref;
@@ -169,17 +173,6 @@ protected:
 		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {}
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (!Rect(point_zero, size).Contains(point)) { return nullptr; }
-		TablePosition pos = HitTestGrid(point);
-		Rect grid = GetGridRegion(pos); child_ptr& child = GetChild(pos);
-		if (!grid.Contains(point) || child == nullptr) { return this; }
-		point -= grid.point - point_zero; return child;
-	}
-	virtual Transform GetChildTransform(WndObject& child) const override {
-		return GetChildRegion(child).point - point_zero;
-	}
 
 	// paint
 protected:
@@ -207,6 +200,16 @@ protected:
 				}
 			}
 		}
+	}
+
+	//message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (!Rect(point_zero, size).Contains(msg.point)) { return nullptr; }
+		TablePosition pos = HitTestGrid(msg.point);
+		Rect grid = GetGridRegion(pos); child_ptr& child = GetChild(pos);
+		if (!grid.Contains(msg.point) || child == nullptr) { return this; }
+		msg.point -= grid.point - point_zero; return child;
 	}
 };
 

@@ -24,7 +24,6 @@ protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return UpdateChildSizeRef(child, size_ref * scale.Invert()) * scale; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(child_size * scale); }
 protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override { point *= scale.Invert(); return child; }
 	virtual Transform GetChildTransform(WndObject& child) const override { return scale; }
 
 	// paint
@@ -37,11 +36,15 @@ protected:
 			DrawChild(child, point_zero, figure_queue, draw_region * scale.Invert());
 		});
 	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point *= scale.Invert(); return child; }
 };
 
 
 template<class T>
-ScaleFrame(Scale, T)->ScaleFrame<extract_width_type<T>, extract_height_type<T>>;
+ScaleFrame(Scale, T) -> ScaleFrame<extract_width_type<T>, extract_height_type<T>>;
 
 
 END_NAMESPACE(WndDesign)

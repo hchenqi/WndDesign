@@ -55,6 +55,10 @@ bool FlowLayout::UpdateLayout(child_index child_index) {
 	size.height = height; return true;
 }
 
+Transform FlowLayout::GetChildTransform(WndObject& child) const {
+	return GetChildRegion(child).point - point_zero;
+}
+
 Size FlowLayout::OnSizeRefUpdate(Size size_ref) {
 	if (size.width != size_ref.width) {
 		size.width = size_ref.width;
@@ -71,17 +75,6 @@ void FlowLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 		info.width = child_size.width;
 		if (UpdateLayout(child_index)) { SizeUpdated(size); }
 	}
-}
-
-ref_ptr<WndObject> FlowLayout::HitTest(Point& point) {
-	if (!Rect(point_zero, size).Contains(point)) { return nullptr; }
-	row_index row = HitTestRow(point.y); point.y -= GetRowOffset(row); if (point.y >= row_height) { return this; }
-	auto it = HitTestColumn(row, point.x); point.x -= it->offset; if (point.x >= it->width) { return this; }
-	return it->child;
-}
-
-Transform FlowLayout::GetChildTransform(WndObject& child) const {
-	return GetChildRegion(child).point - point_zero;
 }
 
 void FlowLayout::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
@@ -101,5 +94,13 @@ void FlowLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 		}
 	}
 }
+
+ref_ptr<WndObject> FlowLayout::HitTest(MouseMsg& msg) {
+	if (!Rect(point_zero, size).Contains(msg.point)) { return nullptr; }
+	row_index row = HitTestRow(msg.point.y); msg.point.y -= GetRowOffset(row); if (msg.point.y >= row_height) { return this; }
+	auto it = HitTestColumn(row, msg.point.x); msg.point.x -= it->offset; if (msg.point.x >= it->width) { return this; }
+	return it->child;
+}
+
 
 END_NAMESPACE(WndDesign)

@@ -45,12 +45,12 @@ private:
 		Rect region;
 	private:
 		virtual Rect OnOverlapFrameSizeRefUpdate(Size size_ref) override { return region; }
-	private:
-		virtual ref_ptr<WndObject> HitTest(Point& point) override { return this; }
 
 		// message
 	private:
 		MouseTracker mouse_tracker;
+	private:
+		virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return this; }
 	private:
 		virtual void OnMouseMsg(MouseMsg msg) override {
 			switch (msg.type) {

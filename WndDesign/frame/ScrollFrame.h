@@ -52,7 +52,6 @@ protected:
 
 	// layout
 protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
 	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 
 	// paint
@@ -65,6 +64,8 @@ protected:
 	}
 
 	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point -= GetChildOffset(); return child; }
 protected:
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		if (msg.type == MouseMsg::WheelVertical) { Scroll(Vector(0.0f, (float)-msg.wheel_delta)); }

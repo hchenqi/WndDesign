@@ -57,12 +57,12 @@ std::vector<_ListLayoutAuto_Base::child_ptr> _ListLayoutAuto_Base::ExtractChild(
 	return ptr_list;
 }
 
-Size _ListLayoutAuto_Base::OnSizeRefUpdate(Size size_ref) {
-	return size;
-}
-
 Transform _ListLayoutAuto_Base::GetChildTransform(WndObject& child) const {
 	return GetChildRegion(child).point - point_zero;
+}
+
+Size _ListLayoutAuto_Base::OnSizeRefUpdate(Size size_ref) {
+	return size;
 }
 
 void _ListLayoutAuto_Base::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
@@ -137,17 +137,17 @@ void ListLayoutAuto<Vertical>::OnChildSizeUpdate(WndObject& child, Size child_si
 	}
 }
 
-ref_ptr<WndObject> ListLayoutAuto<Vertical>::HitTest(Point& point) {
-	size_t index = HitTestIndex(point); if (index >= Length()) { return this; }
-	Rect child_region = GetChildRegion(index); if (!child_region.Contains(point)) { return this; }
-	point -= child_region.point - point_zero;
-	return &GetChild(index);
-}
-
 void ListLayoutAuto<Vertical>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
 	size_t index_begin = HitTestIndex(draw_region.LeftTop()), index_end = HitTestIndex(draw_region.RightBottom());
 	for (size_t index = index_begin; index <= index_end; ++index) { DrawChild(GetChild(index), GetChildRegion(index), figure_queue, draw_region); }
+}
+
+ref_ptr<WndObject> ListLayoutAuto<Vertical>::HitTest(MouseMsg& msg) {
+	size_t index = HitTestIndex(msg.point); if (index >= Length()) { return this; }
+	Rect child_region = GetChildRegion(index); if (!child_region.Contains(msg.point)) { return this; }
+	msg.point -= child_region.point - point_zero;
+	return &GetChild(index);
 }
 
 
@@ -217,17 +217,17 @@ void ListLayoutAuto<Horizontal>::OnChildSizeUpdate(WndObject& child, Size child_
 	}
 }
 
-ref_ptr<WndObject> ListLayoutAuto<Horizontal>::HitTest(Point& point) {
-	size_t index = HitTestIndex(point); if (index >= Length()) { return this; }
-	Rect child_region = GetChildRegion(index); if (!child_region.Contains(point)) { return this; }
-	point -= child_region.point - point_zero;
-	return &GetChild(index);
-}
-
 void ListLayoutAuto<Horizontal>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
 	size_t index_begin = HitTestIndex(draw_region.LeftTop()), index_end = HitTestIndex(draw_region.RightBottom());
 	for (size_t index = index_begin; index <= index_end; ++index) { DrawChild(GetChild(index), GetChildRegion(index), figure_queue, draw_region); }
+}
+
+ref_ptr<WndObject> ListLayoutAuto<Horizontal>::HitTest(MouseMsg& msg) {
+	size_t index = HitTestIndex(msg.point); if (index >= Length()) { return this; }
+	Rect child_region = GetChildRegion(index); if (!child_region.Contains(msg.point)) { return this; }
+	msg.point -= child_region.point - point_zero;
+	return &GetChild(index);
 }
 
 

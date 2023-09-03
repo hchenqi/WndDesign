@@ -76,6 +76,10 @@ size_t ListLayout<Vertical>::HitTestIndex(Point point) {
 	return std::lower_bound(child_list.begin(), child_list.end(), point.y, cmp) - child_list.begin() - 1;
 }
 
+Transform ListLayout<Vertical>::GetChildTransform(WndObject& child) const {
+	return GetChildRegion(child).point - point_zero;
+}
+
 Size ListLayout<Vertical>::OnSizeRefUpdate(Size size_ref) {
 	if (size.width != size_ref.width) {
 		size.width = size_ref.width;
@@ -98,17 +102,6 @@ void ListLayout<Vertical>::OnChildSizeUpdate(WndObject& child, Size child_size) 
 	}
 }
 
-ref_ptr<WndObject> ListLayout<Vertical>::HitTest(Point& point) {
-	size_t index = HitTestIndex(point); if (index >= Length()) { return this; }
-	Rect child_region = GetChildRegion(index); if (!child_region.Contains(point)) { return this; }
-	point -= child_region.point - point_zero;
-	return &GetChild(index);
-}
-
-Transform ListLayout<Vertical>::GetChildTransform(WndObject& child) const {
-	return GetChildRegion(child).point - point_zero;
-}
-
 void ListLayout<Vertical>::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 	Rect child_region = GetChildRegion(child);
 	Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
@@ -118,6 +111,13 @@ void ListLayout<Vertical>::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
 	size_t index_begin = HitTestIndex(draw_region.LeftTop()), index_end = HitTestIndex(draw_region.RightBottom());
 	for (size_t index = index_begin; index <= index_end; ++index) { DrawChild(GetChild(index), GetChildRegion(index), figure_queue, draw_region); }
+}
+
+ref_ptr<WndObject> ListLayout<Vertical>::HitTest(MouseMsg& msg) {
+	size_t index = HitTestIndex(msg.point); if (index >= Length()) { return this; }
+	Rect child_region = GetChildRegion(index); if (!child_region.Contains(msg.point)) { return this; }
+	msg.point -= child_region.point - point_zero;
+	return &GetChild(index);
 }
 
 
@@ -188,6 +188,10 @@ size_t ListLayout<Horizontal>::HitTestIndex(Point point) {
 	return std::lower_bound(child_list.begin(), child_list.end(), point.x, cmp) - child_list.begin() - 1;
 }
 
+Transform ListLayout<Horizontal>::GetChildTransform(WndObject& child) const {
+	return GetChildRegion(child).point - point_zero;
+}
+
 Size ListLayout<Horizontal>::OnSizeRefUpdate(Size size_ref) {
 	if (size.height != size_ref.height) {
 		size.height = size_ref.height;
@@ -210,17 +214,6 @@ void ListLayout<Horizontal>::OnChildSizeUpdate(WndObject& child, Size child_size
 	}
 }
 
-ref_ptr<WndObject> ListLayout<Horizontal>::HitTest(Point& point) {
-	size_t index = HitTestIndex(point); if (index >= Length()) { return this; }
-	Rect child_region = GetChildRegion(index); if (!child_region.Contains(point)) { return this; }
-	point -= child_region.point - point_zero;
-	return &GetChild(index);
-}
-
-Transform ListLayout<Horizontal>::GetChildTransform(WndObject& child) const {
-	return GetChildRegion(child).point - point_zero;
-}
-
 void ListLayout<Horizontal>::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 	Rect child_region = GetChildRegion(child);
 	Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
@@ -230,6 +223,13 @@ void ListLayout<Horizontal>::OnDraw(FigureQueue& figure_queue, Rect draw_region)
 	draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
 	size_t index_begin = HitTestIndex(draw_region.LeftTop()), index_end = HitTestIndex(draw_region.RightBottom());
 	for (size_t index = index_begin; index <= index_end; ++index) { DrawChild(GetChild(index), GetChildRegion(index), figure_queue, draw_region); }
+}
+
+ref_ptr<WndObject> ListLayout<Horizontal>::HitTest(MouseMsg& msg) {
+	size_t index = HitTestIndex(msg.point); if (index >= Length()) { return this; }
+	Rect child_region = GetChildRegion(index); if (!child_region.Contains(msg.point)) { return this; }
+	msg.point -= child_region.point - point_zero;
+	return &GetChild(index);
 }
 
 

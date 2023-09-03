@@ -54,16 +54,19 @@ protected:
 protected:
 	bool UpdateLayout(child_index child_index);
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const override;
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override;
-	virtual Transform GetChildTransform(WndObject& child) const override;
 
 	// paint
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override;
 };
 
 

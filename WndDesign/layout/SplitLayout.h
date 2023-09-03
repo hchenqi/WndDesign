@@ -41,12 +41,6 @@ protected:
 	Rect GetRegionSecond() const { return Rect(Point(0.0f, length_first), Size(size.width, length_second)); }
 	Rect GetChildRegion(WndObject& child) const { return IsFirst(child) ? GetRegionFirst() : GetRegionSecond(); }
 protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (point.y < length_first) { return child_first; }
-		point.y -= length_first;
-		if (point.y < length_second) { return child_second; }
-		return nullptr;
-	}
 	virtual Transform GetChildTransform(WndObject& child) const override {
 		return GetChildRegion(child).point - point_zero;
 	}
@@ -60,6 +54,15 @@ protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child_first, GetRegionFirst(), figure_queue, draw_region);
 		DrawChild(child_second, GetRegionSecond(), figure_queue, draw_region);
+	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (msg.point.y < length_first) { return child_first; }
+		msg.point.y -= length_first;
+		if (msg.point.y < length_second) { return child_second; }
+		return nullptr;
 	}
 };
 
@@ -73,12 +76,6 @@ protected:
 	Rect GetRegionSecond() const { return Rect(Point(length_first, 0.0f), Size(length_second, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return IsFirst(child) ? GetRegionFirst() : GetRegionSecond(); }
 protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (point.x < length_first) { return child_first; }
-		point.x -= length_first;
-		if (point.x < length_second) { return child_second; }
-		return nullptr;
-	}
 	virtual Transform GetChildTransform(WndObject& child) const override {
 		return GetChildRegion(child).point - point_zero;
 	}
@@ -92,6 +89,15 @@ protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child_first, GetRegionFirst(), figure_queue, draw_region);
 		DrawChild(child_second, GetRegionSecond(), figure_queue, draw_region);
+	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (msg.point.x < length_first) { return child_first; }
+		msg.point.x -= length_first;
+		if (msg.point.x < length_second) { return child_second; }
+		return nullptr;
 	}
 };
 
@@ -262,10 +268,10 @@ protected:
 
 
 template<class T1, class T2>
-SplitLayoutVertical(T1, T2)->SplitLayoutVertical<extract_width_type<T1>, extract_height_type<T1>, extract_width_type<T2>, extract_height_type<T2>>;
+SplitLayoutVertical(T1, T2) -> SplitLayoutVertical<extract_width_type<T1>, extract_height_type<T1>, extract_width_type<T2>, extract_height_type<T2>>;
 
 template<class T1, class T2>
-SplitLayoutHorizontal(T1, T2)->SplitLayoutHorizontal<extract_width_type<T1>, extract_height_type<T1>, extract_width_type<T2>, extract_height_type<T2>>;
+SplitLayoutHorizontal(T1, T2) -> SplitLayoutHorizontal<extract_width_type<T1>, extract_height_type<T1>, extract_width_type<T2>, extract_height_type<T2>>;
 
 
 END_NAMESPACE(WndDesign)

@@ -12,6 +12,10 @@ BarLayout::BarLayout(float height, child_ptr left, child_ptr right, child_ptr ce
 	width_center = UpdateChildSizeRef(this->center, size).width;
 }
 
+Transform BarLayout::GetChildTransform(WndObject& child) const {
+	return GetChildRegion(child).point - point_zero;
+}
+
 Size BarLayout::OnSizeRefUpdate(Size size_ref) { size.width = size_ref.width; return size; }
 
 void BarLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
@@ -36,18 +40,6 @@ void BarLayout::OnChildSizeUpdate(WndObject& child, Size child_size) {
 	}
 }
 
-ref_ptr<WndObject> BarLayout::HitTest(Point& point) {
-	using pair = std::pair<WndObject&, Rect>;
-	for (auto [child, child_region] : { pair{ center, GetRegionCenter() }, pair{ right, GetRegionRight() }, pair{ left, GetRegionLeft() } }) {
-		if (child_region.Contains(point)) { point -= child_region.point - point_zero; return &child; }
-	}
-	return this;
-}
-
-Transform BarLayout::GetChildTransform(WndObject& child) const {
-	return GetChildRegion(child).point - point_zero;
-}
-
 void BarLayout::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 	Rect child_region = GetChildRegion(child);
 	Redraw(child_region.Intersect(child_redraw_region + (child_region.point - point_zero)));
@@ -57,6 +49,14 @@ void BarLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	DrawChild(left, GetRegionLeft(), figure_queue, draw_region);
 	DrawChild(right, GetRegionRight(), figure_queue, draw_region);
 	DrawChild(center, GetRegionCenter(), figure_queue, draw_region);
+}
+
+ref_ptr<WndObject> BarLayout::HitTest(MouseMsg& msg) {
+	using pair = std::pair<WndObject&, Rect>;
+	for (auto [child, child_region] : { pair{ center, GetRegionCenter() }, pair{ right, GetRegionRight() }, pair{ left, GetRegionLeft() } }) {
+		if (child_region.Contains(msg.point)) { msg.point -= child_region.point - point_zero; return &child; }
+	}
+	return this;
 }
 
 

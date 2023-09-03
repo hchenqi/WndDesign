@@ -31,14 +31,10 @@ protected:
 	Vector GetChildOffset() const { return Vector(border._width, border._width); }
 	Rect GetChildRegion() const { return Rect(Point(border._width, border._width), child_size); }
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return size = Extend(child_size = UpdateChildSizeRef(child, Extend(size_ref, -border._width)), border._width); }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(size = Extend(this->child_size = child_size, border._width)); }
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (PointInRoundedRectangle(point, GetChildRegion(), border._radius)) { point -= GetChildOffset(); return child; }
-		return this;
-	}
-	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 
 	// paint
 protected:
@@ -55,11 +51,18 @@ protected:
 			}
 		}
 	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (PointInRoundedRectangle(msg.point, GetChildRegion(), border._radius)) { msg.point -= GetChildOffset(); return child; }
+		return this;
+	}
 };
 
 
 template<class T>
-BorderFrame(Border, T)->BorderFrame<extract_width_type<T>, extract_height_type<T>>;
+BorderFrame(Border, T) -> BorderFrame<extract_width_type<T>, extract_height_type<T>>;
 
 
 END_NAMESPACE(WndDesign)

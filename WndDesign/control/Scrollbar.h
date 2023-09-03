@@ -47,11 +47,6 @@ public:
 		if (is_shown ^ IsShown()) { SizeUpdated(GetSize()); }
 		Redraw(region_infinite);
 	}
-private:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (Interval(slider_offset, slider_height).Contains(point.y)) { return &slider; }
-		return this;
-	}
 
 	// paint
 private:
@@ -77,6 +72,11 @@ private:
 private:
 	void OnMousePress(float y) { mouse_down_offset = y - slider_offset; }
 	void OnMouseDrag(float y) { GetScrollFrame().UpdateFrameOffset((y - mouse_down_offset) * GetScrollFrame().GetChildLength() / height); }
+private:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (Interval(slider_offset, slider_height).Contains(msg.point.y)) { return &slider; }
+		return this;
+	}
 private:
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		if (msg.type == MouseMsg::WheelVertical) { GetScrollFrame().Scroll((float)-msg.wheel_delta); }

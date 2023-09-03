@@ -52,8 +52,9 @@ protected:
 	Rect GetChildRegion(size_t index) const { return child_list[index].region; }
 	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildIndex(child)); }
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual Transform GetChildTransform(WndObject& child) const override;
+protected:
+	virtual Size OnSizeRefUpdate(Size size_ref) override;
 
 	// paint
 protected:
@@ -91,11 +92,14 @@ protected:
 	size_t HitTestIndex(Point point);
 protected:
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
-	virtual ref_ptr<WndObject> HitTest(Point& point) override;
 
 	// paint
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override;
 };
 
 
@@ -129,11 +133,14 @@ protected:
 	size_t HitTestIndex(Point point);
 protected:
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
-	virtual ref_ptr<WndObject> HitTest(Point& point) override;
 
 	// paint
 protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override;
 };
 
 

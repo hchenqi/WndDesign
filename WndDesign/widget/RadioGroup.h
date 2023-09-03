@@ -1,10 +1,10 @@
 #pragma once
 
-#include "WndDesign/layout/ListLayout.h"
-#include "WndDesign/frame/PaddingFrame.h"
-#include "WndDesign/style/value_tag.h"
-#include "WndDesign/figure/shape.h"
-#include "WndDesign/common/function_traits.h"
+#include "../layout/ListLayout.h"
+#include "../frame/PaddingFrame.h"
+#include "../style/value_tag.h"
+#include "../figure/shape.h"
+#include "../common/function_traits.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -51,7 +51,8 @@ private:
 			PaddingFrame::OnDraw(figure_queue, draw_region);
 			figure_queue.add(GetPaddingRegion().Center(), new Circle(6px, selected ? Color::Gray : color_transparent, 1.0f, Color::Gray));
 		}
-		virtual ref_ptr<WndObject> HitTest(Point& point) override { return selected ? PaddingFrame::HitTest(point) : this; }
+	private:
+		virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return selected ? PaddingFrame::HitTest(msg.point) : this; }
 	};
 
 	template<class T>

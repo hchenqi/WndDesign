@@ -31,16 +31,19 @@ protected:
 	Rect GetRegionCenter() const { return Rect(Point((size.width - width_center) / 2, 0.0f), Size(width_center, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return &child == center.get() ? GetRegionCenter() : &child == right.get() ? GetRegionRight() : GetRegionLeft(); }
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const override;
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override;
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override;
-	virtual Transform GetChildTransform(WndObject& child) const override;
 
 	// paint
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override;
 };
 
 

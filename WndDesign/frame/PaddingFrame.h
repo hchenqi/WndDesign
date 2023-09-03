@@ -28,21 +28,24 @@ private:
 protected:
 	Size size;
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override { return size = Extend(UpdateChildSizeRef(child, Extend(size_ref, -padding)), padding); }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(size = Extend(child_size, padding)); }
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override { point -= GetChildOffset(); return child; }
-	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 
 	// paint
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override { Redraw(child_redraw_region + GetChildOffset()); }
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override { return DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region); }
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point -= GetChildOffset(); return child; }
 };
 
 
 template<class T>
-PaddingFrame(Padding, T)->PaddingFrame<extract_width_type<T>, extract_height_type<T>>;
+PaddingFrame(Padding, T) -> PaddingFrame<extract_width_type<T>, extract_height_type<T>>;
 
 
 END_NAMESPACE(WndDesign)

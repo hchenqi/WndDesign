@@ -20,6 +20,10 @@ OverlapLayout::frame_ptr OverlapLayout::RemoveChild(OverlapFrame& frame) {
 	return ptr;
 }
 
+Transform OverlapLayout::GetChildTransform(WndObject& child) const {
+	return AsFrame(child).region.point - point_zero;
+}
+
 Size OverlapLayout::OnSizeRefUpdate(Size size_ref) {
 	size = size_ref;
 	for (auto& frame : frame_list) { UpdateOverlapFrameChildSizeRef(*frame, size); }
@@ -33,20 +37,6 @@ void OverlapLayout::OnOverlapFrameChildRegionUpdate(WndObject& child, Rect child
 	Redraw(redraw_region);
 }
 
-ref_ptr<WndObject> OverlapLayout::HitTest(Point& point) {
-	for (auto& frame : reverse(frame_list)) {
-		if (frame->region.Contains(point)) {
-			point -= frame->region.point - point_zero;
-			return frame.get();
-		}
-	}
-	return this;
-}
-
-Transform OverlapLayout::GetChildTransform(WndObject& child) const {
-	return AsFrame(child).region.point - point_zero;
-}
-
 void OverlapLayout::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 	Redraw(child_redraw_region + (AsFrame(child).region.point - point_zero));
 }
@@ -55,6 +45,16 @@ void OverlapLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 	for (auto& frame : frame_list) {
 		DrawChild(*frame, frame->region, figure_queue, draw_region);
 	}
+}
+
+ref_ptr<WndObject> OverlapLayout::HitTest(MouseMsg& msg) {
+	for (auto& frame : reverse(frame_list)) {
+		if (frame->region.Contains(msg.point)) {
+			msg.point -= frame->region.point - point_zero;
+			return frame.get();
+		}
+	}
+	return this;
 }
 
 

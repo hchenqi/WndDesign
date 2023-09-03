@@ -35,10 +35,11 @@ class ResizeBorder : public InnerBorderFrame<Assigned, Assigned> {
 public:
 	ResizeBorder(child_ptr child) : InnerBorderFrame<Assigned, Assigned>(Border(5.0, Color(Color::Yellow, 127)), std::move(child)) {}
 private:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		if (PointInRoundedRectangle(point, Extend(Rect(point_zero, size), -border._width), border._radius)) { return child; }
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (PointInRoundedRectangle(msg.point, Extend(Rect(point_zero, size), -border._width), border._radius)) { return child; }
 		return this;
 	}
+private:
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
 			BorderPosition border_position = HitTestBorderPosition(size, border._width + border._radius, msg.point);

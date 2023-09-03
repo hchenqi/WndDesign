@@ -17,7 +17,7 @@ private:
 protected:
 	WndObject() {}
 public:
-	virtual ~WndObject() { if (HasParent()) { GetParent().UnregisterChild(*this); } ReleaseFocus(); }
+	virtual ~WndObject();
 
 	// style
 protected:
@@ -63,11 +63,10 @@ protected:
 	Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
 	void SizeUpdated(Size size) { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const { return Transform::Identity(); }
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) { return this; }
-	virtual Transform GetChildTransform(WndObject& child) const { return Transform::Identity(); }
 public:
 	Transform GetDescendentTransform(WndObject& descendent) const;
 	Point ConvertDescendentPoint(WndObject& descendent, Point point) const;
@@ -91,47 +90,19 @@ private:
 	void SetChildCapture(WndObject& child);
 	void LoseCapture();
 protected:
-	void SetCapture() { SetChildCapture(*this); }
+	void SetCapture();
 	void ReleaseCapture();
 	void SetFocus();
 	void ReleaseFocus();
 private:
 	void DispatchMouseMsg(MouseMsg msg);
 protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) { return this; }
+protected:
 	virtual void OnMouseMsg(MouseMsg msg) {}
 	virtual void OnKeyMsg(KeyMsg msg) {}
 	virtual void OnNotifyMsg(NotifyMsg msg) {}
 };
-
-
-inline Transform WndObject::GetDescendentTransform(WndObject& descendent) const {
-	Transform transform = Transform::Identity();
-	for (ref_ptr<WndObject> child = &descendent, parent = descendent.parent; child != this; child = parent, parent = child->parent) {
-		if (parent == nullptr) { throw std::invalid_argument("invalid descendent window"); }
-		transform = transform * parent->GetChildTransform(*child);
-	}
-	return transform;
-}
-
-inline Point WndObject::ConvertDescendentPoint(WndObject& descendent, Point point) const {
-	for (ref_ptr<WndObject> child = &descendent, parent = descendent.parent; child != this; child = parent, parent = child->parent) {
-		if (parent == nullptr) { throw std::invalid_argument("invalid descendent window"); }
-		point *= parent->GetChildTransform(*child);
-	}
-	return point;
-}
-
-inline void WndObject::DrawChild(WndObject& child, Point child_offset, FigureQueue& figure_queue, Rect draw_region) {
-	VerifyChild(child); if (draw_region.IsEmpty()) { return; }
-	Vector offset = child_offset - point_zero; draw_region -= offset;
-	figure_queue.Offset(offset, [&]() { child.OnDraw(figure_queue, draw_region); });
-}
-
-inline void WndObject::DrawChild(WndObject& child, Rect child_region, FigureQueue& figure_queue, Rect draw_region) {
-	VerifyChild(child); draw_region = draw_region.Intersect(child_region); if (draw_region.IsEmpty()) { return; }
-	Vector offset = child_region.point - point_zero; draw_region -= offset;
-	figure_queue.Group(offset, draw_region, [&]() { child.OnDraw(figure_queue, draw_region); });
-}
 
 
 END_NAMESPACE(WndDesign)

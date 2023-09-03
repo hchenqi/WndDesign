@@ -59,11 +59,10 @@ protected:
 protected:
 	void UpdateOverlapFrameChildSizeRef(OverlapFrame& frame, Size size_ref) { VerifyChild(frame); frame.region = frame.OnOverlapFrameSizeRefUpdate(size_ref); }
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const override;
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override;
 	virtual void OnOverlapFrameChildRegionUpdate(WndObject& child, Rect child_region);
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override;
-	virtual Transform GetChildTransform(WndObject& child) const override;
 private:
 	void UpdateChildSizeRef() {}  // never used
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override final {}  // never used
@@ -72,6 +71,10 @@ private:
 protected:
 	virtual void OnChildRedraw(WndObject& child, Rect child_redraw_region) override;
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override;
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override;
 };
 
 

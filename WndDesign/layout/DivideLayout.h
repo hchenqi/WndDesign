@@ -49,6 +49,10 @@ protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(0.0f, index * child_length), Size(size.width, child_length)); }
 	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildIndex(child)); }
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const override {
+		return GetChildRegion(child).point - point_zero;
+	}
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			size = size_ref;
@@ -60,16 +64,6 @@ protected:
 			}
 		}
 		return size;
-	}
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		float offset = point.y;
-		if (offset < 0.0f || offset >= size.height || child_list.empty()) { return nullptr; }
-		size_t index = HitTestItem(offset); point.y -= index * child_length;
-		return child_list[index];
-	}
-	virtual Transform GetChildTransform(WndObject& child) const override {
-		return GetChildRegion(child).point - point_zero;
 	}
 
 	// paint
@@ -83,6 +77,15 @@ protected:
 		draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
 		size_t begin = HitTestItem(draw_region.top()), end = HitTestItem(ceilf(draw_region.bottom()) - 1.0f);
 		for (size_t index = begin; index <= end; ++index) { DrawChild(child_list[index], GetChildRegion(index), figure_queue, draw_region); }
+	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		float offset = msg.point.y;
+		if (offset < 0.0f || offset >= size.height || child_list.empty()) { return nullptr; }
+		size_t index = HitTestItem(offset); msg.point.y -= index * child_length;
+		return child_list[index];
 	}
 };
 
@@ -101,6 +104,10 @@ protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(index * child_length, 0.0f), Size(child_length, size.height)); }
 	Rect GetChildRegion(WndObject& child) const { return GetChildRegion(GetChildIndex(child)); }
 protected:
+	virtual Transform GetChildTransform(WndObject& child) const override {
+		return GetChildRegion(child).point - point_zero;
+	}
+protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		if (size != size_ref) {
 			size = size_ref;
@@ -112,16 +119,6 @@ protected:
 			}
 		}
 		return size;
-	}
-protected:
-	virtual ref_ptr<WndObject> HitTest(Point& point) override {
-		float offset = point.x;
-		if (offset < 0.0f || offset >= size.width || child_list.empty()) { return nullptr; }
-		size_t index = HitTestItem(offset); point.x -= index * child_length;
-		return child_list[index];
-	}
-	virtual Transform GetChildTransform(WndObject& child) const override {
-		return GetChildRegion(child).point - point_zero;
 	}
 
 	// paint
@@ -135,6 +132,15 @@ protected:
 		draw_region = draw_region.Intersect(Rect(point_zero, size)); if (draw_region.IsEmpty()) { return; }
 		size_t begin = HitTestItem(draw_region.left()), end = HitTestItem(ceilf(draw_region.right()) - 1.0f);
 		for (size_t index = begin; index <= end; ++index) { DrawChild(child_list[index], GetChildRegion(index), figure_queue, draw_region); }
+	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		float offset = msg.point.x;
+		if (offset < 0.0f || offset >= size.width || child_list.empty()) { return nullptr; }
+		size_t index = HitTestItem(offset); msg.point.x -= index * child_length;
+		return child_list[index];
 	}
 };
 
