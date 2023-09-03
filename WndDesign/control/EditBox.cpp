@@ -259,7 +259,7 @@ void EditBox::Cut() {
 
 void EditBox::Copy() {
 	if (HasSelection()) {
-		SetClipboardData(text.substr(selection_range.begin, selection_range.length));
+		SetClipboardData(Substr(selection_range));
 	}
 }
 
