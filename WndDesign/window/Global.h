@@ -14,7 +14,7 @@ class DesktopFrame;
 struct Global {
 	static DesktopFrame& AddWnd(std::unique_ptr<DesktopFrame> frame);
 	static DesktopFrame& AddWnd(alloc_ptr<DesktopFrame> frame);
-	static void RemoveWnd(DesktopFrame& frame);
+	static std::unique_ptr<DesktopFrame> RemoveWnd(DesktopFrame& frame);
 
 	static DesktopFrame& GetDesktopFrame(WndObject& wnd);
 	static DesktopFrame& GetDesktopFramePoint(WndObject& wnd, Point& point);

@@ -25,11 +25,14 @@ DesktopFrame& Desktop::AddChild(frame_ptr frame) {
 	return *frame_list.emplace_back(std::move(frame));
 }
 
-void Desktop::RemoveChild(DesktopFrame& frame) {
+Desktop::frame_ptr Desktop::RemoveChild(DesktopFrame& frame) {
 	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
 	if (it == frame_list.end()) { throw std::invalid_argument("invalid desktop frame"); }
-	frame_list.erase(it);
+	frame.Hide();
+	UnregisterChild(frame);
+	frame_ptr ptr = std::move(*it);	frame_list.erase(it);
 	if (frame_list.empty()) { Terminate(); }
+	return ptr;
 }
 
 DesktopFrame& Desktop::GetDesktopFrame(WndObject& wnd) {
