@@ -11,7 +11,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 BEGIN_NAMESPACE(Anonymous)
 
-inline float RoundWin32Length(float length) { length = ceilf(length); return length < 14.0f ? 14.0f : length; }
+inline float RoundWin32Length(float length) { length = floorf(length); return length < 14.0f ? 14.0f : length; }
 
 END_NAMESPACE(Anonymous)
 
@@ -51,6 +51,7 @@ void DesktopFrame::InitializeRegion(Size size_ref) {
 }
 
 void DesktopFrame::DesktopFrameRegionUpdated(Rect region) {
+	if (!HasParent()) { return; }
 	region *= scale;
 	region.size = Size(RoundWin32Length(region.size.width), RoundWin32Length(region.size.height));
 	if (this->region.size != region.size) {
@@ -97,6 +98,10 @@ void DesktopFrame::OnDraw() {
 	}
 	invalid_region.Clear();
 	layer.Present(render_rect);
+}
+
+Point DesktopFrame::GetDesktopCursorPosition() const {
+	return Win32::GetCursorPos() * scale.Invert();
 }
 
 void DesktopFrame::Redraw(Rect redraw_region) {

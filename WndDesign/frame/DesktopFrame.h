@@ -19,7 +19,7 @@ public:
 	~DesktopFrame();
 
 	// style
-protected:
+public:
 	void SetTitle(std::wstring title);
 
 	// layout
@@ -86,6 +86,8 @@ private:
 	void OnDraw();
 
 	// message
+public:
+	Point GetDesktopCursorPosition() const;
 private:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override final { msg.point *= scale.Invert(); return child; }
 };

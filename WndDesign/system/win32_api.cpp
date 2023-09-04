@@ -229,8 +229,47 @@ void SetWndRegion(HANDLE hwnd, Rect region) {
 	MoveWindow((HWND)hwnd, (int)floorf(region.point.x), (int)floorf(region.point.y), (int)ceilf(region.size.width), (int)ceilf(region.size.height), false);
 }
 
-void SetWndStyleTool(HANDLE hwnd) {
-	SetWindowLong((HWND)hwnd, GWL_EXSTYLE, GetWindowLong((HWND)hwnd, GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
+void SetWndStyleTool(HANDLE hwnd, bool style_tool) {
+	LONG style = GetWindowLong((HWND)hwnd, GWL_EXSTYLE);
+	if (style_tool) {
+		if (!(style & WS_EX_TOOLWINDOW)) {
+			style |= WS_EX_TOOLWINDOW;
+			SetWindowLong((HWND)hwnd, GWL_EXSTYLE, style);
+		}
+	} else {
+		if ((style & WS_EX_TOOLWINDOW)) {
+			style &= ~WS_EX_TOOLWINDOW;
+			SetWindowLong((HWND)hwnd, GWL_EXSTYLE, style);
+		}
+	}
+}
+
+void SetWndTopMost(HANDLE hwnd, bool top_most) {
+	SetWindowPos((HWND)hwnd, top_most ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+}
+
+void SetWndOpacity(HANDLE hwnd, uchar opacity) {
+	LONG style = GetWindowLong((HWND)hwnd, GWL_EXSTYLE);
+	if (!(style & WS_EX_LAYERED)) {
+		style |= WS_EX_LAYERED;
+		SetWindowLong((HWND)hwnd, GWL_EXSTYLE, style);
+	}
+	SetLayeredWindowAttributes((HWND)hwnd, 0, opacity, LWA_ALPHA);
+}
+
+void SetWndMousePenetrate(HANDLE hwnd, bool mouse_penetrate) {
+	LONG style = GetWindowLong((HWND)hwnd, GWL_EXSTYLE);
+	if (mouse_penetrate) {
+		if (!(style & WS_EX_TRANSPARENT)) {
+			style |= WS_EX_TRANSPARENT;
+			SetWindowLong((HWND)hwnd, GWL_EXSTYLE, style);
+		}
+	} else {
+		if ((style & WS_EX_TRANSPARENT)) {
+			style &= ~WS_EX_TRANSPARENT;
+			SetWindowLong((HWND)hwnd, GWL_EXSTYLE, style);
+		}
+	}
 }
 
 void ShowWnd(HANDLE hwnd) { ShowWindow((HWND)hwnd, SW_SHOWDEFAULT); }
