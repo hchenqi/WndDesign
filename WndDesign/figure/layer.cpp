@@ -50,7 +50,7 @@ void LayerFigure::DrawOn(RenderTarget& target, Point point) const {
 	target.DrawBitmap(
 		layer.bitmap.Get(),
 		AsD2DRect(Rect(point, size)),
-		1.0f,
+		OpacityAsFloat(opacity),
 		D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
 		AsD2DRect(region)
 	);

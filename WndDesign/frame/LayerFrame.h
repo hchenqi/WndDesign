@@ -10,7 +10,14 @@ BEGIN_NAMESPACE(WndDesign)
 
 class _LayerFrame_Base : public WndFrame {
 protected:
-	using WndFrame::WndFrame;
+	_LayerFrame_Base(uchar opacity, child_ptr<> child) : WndFrame(std::move(child)), opacity(opacity) {}
+
+	// style
+protected:
+	uchar opacity;
+public:
+	uchar GetOpacity() const { return opacity; }
+	void SetOpacity(uchar opacity) { this->opacity = opacity; Redraw(region_infinite); }
 
 	// layout
 protected:
@@ -33,12 +40,16 @@ protected:
 template<class WidthType, class HeightType>
 class LayerFrame : public _LayerFrame_Base, public LayoutType<WidthType, HeightType> {
 public:
-	LayerFrame(child_ptr<WidthType, HeightType> child) : _LayerFrame_Base(std::move(child)) {}
+	LayerFrame(child_ptr<WidthType, HeightType> child) : LayerFrame(0xFF, std::move(child)) {}
+	LayerFrame(uchar opacity, child_ptr<WidthType, HeightType> child) : _LayerFrame_Base(opacity, std::move(child)) {}
 };
 
 
 template<class T>
-LayerFrame(T)->LayerFrame<extract_width_type<T>, extract_height_type<T>>;
+LayerFrame(T) -> LayerFrame<extract_width_type<T>, extract_height_type<T>>;
+
+template<class T>
+LayerFrame(uchar, T) -> LayerFrame<extract_width_type<T>, extract_height_type<T>>;
 
 
 END_NAMESPACE(WndDesign)

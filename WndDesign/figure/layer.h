@@ -28,9 +28,10 @@ struct LayerFigure : Figure {
 	const Layer& layer;
 	Rect region;
 	Size size;
+	uchar opacity;
 
-	LayerFigure(const Layer& layer, Rect region) : LayerFigure(layer, region, region.size) {}
-	LayerFigure(const Layer& layer, Rect region, Size size) : layer(layer), region(region), size(size) {}
+	LayerFigure(const Layer& layer, Rect region, uchar opacity = 0xFF) : LayerFigure(layer, region, region.size, opacity) {}
+	LayerFigure(const Layer& layer, Rect region, Size size, uchar opacity = 0xFF) : layer(layer), region(region), size(size), opacity(opacity) {}
 
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };

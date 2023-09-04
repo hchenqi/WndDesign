@@ -42,7 +42,7 @@ void _LayerFrame_Base::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 		layer.DrawFigureQueue(figure_queue, vector_zero, redraw_region);
 		invalid_region.Sub(redraw_region);
 	}
-	figure_queue.add(draw_region.point, new LayerFigure(layer, composite_region, draw_region.size));
+	figure_queue.add(draw_region.point, new LayerFigure(layer, composite_region, draw_region.size, opacity));
 }
 
 
