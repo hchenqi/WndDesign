@@ -294,6 +294,9 @@
     <ClInclude Include="widget\RadioGroup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="widget\Tooltip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">
@@ -384,6 +387,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="layout\ListLayoutAuto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widget\Tooltip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

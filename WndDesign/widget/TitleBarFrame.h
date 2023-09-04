@@ -14,6 +14,7 @@
 #include "../message/mouse_tracker.h"
 #include "../system/cursor.h"
 #include "../system/win32_aero_snap.h"
+#include "Tooltip.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -130,8 +131,7 @@ private:
 				BorderPosition border_position = HitTestBorderPosition(size, border._width + border._radius, msg.point);
 				if (msg.type == MouseMsg::Move) {
 					SetCursor(GetBorderPositionCursor(border_position));
-				}
-				else {
+				} else {
 					AeroSnapBorderResizingEffect(*this, border_position);
 				}
 			}
@@ -150,9 +150,9 @@ private:
 			std::move(menu),
 			new ListLayout<Horizontal>{
 				0.0f,
-				new MinimizeButton(frame, style.title_bar._background),
-				new MaximizeButton(frame, style.title_bar._background),
-				new CloseButton(frame, style.title_bar._background)
+				new MinimizeButton(frame, style.title_bar._background, L"minimize"),
+				new MaximizeButton(frame, style.title_bar._background, L"maximize"),
+				new CloseButton(frame, style.title_bar._background, L"close")
 			},
 			new ClipFrame<Auto, Assigned>{
 				new MaxFrame{
@@ -191,11 +191,21 @@ private:
 
 		class ButtonBase : public Button<Auto, Assigned> {
 		public:
-			ButtonBase(TitleBarFrame& frame, Color background) : Button<Auto, Assigned>(50.0f), frame(frame) {
+			ButtonBase(TitleBarFrame& frame, Color background, const std::wstring& tool_tip_text) : Button<Auto, Assigned>(50.0f), frame(frame), tool_tip_text(tool_tip_text) {
 				this->background = this->background_normal = background;
 			}
 		protected:
 			TitleBarFrame& frame;
+		private:
+			std::wstring tool_tip_text;
+		private:
+			virtual void OnNotifyMsg(NotifyMsg msg) override {
+				Button::OnNotifyMsg(msg);
+				switch (msg) {
+				case NotifyMsg::MouseEnter: TooltipShow(tool_tip_text); break;
+				case NotifyMsg::MouseLeave: TooltipHide(); break;
+				}
+			}
 		};
 
 		class MinimizeButton : public ButtonBase {

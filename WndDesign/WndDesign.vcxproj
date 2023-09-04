@@ -239,6 +239,7 @@
     <ClInclude Include="widget\RadioGroup.h" />
     <ClInclude Include="widget\TitleBarFrame.h" />
     <ClInclude Include="widget\ScrollBox.h" />
+    <ClInclude Include="widget\Tooltip.h" />
     <ClInclude Include="window\Global.h" />
     <ClInclude Include="window\desktop.h" />
     <ClInclude Include="window\wnd_traits.h" />
@@ -277,6 +278,7 @@
     <ClCompile Include="system\win32_api.cpp" />
     <ClCompile Include="system\win32_ime.cpp" />
     <ClCompile Include="system\win_main.cpp" />
+    <ClCompile Include="widget\Tooltip.cpp" />
     <ClCompile Include="window\Global.cpp" />
     <ClCompile Include="window\desktop.cpp" />
     <ClCompile Include="window\WndObject.cpp" />
