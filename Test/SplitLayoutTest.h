@@ -38,7 +38,7 @@ private:
 
 struct EditBoxStyle : EditBox::Style {
 	EditBoxStyle() {
-		font.family(L"DengXian").size(20).weight(FontWeight::Bold).color(Color::Black);
+		font.family(L"DengXian").size(20).weight(FontWeight::Bold).color(Color::Orange);
 	}
 };
 
@@ -55,7 +55,7 @@ int main() {
 		new MainFrame{
 			L"SplitLayoutTest",
 			new InnerBorderFrame {
-				Border(1.0, Color::Black),
+				Border(1.0, Color::Orange),
 				new SplitLayoutVertical{
 					new PaddingFrame {
 						Padding(50px),

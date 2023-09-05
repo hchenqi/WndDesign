@@ -20,9 +20,11 @@ protected:
 	Scale scale;
 protected:
 	void SetScale(Scale scale) {
-		this->scale = scale;
-		SizeUpdated(UpdateChildSizeRef(child, size_ref * scale.Invert()) * scale);
-		Redraw(region_infinite);
+		if (this->scale != scale) {
+			this->scale = scale;
+			SizeUpdated(UpdateChildSizeRef(child, size_ref * scale.Invert()) * scale);
+			Redraw(region_infinite);
+		}
 	}
 
 	// layout

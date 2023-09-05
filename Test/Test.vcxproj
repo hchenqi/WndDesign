@@ -19,14 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BarLayoutTest.h" />
     <ClInclude Include="DesktopFrameTest.h" />
-    <ClInclude Include="EditBoxTest.h" />
     <ClInclude Include="FlowLayoutTest.h" />
-    <ClInclude Include="ImageBoxTest.h" />
     <ClInclude Include="ListLayoutTest.h" />
     <ClInclude Include="OverlapLayoutTest.h" />
-    <ClInclude Include="ScrollBoxTest.h" />
+    <ClInclude Include="ScrollFrameTest.h" />
     <ClInclude Include="SplitLayoutTest.h" />
     <ClInclude Include="TextBoxTest.h" />
   </ItemGroup>

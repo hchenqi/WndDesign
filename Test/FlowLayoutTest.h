@@ -1,13 +1,13 @@
 #include "WndDesign/window/Global.h"
 #include "WndDesign/widget/TitleBarFrame.h"
-#include "WndDesign/widget/ScrollBox.h"
 #include "WndDesign/layout/FlowLayout.h"
 #include "WndDesign/control/Button.h"
 #include "WndDesign/control/EditBox.h"
-#include "WndDesign/frame/MinMaxFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/frame/BorderFrame.h"
 #include "WndDesign/frame/PaddingFrame.h"
+#include "WndDesign/frame/MaxFrame.h"
+#include "WndDesign/frame/ScrollFrame.h"
 #include "WndDesign/wrapper/Background.h"
 
 
@@ -19,6 +19,23 @@ struct MainFrameStyle : TitleBarFrame::Style {
 		width.normal(560px);
 		height.normal(180px);
 		title.assign(L"FlowLayoutTest");
+	}
+};
+
+
+class ScrollBox : public ScrollFrame<Vertical> {
+public:
+	using ScrollFrame::ScrollFrame;
+private:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (msg.type == MouseMsg::WheelVertical) {
+			return this;
+		}
+		return ScrollFrame::HitTest(msg);
+	}
+private:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		Scroll(-(float)msg.wheel_delta);
 	}
 };
 

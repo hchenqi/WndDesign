@@ -1,7 +1,7 @@
 #include "Tooltip.h"
 
 #include "../control/TextBox.h"
-#include "../frame/MinMaxFrame.h"
+#include "../frame/MaxFrame.h"
 #include "../frame/BorderFrame.h"
 #include "../frame/PaddingFrame.h"
 #include "../frame/DesktopFrame.h"

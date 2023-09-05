@@ -165,7 +165,6 @@
     <ClInclude Include="control\EditBox.h" />
     <ClInclude Include="control\ImageBox.h" />
     <ClInclude Include="control\Placeholder.h" />
-    <ClInclude Include="control\Scrollbar.h" />
     <ClInclude Include="control\TextBox.h" />
     <ClInclude Include="figure\bitmap.h" />
     <ClInclude Include="figure\color.h" />
@@ -176,6 +175,7 @@
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\text_block.h" />
     <ClInclude Include="frame\InnerBorderFrame.h" />
+    <ClInclude Include="frame\MaxFrame.h" />
     <ClInclude Include="geometry\scale.h" />
     <ClInclude Include="geometry\text_range.h" />
     <ClInclude Include="geometry\transform.h" />
@@ -184,7 +184,7 @@
     <ClInclude Include="frame\DesktopFrame.h" />
     <ClInclude Include="frame\FixedFrame.h" />
     <ClInclude Include="frame\LayerFrame.h" />
-    <ClInclude Include="frame\MinMaxFrame.h" />
+    <ClInclude Include="frame\MinFrame.h" />
     <ClInclude Include="frame\ScrollFrame.h" />
     <ClInclude Include="frame\WndFrame.h" />
     <ClInclude Include="geometry\clamp.h" />
@@ -238,7 +238,6 @@
     <ClInclude Include="system\win32_ime.h" />
     <ClInclude Include="widget\RadioGroup.h" />
     <ClInclude Include="widget\TitleBarFrame.h" />
-    <ClInclude Include="widget\ScrollBox.h" />
     <ClInclude Include="widget\Tooltip.h" />
     <ClInclude Include="window\Global.h" />
     <ClInclude Include="window\desktop.h" />

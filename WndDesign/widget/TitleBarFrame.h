@@ -2,8 +2,8 @@
 
 #include "../frame/DesktopFrame.h"
 #include "../frame/BorderFrame.h"
-#include "../frame/ClipFrame.h"
-#include "../frame/MinMaxFrame.h"
+#include "../frame/CenterFrame.h"
+#include "../frame/MaxFrame.h"
 #include "../layout/SplitLayout.h"
 #include "../layout/BarLayout.h"
 #include "../layout/ListLayout.h"
@@ -54,7 +54,8 @@ public:
 			border.width(4).radius(4).color(Color::CadetBlue);
 			title_bar.background(Color::CadetBlue);
 			title.assign(L"TitleBarFrame");
-			title_format.font.size(18px).color(Color::White);
+			title_format.font.size(16px).color(Color::White);
+			title_format.paragraph.line_spacing(100pct);
 			background_color = Color::White;
 		}
 	};
@@ -154,7 +155,7 @@ private:
 				new MaximizeButton(frame, style.title_bar._background, L"maximize"),
 				new CloseButton(frame, style.title_bar._background, L"close")
 			},
-			new ClipFrame<Auto, Assigned>{
+			new CenterFrame<Auto, Assigned>{
 				new MaxFrame{
 					Size(style.title_bar._max_title_length, length_max),
 					new Title(frame, *this, style)

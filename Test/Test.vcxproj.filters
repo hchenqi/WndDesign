@@ -21,22 +21,13 @@
     <ClInclude Include="TextBoxTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EditBoxTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ScrollBoxTest.h">
+    <ClInclude Include="ScrollFrameTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SplitLayoutTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ListLayoutTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageBoxTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BarLayoutTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FlowLayoutTest.h">

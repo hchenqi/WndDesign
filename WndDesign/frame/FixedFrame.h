@@ -15,11 +15,11 @@ class FixedFrame<Auto, Auto> : public WndFrame, public LayoutType<Auto, Auto> {
 public:
 	FixedFrame(float width, child_ptr<Assigned, Auto> child) : WndFrame(std::move(child)) {
 		SetChildData<uint>(this->child, child_assigned_auto);
-		size = Size(width, UpdateChildSizeRef(this->child, Size(width, 0.0f)).height);
+		size = Size(width, UpdateChildSizeRef(this->child, Size(width, length_min)).height);
 	}
 	FixedFrame(float height, child_ptr<Auto, Assigned> child) : WndFrame(std::move(child)) {
 		SetChildData<uint>(this->child, child_auto_assigned);
-		size = Size(UpdateChildSizeRef(this->child, Size(0.0f, height)).width, height);
+		size = Size(UpdateChildSizeRef(this->child, Size(length_min, height)).width, height);
 	}
 	FixedFrame(Size size, child_ptr<Assigned, Assigned> child) : WndFrame(std::move(child)) {
 		SetChildData<uint>(this->child, child_assigned_assigned);
@@ -38,12 +38,12 @@ public:
 		switch (GetChildData<uint>(child)) {
 		case child_assigned_auto:
 			if (this->size.width != size.width) {
-				this->size = Size(size.width, UpdateChildSizeRef(this->child, Size(size.width, 0.0f)).height);
+				this->size = Size(size.width, UpdateChildSizeRef(this->child, Size(size.width, length_min)).height);
 				SizeUpdated(this->size);
 			} break;
 		case child_auto_assigned:
 			if (this->size.height != size.height) {
-				this->size = Size(UpdateChildSizeRef(this->child, Size(0.0f, size.height)).width, size.height);
+				this->size = Size(UpdateChildSizeRef(this->child, Size(length_min, size.height)).width, size.height);
 				SizeUpdated(this->size);
 			} break;
 		case child_assigned_assigned:

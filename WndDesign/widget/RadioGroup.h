@@ -52,7 +52,7 @@ private:
 			figure_queue.add(GetPaddingRegion().Center(), new Circle(6px, selected ? Color::Gray : color_transparent, 1.0f, Color::Gray));
 		}
 	private:
-		virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return selected ? PaddingFrame::HitTest(msg.point) : this; }
+		virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return selected ? PaddingFrame::HitTest(msg) : this; }
 	};
 
 	template<class T>
