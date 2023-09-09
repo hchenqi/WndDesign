@@ -29,6 +29,30 @@ class WndType : public WndObject, public LayoutType<WidthType, HeightType> {};
 
 
 template<class WidthType = Relative, class HeightType = Relative>
+class child_ref;
+
+template<>
+class child_ref<Relative, Relative> : public std::reference_wrapper<WndObject> {
+public:
+	template<class ChildType>
+	child_ref(ChildType& ref) : std::reference_wrapper<WndObject>(ref) {}
+public:
+	operator WndObject& () const { return get(); }
+	operator ref_ptr<WndObject>() const { return &get(); }
+	ref_ptr<WndObject> operator->() const { return &get(); }
+};
+
+template<class WidthType, class HeightType>
+class child_ref : public child_ref<> {
+public:
+	template<class ChildType> requires (std::is_base_of_v<WidthType, typename ChildType::width_type>&& std::is_base_of_v<HeightType, typename ChildType::height_type>)
+		child_ref(ChildType& ref) : child_ref<>(ref) {}
+public:
+	child_ref&& operator=(child_ref<>&& ref) { child_ref<>::operator=(ref); return *this; }
+};
+
+
+template<class WidthType = Relative, class HeightType = Relative>
 class child_ptr;
 
 template<>
@@ -73,7 +97,7 @@ struct extract_layout_type<alloc_ptr<ChildType>> {
 };
 
 template<class ChildType>
-struct extract_layout_type<std::unique_ptr<ChildType>> : public extract_layout_type<alloc_ptr<ChildType>>{};
+struct extract_layout_type<std::unique_ptr<ChildType>> : public extract_layout_type<alloc_ptr<ChildType>> {};
 
 template<class T>
 using extract_width_type = typename extract_layout_type<T>::width_type;

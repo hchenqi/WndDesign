@@ -49,4 +49,11 @@ private:
 int main() {
 	global.AddWnd(new MainFrame(L"DesktopFrameTest", new EmptyWindow()));
 	global.MessageLoop();
+
+	global.AddWnd(new MainFrame(L"DesktopFrameTest", new WndFrame(new EmptyWindow())));
+	global.MessageLoop();
+
+	std::unique_ptr<EmptyWindow> window(new EmptyWindow());
+	global.AddWnd(new MainFrame(L"DesktopFrameTest", new WndFrameRef(*window)));
+	global.MessageLoop();
 }
