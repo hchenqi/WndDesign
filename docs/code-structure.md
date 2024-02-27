@@ -6,6 +6,11 @@ There are two projects contained within the `WndDesign` solution: `WndDesign` an
 
 Contains the main source code and builds to a static library `WndDesign.lib`.
 
+The source code can be divided into different parts:
+- common headers: common, geometry, figure, style, message, system
+- window object base: window
+- component library: control, frame, layout, wrapper, widget
+
 The folder-level dependencies are roughly shown in the graph below:
 
 ![](images/dependency.png)

@@ -80,7 +80,7 @@ Indicates the width or height of a window is independent of its parent window, a
 
 #### Relative
 
-Indicates the width or height of a window is dependent on its parent window but is not strictly assigned by its parent window. 
+Indicates the width or height of a window is dependent on its parent window but is not strictly assigned by its parent window.
 
 ## Drawing
 

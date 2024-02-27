@@ -45,3 +45,15 @@ A child window type can be defined in a separate class or in its parent window c
 A child window object can be managed by its parent window through member object, reference or `child_ptr`, which is an alias for `std::unique_ptr<WndObject>`. The last way is most commonly used, since it requires neither additional dependencies for the parent window to construct the child, nor the need to manually destruct the child window when the parent is destructed, although the other two approaches also have their use scenarios.
 
 The child window registration has nothing to do with keeping the child window resource. Parent windows, especially Layouts, use their internal data structures to manage child windows' resources. In most cases, the parent window maintains a `unique_ptr<WndObject>` to the child window, so that the child window resource can be automatically released when parent window destructs.
+
+## Window Layout
+
+### Style Definition
+
+Some windows or figures use styles to .
+
+`ValueTag` allows
+
+## Drawing
+
+## Message Handling
