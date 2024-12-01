@@ -2,6 +2,8 @@
 
 #include "../frame/WndFrame.h"
 
+#include <list>
+
 
 BEGIN_NAMESPACE(WndDesign)
 
@@ -17,6 +19,11 @@ public:
 	// parent
 protected:
 	OverlapLayout& GetParent() const;
+protected:
+	void BringForward();
+	void BringToFront();
+	void SendBackward();
+	void SendToBack();
 
 	// layout
 private:
@@ -45,13 +52,18 @@ public:
 
 	// child
 protected:
-	std::vector<frame_ptr> frame_list;
+	std::list<frame_ptr> frame_list;
 protected:
 	static OverlapFrame& AsFrame(WndObject& child) { return static_cast<OverlapFrame&>(child); }
 public:
 	void AddChild(frame_ptr frame);
 	void AddChild(alloc_ptr<OverlapFrame> frame) { AddChild(frame_ptr(frame)); }
 	frame_ptr RemoveChild(OverlapFrame& frame);
+public:
+	void BringForward(OverlapFrame& frame);
+	void BringToFront(OverlapFrame& frame);
+	void SendBackward(OverlapFrame& frame);
+	void SendToBack(OverlapFrame& frame);
 
 	// layout
 protected:
@@ -79,6 +91,10 @@ protected:
 
 
 inline OverlapLayout& OverlapFrame::GetParent() const { return static_cast<OverlapLayout&>(WndObject::GetParent()); }
+inline void OverlapFrame::BringForward() { GetParent().BringForward(*this); }
+inline void OverlapFrame::BringToFront() { GetParent().BringToFront(*this); }
+inline void OverlapFrame::SendBackward() { GetParent().SendBackward(*this); }
+inline void OverlapFrame::SendToBack() { GetParent().SendToBack(*this); }
 inline void OverlapFrame::OverlapFrameRegionUpdated(Rect region) { if (HasParent()) { GetParent().OnOverlapFrameChildRegionUpdate(*this, region); } }
 
 

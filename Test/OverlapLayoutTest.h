@@ -3,6 +3,7 @@
 #include "WndDesign/frame/BorderFrame.h"
 #include "WndDesign/widget/TitleBarFrame.h"
 #include "WndDesign/message/mouse_tracker.h"
+#include "WndDesign/message/key_tracker.h"
 #include "WndDesign/wrapper/Background.h"
 
 
@@ -29,16 +30,27 @@ private:
 	}
 
 private:
+	class Wnd : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground> {
+	public:
+		Wnd(Color background_color) { background = background_color; }
+	public:
+		void SetColor(Color color) { background = color; Redraw(region_infinite); }
+	};
+
 	class Frame : public OverlapFrame {
 	public:
 		Frame(Point point) : OverlapFrame{
 			new BorderFrame{
 				Border(5px, Color::Wheat),
-				new Wnd(Color(Color::Indigo, 64))
+				wnd = new Wnd(Color(Color::Indigo, 64))
 			}
 		}, region(point, Size(300, 300)) {
 			UpdateChildSizeRef(child, region.size);
 		}
+
+		// child
+	private:
+		ref_ptr<Wnd> wnd;
 
 		// layout
 	private:
@@ -49,6 +61,7 @@ private:
 		// message
 	private:
 		MouseTracker mouse_tracker;
+		KeyTracker key_tracker;
 	private:
 		virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return this; }
 	private:
@@ -58,6 +71,10 @@ private:
 			case MouseMsg::LeftUp: ReleaseCapture(); break;
 			}
 			switch (mouse_tracker.Track(msg)) {
+			case MouseTrackMsg::LeftClick:
+				SetFocus();
+				wnd->SetColor(Color(Color::Indigo, 128));
+				break;
 			case MouseTrackMsg::LeftDrag:
 				region.point += msg.point - mouse_tracker.mouse_down_position;
 				OverlapFrameRegionUpdated(region);
@@ -67,11 +84,20 @@ private:
 				break;
 			}
 		}
-	};
-
-	class Wnd : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground> {
-	public:
-		Wnd(Color background_color) { background = background_color; }
+		virtual void OnKeyMsg(KeyMsg msg) override {
+			key_tracker.Track(msg);
+			if (msg.type == KeyMsg::KeyDown) {
+				switch (msg.key) {
+				case CharKey('F'): key_tracker.ctrl ? BringToFront() : BringForward(); break;
+				case CharKey('B'): key_tracker.ctrl ? SendToBack() : SendBackward(); break;
+				}
+			}
+		}
+		virtual void OnNotifyMsg(NotifyMsg msg) override {
+			if (msg == NotifyMsg::LoseFocus) {
+				wnd->SetColor(Color(Color::Indigo, 64));
+			}
+		}
 	};
 };
 

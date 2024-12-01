@@ -20,6 +20,38 @@ OverlapLayout::frame_ptr OverlapLayout::RemoveChild(OverlapFrame& frame) {
 	return ptr;
 }
 
+void OverlapLayout::BringForward(OverlapFrame& frame) {
+	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
+	if (it == frame_list.end()) { throw std::invalid_argument("invalid OverlapFrame reference"); }
+	auto next = std::next(it);
+	if (next == frame_list.end()) { return; }
+	std::swap(*it, *next);
+	Redraw((*it)->region.Intersect((*next)->region));
+}
+
+void OverlapLayout::BringToFront(OverlapFrame& frame) {
+	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
+	if (it == frame_list.end()) { throw std::invalid_argument("invalid OverlapFrame reference"); }
+	frame_list.splice(frame_list.end(), frame_list, it);
+	Redraw((*it)->region);
+}
+
+void OverlapLayout::SendBackward(OverlapFrame& frame) {
+	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
+	if (it == frame_list.end()) { throw std::invalid_argument("invalid OverlapFrame reference"); }
+	if (it == frame_list.begin()) { return; }
+	auto prev = std::prev(it);
+	std::swap(*it, *prev);
+	Redraw((*it)->region.Intersect((*prev)->region));
+}
+
+void OverlapLayout::SendToBack(OverlapFrame& frame) {
+	auto it = std::find_if(frame_list.begin(), frame_list.end(), [&](const frame_ptr& ptr) { return ptr.get() == &frame; });
+	if (it == frame_list.end()) { throw std::invalid_argument("invalid OverlapFrame reference"); }
+	frame_list.splice(frame_list.begin(), frame_list, it);
+	Redraw((*it)->region);
+}
+
 Transform OverlapLayout::GetChildTransform(WndObject& child) const {
 	return AsFrame(child).region.point - point_zero;
 }
