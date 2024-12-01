@@ -207,6 +207,7 @@
     <ClInclude Include="layout\SplitLayout.h" />
     <ClInclude Include="layout\TableLayout.h" />
     <ClInclude Include="message\key_msg.h" />
+    <ClInclude Include="message\key_tracker.h" />
     <ClInclude Include="message\message.h" />
     <ClInclude Include="message\mouse_msg.h" />
     <ClInclude Include="message\mouse_tracker.h" />

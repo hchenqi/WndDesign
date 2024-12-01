@@ -294,6 +294,9 @@
     <ClInclude Include="frame\MaxFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="message\key_tracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">

@@ -283,6 +283,7 @@ void EditBox::OnMouseMsg(MouseMsg msg) {
 }
 
 void EditBox::OnKeyMsg(KeyMsg msg) {
+	key_tracker.Track(msg);
 	switch (msg.type) {
 	case KeyMsg::KeyDown:
 		switch (msg.key) {
@@ -299,23 +300,14 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 		case Key::Backspace: Delete(true); break;
 		case Key::Delete: Delete(false); break;
 
-		case Key::Ctrl: is_ctrl_down = true; break;
-		case Key::Shift: is_shift_down = true; break;
-
-		case CharKey('A'): if (is_ctrl_down) { SelectAll(); } break;
-		case CharKey('X'): if (is_ctrl_down) { Cut(); } break;
-		case CharKey('C'): if (is_ctrl_down) { Copy(); } break;
-		case CharKey('V'): if (is_ctrl_down) { Paste(); } break;
-		}
-		break;
-	case KeyMsg::KeyUp:
-		switch (msg.key) {
-		case Key::Ctrl: is_ctrl_down = false; break;
-		case Key::Shift: is_shift_down = false; break;
+		case CharKey('A'): if (key_tracker.ctrl) { SelectAll(); } break;
+		case CharKey('X'): if (key_tracker.ctrl) { Cut(); } break;
+		case CharKey('C'): if (key_tracker.ctrl) { Copy(); } break;
+		case CharKey('V'): if (key_tracker.ctrl) { Paste(); } break;
 		}
 		break;
 	case KeyMsg::Char:
-		if (is_ctrl_down) { break; }
+		if (key_tracker.ctrl) { break; }
 		if (!iswcntrl(msg.ch)) { Insert(msg.ch); };
 		break;
 	case KeyMsg::ImeBegin: OnImeBegin(); break;

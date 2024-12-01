@@ -5,6 +5,7 @@
 #include "../message/timer.h"
 #include "../message/ime.h"
 #include "../message/mouse_tracker.h"
+#include "../message/key_tracker.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
@@ -146,8 +147,7 @@ protected:
 	// message
 protected:
 	MouseTracker mouse_tracker;
-	bool is_ctrl_down = false;
-	bool is_shift_down = false;
+	KeyTracker key_tracker;
 protected:
 	virtual void OnMouseMsg(MouseMsg msg) override;
 	virtual void OnKeyMsg(KeyMsg msg) override;
