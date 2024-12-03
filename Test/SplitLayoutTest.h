@@ -52,21 +52,21 @@ struct TextBoxStyle : TextBlockStyle {
 
 int main() {
 	global.AddWnd(
-		new MainFrame{
+		new MainFrame(
 			L"SplitLayoutTest",
-			new InnerBorderFrame {
+			new InnerBorderFrame(
 				Border(1.0, Color::Orange),
-				new SplitLayoutVertical{
-					new PaddingFrame {
+				new SplitLayoutVertical(
+					new PaddingFrame(
 						Padding(50px),
 						new EditBox(EditBoxStyle(), L"edit here...")
-					},
-					new ClipFrame<Assigned, Auto>{
+					),
+					new ClipFrame<Assigned, Auto>(
 						new TextBox(TextBoxStyle(), L"Hello World!")
-					}
-				}
-			}
-		}
+					)
+				)
+			)
+		)
 	);
 	global.MessageLoop();
 }

@@ -37,12 +37,12 @@ void ImeSetPosition(HANDLE hwnd, Point point) {
 void ImeUpdateString(HANDLE hwnd, uint type) {
 	HIMC imc = ImmGetContext((HWND)hwnd);
 	if (type & GCS_COMPSTR) {
-		size_t size = ImmGetCompositionStringW(imc, GCS_COMPSTR, nullptr, 0);
+		LONG size = ImmGetCompositionStringW(imc, GCS_COMPSTR, nullptr, 0);
 		ime_string.resize(size / sizeof(wchar));
 		ImmGetCompositionStringW(imc, GCS_COMPSTR, ime_string.data(), size);
 	}
 	if (type & GCS_RESULTSTR) {
-		size_t size = ImmGetCompositionStringW(imc, GCS_RESULTSTR, nullptr, 0);
+		LONG size = ImmGetCompositionStringW(imc, GCS_RESULTSTR, nullptr, 0);
 		ime_string.resize(size / sizeof(wchar));
 		ImmGetCompositionStringW(imc, GCS_RESULTSTR, ime_string.data(), size);
 	}

@@ -67,18 +67,18 @@ private:
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		if (msg.type == MouseMsg::LeftDown) {
 			AppendChild(
-				new BorderFrame{
+				new BorderFrame(
 					Border(3px, 12px, Color::CadetBlue),
-					new PaddingFrame{
+					new PaddingFrame(
 						Padding(6, 0),
-						new ClipFrame<Auto, Assigned>{
-							new MaxFrame{
+						new ClipFrame<Auto, Assigned>(
+							new MaxFrame(
 								size_max,
 								new EditBox(EditBoxStyle(), NextName())
-							}
-						}
-					}
-				}
+							)
+						)
+					)
+				)
 			);
 		}
 	}
@@ -87,15 +87,15 @@ private:
 
 int main() {
 	global.AddWnd(
-		new TitleBarFrame{
+		new TitleBarFrame(
 			MainFrameStyle(),
-			new ScrollBox{
-				new PaddingFrame{
+			new ScrollBox(
+				new PaddingFrame(
 					Padding(10),
 					new MyFlowLayout
-				}
-			}
-		}
+				)
+			)
+		)
 	);
 	global.MessageLoop();
 }

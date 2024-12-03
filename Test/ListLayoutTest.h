@@ -50,23 +50,23 @@ struct EditBoxStyle2 : EditBox::Style {
 
 int main() {
 	global.AddWnd(
-		new MainFrame{
+		new MainFrame(
 			L"ListLayoutTest",
-			new ScrollFrame{
-				new ListLayout<Vertical>{
+			new ScrollFrame(
+				new ListLayout<Vertical>(
 					100,
-					new ClipFrame<Assigned, Auto>{
-						new TextBox(TextBoxStyle(), L"ListLayoutTest"),
-					},
-					new ClipFrame<Assigned, Auto>{
+					new ClipFrame<Assigned, Auto>(
+						new TextBox(TextBoxStyle(), L"ListLayoutTest")
+					),
+					new ClipFrame<Assigned, Auto>(
 						new EditBox(EditBoxStyle1(), L"EditBox")
-					},
-					new ClipFrame<Assigned, Auto>{
+					),
+					new ClipFrame<Assigned, Auto>(
 						new EditBox(EditBoxStyle2(), L"EditBox2")
-					}
-				}
-			}
-		}
+					)
+				)
+			)
+		)
 	);
 	global.MessageLoop();
 }

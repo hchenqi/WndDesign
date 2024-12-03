@@ -39,12 +39,12 @@ private:
 
 	class Frame : public OverlapFrame {
 	public:
-		Frame(Point point) : OverlapFrame{
-			new BorderFrame{
+		Frame(Point point) : OverlapFrame(
+			new BorderFrame(
 				Border(5px, Color::Wheat),
 				wnd = new Wnd(Color(Color::Indigo, 64))
-			}
-		}, region(point, Size(300, 300)) {
+			)
+		), region(point, Size(300, 300)) {
 			UpdateChildSizeRef(child, region.size);
 		}
 
@@ -104,10 +104,10 @@ private:
 
 int main() {
 	global.AddWnd(
-		new TitleBarFrame{
+		new TitleBarFrame(
 			MainFrameStyle(),
 			new MainWindow
-		}
+		)
 	);
 	global.MessageLoop();
 }

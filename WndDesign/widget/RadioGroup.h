@@ -25,16 +25,15 @@ public:
 	RadioGroup(std::function<void(const T&)> callback, Ts... child_args) :
 		ListLayout(0px, (new ItemFrame(*this, std::move(child_args)))...),
 		callback(callback),
-		selected_item(selected_item ? selected_item : nullptr) {
-	}
+		selected_item(selected_item ? selected_item : nullptr) {}
 
 private:
 	class ItemFrameBase : public PaddingFrame<Assigned, Auto> {
 	protected:
-		ItemFrameBase(RadioGroup& group, bool selected, child_ptr child) : PaddingFrame{
+		ItemFrameBase(RadioGroup& group, bool selected, child_ptr child) : PaddingFrame(
 			Padding(20px, 0px, 0px, 0px),
 			std::move(child)
-		}, selected(selected) {
+		), selected(selected) {
 			if (selected) { group.selected_item = this; }
 		}
 	protected:

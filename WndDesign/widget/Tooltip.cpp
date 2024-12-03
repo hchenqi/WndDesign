@@ -17,19 +17,19 @@ BEGIN_NAMESPACE(Anonymous)
 
 class Tooltip : public DesktopFrame {
 private:
-	Tooltip() : DesktopFrame{
+	Tooltip() : DesktopFrame(
 		L"",
-		new MaxFrame{
+		new MaxFrame(
 			Size(200px, 200px),
-			new BorderFrame{
+			new BorderFrame(
 				Border(1.5px, 0x767676),
-				new PaddingFrame{
+				new PaddingFrame(
 					Padding(5px, 2px),
 					text_box = new SolidColorBackground<TextBox, 0xF1F2F7>(TextBoxStyle(), L"")
-				}
-			}
-		}
-	} {
+				)
+			)
+		)
+	) {
 		Win32::SetWndStyleTool(GetHWND());
 		Win32::SetWndTopMost(GetHWND());
 		Win32::SetWndMousePenetrate(GetHWND());

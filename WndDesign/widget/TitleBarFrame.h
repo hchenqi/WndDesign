@@ -61,17 +61,16 @@ public:
 	};
 
 public:
-	TitleBarFrame(Style style, child_ptr child, child_ptr_menu menu = new Placeholder<Auto, Assigned>(0.0f)) : DesktopFrame{
+	TitleBarFrame(Style style, child_ptr child, child_ptr_menu menu = new Placeholder<Auto, Assigned>(0.0f)) : DesktopFrame(
 		style.title,
-		new ResizeBorder{
+		new ResizeBorder(
 			style.border,
-			new SplitLayoutVertical{
+			new SplitLayoutVertical(
 				new TitleBar(*this, style, std::move(menu)),
 				std::move(child)
-			}
-		}
-	}, style(style), title(title) {
-	}
+			)
+		)
+	), style(style), title(title) {}
 
 	// style
 private:
@@ -149,18 +148,18 @@ private:
 		TitleBar(TitleBarFrame& frame, const Style& style, child_ptr_menu menu) : Base(
 			style.title_bar._height,
 			std::move(menu),
-			new ListLayout<Horizontal>{
+			new ListLayout<Horizontal>(
 				0.0f,
 				new MinimizeButton(frame, style.title_bar._background, L"minimize"),
 				new MaximizeButton(frame, style.title_bar._background, L"maximize"),
 				new CloseButton(frame, style.title_bar._background, L"close")
-			},
-			new CenterFrame<Auto, Assigned>{
-				new MaxFrame{
+			),
+			new CenterFrame<Auto, Assigned>(
+				new MaxFrame(
 					Size(style.title_bar._max_title_length, length_max),
 					new Title(frame, *this, style)
-				}
-			}
+				)
+			)
 		), frame(frame) {
 			background = style.title_bar._background;
 		}

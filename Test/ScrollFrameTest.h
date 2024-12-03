@@ -82,14 +82,14 @@ public:
 
 int main() {
 	global.AddWnd(
-		new MainFrame{
+		new MainFrame(
 			L"ScrollFrameTest",
-			new ScrollBox{
-				new ScaleLayer{
+			new ScrollBox(
+				new ScaleLayer(
 					MyEditBox::Create()
-				}
-			}
-		}
+				)
+			)
+		)
 	);
 	global.MessageLoop();
 }

@@ -82,19 +82,19 @@ struct TextBoxStyle : TextBlockStyle {
 
 int main() {
 	global.AddWnd(
-		new MainFrame{
+		new MainFrame(
 			L"TextBoxTest",
-			new ScaleLayer{
-				new ResizeBorder{
-					new ClipFrame<>{
-						new InnerBorderFrame{
+			new ScaleLayer(
+				new ResizeBorder(
+					new ClipFrame<>(
+						new InnerBorderFrame(
 							Border(1.0, Color::Black),
 							new TextBox(TextBoxStyle(), L"Hello World!")
-						}
-					}
-				}
-			}
-		}
+						)
+					)
+				)
+			)
+		)
 	);
 	global.MessageLoop();
 }
