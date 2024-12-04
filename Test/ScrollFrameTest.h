@@ -30,23 +30,6 @@ private:
 };
 
 
-class ScrollBox : public ScrollFrame<Vertical> {
-public:
-	using ScrollFrame::ScrollFrame;
-private:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
-		if (!msg.ctrl && msg.type == MouseMsg::WheelVertical) {
-			return this;
-		}
-		return ScrollFrame::HitTest(msg);
-	}
-private:
-	virtual void OnMouseMsg(MouseMsg msg) override {
-		Scroll(-(float)msg.wheel_delta);
-	}
-};
-
-
 class ScaleLayer : public ScaleFrame<Assigned, Auto> {
 public:
 	ScaleLayer(child_ptr child) : ScaleFrame(Scale(1.0), std::move(child)) {}
@@ -84,7 +67,7 @@ int main() {
 	global.AddWnd(
 		new MainFrame(
 			L"ScrollFrameTest",
-			new ScrollBox(
+			new ScrollFrame<Vertical>(
 				new ScaleLayer(
 					MyEditBox::Create()
 				)

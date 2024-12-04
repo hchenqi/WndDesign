@@ -95,6 +95,25 @@ protected:
 			Redraw(region_infinite);
 		}
 	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (!msg.ctrl) {
+			switch (msg.type) {
+			case MouseMsg::WheelVertical:
+			case MouseMsg::WheelHorizontal: return this;
+			}
+		}
+		return _ScrollFrame_Base::HitTest(msg);
+	}
+protected:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		switch (msg.type) {
+		case MouseMsg::WheelVertical: Scroll(Vector(0, -(float)msg.wheel_delta)); break;
+		case MouseMsg::WheelHorizontal: Scroll(Vector(-(float)msg.wheel_delta, 0)); break;
+		}
+	}
 };
 
 
@@ -139,6 +158,19 @@ protected:
 			Redraw(region_infinite);
 		}
 	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (!msg.ctrl && msg.type == MouseMsg::WheelVertical) {
+			return this;
+		}
+		return _ScrollFrame_Base::HitTest(msg);
+	}
+protected:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		Scroll(-(float)msg.wheel_delta);
+	}
 };
 
 
@@ -182,6 +214,19 @@ protected:
 			frame_offset = ClampFrameOffset(frame_offset);
 			Redraw(region_infinite);
 		}
+	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (!msg.ctrl && msg.type == MouseMsg::WheelHorizontal) {
+			return this;
+		}
+		return _ScrollFrame_Base::HitTest(msg);
+	}
+protected:
+	virtual void OnMouseMsg(MouseMsg msg) override {
+		Scroll(-(float)msg.wheel_delta);
 	}
 };
 
