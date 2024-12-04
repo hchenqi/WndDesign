@@ -65,16 +65,17 @@ protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) override {
 		DrawChild(child, point_zero + GetChildOffset(), figure_queue, draw_region);
 	}
+
+	// message
+protected:
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point -= GetChildOffset(); return child; }
 };
 
 
 template<>
 class ScrollFrame<Bidirectional> : public _ScrollFrame_Base {
 public:
-	using child_ptr = child_ptr<Auto, Auto>;
-
-public:
-	ScrollFrame(child_ptr child) : _ScrollFrame_Base(std::move(child)) {
+	ScrollFrame(child_ptr<Auto, Auto> child) : _ScrollFrame_Base(std::move(child)) {
 		child_size = UpdateChildSizeRef(this->child, size_empty);
 	}
 
@@ -100,10 +101,7 @@ protected:
 template<>
 class ScrollFrame<Vertical> : public _ScrollFrame_Base {
 public:
-	using child_ptr = child_ptr<Assigned, Auto>;
-
-public:
-	ScrollFrame(child_ptr child) : _ScrollFrame_Base(std::move(child)) {}
+	ScrollFrame(child_ptr<Assigned, Auto> child) : _ScrollFrame_Base(std::move(child)) {}
 
 	// layout
 public:
@@ -147,10 +145,7 @@ protected:
 template<>
 class ScrollFrame<Horizontal> : public _ScrollFrame_Base {
 public:
-	using child_ptr = child_ptr<Auto, Assigned>;
-
-public:
-	ScrollFrame(child_ptr child) : _ScrollFrame_Base(std::move(child)) {}
+	ScrollFrame(child_ptr<Auto, Assigned> child) : _ScrollFrame_Base(std::move(child)) {}
 
 	// layout
 public:
