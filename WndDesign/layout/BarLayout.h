@@ -8,16 +8,16 @@ BEGIN_NAMESPACE(WndDesign)
 
 class BarLayout : public WndType<Assigned, Auto> {
 public:
-	using child_ptr = child_ptr<Auto, Assigned>;
+	using child_type = child_ptr<Auto, Assigned>;
 
 public:
-	BarLayout(float height, child_ptr left, child_ptr right, child_ptr center);
+	BarLayout(float height, child_type left, child_type right, child_type center);
 
 	// child
 protected:
-	child_ptr left;
-	child_ptr right;
-	child_ptr center;
+	child_type left;
+	child_type right;
+	child_type center;
 
 	// layout
 private:

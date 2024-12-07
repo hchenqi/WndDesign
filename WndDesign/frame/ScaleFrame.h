@@ -10,10 +10,10 @@ BEGIN_NAMESPACE(WndDesign)
 template<class WidthType, class HeightType>
 class ScaleFrame : public WndFrame, public LayoutType<WidthType, HeightType> {
 public:
-	using child_ptr = child_ptr<WidthType, HeightType>;
+	using child_type = child_ptr<WidthType, HeightType>;
 
 public:
-	ScaleFrame(Scale scale, child_ptr child) : WndFrame(std::move(child)), scale(scale) {}
+	ScaleFrame(Scale scale, child_type child) : WndFrame(std::move(child)), scale(scale) {}
 
 	// style
 protected:

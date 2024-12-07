@@ -14,7 +14,7 @@ class ListLayoutAuto;
 
 class _ListLayoutAuto_Base : public WndType<Auto, Auto> {
 public:
-	using child_ptr = child_ptr<Auto, Auto>;
+	using child_type = child_ptr<Auto, Auto>;
 
 protected:
 	_ListLayoutAuto_Base(float gap) : child_list(), gap(gap) {}
@@ -23,10 +23,10 @@ protected:
 protected:
 	struct ChildInfo {
 	public:
-		child_ptr child;
+		child_type child;
 		Rect region;
 	public:
-		ChildInfo(child_ptr child) : child(std::move(child)) {}
+		ChildInfo(child_type child) : child(std::move(child)) {}
 	};
 	std::vector<ChildInfo> child_list;
 public:
@@ -38,11 +38,11 @@ private:
 	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	void UpdateIndex(size_t begin);
 protected:
-	size_t InsertChild(size_t index, child_ptr child);
-	size_t InsertChild(size_t begin, std::vector<child_ptr> children);
+	size_t InsertChild(size_t index, child_type child);
+	size_t InsertChild(size_t begin, std::vector<child_type> children);
 	void EraseChild(size_t begin, size_t count);
-	child_ptr ExtractChild(size_t index);
-	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
+	child_type ExtractChild(size_t index);
+	std::vector<child_type> ExtractChild(size_t begin, size_t count);
 
 	// layout
 protected:
@@ -68,7 +68,7 @@ public:
 	template<class... Ts>
 	ListLayoutAuto(float gap, Ts... child_args) : _ListLayoutAuto_Base(gap) {
 		if constexpr (sizeof...(Ts) > 0) {
-			child_ptr list[] = { std::move(child_args)... };
+			child_type list[] = { std::move(child_args)... };
 			InsertChild(0, std::vector<child_ptr>(std::make_move_iterator(std::begin(list)), std::make_move_iterator(std::end(list))));
 		}
 	}
@@ -78,12 +78,12 @@ private:
 	_ListLayoutAuto_Base::ChildInfo;
 	_ListLayoutAuto_Base::child_list;
 public:
-	void InsertChild(size_t index, child_ptr child);
-	void InsertChild(size_t begin, std::vector<child_ptr> children);
-	void AppendChild(child_ptr child) { InsertChild(-1, std::move(child)); }
+	void InsertChild(size_t index, child_type child);
+	void InsertChild(size_t begin, std::vector<child_type> children);
+	void AppendChild(child_type child) { InsertChild(-1, std::move(child)); }
 	void EraseChild(size_t begin, size_t count = 1);
-	child_ptr ExtractChild(size_t index);
-	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
+	child_type ExtractChild(size_t index);
+	std::vector<child_type> ExtractChild(size_t begin, size_t count);
 
 	// layout
 private:
@@ -109,8 +109,8 @@ public:
 	template<class... Ts>
 	ListLayoutAuto(float gap, Ts... child_args) : _ListLayoutAuto_Base(gap) {
 		if constexpr (sizeof...(Ts) > 0) {
-			child_ptr list[] = { std::move(child_args)... };
-			InsertChild(0, std::vector<child_ptr>(std::make_move_iterator(std::begin(list)), std::make_move_iterator(std::end(list))));
+			child_type list[] = { std::move(child_args)... };
+			InsertChild(0, std::vector<child_type>(std::make_move_iterator(std::begin(list)), std::make_move_iterator(std::end(list))));
 		}
 	}
 
@@ -119,12 +119,12 @@ private:
 	_ListLayoutAuto_Base::ChildInfo;
 	_ListLayoutAuto_Base::child_list;
 public:
-	void InsertChild(size_t index, child_ptr child);
-	void InsertChild(size_t begin, std::vector<child_ptr> children);
-	void AppendChild(child_ptr child) { InsertChild(-1, std::move(child)); }
+	void InsertChild(size_t index, child_type child);
+	void InsertChild(size_t begin, std::vector<child_type> children);
+	void AppendChild(child_type child) { InsertChild(-1, std::move(child)); }
 	void EraseChild(size_t begin, size_t count = 1);
-	child_ptr ExtractChild(size_t index);
-	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
+	child_type ExtractChild(size_t index);
+	std::vector<child_type> ExtractChild(size_t begin, size_t count);
 
 	// layout
 private:

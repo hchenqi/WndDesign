@@ -8,17 +8,17 @@ BEGIN_NAMESPACE(WndDesign)
 
 class _SplitLayout_Base : public WndObject {
 protected:
-	using child_ptr = child_ptr<>;
+	using child_type = child_ptr<>;
 
 protected:
-	_SplitLayout_Base(child_ptr child_first, child_ptr child_second) : child_first(std::move(child_first)), child_second(std::move(child_second)) {
+	_SplitLayout_Base(child_type child_first, child_type child_second) : child_first(std::move(child_first)), child_second(std::move(child_second)) {
 		RegisterChild(this->child_first); RegisterChild(this->child_second);
 	}
 
 	// child
 protected:
-	child_ptr child_first;
-	child_ptr child_second;
+	child_type child_first;
+	child_type child_second;
 protected:
 	bool IsFirst(WndObject& child) const { return &child == child_first.get(); }
 
@@ -33,7 +33,7 @@ protected:
 
 class _SplitLayout_Base_Vertical : public _SplitLayout_Base {
 protected:
-	_SplitLayout_Base_Vertical(child_ptr child_first, child_ptr child_second) : _SplitLayout_Base(std::move(child_first), std::move(child_second)) {}
+	_SplitLayout_Base_Vertical(child_type child_first, child_type child_second) : _SplitLayout_Base(std::move(child_first), std::move(child_second)) {}
 
 	// layout
 protected:
@@ -68,7 +68,7 @@ protected:
 
 class _SplitLayout_Base_Horizontal : public _SplitLayout_Base {
 protected:
-	_SplitLayout_Base_Horizontal(child_ptr child_first, child_ptr child_second) : _SplitLayout_Base(std::move(child_first), std::move(child_second)) {}
+	_SplitLayout_Base_Horizontal(child_type child_first, child_type child_second) : _SplitLayout_Base(std::move(child_first), std::move(child_second)) {}
 
 	// layout
 protected:
@@ -112,11 +112,11 @@ public:
 	using width_type = std::conditional_t<IsAssigned<WidthTypeFirst>, WidthTypeSecond, WidthTypeFirst>;
 	using height_type = std::conditional_t<IsAuto<HeightTypeFirst>, HeightTypeSecond, HeightTypeFirst>;
 public:
-	using child_ptr_first = WndDesign::child_ptr<WidthTypeFirst, HeightTypeFirst>;
-	using child_ptr_second = WndDesign::child_ptr<WidthTypeSecond, HeightTypeSecond>;
+	using child_type_first = WndDesign::child_ptr<WidthTypeFirst, HeightTypeFirst>;
+	using child_type_second = WndDesign::child_ptr<WidthTypeSecond, HeightTypeSecond>;
 
 public:
-	SplitLayoutVertical(child_ptr_first child_first, child_ptr_second child_second) : _SplitLayout_Base_Vertical(std::move(child_first), std::move(child_second)) {}
+	SplitLayoutVertical(child_type_first child_first, child_type_second child_second) : _SplitLayout_Base_Vertical(std::move(child_first), std::move(child_second)) {}
 
 	// layout
 protected:
@@ -194,11 +194,11 @@ public:
 	using width_type = std::conditional_t<IsAuto<WidthTypeFirst>, WidthTypeSecond, WidthTypeFirst>;
 	using height_type = std::conditional_t<IsAssigned<HeightTypeFirst>, HeightTypeSecond, HeightTypeFirst>;
 public:
-	using child_ptr_first = WndDesign::child_ptr<WidthTypeFirst, HeightTypeFirst>;
-	using child_ptr_second = WndDesign::child_ptr<WidthTypeSecond, HeightTypeSecond>;
+	using child_type_first = WndDesign::child_ptr<WidthTypeFirst, HeightTypeFirst>;
+	using child_type_second = WndDesign::child_ptr<WidthTypeSecond, HeightTypeSecond>;
 
 public:
-	SplitLayoutHorizontal(child_ptr_first child_first, child_ptr_second child_second) : _SplitLayout_Base_Horizontal(std::move(child_first), std::move(child_second)) {}
+	SplitLayoutHorizontal(child_type_first child_first, child_type_second child_second) : _SplitLayout_Base_Horizontal(std::move(child_first), std::move(child_second)) {}
 
 	// layout
 protected:

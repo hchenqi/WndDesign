@@ -4,7 +4,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-BarLayout::BarLayout(float height, child_ptr left, child_ptr right, child_ptr center) :
+BarLayout::BarLayout(float height, child_type left, child_type right, child_type center) :
 	left(std::move(left)), right(std::move(right)), center(std::move(center)), size(0.0f, height) {
 	RegisterChild(this->left); RegisterChild(this->right); RegisterChild(this->center);
 	width_left = UpdateChildSizeRef(this->left, size).width;

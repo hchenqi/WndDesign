@@ -14,14 +14,14 @@ class DivideLayout;
 
 class _DivideLayout_Base : public WndType<Assigned, Assigned> {
 public:
-	using child_ptr = child_ptr<Assigned, Assigned>;
+	using child_type = child_ptr<Assigned, Assigned>;
 
 protected:
 	_DivideLayout_Base() : child_list() {}
 
 	// child
 protected:
-	std::vector<child_ptr> child_list;
+	std::vector<child_type> child_list;
 protected:
 	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }

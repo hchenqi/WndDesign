@@ -12,10 +12,10 @@ BEGIN_NAMESPACE(WndDesign)
 template<class WidthType, class HeightType>
 class BorderFrame : public WndFrame, public LayoutType<WidthType, HeightType> {
 public:
-	using child_ptr = child_ptr<WidthType, HeightType>;
+	using child_type = child_ptr<WidthType, HeightType>;
 
 public:
-	BorderFrame(Border border, child_ptr child) : WndFrame(std::move(child)), border(border) {}
+	BorderFrame(Border border, child_type child) : WndFrame(std::move(child)), border(border) {}
 
 	// style
 protected:

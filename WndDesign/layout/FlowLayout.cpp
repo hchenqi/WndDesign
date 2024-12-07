@@ -26,7 +26,7 @@ auto FlowLayout::HitTestColumn(row_index row, float x) const {
 	return std::lower_bound(child_list.begin() + row_list[row], child_list.begin() + row_list[row + 1], x, cmp) - 1;
 }
 
-void FlowLayout::AppendChild(child_ptr child) {
+void FlowLayout::AppendChild(child_type child) {
 	RegisterChild(child);
 	child_index child_index = (uint)child_list.size();
 	ChildInfo& info = child_list.emplace_back(std::move(child));

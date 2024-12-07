@@ -14,7 +14,7 @@ void ListLayout<Vertical>::UpdateIndex(size_t begin) {
 	}
 }
 
-void ListLayout<Vertical>::InsertChild(size_t index, child_ptr child) {
+void ListLayout<Vertical>::InsertChild(size_t index, child_type child) {
 	RegisterChild(child);
 	if (index > child_list.size()) { index = child_list.size(); }
 	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
@@ -23,7 +23,7 @@ void ListLayout<Vertical>::InsertChild(size_t index, child_ptr child) {
 	UpdateLayout(index);
 }
 
-void ListLayout<Vertical>::InsertChild(size_t begin, std::vector<child_ptr> children) {
+void ListLayout<Vertical>::InsertChild(size_t begin, std::vector<child_type> children) {
 	for (auto& child : children) { RegisterChild(child); }
 	if (begin > child_list.size()) { begin = child_list.size(); }
 	auto it = child_list.insert(child_list.begin() + begin, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
@@ -41,7 +41,7 @@ void ListLayout<Vertical>::EraseChild(size_t begin, size_t count) {
 	UpdateIndex(begin); UpdateLayout(begin);
 }
 
-ListLayout<Vertical>::child_ptr ListLayout<Vertical>::ExtractChild(size_t index) {
+ListLayout<Vertical>::child_type ListLayout<Vertical>::ExtractChild(size_t index) {
 	if (index >= child_list.size()) { throw std::invalid_argument("invalid child index"); }
 	UnregisterChild(child_list[index].child);
 	child_ptr ptr(std::move(child_list[index].child));
@@ -49,10 +49,10 @@ ListLayout<Vertical>::child_ptr ListLayout<Vertical>::ExtractChild(size_t index)
 	return ptr;
 }
 
-std::vector<ListLayout<Vertical>::child_ptr> ListLayout<Vertical>::ExtractChild(size_t begin, size_t count) {
+std::vector<ListLayout<Vertical>::child_type> ListLayout<Vertical>::ExtractChild(size_t begin, size_t count) {
 	if (begin >= child_list.size() || count == 0) { return {}; }
 	count = std::min(count, child_list.size() - begin); size_t end = begin + count;
-	std::vector<child_ptr> ptr_list; ptr_list.reserve(count);
+	std::vector<child_type> ptr_list; ptr_list.reserve(count);
 	for (size_t index = begin; index < end; ++index) {
 		UnregisterChild(child_list[index].child);
 		ptr_list.emplace_back(std::move(child_list[index].child));
@@ -127,7 +127,7 @@ void ListLayout<Horizontal>::UpdateIndex(size_t begin) {
 	}
 }
 
-void ListLayout<Horizontal>::InsertChild(size_t index, child_ptr child) {
+void ListLayout<Horizontal>::InsertChild(size_t index, child_type child) {
 	RegisterChild(child);
 	if (index > child_list.size()) { index = child_list.size(); }
 	auto it = child_list.emplace(child_list.begin() + index, std::move(child));
@@ -136,7 +136,7 @@ void ListLayout<Horizontal>::InsertChild(size_t index, child_ptr child) {
 	UpdateLayout(index);
 }
 
-void ListLayout<Horizontal>::InsertChild(size_t begin, std::vector<child_ptr> children) {
+void ListLayout<Horizontal>::InsertChild(size_t begin, std::vector<child_type> children) {
 	for (auto& child : children) { RegisterChild(child); }
 	if (begin > child_list.size()) { begin = child_list.size(); }
 	auto it = child_list.insert(child_list.begin() + begin, std::make_move_iterator(children.begin()), std::make_move_iterator(children.end()));
@@ -154,17 +154,17 @@ void ListLayout<Horizontal>::EraseChild(size_t begin, size_t count) {
 	UpdateIndex(begin); UpdateLayout(begin);
 }
 
-ListLayout<Horizontal>::child_ptr ListLayout<Horizontal>::ExtractChild(size_t index) {
+ListLayout<Horizontal>::child_type ListLayout<Horizontal>::ExtractChild(size_t index) {
 	UnregisterChild(child_list[index].child);
-	child_ptr item(std::move(child_list[index].child));
+	child_type item(std::move(child_list[index].child));
 	EraseChild(index, 1);
 	return item;
 }
 
-std::vector<ListLayout<Horizontal>::child_ptr> ListLayout<Horizontal>::ExtractChild(size_t begin, size_t count) {
+std::vector<ListLayout<Horizontal>::child_type> ListLayout<Horizontal>::ExtractChild(size_t begin, size_t count) {
 	if (begin >= child_list.size() || count == 0) { return {}; }
 	count = std::min(count, child_list.size() - begin); size_t end = begin + count;
-	std::vector<child_ptr> children; children.reserve(count);
+	std::vector<child_type> children; children.reserve(count);
 	for (size_t index = begin; index < end; ++index) {
 		UnregisterChild(child_list[index].child);
 		children.emplace_back(std::move(child_list[index].child));

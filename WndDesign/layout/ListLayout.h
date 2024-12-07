@@ -15,7 +15,7 @@ class ListLayout;
 template<>
 class ListLayout<Vertical> : public WndType<Assigned, Auto> {
 public:
-	using child_ptr = child_ptr<Assigned, Auto>;
+	using child_type = child_ptr<Assigned, Auto>;
 
 public:
 	template<class... Ts>
@@ -28,11 +28,11 @@ public:
 private:
 	struct ChildInfo {
 	public:
-		child_ptr child;
+		child_type child;
 		float offset;
 		float length;
 	public:
-		ChildInfo(child_ptr child) : child(std::move(child)), offset(0.0f), length(0.0f) {}
+		ChildInfo(child_type child) : child(std::move(child)), offset(0.0f), length(0.0f) {}
 	};
 	std::vector<ChildInfo> child_list;
 public:
@@ -44,12 +44,12 @@ private:
 	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	void UpdateIndex(size_t begin);
 public:
-	void InsertChild(size_t index, child_ptr child);
-	void InsertChild(size_t begin, std::vector<child_ptr> children);
-	void AppendChild(child_ptr child) { InsertChild(-1, std::move(child)); }
+	void InsertChild(size_t index, child_type child);
+	void InsertChild(size_t begin, std::vector<child_type> children);
+	void AppendChild(child_type child) { InsertChild(-1, std::move(child)); }
 	void EraseChild(size_t begin, size_t count = 1);
-	child_ptr ExtractChild(size_t index);
-	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
+	child_type ExtractChild(size_t index);
+	std::vector<child_type> ExtractChild(size_t begin, size_t count);
 
 	// layout
 protected:
@@ -81,7 +81,7 @@ protected:
 template<>
 class ListLayout<Horizontal> : public WndType<Auto, Assigned> {
 public:
-	using child_ptr = child_ptr<Auto, Assigned>;
+	using child_type = child_ptr<Auto, Assigned>;
 
 public:
 	template<class... Ts>
@@ -94,11 +94,11 @@ public:
 protected:
 	struct ChildInfo {
 	public:
-		child_ptr child;
+		child_type child;
 		float offset;
 		float length;
 	public:
-		ChildInfo(child_ptr child) : child(std::move(child)), offset(0.0f), length(0.0f) {}
+		ChildInfo(child_type child) : child(std::move(child)), offset(0.0f), length(0.0f) {}
 	};
 	std::vector<ChildInfo> child_list;
 protected:
@@ -109,12 +109,12 @@ public:
 	WndObject& GetChild(size_t index) const { return child_list[index].child; }
 	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
 public:
-	void InsertChild(size_t index, child_ptr child);
-	void InsertChild(size_t begin, std::vector<child_ptr> children);
-	void AppendChild(child_ptr child) { InsertChild(-1, std::move(child)); }
+	void InsertChild(size_t index, child_type child);
+	void InsertChild(size_t begin, std::vector<child_type> children);
+	void AppendChild(child_type child) { InsertChild(-1, std::move(child)); }
 	void EraseChild(size_t begin, size_t count = 1);
-	child_ptr ExtractChild(size_t index);
-	std::vector<child_ptr> ExtractChild(size_t begin, size_t count);
+	child_type ExtractChild(size_t index);
+	std::vector<child_type> ExtractChild(size_t begin, size_t count);
 
 	// layout
 protected:

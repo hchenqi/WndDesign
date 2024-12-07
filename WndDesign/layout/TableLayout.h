@@ -13,7 +13,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 class TableLayout : public WndType<Relative, Relative> {
 public:
-	using child_ptr = child_ptr<Relative, Relative>;
+	using child_type = child_ptr<Relative, Relative>;
 
 public:
 	struct TableSize {
@@ -40,7 +40,7 @@ public:
 public:
 	struct Row {
 		GridStyle style;
-		std::vector<child_ptr> child_list;
+		std::vector<child_type> child_list;
 
 		template<class... Ts>
 		Row(GridStyle style, Ts... child_args) : style(style), child_list() {
@@ -74,17 +74,17 @@ public:
 protected:
 	struct ChildInfo {
 	public:
-		child_ptr child;
+		child_type child;
 		Size size;
 	public:
-		ChildInfo(child_ptr child) : child(std::move(child)) {}
+		ChildInfo(child_type child) : child(std::move(child)) {}
 	};
 	std::vector<std::vector<ChildInfo>> table;
 protected:
 	void SetChildIndex(WndObject& child, TablePosition pos) { WndObject::SetChildData<TablePosition>(child, pos); }
 	TablePosition GetChildIndex(WndObject& child) const { return WndObject::GetChildData<TablePosition>(child); }
 protected:
-	child_ptr& GetChild(TablePosition pos) { return table[pos.row][pos.column].child; }
+	child_type& GetChild(TablePosition pos) { return table[pos.row][pos.column].child; }
 
 	// layout
 protected:
@@ -207,7 +207,7 @@ protected:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
 		if (!Rect(point_zero, size).Contains(msg.point)) { return nullptr; }
 		TablePosition pos = HitTestGrid(msg.point);
-		Rect grid = GetGridRegion(pos); child_ptr& child = GetChild(pos);
+		Rect grid = GetGridRegion(pos); child_type& child = GetChild(pos);
 		if (!grid.Contains(msg.point) || child == nullptr) { return this; }
 		msg.point -= grid.point - point_zero; return child;
 	}

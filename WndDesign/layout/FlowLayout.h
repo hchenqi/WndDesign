@@ -10,7 +10,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 class FlowLayout : public WndType<Assigned, Auto> {
 public:
-	using child_ptr = child_ptr<Auto, Assigned>;
+	using child_type = child_ptr<Auto, Assigned>;
 
 public:
 	FlowLayout(float row_height, float column_gap, float row_gap);
@@ -24,10 +24,10 @@ protected:
 	// child
 protected:
 	struct ChildInfo {
-		child_ptr child;
+		child_type child;
 		float width = 0;
 		float offset = 0;
-		ChildInfo(child_ptr child) : child(std::move(child)) {}
+		ChildInfo(child_type child) : child(std::move(child)) {}
 	};
 	std::vector<ChildInfo> child_list;
 protected:
@@ -46,7 +46,7 @@ protected:
 	uint HitTestRow(float y) const;
 	auto HitTestColumn(row_index row, float x) const;
 public:
-	void AppendChild(child_ptr child);
+	void AppendChild(child_type child);
 
 	// layout
 protected:

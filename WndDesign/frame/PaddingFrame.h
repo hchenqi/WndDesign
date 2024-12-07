@@ -13,10 +13,10 @@ using Padding = Margin;
 template<class WidthType, class HeightType>
 class PaddingFrame : public WndFrame, public LayoutType<WidthType, HeightType> {
 public:
-	using child_ptr = child_ptr<WidthType, HeightType>;
+	using child_type = child_ptr<WidthType, HeightType>;
 
 public:
-	PaddingFrame(Padding padding, child_ptr child) : WndFrame(std::move(child)), padding(padding) {}
+	PaddingFrame(Padding padding, child_type child) : WndFrame(std::move(child)), padding(padding) {}
 
 	// style
 protected:
