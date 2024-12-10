@@ -297,6 +297,9 @@
     <ClInclude Include="message\key_tracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="message\context.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">
@@ -390,6 +393,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="widget\Tooltip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="message\context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

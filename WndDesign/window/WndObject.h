@@ -13,6 +13,7 @@ BEGIN_NAMESPACE(WndDesign)
 class WndObject : Uncopyable {
 private:
 	friend class Desktop;
+	friend struct WndObjectPrivateAccess;
 
 protected:
 	WndObject() {}

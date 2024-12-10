@@ -206,6 +206,7 @@
     <ClInclude Include="layout\OverlapLayout.h" />
     <ClInclude Include="layout\SplitLayout.h" />
     <ClInclude Include="layout\TableLayout.h" />
+    <ClInclude Include="message\context.h" />
     <ClInclude Include="message\key_msg.h" />
     <ClInclude Include="message\key_tracker.h" />
     <ClInclude Include="message\message.h" />
@@ -269,6 +270,7 @@
     <ClCompile Include="layout\ListLayout.cpp" />
     <ClCompile Include="layout\ListLayoutAuto.cpp" />
     <ClCompile Include="layout\OverlapLayout.cpp" />
+    <ClCompile Include="message\context.cpp" />
     <ClCompile Include="message\timer.cpp" />
     <ClCompile Include="system\clipboard.cpp" />
     <ClCompile Include="system\cursor.cpp" />
