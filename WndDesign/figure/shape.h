@@ -8,11 +8,13 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 struct Line : Figure {
+	Vector begin;
 	Vector end;
 	float width;
 	Color color;
 
-	Line(Vector end, float width, Color color) : end(end), width(width), color(color) {}
+	Line(Vector begin, Vector end, float width, Color color) : begin(begin), end(end), width(width), color(color) {}
+	Line(Vector end, float width, Color color) : Line(vector_zero, end, width, color) {}
 
 	virtual void DrawOn(RenderTarget& target, Point point) const override;
 };

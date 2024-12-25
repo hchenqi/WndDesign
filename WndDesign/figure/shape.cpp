@@ -14,7 +14,7 @@ inline D2D1_RECT_F ShrinkD2DRect(D2D1_RECT_F rect, float length) {
 
 void Line::DrawOn(RenderTarget& target, Point point) const {
 	if (width > 0.0f && color.IsVisible()) {
-		target.DrawLine(AsD2DPoint(point), AsD2DPoint(point + end), &GetD2DSolidColorBrush(color), width);
+		target.DrawLine(AsD2DPoint(point + begin), AsD2DPoint(point + end), &GetD2DSolidColorBrush(color), width);
 	}
 }
 
