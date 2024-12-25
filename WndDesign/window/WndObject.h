@@ -19,10 +19,12 @@ protected:
 	WndObject() {}
 public:
 	virtual ~WndObject();
+protected:
+	WndObject& AsWndObject() { return *this; }
 
 	// style
 protected:
-	Cursor cursor = Cursor::Default;
+	Cursor cursor = Cursor::Arrow;
 
 	// parent
 private:

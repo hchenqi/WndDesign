@@ -24,41 +24,31 @@ inline BorderPosition HitTestBorderPosition(Size window_size, float border_width
 	float x2 = window_size.width - border_width, y2 = window_size.height - border_width;
 	float width = window_size.width, height = window_size.height;
 	float x = point.x, y = point.y;
-	if (x < 0.0f) { return BorderPosition::None; }
 	if (x < x1) {
-		if (y < 0.0f) { return BorderPosition::None; }
 		if (y < y1) { return BorderPosition::LeftTop; }
-		if (y < y2) { return BorderPosition::Left; }
-		if (y < height) { return BorderPosition::LeftBottom; }
-		return BorderPosition::None;
-	}
-	if (x < x2) {
-		if (y < 0.0f) { return BorderPosition::None; }
+		else if (y < y2) { return BorderPosition::Left; }
+		else { return BorderPosition::LeftBottom; }
+	} else if (x < x2) {
 		if (y < y1) { return BorderPosition::Top; }
-		if (y < y2) { return BorderPosition::None; }
-		if (y < height) { return BorderPosition::Bottom; }
-		return BorderPosition::None;
-	}
-	if (x < width) {
-		if (y < 0.0f) { return BorderPosition::None; }
+		else if (y < y2) { return BorderPosition::None; }
+		else { return BorderPosition::Bottom; }
+	} else {
 		if (y < y1) { return BorderPosition::RightTop; }
-		if (y < y2) { return BorderPosition::Right; }
-		if (y < height) { return BorderPosition::RightBottom; }
-		return BorderPosition::None;
+		else if (y < y2) { return BorderPosition::Right; }
+		else { return BorderPosition::RightBottom; }
 	}
-	return BorderPosition::None;
 }
 
 inline Cursor GetBorderPositionCursor(BorderPosition border_position) {
 	switch (border_position) {
-	case BorderPosition::Left: return Cursor::Resize0;
-	case BorderPosition::Top: return Cursor::Resize90;
-	case BorderPosition::Right: return Cursor::Resize0;
-	case BorderPosition::Bottom: return Cursor::Resize90;
-	case BorderPosition::LeftTop: return Cursor::Resize135;
-	case BorderPosition::RightTop: return Cursor::Resize45;
-	case BorderPosition::LeftBottom: return Cursor::Resize45;
-	case BorderPosition::RightBottom: return Cursor::Resize135;
+	case BorderPosition::Left: return Cursor::ResizeWE;
+	case BorderPosition::Top: return Cursor::ResizeNS;
+	case BorderPosition::Right: return Cursor::ResizeWE;
+	case BorderPosition::Bottom: return Cursor::ResizeNS;
+	case BorderPosition::LeftTop: return Cursor::ResizeNWSE;
+	case BorderPosition::RightTop: return Cursor::ResizeNESW;
+	case BorderPosition::LeftBottom: return Cursor::ResizeNESW;
+	case BorderPosition::RightBottom: return Cursor::ResizeNWSE;
 	default: return Cursor::Default;
 	}
 }

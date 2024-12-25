@@ -251,6 +251,7 @@
     <ClInclude Include="frame\BorderFrame.h" />
     <ClInclude Include="frame\PaddingFrame.h" />
     <ClInclude Include="frame\ScaleFrame.h" />
+    <ClInclude Include="wrapper\Cursor.h" />
     <ClInclude Include="wrapper\wrapper.h" />
   </ItemGroup>
   <ItemGroup>

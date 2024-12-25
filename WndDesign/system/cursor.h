@@ -6,7 +6,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void SetCursor(Cursor cursor = Cursor::Default);
+void SetCursor(Cursor cursor);
 
 
 END_NAMESPACE(WndDesign)

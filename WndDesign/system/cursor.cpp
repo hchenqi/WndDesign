@@ -7,6 +7,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 void SetCursor(Cursor cursor) {
+	if (cursor == Cursor::Default) { return; }
 	::SetCursor(LoadCursorW(NULL, MAKEINTRESOURCE(cursor)));
 }
 
