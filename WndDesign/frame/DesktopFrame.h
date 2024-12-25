@@ -9,7 +9,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-class DesktopFrame : protected WndFrame {
+class DesktopFrame : public WndFrame {
 private:
 	friend class Desktop;
 	friend struct DesktopFrameApi;
@@ -51,7 +51,7 @@ protected:
 private:
 	State state = State::Normal;
 private:
-	void SetState(State state) { this->state = state; OnStateChange(state); }
+	void SetState(State state) { if (this->state != state) { this->state = state; OnStateChange(state); } }
 protected:
 	State GetState() { return state; }
 protected:
