@@ -40,16 +40,19 @@ public:
 			if (this->size.width != size.width) {
 				this->size = Size(size.width, UpdateChildSizeRef(this->child, Size(size.width, length_min)).height);
 				SizeUpdated(this->size);
+				Redraw(region_infinite);
 			} break;
 		case child_auto_assigned:
 			if (this->size.height != size.height) {
 				this->size = Size(UpdateChildSizeRef(this->child, Size(length_min, size.height)).width, size.height);
 				SizeUpdated(this->size);
+				Redraw(region_infinite);
 			} break;
 		case child_assigned_assigned:
 			if (this->size != size) {
 				this->size = size; UpdateChildSizeRef(this->child, size);
 				SizeUpdated(this->size);
+				Redraw(region_infinite);
 			} break;
 		}
 	}
@@ -74,7 +77,12 @@ protected:
 	Size size;
 public:
 	void SetWidth(float width) {
-		if (size.width != width) { size.width = width; UpdateChildSizeRef(child, size); SizeUpdated(size); }
+		if (size.width != width) {
+			size.width = width;
+			UpdateChildSizeRef(child, size);
+			SizeUpdated(size);
+			Redraw(region_infinite);
+		}
 	}
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
@@ -93,7 +101,12 @@ protected:
 	Size size;
 public:
 	void SetHeight(float height) {
-		if (size.height != height) { size.height = height; UpdateChildSizeRef(child, size); SizeUpdated(size); }
+		if (size.height != height) {
+			size.height = height;
+			UpdateChildSizeRef(child, size);
+			SizeUpdated(size);
+			Redraw(region_infinite);
+		}
 	}
 protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
