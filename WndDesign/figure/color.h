@@ -20,8 +20,8 @@ public:
 	}
 #pragma warning (push)
 #pragma warning (disable : 26812)  // Prefer 'enum class' over 'enum' (Enum.3)
-	enum ColorSet : uint;
-	constexpr Color(ColorSet rgb, uchar alpha = 0xFF) : Color((uint)rgb, alpha) {}
+	enum Set : uint;
+	constexpr Color(Set rgb, uchar alpha = 0xFF) : Color((uint)rgb, alpha) {}
 #pragma warning (pop)
 
 	constexpr uint AsUnsigned() const { return blue | (green << 8) | (red << 16) | (alpha << 24); }
@@ -33,7 +33,7 @@ public:
 	constexpr bool IsVisible() const { return alpha != 0x00; }
 
 public:
-	enum ColorSet : uint {
+	enum Set : uint {
 		AliceBlue = 0xF0F8FF,
 		AntiqueWhite = 0xFAEBD7,
 		Aqua = 0x00FFFF,
