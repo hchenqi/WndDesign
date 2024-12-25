@@ -10,8 +10,10 @@ BEGIN_NAMESPACE(WndDesign)
 template<class Wnd, Color color = Color::White>
 class SolidColorBackground : public Wnd {
 public:
-	using Wnd::Wnd;
 	using Base = SolidColorBackground;
+
+public:
+	using Wnd::Wnd;
 
 	// style
 protected:
