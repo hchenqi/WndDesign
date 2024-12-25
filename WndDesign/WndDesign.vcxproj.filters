@@ -300,6 +300,12 @@
     <ClInclude Include="message\context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="common\tuple_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame\WndFrameMutable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">

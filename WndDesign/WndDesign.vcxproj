@@ -159,6 +159,7 @@
     <ClInclude Include="common\coroutine.h" />
     <ClInclude Include="common\function_traits.h" />
     <ClInclude Include="common\reversion_wrapper.h" />
+    <ClInclude Include="common\tuple_helper.h" />
     <ClInclude Include="common\uncopyable.h" />
     <ClInclude Include="common\unicode_helper.h" />
     <ClInclude Include="control\Button.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="figure\text_block.h" />
     <ClInclude Include="frame\InnerBorderFrame.h" />
     <ClInclude Include="frame\MaxFrame.h" />
+    <ClInclude Include="frame\WndFrameMutable.h" />
     <ClInclude Include="geometry\scale.h" />
     <ClInclude Include="geometry\text_range.h" />
     <ClInclude Include="geometry\transform.h" />
