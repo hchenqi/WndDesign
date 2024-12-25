@@ -43,11 +43,18 @@ public:
 public:
 	child_ptr<> Reset(child_ptr<> child) {
 		UnregisterChild(this->child);
-		child.swap(this->child);
+		std::swap(this->child, child);
 		RegisterChild(this->child);
 		SizeUpdated(UpdateChildSizeRef(this->child, size_ref));
 		Redraw(region_infinite);
 		return child;
+	}
+	void SwapWith(WndFrameMutable& other) {
+		UnregisterChild(child); other.UnregisterChild(other.child);
+		std::swap(child, other.child);
+		RegisterChild(child); other.RegisterChild(other.child);
+		SizeUpdated(UpdateChildSizeRef(child, size_ref)); other.SizeUpdated(other.UpdateChildSizeRef(other.child, other.size_ref));
+		Redraw(region_infinite); other.Redraw(region_infinite);
 	}
 
 	// layout
@@ -58,6 +65,8 @@ protected:
 		return WndFrame::OnSizeRefUpdate(this->size_ref = size_ref);
 	}
 };
+
+inline void SwapChild(WndFrameMutable& frame1, WndFrameMutable& frame2) { frame1.SwapWith(frame2); }
 
 
 class WndFrameRef : public WndObject {
@@ -95,12 +104,23 @@ public:
 
 	// child
 public:
-	void Reset(child_ref<> child) {
+	child_ref<> Reset(child_ref<> child) {
+		if (this->child == child) {
+			throw std::invalid_argument("WndFrameRefMutable::Reset: child is the same");
+		}
 		UnregisterChild(this->child);
-		this->child = child;
+		std::swap(this->child, child);
 		RegisterChild(this->child);
 		SizeUpdated(UpdateChildSizeRef(this->child, size_ref));
 		Redraw(region_infinite);
+		return child;
+	}
+	void SwapWith(WndFrameRefMutable& other) {
+		UnregisterChild(child); other.UnregisterChild(other.child);
+		std::swap(child, other.child);
+		RegisterChild(child); other.RegisterChild(other.child);
+		SizeUpdated(UpdateChildSizeRef(child, size_ref)); other.SizeUpdated(other.UpdateChildSizeRef(other.child, other.size_ref));
+		Redraw(region_infinite); other.Redraw(region_infinite);
 	}
 
 	// layout
@@ -111,6 +131,8 @@ protected:
 		return WndFrameRef::OnSizeRefUpdate(this->size_ref = size_ref);
 	}
 };
+
+inline void SwapChild(WndFrameRefMutable& frame1, WndFrameRefMutable& frame2) { frame1.SwapWith(frame2); }
 
 
 END_NAMESPACE(WndDesign)
