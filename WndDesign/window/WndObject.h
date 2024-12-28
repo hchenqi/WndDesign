@@ -47,6 +47,7 @@ protected:
 		if (child_capture == &child) { ReleaseCapture(); }
 		child.parent = nullptr;
 	}
+	WndObject& GetDirectChild(WndObject& descendent) const;
 
 	// parent data
 private:
