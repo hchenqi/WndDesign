@@ -309,6 +309,9 @@
     <ClInclude Include="frame\BackgroundFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="layout\StackLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="wrapper\MouseThrough.h">
       <Filter>Header Files</Filter>
     </ClInclude>

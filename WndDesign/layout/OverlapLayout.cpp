@@ -80,10 +80,14 @@ void OverlapLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 }
 
 ref_ptr<WndObject> OverlapLayout::HitTest(MouseMsg& msg) {
+	MouseMsg msg_copy = msg;
 	for (auto& frame : reverse(frame_list)) {
 		if (frame->region.Contains(msg.point)) {
 			msg.point -= frame->region.point - point_zero;
-			return frame.get();
+			if (ref_ptr<WndObject> res = HitTestChild(*frame.get(), msg)) {
+				return res;
+			}
+			msg = msg_copy;
 		}
 	}
 	return this;
