@@ -68,7 +68,7 @@ protected:
 
 	// message
 protected:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point -= GetChildOffset(); return child; }
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point -= GetChildOffset(); return WndFrame::HitTest(msg); }
 };
 
 
@@ -99,12 +99,7 @@ protected:
 	// message
 protected:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
-		if (!msg.ctrl) {
-			switch (msg.type) {
-			case MouseMsg::WheelVertical:
-			case MouseMsg::WheelHorizontal: return this;
-			}
-		}
+		if (!msg.ctrl && (msg.type == MouseMsg::WheelVertical || msg.type == MouseMsg::WheelHorizontal)) { return this; }
 		return _ScrollFrame_Base::HitTest(msg);
 	}
 protected:
@@ -162,9 +157,7 @@ protected:
 	// message
 protected:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
-		if (!msg.ctrl && msg.type == MouseMsg::WheelVertical) {
-			return this;
-		}
+		if (!msg.ctrl && msg.type == MouseMsg::WheelVertical) { return this; }
 		return _ScrollFrame_Base::HitTest(msg);
 	}
 protected:
@@ -219,9 +212,7 @@ protected:
 	// message
 protected:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
-		if (!msg.ctrl && msg.type == MouseMsg::WheelHorizontal) {
-			return this;
-		}
+		if (!msg.ctrl && msg.type == MouseMsg::WheelHorizontal) { return this; }
 		return _ScrollFrame_Base::HitTest(msg);
 	}
 protected:

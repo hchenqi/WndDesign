@@ -20,6 +20,7 @@ protected:
 	Size child_size;
 protected:
 	Vector GetChildOffset() const { return Vector((size.width - child_size.width) / 2, (size.height - child_size.height) / 2); }
+	Rect GetChildRegion() const { return Rect(point_zero + GetChildOffset(), child_size); }
 protected:
 	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 
@@ -30,7 +31,13 @@ protected:
 
 	// message
 protected:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point -= GetChildOffset(); return child; }
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
+		if (GetChildRegion().Contains(msg.point)) {
+			msg.point -= GetChildOffset();
+			return WndFrame::HitTest(msg);
+		}
+		return nullptr;
+	}
 };
 
 

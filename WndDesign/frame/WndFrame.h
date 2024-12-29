@@ -31,7 +31,7 @@ protected:
 
 	// message
 protected:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return child; }
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return HitTestChild(child, msg); }
 };
 
 
@@ -60,7 +60,7 @@ protected:
 
 	// message
 protected:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return child; }
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return HitTestChild(child, msg); }
 };
 
 

@@ -55,7 +55,10 @@ protected:
 	// message
 protected:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
-		if (PointInRoundedRectangle(msg.point, GetChildRegion(), border._radius)) { msg.point -= GetChildOffset(); return child; }
+		if (PointInRoundedRectangle(msg.point, GetChildRegion(), border._radius)) {
+			msg.point -= GetChildOffset();
+			return WndFrame::HitTest(msg);
+		}
 		return this;
 	}
 };

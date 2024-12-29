@@ -89,7 +89,7 @@ private:
 public:
 	Point GetDesktopCursorPosition() const;
 private:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override final { msg.point *= scale.Invert(); return child; }
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override final { msg.point *= scale.Invert(); return WndFrame::HitTest(msg); }
 };
 
 

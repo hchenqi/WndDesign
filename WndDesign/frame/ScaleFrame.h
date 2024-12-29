@@ -49,7 +49,7 @@ protected:
 
 	// message
 protected:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point *= scale.Invert(); return child; }
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point *= scale.Invert(); return WndFrame::HitTest(msg); }
 };
 
 
