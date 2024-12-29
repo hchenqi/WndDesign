@@ -31,13 +31,7 @@ protected:
 
 	// message
 protected:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
-		if (GetChildRegion().Contains(msg.point)) {
-			msg.point -= GetChildOffset();
-			return WndFrame::HitTest(msg);
-		}
-		return nullptr;
-	}
+	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { msg.point -= GetChildOffset(); return WndFrame::HitTest(msg); }
 };
 
 

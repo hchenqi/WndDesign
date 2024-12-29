@@ -47,7 +47,7 @@ private:
 };
 
 
-class MyEditBox : public Decorate<EditBox, SolidColorBackground> {
+class MyEditBox : public SolidColorBackground<EditBox> {
 private:
 	struct Style : EditBox::Style {
 		Style() {
@@ -60,7 +60,7 @@ protected:
 	MyEditBox() : Base(Style(), L"Hello World!") {}
 public:
 	static auto Create() {
-		return new ClipFrame<Assigned, Auto>(new PaddingFrame(Padding(30px), new MyEditBox()));
+		return new ClipFrame<Assigned, Auto, Left>(new PaddingFrame(Padding(30px), new MyEditBox()));
 	}
 };
 

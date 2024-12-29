@@ -40,7 +40,7 @@ private:
 };
 
 
-class MyFlowLayout : public Decorate<FlowLayout, SolidColorBackground> {
+class MyFlowLayout : public SolidColorBackground<FlowLayout> {
 public:
 	MyFlowLayout() : Base(25, 10, 5) {}
 private:
@@ -71,7 +71,7 @@ private:
 					Border(3px, 12px, Color::CadetBlue),
 					new PaddingFrame(
 						Padding(6, 0),
-						new ClipFrame<Auto, Assigned>(
+						new ClipFrame<Auto, Assigned, Bottom> (
 							new MaxFrame(
 								size_max,
 								new EditBox(EditBoxStyle(), NextName())

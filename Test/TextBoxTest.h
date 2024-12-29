@@ -86,7 +86,7 @@ int main() {
 			L"TextBoxTest",
 			new ScaleLayer(
 				new ResizeBorder(
-					new ClipFrame<>(
+					new ClipFrame<Assigned, Assigned, TopLeft>(
 						new InnerBorderFrame(
 							Border(1.0, Color::Black),
 							new TextBox(TextBoxStyle(), L"Hello World!")

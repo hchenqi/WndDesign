@@ -25,6 +25,7 @@ protected:
 	Size GetChildSize() const { return child_size; }
 	Point GetFrameOffset() const { return frame_offset; }
 	Vector GetChildOffset() const { return point_zero - frame_offset; }
+	Rect GetChildRegion() const { return Rect(point_zero + GetChildOffset(), child_size); }
 protected:
 	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 

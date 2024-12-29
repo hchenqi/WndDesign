@@ -30,7 +30,7 @@ private:
 	}
 
 private:
-	class Wnd : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground> {
+	class Wnd : public SolidColorBackground<Placeholder<Assigned, Assigned>> {
 	public:
 		Wnd(Color background_color) { background = background_color; }
 	public:

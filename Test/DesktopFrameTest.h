@@ -21,7 +21,7 @@ private:
 };
 
 
-class EmptyWindow : public Decorate<Placeholder<Assigned, Assigned>, SolidColorBackground> {
+class EmptyWindow : public SolidColorBackground<Placeholder<Assigned, Assigned>> {
 public:
 	EmptyWindow() {
 		cursor = Cursor::Hand;

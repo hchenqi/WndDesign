@@ -8,9 +8,9 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 template<class WidthType, class HeightType>
-class Button : public Decorate<Placeholder<WidthType, HeightType>, SolidColorBackground> {
+class Button : public SolidColorBackground<Placeholder<WidthType, HeightType>> {
 public:
-	using Decorate<Placeholder<WidthType, HeightType>, SolidColorBackground>::Decorate;
+	using SolidColorBackground<Placeholder<WidthType, HeightType>>::SolidColorBackground;
 
 	// style
 protected:

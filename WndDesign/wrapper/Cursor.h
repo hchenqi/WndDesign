@@ -1,12 +1,12 @@
 #pragma once
 
-#include "wrapper.h"
+#include "../window/WndObject.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-template<class Wnd, Cursor cursor = Cursor::Arrow>
+template<class Wnd, Cursor cursor = Cursor::Arrow> requires std::is_base_of_v<WndObject, Wnd>
 class CustomizedCursor : public Wnd {
 public:
 	using Base = CustomizedCursor;

@@ -4,6 +4,7 @@
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/layout/ListLayout.h"
 #include "WndDesign/control/EditBox.h"
+#include "WndDesign/wrapper/MouseThrough.h"
 
 
 using namespace WndDesign;
@@ -55,13 +56,13 @@ int main() {
 			new ScrollFrame(
 				new ListLayout<Vertical>(
 					100,
-					new ClipFrame<Assigned, Auto>(
+					new ClipFrame<Assigned, Auto, Left>(
 						new TextBox(TextBoxStyle(), L"ListLayoutTest")
 					),
-					new ClipFrame<Assigned, Auto>(
+					new ClipFrame<Assigned, Auto, Left>(
 						new EditBox(EditBoxStyle1(), L"EditBox")
 					),
-					new ClipFrame<Assigned, Auto>(
+					new MouseThrough<ClipFrame<Assigned, Auto, Right>>(
 						new EditBox(EditBoxStyle2(), L"EditBox2")
 					)
 				)

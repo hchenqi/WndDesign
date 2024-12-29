@@ -88,7 +88,7 @@ protected:
 		}
 	};
 
-	class TitleBar : public Decorate<BarLayout, SolidColorBackground>, Context, ContextProvider {
+	class TitleBar : public SolidColorBackground<BarLayout>, Context, ContextProvider {
 	public:
 		class Title : public TextBox, Context {
 		public:

@@ -61,7 +61,7 @@ int main() {
 						Padding(50px),
 						new EditBox(EditBoxStyle(), L"edit here...")
 					),
-					new ClipFrame<Assigned, Auto>(
+					new ClipFrame<Assigned, Auto, Left>(
 						new TextBox(TextBoxStyle(), L"Hello World!")
 					)
 				)

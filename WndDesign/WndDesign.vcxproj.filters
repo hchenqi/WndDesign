@@ -228,9 +228,6 @@
     <ClInclude Include="wrapper\Background.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wrapper\wrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="frame\BorderFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -310,6 +307,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="frame\BackgroundFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wrapper\MouseThrough.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
