@@ -32,7 +32,7 @@ private:
 
 class ScaleLayer : public ScaleFrame<Assigned, Auto> {
 public:
-	ScaleLayer(child_ptr child) : ScaleFrame(Scale(1.0), std::move(child)) {}
+	ScaleLayer(child_type child) : ScaleFrame(Scale(1.0), std::move(child)) {}
 private:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
 		if (msg.ctrl && msg.type == MouseMsg::WheelVertical) {
@@ -51,7 +51,9 @@ class MyEditBox : public Decorate<EditBox, SolidColorBackground> {
 private:
 	struct Style : EditBox::Style {
 		Style() {
-			font.family(L"Calibri").size(20);
+			paragraph.line_spacing(25px);
+			paragraph.baseline_spacing(20px);
+			font.family(L"Calibri").size(20px);
 		}
 	};
 protected:

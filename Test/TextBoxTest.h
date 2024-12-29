@@ -36,7 +36,7 @@ private:
 
 class ScaleLayer : public ScaleFrame<Assigned, Assigned> {
 public:
-	ScaleLayer(child_ptr child) : ScaleFrame(Scale(1.0), std::move(child)) {}
+	ScaleLayer(child_type child) : ScaleFrame(Scale(1.0), std::move(child)) {}
 private:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
 		if (msg.ctrl && msg.type == MouseMsg::WheelVertical) {
@@ -53,7 +53,7 @@ private:
 
 class ResizeBorder : public InnerBorderFrame<Assigned, Assigned> {
 public:
-	ResizeBorder(child_ptr child) : InnerBorderFrame<Assigned, Assigned>(Border(5.0, Color(Color::Yellow, 127)), std::move(child)) {}
+	ResizeBorder(child_type child) : InnerBorderFrame<Assigned, Assigned>(Border(5.0, Color(Color::Yellow, 127)), std::move(child)) {}
 private:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
 		if (PointInRoundedRectangle(msg.point, Extend(Rect(point_zero, size), -border._width), border._radius)) { return child; }

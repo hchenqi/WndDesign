@@ -18,7 +18,7 @@ struct MainFrameStyle : TitleBarFrame::Style {
 	MainFrameStyle() {
 		width.normal(560px);
 		height.normal(180px);
-		title.assign(L"FlowLayoutTest");
+		title.text.assign(L"FlowLayoutTest");
 	}
 };
 

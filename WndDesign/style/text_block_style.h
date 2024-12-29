@@ -94,8 +94,8 @@ struct TextBlockStyle {
 		FlowDirection _flow_direction = FlowDirection::TopToBottom;
 		ReadDirection _read_direction = ReadDirection::LeftToRight;
 		WordWrap _word_wrap = WordWrap::Wrap;
-		ValueTag _line_spacing = 110pct;
-		ValueTag _baseline_spacing = 90pct;
+		ValueTag _line_spacing = 100pct;
+		ValueTag _baseline_spacing = 100pct;
 		ValueTag _tab_size = 200pct;
 	public:
 		constexpr ParagraphFormat& text_align(TextAlign text_align) { _text_align = text_align; return *this; }

@@ -12,7 +12,7 @@ using namespace WndDesign;
 
 struct MainFrameStyle : TitleBarFrame::Style {
 	MainFrameStyle() {
-		title.assign(L"OverlapLayoutTest");
+		title.text.assign(L"OverlapLayoutTest");
 		background_color = color_transparent;
 	}
 };
