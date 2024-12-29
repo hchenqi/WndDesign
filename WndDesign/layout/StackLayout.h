@@ -106,8 +106,8 @@ public:
 public:
 	template<class... Ts>
 	StackLayoutMultiple(Ts... child_args) : child_list() {
-		(RegisterChild(child_args), ...);
 		child_list.reserve(sizeof...(Ts)); (child_list.emplace_back(std::move(child_args)), ...);
+		for (auto& child : child_list) { RegisterChild(child); }
 	}
 
 	// child

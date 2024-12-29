@@ -5,15 +5,18 @@
 #include "../frame/PaddingFrame.h"
 #include "../frame/BorderFrame.h"
 #include "../frame/CenterFrame.h"
+#include "../frame/ClipFrame.h"
 #include "../frame/MaxFrame.h"
+#include "../frame/FixedFrame.h"
 #include "../frame/BackgroundFrame.h"
 #include "../layout/SplitLayout.h"
-#include "../layout/BarLayout.h"
+#include "../layout/StackLayout.h"
 #include "../layout/ListLayout.h"
 #include "../control/TextBox.h"
 #include "../control/Button.h"
 #include "../wrapper/Background.h"
 #include "../wrapper/Cursor.h"
+#include "../wrapper/MouseThrough.h"
 #include "../style/length_style_helper.h"
 #include "../message/mouse_tracker.h"
 #include "../message/context.h"
@@ -88,7 +91,7 @@ protected:
 		}
 	};
 
-	class TitleBar : public SolidColorBackground<BarLayout>, Context, ContextProvider {
+	class TitleBar : public SolidColorBackground<FixedFrame<Assigned, Auto>>, Context, ContextProvider {
 	public:
 		class Title : public TextBox, Context {
 		public:
@@ -161,17 +164,23 @@ protected:
 	public:
 		TitleBar(const TitleBarStyle::BarStyle& style, child_type_menu menu, alloc_ptr<Title> title) : Base(
 			style._height,
-			std::move(menu),
-			new ListLayout<Horizontal>(
-				0.0f,
-				new MinimizeButton(style._background_color, style._foreground_color, L"minimize"),
-				new MaximizeButton(style._background_color, style._foreground_color, L"maximize"),
-				new CloseButton(style._background_color, style._foreground_color, L"close")
-			),
-			new CenterFrame<Auto, Assigned>(
-				new MaxFrame(
-					Size(style._max_title_length, length_max),
-					std::move(title)
+			new StackLayoutMultiple(
+				new CenterFrame<Assigned, Assigned>(
+					new MaxFrame(
+						Size(style._max_title_length, length_max),
+						std::move(title)
+					)
+				),
+				new MouseThrough<ClipFrame<Assigned, Assigned, TopLeft>>(
+					std::move(menu)
+				),
+				new MouseThrough<ClipFrame<Assigned, Assigned, TopRight>>(
+					new ListLayout<Horizontal>(
+						0.0f,
+						new MinimizeButton(style._background_color, style._foreground_color, L"minimize"),
+						new MaximizeButton(style._background_color, style._foreground_color, L"maximize"),
+						new CloseButton(style._background_color, style._foreground_color, L"close")
+					)
 				)
 			)
 		), Context(AsWndObject()), ContextProvider(AsWndObject()) {

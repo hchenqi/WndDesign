@@ -120,9 +120,6 @@
     <ClInclude Include="control\Placeholder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="layout\BarLayout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="layout\SplitLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -396,9 +393,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="layout\ListLayout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="layout\BarLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="frame\LayerFrame.cpp">

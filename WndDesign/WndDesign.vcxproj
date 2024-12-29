@@ -201,7 +201,6 @@
     <ClInclude Include="geometry\size.h" />
     <ClInclude Include="geometry\tiling.h" />
     <ClInclude Include="geometry\vector.h" />
-    <ClInclude Include="layout\BarLayout.h" />
     <ClInclude Include="layout\DivideLayout.h" />
     <ClInclude Include="layout\FlowLayout.h" />
     <ClInclude Include="layout\ListLayout.h" />
@@ -270,7 +269,6 @@
     <ClCompile Include="frame\DesktopFrame.cpp" />
     <ClCompile Include="geometry\region.cpp" />
     <ClCompile Include="figure\desktop_layer.cpp" />
-    <ClCompile Include="layout\BarLayout.cpp" />
     <ClCompile Include="layout\FlowLayout.cpp" />
     <ClCompile Include="layout\ListLayout.cpp" />
     <ClCompile Include="layout\ListLayoutAuto.cpp" />
