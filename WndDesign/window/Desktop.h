@@ -21,9 +21,6 @@ private:
 	friend struct Global;
 
 private:
-	using frame_ptr = std::unique_ptr<DesktopFrame>;
-
-private:
 	Desktop();
 	~Desktop();
 
@@ -32,10 +29,10 @@ public:
 
 	// frame
 private:
-	std::vector<frame_ptr> frame_list;
+	std::vector<std::unique_ptr<DesktopFrame>> frame_list;
 private:
-	DesktopFrame& AddChild(frame_ptr frame);
-	frame_ptr RemoveChild(DesktopFrame& frame);
+	DesktopFrame& AddChild(std::unique_ptr<DesktopFrame> frame);
+	std::unique_ptr<DesktopFrame> RemoveChild(DesktopFrame& frame);
 private:
 	DesktopFrame& GetDesktopFrame(WndObject& wnd);
 	DesktopFrame& GetDesktopFramePoint(WndObject& wnd, Point& point);
@@ -48,8 +45,18 @@ private:
 
 	// mouse message
 private:
+	std::vector<ref_ptr<WndObject>> wnd_track_stack;
+	std::unordered_map<ref_ptr<WndObject>, size_t> wnd_track_map;
+	ref_ptr<DesktopFrame> frame_capture = nullptr;
+	ref_ptr<WndObject> wnd_capture = nullptr;
+private:
+	void SetTrack(WndObject& wnd);
+	void LoseTrack();
 	void SetCapture(WndObject& wnd);
-	void ReleaseCapture();
+	void ReleaseCapture(WndObject& wnd);
+	void LoseCapture();
+private:
+	void DispatchMouseMsg(DesktopFrame& frame, MouseMsg msg);
 
 	// key message
 private:
@@ -60,7 +67,7 @@ private:
 	void ReleaseFocus(WndObject& wnd);
 	void LoseFocus();
 private:
-	void DispatchKeyMsg(KeyMsg msg) { if (wnd_focus != nullptr) { wnd_focus->OnKeyMsg(msg); } }
+	void DispatchKeyMsg(KeyMsg msg);
 
 	// ime
 private:
@@ -69,6 +76,10 @@ private:
 	void ImeEnable(WndObject& wnd) { ime_enabled_wnd.emplace(&wnd); }
 	void ImeDisable(WndObject& wnd) { ime_enabled_wnd.erase(&wnd); }
 	void ImeSetPosition(WndObject& wnd, Point point);
+
+	// message
+private:
+	void ReleaseWindow(WndObject& wnd);
 
 	// global
 private:

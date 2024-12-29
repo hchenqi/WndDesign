@@ -8,8 +8,9 @@ BEGIN_NAMESPACE(WndDesign)
 
 enum class NotifyMsg : uchar {
 	MouseEnter,
-	MouseHover,
 	MouseLeave,
+	MouseOver,
+	MouseOut,
 	LoseFocus,
 };
 

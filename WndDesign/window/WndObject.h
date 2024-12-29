@@ -42,11 +42,9 @@ protected:
 		if (child.HasParent()) { throw std::invalid_argument("window already has a parent"); } child.parent = this;
 	}
 	void UnregisterChild(WndObject& child) {
-		VerifyChild(child);
-		if (child_track == &child) { SetChildTrack(*this); }
-		if (child_capture == &child) { ReleaseCapture(); }
-		child.parent = nullptr;
+		VerifyChild(child); child.parent = nullptr;
 	}
+protected:
 	WndObject& GetDirectChild(WndObject& descendent) const;
 
 	// parent data
@@ -64,16 +62,16 @@ protected:
 
 	// layout
 protected:
-	Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
 	void SizeUpdated(Size size) { if (HasParent()) { GetParent().OnChildSizeUpdate(*this, size); } }
+	Size UpdateChildSizeRef(WndObject& child, Size size_ref) { VerifyChild(child); return child.OnSizeRefUpdate(size_ref); }
 protected:
 	virtual Transform GetChildTransform(WndObject& child) const { return Transform::Identity(); }
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
-public:
 	Transform GetDescendentTransform(WndObject& descendent) const;
 	Point ConvertDescendentPoint(WndObject& descendent, Point point) const;
+protected:
+	virtual Size OnSizeRefUpdate(Size size_ref) { return size_ref; }
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) {}
 
 	// paint
 protected:
@@ -85,21 +83,13 @@ protected:
 	virtual void OnDraw(FigureQueue& figure_queue, Rect draw_region) {}
 
 	// message
-private:
-	ref_ptr<WndObject> child_track = nullptr;
-	ref_ptr<WndObject> child_capture = nullptr;
-private:
-	void SetChildTrack(WndObject& child);
-	void LoseTrack();
-	void SetChildCapture(WndObject& child);
-	void LoseCapture();
 protected:
 	void SetCapture();
 	void ReleaseCapture();
 	void SetFocus();
 	void ReleaseFocus();
-private:
-	void DispatchMouseMsg(MouseMsg msg);
+protected:
+	ref_ptr<WndObject> HitTestChild(WndObject& child, MouseMsg& msg) { VerifyChild(child); return child.HitTest(msg); }
 protected:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) { return this; }
 protected:
