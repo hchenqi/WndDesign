@@ -309,7 +309,7 @@
     <ClInclude Include="layout\StackLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wrapper\MouseThrough.h">
+    <ClInclude Include="wrapper\HitTestHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

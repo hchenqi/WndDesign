@@ -89,7 +89,7 @@ protected:
 	void SetFocus();
 	void ReleaseFocus();
 protected:
-	ref_ptr<WndObject> HitTestChild(WndObject& child, MouseMsg& msg) { VerifyChild(child); return child.HitTest(msg); }
+	ref_ptr<WndObject> HitTestChild(WndObject& child, MouseMsg& msg) { return child.HitTest(msg); }
 protected:
 	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) { return this; }
 protected:

@@ -9,6 +9,7 @@
 #include "WndDesign/frame/MaxFrame.h"
 #include "WndDesign/frame/ScrollFrame.h"
 #include "WndDesign/wrapper/Background.h"
+#include "WndDesign/wrapper/HitTestHelper.h"
 
 
 using namespace WndDesign;
@@ -23,24 +24,7 @@ struct MainFrameStyle : TitleBarFrame::Style {
 };
 
 
-class ScrollBox : public ScrollFrame<Vertical> {
-public:
-	using ScrollFrame::ScrollFrame;
-private:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
-		if (msg.type == MouseMsg::WheelVertical) {
-			return this;
-		}
-		return ScrollFrame::HitTest(msg);
-	}
-private:
-	virtual void OnMouseMsg(MouseMsg msg) override {
-		Scroll(-(float)msg.wheel_delta);
-	}
-};
-
-
-class MyFlowLayout : public SolidColorBackground<FlowLayout> {
+class MyFlowLayout : public HitSelfFallbackNext<SolidColorBackground<FlowLayout>> {
 public:
 	MyFlowLayout() : Base(25, 10, 5) {}
 private:
@@ -60,10 +44,6 @@ private:
 		return names[next >= 26 ? next : next++];
 	}
 private:
-	virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override {
-		ref_ptr<WndObject> wnd = Base::HitTest(msg);
-		return wnd == nullptr ? this : wnd;
-	}
 	virtual void OnMouseMsg(MouseMsg msg) override {
 		if (msg.type == MouseMsg::LeftDown) {
 			AppendChild(
@@ -71,7 +51,7 @@ private:
 					Border(3px, 12px, Color::CadetBlue),
 					new PaddingFrame(
 						Padding(6, 0),
-						new ClipFrame<Auto, Assigned, Bottom> (
+						new ClipFrame<Auto, Assigned, Bottom>(
 							new MaxFrame(
 								size_max,
 								new EditBox(EditBoxStyle(), NextName())
@@ -89,7 +69,7 @@ int main() {
 	global.AddWnd(
 		new TitleBarFrame(
 			MainFrameStyle(),
-			new ScrollBox(
+			new ScrollFrame<Vertical>(
 				new PaddingFrame(
 					Padding(10),
 					new MyFlowLayout

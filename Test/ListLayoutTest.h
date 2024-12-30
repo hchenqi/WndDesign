@@ -4,7 +4,7 @@
 #include "WndDesign/frame/ClipFrame.h"
 #include "WndDesign/layout/ListLayout.h"
 #include "WndDesign/control/EditBox.h"
-#include "WndDesign/wrapper/MouseThrough.h"
+#include "WndDesign/wrapper/HitTestHelper.h"
 
 
 using namespace WndDesign;
@@ -62,7 +62,7 @@ int main() {
 					new ClipFrame<Assigned, Auto, Left>(
 						new EditBox(EditBoxStyle1(), L"EditBox")
 					),
-					new MouseThrough<ClipFrame<Assigned, Auto, Right>>(
+					new HitThroughMargin<ClipFrame<Assigned, Auto, Right>>(
 						new EditBox(EditBoxStyle2(), L"EditBox2")
 					)
 				)

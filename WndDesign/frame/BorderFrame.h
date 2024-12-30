@@ -59,7 +59,7 @@ protected:
 			msg.point -= GetChildOffset();
 			return WndFrame::HitTest(msg);
 		}
-		return this;
+		return nullptr;
 	}
 };
 

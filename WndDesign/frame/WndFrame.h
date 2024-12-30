@@ -14,8 +14,6 @@ public:
 	// child
 protected:
 	child_ptr<> child;
-public:
-	WndObject& GetChild() { return child; }
 
 	// layout
 protected:
@@ -43,8 +41,6 @@ public:
 	// child
 protected:
 	child_ref<> child;
-public:
-	WndObject& GetChild() { return child; }
 
 	// layout
 protected:

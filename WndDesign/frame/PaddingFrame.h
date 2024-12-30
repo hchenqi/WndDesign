@@ -21,17 +21,19 @@ public:
 	// style
 protected:
 	Padding padding;
-private:
-	Vector GetChildOffset() const { return Vector(padding.left, padding.top); }
 
 	// layout
 protected:
 	Size size;
+	Size child_size;
+protected:
+	Vector GetChildOffset() const { return Vector(padding.left, padding.top); }
+	Rect GetChildRegion() const { return Rect(point_zero + GetChildOffset(), child_size); }
 protected:
 	virtual Transform GetChildTransform(WndObject& child) const override { return GetChildOffset(); }
 protected:
-	virtual Size OnSizeRefUpdate(Size size_ref) override { return size = Extend(UpdateChildSizeRef(child, Extend(size_ref, -padding)), padding); }
-	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(size = Extend(child_size, padding)); }
+	virtual Size OnSizeRefUpdate(Size size_ref) override { return size = Extend(child_size = UpdateChildSizeRef(child, Extend(size_ref, -padding)), padding); }
+	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override { SizeUpdated(size = Extend(this->child_size = child_size, padding)); }
 
 	// paint
 protected:

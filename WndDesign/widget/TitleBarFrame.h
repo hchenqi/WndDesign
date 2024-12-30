@@ -16,7 +16,7 @@
 #include "../control/Button.h"
 #include "../wrapper/Background.h"
 #include "../wrapper/Cursor.h"
-#include "../wrapper/MouseThrough.h"
+#include "../wrapper/HitTestHelper.h"
 #include "../style/length_style_helper.h"
 #include "../message/mouse_tracker.h"
 #include "../message/context.h"
@@ -75,9 +75,9 @@ public:
 	};
 
 protected:
-	class ResizeBorder : public BorderFrame<Assigned, Assigned> {
+	class ResizeBorder : public HitSelfFallback<BorderFrame<Assigned, Assigned>> {
 	public:
-		using BorderFrame::BorderFrame;
+		using Base::Base;
 	protected:
 		virtual void OnMouseMsg(MouseMsg msg) override {
 			if (msg.type == MouseMsg::Move || msg.type == MouseMsg::LeftDown) {
@@ -91,13 +91,11 @@ protected:
 		}
 	};
 
-	class TitleBar : public SolidColorBackground<FixedFrame<Assigned, Auto>>, Context, ContextProvider {
+	class TitleBar : public HitSelfFallback<SolidColorBackground<FixedFrame<Assigned, Auto>>>, Context, ContextProvider {
 	public:
-		class Title : public TextBox, Context {
+		class Title : public TextBox {
 		public:
-			Title(const TitleBarStyle& style) : TextBox(style, style.text), Context(AsWndObject()) {}
-		protected:
-			virtual void OnMouseMsg(MouseMsg msg) { Context::Get<TitleBar>().OnMouseMsg(msg); }
+			Title(const TitleBarStyle& style) : TextBox(style, style.text) {}
 		};
 
 	protected:
@@ -165,16 +163,16 @@ protected:
 		TitleBar(const TitleBarStyle::BarStyle& style, child_type_menu menu, alloc_ptr<Title> title) : Base(
 			style._height,
 			new StackLayoutMultiple(
-				new CenterFrame<Assigned, Assigned>(
+				new HitThrough<CenterFrame<Assigned, Assigned>>(
 					new MaxFrame(
 						Size(style._max_title_length, length_max),
 						std::move(title)
 					)
 				),
-				new MouseThrough<ClipFrame<Assigned, Assigned, TopLeft>>(
+				new HitThroughMargin<ClipFrame<Assigned, Assigned, TopLeft>>(
 					std::move(menu)
 				),
-				new MouseThrough<ClipFrame<Assigned, Assigned, TopRight>>(
+				new HitThroughMargin<ClipFrame<Assigned, Assigned, TopRight>>(
 					new ListLayout<Horizontal>(
 						0.0f,
 						new MinimizeButton(style._background_color, style._foreground_color, L"minimize"),
@@ -185,6 +183,7 @@ protected:
 			)
 		), Context(AsWndObject()), ContextProvider(AsWndObject()) {
 			background = style._background_color;
+			cursor = Cursor::Arrow;
 		}
 
 	protected:

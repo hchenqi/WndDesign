@@ -5,6 +5,7 @@
 #include "WndDesign/message/mouse_tracker.h"
 #include "WndDesign/message/key_tracker.h"
 #include "WndDesign/wrapper/Background.h"
+#include "WndDesign/wrapper/HitTestHelper.h"
 
 
 using namespace WndDesign;
@@ -37,9 +38,9 @@ private:
 		void SetColor(Color color) { background = color; Redraw(region_infinite); }
 	};
 
-	class Frame : public OverlapFrame {
+	class Frame : public HitSelf<OverlapFrame> {
 	public:
-		Frame(Point point) : OverlapFrame(
+		Frame(Point point) : Base(
 			new BorderFrame(
 				Border(5px, Color::Wheat),
 				wnd = new Wnd(Color(Color::Indigo, 64))
@@ -62,8 +63,6 @@ private:
 	private:
 		MouseTracker mouse_tracker;
 		KeyTracker key_tracker;
-	private:
-		virtual ref_ptr<WndObject> HitTest(MouseMsg& msg) override { return this; }
 	private:
 		virtual void OnMouseMsg(MouseMsg msg) override {
 			switch (msg.type) {

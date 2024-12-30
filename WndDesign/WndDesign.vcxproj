@@ -253,7 +253,7 @@
     <ClInclude Include="frame\PaddingFrame.h" />
     <ClInclude Include="frame\ScaleFrame.h" />
     <ClInclude Include="wrapper\Cursor.h" />
-    <ClInclude Include="wrapper\MouseThrough.h" />
+    <ClInclude Include="wrapper\HitTestHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common\unicode_helper.cpp" />

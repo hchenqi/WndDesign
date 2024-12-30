@@ -7,8 +7,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 
 FlowLayout::FlowLayout(float row_height, float column_gap, float row_gap) :
-	row_height(row_height), column_gap(column_gap), row_gap(row_gap), row_list({ 0 }) {
-}
+	row_height(row_height), column_gap(column_gap), row_gap(row_gap), row_list({ 0 }) {}
 
 Rect FlowLayout::GetChildRegion(WndObject& child) const {
 	auto [row, column] = GetChildData(child); const ChildInfo& info = child_list[row_list[row] + column];
@@ -97,8 +96,9 @@ void FlowLayout::OnDraw(FigureQueue& figure_queue, Rect draw_region) {
 
 ref_ptr<WndObject> FlowLayout::HitTest(MouseMsg& msg) {
 	if (!Rect(point_zero, size).Contains(msg.point)) { return nullptr; }
-	row_index row = HitTestRow(msg.point.y); msg.point.y -= GetRowOffset(row); if (msg.point.y >= row_height) { return this; }
-	auto it = HitTestColumn(row, msg.point.x); msg.point.x -= it->offset; if (msg.point.x >= it->width) { return this; }
+	row_index row = HitTestRow(msg.point.y); if (msg.point.y - GetRowOffset(row) >= row_height) { return this; }
+	auto it = HitTestColumn(row, msg.point.x); if (msg.point.x - it->offset >= it->width) { return this; }
+	msg.point.x -= it->offset; msg.point.y -= GetRowOffset(row);
 	return it->child;
 }
 
