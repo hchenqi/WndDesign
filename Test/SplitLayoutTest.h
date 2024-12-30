@@ -3,6 +3,7 @@
 #include "WndDesign/frame/InnerBorderFrame.h"
 #include "WndDesign/frame/PaddingFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
+#include "WndDesign/frame/MaxFrame.h"
 #include "WndDesign/layout/SplitLayout.h"
 #include "WndDesign/control/EditBox.h"
 
@@ -57,9 +58,17 @@ int main() {
 			new InnerBorderFrame(
 				Border(1.0, Color::Orange),
 				new SplitLayoutVertical(
-					new PaddingFrame(
-						Padding(50px),
-						new EditBox(EditBoxStyle(), L"edit here...")
+					new SplitLayoutHorizontal(
+						new PaddingFrame(
+							Padding(30px),
+							new EditBox(EditBoxStyle(), L"edit here...")
+						),
+						new ClipFrame<Auto, Assigned, Top>(
+							new MaxFrame<Auto, Auto>(
+								Size(150px, length_max),
+								new TextBox(TextBoxStyle(), L"Hello World!")
+							)
+						)
 					),
 					new ClipFrame<Assigned, Auto, Left>(
 						new TextBox(TextBoxStyle(), L"Hello World!")

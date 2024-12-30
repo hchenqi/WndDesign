@@ -106,14 +106,14 @@ template<class WidthTypeFirst, class HeightTypeFirst, class WidthTypeSecond, cla
 class SplitLayoutVertical : public _SplitLayout_Base_Vertical {
 public:
 	static_assert(IsAssigned<WidthTypeFirst> || IsAssigned<WidthTypeSecond>, "At least one child window's width type should be Assigned.");
-	static_assert(IsAuto<HeightTypeFirst> || IsAuto<HeightTypeSecond>, "At least one child window's height type should be Auto.");
-	static_assert((IsAssigned<WidthTypeFirst> || IsAuto<HeightTypeFirst>) && (IsAssigned<WidthTypeSecond> || IsAuto<HeightTypeSecond>), "Child window's height type must be Auto if its width type is not Assigned.");
+	static_assert(!IsAssigned<HeightTypeFirst> || !IsAssigned<HeightTypeSecond>, "At least one child window's height type should not be Assigned.");
+	static_assert((IsAssigned<WidthTypeFirst> || !IsAssigned<HeightTypeFirst>) && (IsAssigned<WidthTypeSecond> || !IsAssigned<HeightTypeSecond>), "Child window's width type must be Assigned if its height type is Assigned.");
 public:
-	using width_type = std::conditional_t<IsAssigned<WidthTypeFirst>, WidthTypeSecond, WidthTypeFirst>;
-	using height_type = std::conditional_t<IsAuto<HeightTypeFirst>, HeightTypeSecond, HeightTypeFirst>;
+	using width_type = std::conditional_t<IsAssigned<WidthTypeFirst>&& IsAssigned<WidthTypeSecond>, Assigned, std::conditional_t<IsRelative<WidthTypeFirst> || IsRelative<WidthTypeSecond>, Relative, Auto>>;
+	using height_type = std::conditional_t<IsAssigned<HeightTypeFirst> || IsAssigned<HeightTypeSecond>, Assigned, std::conditional_t<IsRelative<HeightTypeFirst> || IsRelative<HeightTypeSecond>, Relative, Auto>>;
 public:
-	using child_type_first = WndDesign::child_ptr<WidthTypeFirst, HeightTypeFirst>;
-	using child_type_second = WndDesign::child_ptr<WidthTypeSecond, HeightTypeSecond>;
+	using child_type_first = child_ptr<WidthTypeFirst, HeightTypeFirst>;
+	using child_type_second = child_ptr<WidthTypeSecond, HeightTypeSecond>;
 
 public:
 	SplitLayoutVertical(child_type_first child_first, child_type_second child_second) : _SplitLayout_Base_Vertical(std::move(child_first), std::move(child_second)) {}
@@ -123,79 +123,118 @@ protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		this->size_ref = size_ref;
 
-		// update width
-		if constexpr (IsAssigned<width_type>) {
-			size.width = size_ref.width;
-		}
-		if constexpr (!IsAssigned<WidthTypeFirst> || (IsAssigned<width_type> && IsAuto<HeightTypeFirst>)) {
+		if constexpr (!IsAssigned<WidthTypeFirst> || (IsAssigned<width_type> && !IsAssigned<HeightTypeFirst>)) {
 			Size child_size = UpdateChildSizeRef(child_first, size_ref);
-			length_first = child_size.height;
 			if constexpr (!IsAssigned<WidthTypeFirst>) {
 				size.width = child_size.width;
 			}
+			if constexpr (!IsAssigned<HeightTypeFirst>) {
+				length_first = child_size.height;
+			}
 		}
-		if constexpr (!IsAssigned<WidthTypeSecond> || (IsAssigned<width_type> && IsAuto<HeightTypeSecond>)) {
+		if constexpr (!IsAssigned<WidthTypeSecond> || (IsAssigned<width_type> && !IsAssigned<HeightTypeSecond>)) {
 			Size child_size = UpdateChildSizeRef(child_second, size_ref);
-			length_second = child_size.height;
 			if constexpr (!IsAssigned<WidthTypeSecond>) {
 				size.width = child_size.width;
 			}
+			if constexpr (!IsAssigned<HeightTypeFirst>) {
+				length_second = child_size.height;
+			}
+		}
+		if constexpr (IsAssigned<width_type>) {
+			size.width = size_ref.width;
 		}
 
-		// update child size
-		if constexpr (IsAssigned<WidthTypeFirst> && !(IsAssigned<width_type> && IsAuto<HeightTypeFirst>)) {
-			Size child_size = UpdateChildSizeRef(child_first, Size(size.width, size_ref.height - length_second));
-			length_first = child_size.height;
+		if constexpr (IsAssigned<height_type>) {
+			size.height = size_ref.height;
 		}
-		if constexpr (IsAssigned<WidthTypeSecond> && !(IsAssigned<width_type> && IsAuto<HeightTypeSecond>)) {
-			Size child_size = UpdateChildSizeRef(child_second, Size(size.width, size_ref.height - length_first));
-			length_second = child_size.height;
+		if constexpr (IsAssigned<WidthTypeFirst> && (!IsAssigned<width_type> || IsAssigned<HeightTypeFirst>)) {
+			if constexpr (IsAssigned<HeightTypeFirst>) {
+				UpdateChildSizeRef(child_first, Size(size.width, length_first = size.height - length_second));
+			} else {
+				length_first = UpdateChildSizeRef(child_first, Size(size.width, size_ref.height)).height;
+			}
 		}
-
-		// update height
-		size.height = length_first + length_second;
+		if constexpr (IsAssigned<WidthTypeSecond> && (!IsAssigned<width_type> || IsAssigned<HeightTypeSecond>)) {
+			if constexpr (IsAssigned<HeightTypeSecond>) {
+				UpdateChildSizeRef(child_second, Size(size.width, length_second = size.height - length_first));
+			} else {
+				length_second = UpdateChildSizeRef(child_second, Size(size.width, size_ref.height)).height;
+			}
+		}
+		if constexpr (!IsAssigned<height_type>) {
+			size.height = length_first + length_second;
+		}
 
 		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (IsFirst(child)) {
-			length_first = child_size.height;
-			if constexpr (!IsAssigned<WidthTypeFirst> || (IsAssigned<width_type> && IsAuto<HeightTypeFirst>)) {
-				if constexpr (!IsAssigned<WidthTypeFirst>) {
+			if constexpr (!IsAssigned<HeightTypeFirst>) {
+				if (IsAssigned<WidthTypeFirst> || size.width == child_size.width) {
+					if (length_first != child_size.height) {
+						length_first = child_size.height;
+						if constexpr (IsAssigned<HeightTypeSecond>) {
+							UpdateChildSizeRef(child_second, Size(size.width, length_second = size.height - length_first));
+							Redraw(GetRegionSecond());
+						} else {
+							size.height = length_first + length_second;
+							SizeUpdated(size);
+						}
+					}
+				} else {
 					size.width = child_size.width;
+					length_first = child_size.height;
+					if constexpr (IsAssigned<HeightTypeSecond>) {
+						UpdateChildSizeRef(child_second, Size(size.width, length_second = size.height - length_first));
+					} else {
+						length_second = UpdateChildSizeRef(child_second, Size(size.width, size_ref.height)).height;
+						size.height = length_first + length_second;
+					}
+					SizeUpdated(size);
 				}
-				Size child_size = UpdateChildSizeRef(child_second, Size(size.width, size_ref.height - length_first));
-				length_second = child_size.height;
-				Redraw(GetRegionSecond());
 			}
 		} else {
-			length_second = child_size.height;
-			if constexpr (!IsAssigned<WidthTypeSecond> || (IsAssigned<width_type> && IsAuto<HeightTypeSecond>)) {
-				if constexpr (!IsAssigned<WidthTypeSecond>) {
+			if constexpr (!IsAssigned<HeightTypeSecond>) {
+				if (IsAssigned<WidthTypeSecond> || size.width == child_size.width) {
+					if (length_second != child_size.height) {
+						length_second = child_size.height;
+						if constexpr (IsAssigned<HeightTypeFirst>) {
+							UpdateChildSizeRef(child_first, Size(size.width, length_first = size.height - length_second));
+							Redraw(GetRegionFirst());
+						} else {
+							size.height = length_first + length_second;
+							SizeUpdated(size);
+						}
+					}
+				} else {
 					size.width = child_size.width;
+					length_second = child_size.height;
+					if constexpr (IsAssigned<HeightTypeFirst>) {
+						UpdateChildSizeRef(child_first, Size(size.width, length_first = size.height - length_second));
+					} else {
+						length_second = UpdateChildSizeRef(child_first, Size(size.width, size_ref.height)).height;
+						size.height = length_first + length_second;
+					}
+					SizeUpdated(size);
 				}
-				Size child_size = UpdateChildSizeRef(child_first, Size(size.width, size_ref.height - length_second));
-				length_first = child_size.height;
-				Redraw(GetRegionFirst());
 			}
 		}
-		size.height = length_first + length_second;
-		SizeUpdated(size);
 	}
 };
 
 template<class WidthTypeFirst, class HeightTypeFirst, class WidthTypeSecond, class HeightTypeSecond>
 class SplitLayoutHorizontal : public _SplitLayout_Base_Horizontal {
 public:
+	static_assert(!IsAssigned<WidthTypeFirst> || !IsAssigned<WidthTypeSecond>, "At least one child window's width type should not be Assigned.");
 	static_assert(IsAssigned<HeightTypeFirst> || IsAssigned<HeightTypeSecond>, "At least one child window's height type should be Assigned.");
-	static_assert(IsAuto<WidthTypeFirst> || IsAuto<WidthTypeSecond>, "At least one child window's width type should be Auto.");
-	static_assert((IsAssigned<HeightTypeFirst> || IsAuto<WidthTypeFirst>) && (IsAssigned<HeightTypeSecond> || IsAuto<WidthTypeSecond>), "Child window's width type must be Auto if its height type is not Assigned.");
+	static_assert((!IsAssigned<WidthTypeFirst> || IsAssigned<HeightTypeFirst>) && (!IsAssigned<WidthTypeSecond> || IsAssigned<HeightTypeSecond>), "Child window's height type must be Assigned if its width type is Assigned.");
 public:
-	using width_type = std::conditional_t<IsAuto<WidthTypeFirst>, WidthTypeSecond, WidthTypeFirst>;
-	using height_type = std::conditional_t<IsAssigned<HeightTypeFirst>, HeightTypeSecond, HeightTypeFirst>;
+	using width_type = std::conditional_t<IsAssigned<WidthTypeFirst> || IsAssigned<WidthTypeSecond>, Assigned, std::conditional_t<IsRelative<WidthTypeFirst> || IsRelative<WidthTypeSecond>, Relative, Auto>>;
+	using height_type = std::conditional_t<IsAssigned<HeightTypeFirst>&& IsAssigned<HeightTypeSecond>, Assigned, std::conditional_t<IsRelative<HeightTypeFirst> || IsRelative<HeightTypeSecond>, Relative, Auto>>;
 public:
-	using child_type_first = WndDesign::child_ptr<WidthTypeFirst, HeightTypeFirst>;
-	using child_type_second = WndDesign::child_ptr<WidthTypeSecond, HeightTypeSecond>;
+	using child_type_first = child_ptr<WidthTypeFirst, HeightTypeFirst>;
+	using child_type_second = child_ptr<WidthTypeSecond, HeightTypeSecond>;
 
 public:
 	SplitLayoutHorizontal(child_type_first child_first, child_type_second child_second) : _SplitLayout_Base_Horizontal(std::move(child_first), std::move(child_second)) {}
@@ -205,64 +244,103 @@ protected:
 	virtual Size OnSizeRefUpdate(Size size_ref) override {
 		this->size_ref = size_ref;
 
-		// update height
-		if constexpr (IsAssigned<height_type>) {
-			size.height = size_ref.height;
-		}
-		if constexpr (!IsAssigned<HeightTypeFirst> || (IsAssigned<height_type> && IsAuto<WidthTypeFirst>)) {
+		if constexpr (!IsAssigned<HeightTypeFirst> || (IsAssigned<height_type> && !IsAssigned<WidthTypeFirst>)) {
 			Size child_size = UpdateChildSizeRef(child_first, size_ref);
-			length_first = child_size.width;
 			if constexpr (!IsAssigned<HeightTypeFirst>) {
 				size.height = child_size.height;
 			}
+			if constexpr (!IsAssigned<WidthTypeFirst>) {
+				length_first = child_size.width;
+			}
 		}
-		if constexpr (!IsAssigned<HeightTypeSecond> || (IsAssigned<height_type> && IsAuto<WidthTypeSecond>)) {
+		if constexpr (!IsAssigned<HeightTypeSecond> || (IsAssigned<height_type> && !IsAssigned<WidthTypeSecond>)) {
 			Size child_size = UpdateChildSizeRef(child_second, size_ref);
-			length_second = child_size.width;
 			if constexpr (!IsAssigned<HeightTypeSecond>) {
 				size.height = child_size.height;
 			}
+			if constexpr (!IsAssigned<WidthTypeFirst>) {
+				length_second = child_size.width;
+			}
+		}
+		if constexpr (IsAssigned<height_type>) {
+			size.height = size_ref.height;
 		}
 
-		// update child size
-		if constexpr (IsAssigned<HeightTypeFirst> && !(IsAssigned<height_type> && IsAuto<WidthTypeFirst>)) {
-			Size child_size = UpdateChildSizeRef(child_first, Size(size_ref.width - length_second, size.height));
-			length_first = child_size.width;
+		if constexpr (IsAssigned<width_type>) {
+			size.width = size_ref.width;
 		}
-		if constexpr (IsAssigned<HeightTypeSecond> && !(IsAssigned<height_type> && IsAuto<WidthTypeSecond>)) {
-			Size child_size = UpdateChildSizeRef(child_second, Size(size_ref.width - length_first, size.height));
-			length_second = child_size.width;
+		if constexpr (IsAssigned<HeightTypeFirst> && (!IsAssigned<height_type> || IsAssigned<WidthTypeFirst>)) {
+			if constexpr (IsAssigned<WidthTypeFirst>) {
+				UpdateChildSizeRef(child_first, Size(length_first = size.width - length_second, size.height));
+			} else {
+				length_first = UpdateChildSizeRef(child_first, Size(size_ref.width, size.height)).width;
+			}
 		}
-
-		// update width
-		size.width = length_first + length_second;
+		if constexpr (IsAssigned<HeightTypeSecond> && (!IsAssigned<height_type> || IsAssigned<WidthTypeSecond>)) {
+			if constexpr (IsAssigned<WidthTypeSecond>) {
+				UpdateChildSizeRef(child_second, Size(length_second = size.width - length_first, size.height));
+			} else {
+				length_second = UpdateChildSizeRef(child_second, Size(size_ref.width, size.height)).width;
+			}
+		}
+		if constexpr (!IsAssigned<height_type>) {
+			size.width = length_first + length_second;
+		}
 
 		return size;
 	}
 	virtual void OnChildSizeUpdate(WndObject& child, Size child_size) override {
 		if (IsFirst(child)) {
-			length_first = child_size.width;
-			if constexpr (!IsAssigned<HeightTypeFirst> || (IsAssigned<height_type> && IsAuto<WidthTypeFirst>)) {
-				if constexpr (!IsAssigned<HeightTypeFirst>) {
+			if constexpr (!IsAssigned<WidthTypeFirst>) {
+				if (IsAssigned<HeightTypeFirst> || size.height == child_size.height) {
+					if (length_first != child_size.width) {
+						length_first = child_size.width;
+						if constexpr (IsAssigned<WidthTypeSecond>) {
+							UpdateChildSizeRef(child_second, Size(length_second = size.width - length_first, size.height));
+							Redraw(GetRegionSecond());
+						} else {
+							size.width = length_first + length_second;
+							SizeUpdated(size);
+						}
+					}
+				} else {
 					size.height = child_size.height;
+					length_first = child_size.width;
+					if constexpr (IsAssigned<WidthTypeSecond>) {
+						UpdateChildSizeRef(child_second, Size(length_second = size.width - length_first, size.height));
+					} else {
+						length_second = UpdateChildSizeRef(child_second, Size(size_ref.width, size.height)).width;
+						size.width = length_first + length_second;
+					}
+					SizeUpdated(size);
 				}
-				Size child_size = UpdateChildSizeRef(child_second, Size(size_ref.width - length_first, size.height));
-				length_second = child_size.width;
-				Redraw(GetRegionSecond());
 			}
 		} else {
-			length_second = child_size.width;
-			if constexpr (!IsAssigned<HeightTypeSecond> || (IsAssigned<height_type> && IsAuto<WidthTypeSecond>)) {
-				if constexpr (!IsAssigned<HeightTypeSecond>) {
+			if constexpr (!IsAssigned<WidthTypeSecond>) {
+				if (IsAssigned<HeightTypeSecond> || size.height == child_size.height) {
+					if (length_second != child_size.width) {
+						length_second = child_size.width;
+						if constexpr (IsAssigned<WidthTypeFirst>) {
+							UpdateChildSizeRef(child_first, Size(length_first = size.width - length_second, size.height));
+							Redraw(GetRegionFirst());
+						} else {
+							size.width = length_first + length_second;
+							SizeUpdated(size);
+						}
+					}
+				} else {
 					size.height = child_size.height;
+					length_second = child_size.width;
+					if constexpr (IsAssigned<WidthTypeFirst>) {
+						UpdateChildSizeRef(child_first, Size(length_first = size.width - length_second, size.height));
+					} else {
+						length_second = UpdateChildSizeRef(child_first, Size(size_ref.width, size.height)).width;
+						size.width = length_first + length_second;
+					}
+					SizeUpdated(size);
 				}
-				Size child_size = UpdateChildSizeRef(child_first, Size(size_ref.width - length_second, size.height));
-				length_first = child_size.width;
-				Redraw(GetRegionFirst());
 			}
 		}
-		size.width = length_first + length_second;
-		SizeUpdated(size);
 	}
 };
 
