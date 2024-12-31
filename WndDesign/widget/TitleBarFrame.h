@@ -75,7 +75,7 @@ public:
 	};
 
 protected:
-	class ResizeBorder : public HitSelfFallback<BorderFrame<Assigned, Assigned>> {
+	class ResizeBorder : public CustomizedCursor<HitSelfFallback<BorderFrame<Assigned, Assigned>>, Cursor::Default> {
 	public:
 		using Base::Base;
 	protected:
@@ -183,7 +183,6 @@ protected:
 			)
 		), Context(AsWndObject()), ContextProvider(AsWndObject()) {
 			background = style._background_color;
-			cursor = Cursor::Arrow;
 		}
 
 	protected:

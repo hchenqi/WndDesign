@@ -6,8 +6,7 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-EditBox::EditBox(Style style, std::wstring text) : TextBox(style, text), style(style) {
-	cursor = Cursor::Text;
+EditBox::EditBox(Style style, std::wstring text) : Base(style, text), style(style) {
 	style.edit._disabled ? ime.Disable(*this) : ime.Enable(*this);
 	word_break_iterator.SetText(this->text);
 }

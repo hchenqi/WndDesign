@@ -6,12 +6,13 @@
 #include "../message/ime.h"
 #include "../message/mouse_tracker.h"
 #include "../message/key_tracker.h"
+#include "../wrapper/Cursor.h"
 
 
 BEGIN_NAMESPACE(WndDesign)
 
 
-class EditBox : public TextBox {
+class EditBox : public CustomizedCursor<TextBox, Cursor::Text> {
 protected:
 	struct EditBoxStyle {
 		struct EditStyle {

@@ -8,7 +8,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 class WndFrame : public WndObject {
 public:
-	WndFrame(child_ptr<> child) : child(std::move(child)) { RegisterChild(this->child); cursor = Cursor::Default; }
+	WndFrame(child_ptr<> child) : child(std::move(child)) { RegisterChild(this->child); }
 	virtual ~WndFrame() override {}
 
 	// child
@@ -35,7 +35,7 @@ protected:
 
 class WndFrameRef : public WndObject {
 public:
-	WndFrameRef(child_ref<> child) : child(child) { RegisterChild(child); cursor = Cursor::Default; }
+	WndFrameRef(child_ref<> child) : child(child) { RegisterChild(child); }
 	virtual ~WndFrameRef() override { UnregisterChild(child); }
 
 	// child
