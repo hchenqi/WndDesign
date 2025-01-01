@@ -137,7 +137,7 @@ protected:
 			if constexpr (!IsAssigned<WidthTypeSecond>) {
 				size.width = child_size.width;
 			}
-			if constexpr (!IsAssigned<HeightTypeFirst>) {
+			if constexpr (!IsAssigned<HeightTypeSecond>) {
 				length_second = child_size.height;
 			}
 		}
@@ -258,7 +258,7 @@ protected:
 			if constexpr (!IsAssigned<HeightTypeSecond>) {
 				size.height = child_size.height;
 			}
-			if constexpr (!IsAssigned<WidthTypeFirst>) {
+			if constexpr (!IsAssigned<WidthTypeSecond>) {
 				length_second = child_size.width;
 			}
 		}
