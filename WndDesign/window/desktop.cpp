@@ -67,19 +67,20 @@ void Desktop::OnChildRedraw(WndObject& child, Rect child_redraw_region) {
 void Desktop::SetTrack(WndObject& wnd) {
 	if (!wnd_track_stack.empty() && wnd_track_stack.back() == &wnd) { return; }
 	std::vector<ref_ptr<WndObject>> trace;
-	ref_ptr<WndObject> curr = &wnd;
-	while (!wnd_track_map.contains(curr)) {
+	for (ref_ptr<WndObject> curr = &wnd;;) {
 		trace.push_back(curr);
 		curr = curr->parent;
-		if (curr == nullptr) { break; }
-	}
-	if (curr == nullptr) {
-		LoseTrack();
-	} else {
-		wnd_track_stack.back()->OnNotifyMsg(NotifyMsg::MouseOut);
-		for (size_t index = wnd_track_map[curr]; wnd_track_stack.size() > index; wnd_track_stack.pop_back()) {
-			wnd_track_stack.back()->OnNotifyMsg(NotifyMsg::MouseLeave);
-			wnd_track_map.erase(wnd_track_stack.back());
+		if (curr == nullptr || curr == &desktop) {
+			LoseTrack();
+			break;
+		}
+		if (wnd_track_map.contains(curr)) {
+			wnd_track_stack.back()->OnNotifyMsg(NotifyMsg::MouseOut);
+			for (size_t index = wnd_track_map[curr]; wnd_track_stack.size() > index; wnd_track_stack.pop_back()) {
+				wnd_track_stack.back()->OnNotifyMsg(NotifyMsg::MouseLeave);
+				wnd_track_map.erase(wnd_track_stack.back());
+			}
+			break;
 		}
 	}
 	for (; !trace.empty(); trace.pop_back()) {
@@ -140,30 +141,62 @@ void Desktop::DispatchMouseMsg(DesktopFrame& frame, MouseMsg msg) {
 }
 
 void Desktop::SetFocus(WndObject& wnd) {
-	if (wnd_focus == &wnd) { return; }
-	DesktopFrame& frame = GetDesktopFrame(wnd);
-	if (frame_focus != &frame) { Win32::SetFocus(frame.hwnd); }
-	LoseFocus();
-	frame_focus = &frame; wnd_focus = &wnd;
-	ime_enabled_wnd.contains(&wnd) ? WndDesign::ImeEnable(frame.hwnd) : WndDesign::ImeDisable(frame.hwnd);
+	if (!wnd_focus_stack.empty() && wnd_focus_stack.back() == &wnd) { return; }
+	std::vector<ref_ptr<WndObject>> trace;
+	for (ref_ptr<WndObject> curr = &wnd;;) {
+		trace.push_back(curr);
+		ref_ptr<WndObject> next = curr->parent;
+		if (next == nullptr) {
+			LoseFocus();
+			break;
+		}
+		if (next == &desktop) {
+			LoseFocus();
+			frame_focus = static_cast<ref_ptr<DesktopFrame>>(curr);
+			Win32::SetFocus(frame_focus->hwnd);
+			break;
+		}
+		if (wnd_focus_map.contains(curr)) {
+			wnd_focus_stack.back()->OnNotifyMsg(NotifyMsg::Blur);
+			for (size_t index = wnd_focus_map[curr]; wnd_focus_stack.size() > index; wnd_focus_stack.pop_back()) {
+				wnd_focus_stack.back()->OnNotifyMsg(NotifyMsg::FocusOut);
+				wnd_focus_map.erase(wnd_focus_stack.back());
+			}
+			break;
+		}
+		curr = next;
+	}
+	for (; !trace.empty(); trace.pop_back()) {
+		trace.back()->OnNotifyMsg(NotifyMsg::FocusIn);
+		wnd_focus_stack.push_back(trace.back());
+		wnd_focus_map.emplace(trace.back(), wnd_focus_stack.size());
+	}
+	if (frame_focus) {
+		ime_enabled_wnd.contains(&wnd) ? WndDesign::ImeEnable(frame_focus->hwnd) : WndDesign::ImeDisable(frame_focus->hwnd);
+	}
+	wnd.OnNotifyMsg(NotifyMsg::Focus);
 }
 
 void Desktop::ReleaseFocus(WndObject& wnd) {
-	if (wnd_focus == &wnd) {
+	if (!wnd_focus_stack.empty() && wnd_focus_stack.back() == &wnd) {
 		Win32::SetFocus(nullptr);
 	}
 }
 
 void Desktop::LoseFocus() {
-	if (wnd_focus != nullptr) {
-		wnd_focus->OnNotifyMsg(NotifyMsg::LoseFocus);
-		frame_focus = nullptr; wnd_focus = nullptr;
+	if (wnd_focus_stack.empty()) { return; }
+	wnd_focus_stack.back()->OnNotifyMsg(NotifyMsg::Blur);
+	for (auto wnd : reverse(wnd_focus_stack)) {
+		wnd->OnNotifyMsg(NotifyMsg::FocusOut);
 	}
+	wnd_focus_stack.clear();
+	wnd_focus_map.clear();
+	frame_focus = nullptr;
 }
 
 void Desktop::DispatchKeyMsg(KeyMsg msg) {
-	if (wnd_focus != nullptr) {
-		wnd_focus->OnKeyMsg(msg);
+	if (!wnd_focus_stack.empty()) {
+		wnd_focus_stack.back()->OnKeyMsg(msg);
 	}
 }
 

@@ -60,8 +60,9 @@ private:
 
 	// key message
 private:
+	std::vector<ref_ptr<WndObject>> wnd_focus_stack;
+	std::unordered_map<ref_ptr<WndObject>, size_t> wnd_focus_map;
 	ref_ptr<DesktopFrame> frame_focus = nullptr;
-	ref_ptr<WndObject> wnd_focus = nullptr;
 private:
 	void SetFocus(WndObject& wnd);
 	void ReleaseFocus(WndObject& wnd);

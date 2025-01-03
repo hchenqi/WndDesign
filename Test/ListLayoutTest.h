@@ -2,6 +2,7 @@
 #include "WndDesign/frame/DesktopFrame.h"
 #include "WndDesign/frame/ScrollFrame.h"
 #include "WndDesign/frame/ClipFrame.h"
+#include "WndDesign/frame/InnerBorderFrame.h"
 #include "WndDesign/layout/ListLayout.h"
 #include "WndDesign/control/EditBox.h"
 #include "WndDesign/wrapper/HitTestHelper.h"
@@ -27,6 +28,23 @@ private:
 		return region;
 	}
 };
+
+
+template<class InnerBorderFrame>
+class HighlightFocus : public InnerBorderFrame {
+public:
+	HighlightFocus(InnerBorderFrame::child_type child) : InnerBorderFrame(Border(1.0f, Color::Black), std::move(child)) {}
+private:
+	virtual void OnNotifyMsg(NotifyMsg msg) override {
+		switch (msg) {
+		case NotifyMsg::FocusIn: InnerBorderFrame::SetBorder(Border(2.0f, Color::Red)); break;
+		case NotifyMsg::FocusOut: InnerBorderFrame::SetBorder(Border(1.0f, Color::Black)); break;
+		}
+	}
+};
+
+template<class T>
+HighlightFocus(T) -> HighlightFocus<InnerBorderFrame<extract_width_type<T>, extract_height_type<T>>>;
 
 
 struct TextBoxStyle : TextBox::Style {
@@ -55,15 +73,21 @@ int main() {
 			L"ListLayoutTest",
 			new ScrollFrame(
 				new ListLayout<Vertical>(
-					100,
-					new ClipFrame<Assigned, Auto, Left>(
-						new TextBox(TextBoxStyle(), L"ListLayoutTest")
+					20,
+					new HighlightFocus(
+						new ClipFrame<Assigned, Auto, Left>(
+							new TextBox(TextBoxStyle(), L"ListLayoutTest")
+						)
 					),
-					new ClipFrame<Assigned, Auto, Left>(
-						new EditBox(EditBoxStyle1(), L"EditBox")
+					new HighlightFocus(
+						new ClipFrame<Assigned, Auto, Left>(
+							new EditBox(EditBoxStyle1(), L"EditBox")
+						)
 					),
-					new HitThroughMargin<ClipFrame<Assigned, Auto, Right>>(
-						new EditBox(EditBoxStyle2(), L"EditBox2")
+					new HighlightFocus(
+						new HitThroughMargin<ClipFrame<Assigned, Auto, Right>>(
+							new EditBox(EditBoxStyle2(), L"EditBox2")
+						)
 					)
 				)
 			)

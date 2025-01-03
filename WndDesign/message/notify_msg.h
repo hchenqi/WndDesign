@@ -11,7 +11,10 @@ enum class NotifyMsg : uchar {
 	MouseLeave,
 	MouseOver,
 	MouseOut,
-	LoseFocus,
+	FocusIn,
+	FocusOut,
+	Focus,
+	Blur,
 };
 
 

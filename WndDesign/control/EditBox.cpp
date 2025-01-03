@@ -318,7 +318,7 @@ void EditBox::OnKeyMsg(KeyMsg msg) {
 
 void EditBox::OnNotifyMsg(NotifyMsg msg) {
 	switch (msg) {
-	case NotifyMsg::LoseFocus: HideCaret(); ClearSelection(); ClearImeComposition(); break;
+	case NotifyMsg::Blur: HideCaret(); ClearSelection(); ClearImeComposition(); break;
 	}
 }
 
