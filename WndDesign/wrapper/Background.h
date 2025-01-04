@@ -9,7 +9,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 template<class Wnd, Color color = Color::White> requires std::is_base_of_v<WndObject, Wnd>
 class SolidColorBackground : public Wnd {
-public:
+protected:
 	using Base = SolidColorBackground;
 
 public:

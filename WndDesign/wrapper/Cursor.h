@@ -8,7 +8,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 template<class Wnd, Cursor cursor = Cursor::Arrow> requires std::is_base_of_v<WndObject, Wnd>
 class CustomizedCursor : public Wnd {
-public:
+protected:
 	using Base = CustomizedCursor;
 
 public:

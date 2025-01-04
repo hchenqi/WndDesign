@@ -176,6 +176,7 @@
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\text_block.h" />
     <ClInclude Include="frame\BackgroundFrame.h" />
+    <ClInclude Include="wrapper\DelayedUpdate.h" />
     <ClInclude Include="frame\InnerBorderFrame.h" />
     <ClInclude Include="frame\MaxFrame.h" />
     <ClInclude Include="frame\WndFrameMutable.h" />

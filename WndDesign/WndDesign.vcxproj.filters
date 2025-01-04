@@ -312,6 +312,9 @@
     <ClInclude Include="wrapper\HitTestHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="wrapper\DelayedUpdate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="figure\desktop_layer.cpp">

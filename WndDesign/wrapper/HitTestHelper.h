@@ -8,7 +8,7 @@ BEGIN_NAMESPACE(WndDesign)
 
 template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
 class HitSelf : public Wnd {
-public:
+protected:
 	using Base = HitSelf;
 
 public:
@@ -21,7 +21,7 @@ protected:
 
 template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
 class HitSelfFallback : public Wnd {
-public:
+protected:
 	using Base = HitSelfFallback;
 
 public:
@@ -41,7 +41,7 @@ protected:
 
 template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
 class HitSelfFallbackNext : public Wnd {
-public:
+protected:
 	using Base = HitSelfFallbackNext;
 
 public:
@@ -67,7 +67,7 @@ protected:
 
 template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
 class HitSelfFallbackRecursive : public Wnd {
-public:
+protected:
 	using Base = HitSelfFallbackRecursive;
 
 public:
@@ -100,7 +100,7 @@ protected:
 
 template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
 class HitThrough : public Wnd {
-public:
+protected:
 	using Base = HitThrough;
 
 public:
@@ -113,7 +113,7 @@ protected:
 
 template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
 class HitThroughFallback : public Wnd {
-public:
+protected:
 	using Base = HitThroughFallback;
 
 public:
@@ -131,7 +131,7 @@ protected:
 
 template<class Frame> requires std::is_base_of_v<WndFrame, Frame>
 class HitThroughMargin : public Frame {
-public:
+protected:
 	using Base = HitThroughMargin;
 
 public:
