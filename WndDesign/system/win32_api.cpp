@@ -297,6 +297,11 @@ int MessageLoop() {
 	return (int)msg.wParam;
 }
 
+bool CheckMessage() {
+	MSG msg;
+	return PeekMessageW(&msg, nullptr, 0, 0, PM_NOREMOVE);
+}
+
 void Terminate() { PostQuitMessage(0); }
 
 

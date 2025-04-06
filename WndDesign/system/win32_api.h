@@ -44,6 +44,7 @@ void ReleaseCapture();
 void SetFocus(HANDLE hwnd);
 
 int MessageLoop();
+bool CheckMessage();
 void Terminate();
 
 
