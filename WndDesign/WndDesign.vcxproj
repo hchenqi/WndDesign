@@ -244,6 +244,7 @@
     <ClInclude Include="system\win32_api.h" />
     <ClInclude Include="system\win32_ime.h" />
     <ClInclude Include="widget\RadioGroup.h" />
+    <ClInclude Include="widget\TabView.h" />
     <ClInclude Include="widget\TitleBarFrame.h" />
     <ClInclude Include="widget\Tooltip.h" />
     <ClInclude Include="window\Global.h" />

@@ -25,6 +25,7 @@
     <ClInclude Include="OverlapLayoutTest.h" />
     <ClInclude Include="ScrollFrameTest.h" />
     <ClInclude Include="SplitLayoutTest.h" />
+    <ClInclude Include="TabViewTest.h" />
     <ClInclude Include="TextBoxTest.h" />
   </ItemGroup>
   <ItemGroup>
