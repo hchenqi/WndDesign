@@ -6,41 +6,37 @@
 BEGIN_NAMESPACE(WndDesign)
 
 
-void RegisterContextProvider(WndObject& provider);
-void UnregisterContextProvider(WndObject& provider);
-ref_ptr<WndObject> GetNextContextProvider(WndObject& user);
-
-
-template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
-class ContextProvider {
+class ContextProvider : Uncopyable {
 private:
-	Wnd& provider;
+	WndObject& provider;
 public:
-	ContextProvider(Wnd& provider) : provider(provider) { RegisterContextProvider(provider); }
-	~ContextProvider() { UnregisterContextProvider(provider); }
+	ContextProvider(WndObject& provider);
+	~ContextProvider();
 };
 
 
-template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
-class Context {
+class Context : Uncopyable {
 private:
 	WndObject& user;
-	ref_ptr<Wnd> provider;
+	ref_ptr<WndObject> provider;
+private:
+	static ref_ptr<WndObject> GetNextProvider(WndObject& user);
 public:
 	Context(WndObject& user) : user(user), provider(nullptr) {}
 public:
+	template<class Wnd> requires std::is_base_of_v<WndObject, Wnd>
 	Wnd& Get() {
-		if (!provider) {
+		if (!provider || !dynamic_cast<ref_ptr<Wnd>>(provider)) {
 			ref_ptr<WndObject> next = &user;
 			do {
-				next = GetNextContextProvider(*next);
+				next = GetNextProvider(*next);
 				if (next == nullptr) {
 					throw std::invalid_argument("context provider not found");
 				}
 				provider = dynamic_cast<ref_ptr<Wnd>>(next);
 			} while (!provider);
 		}
-		return *provider;
+		return static_cast<Wnd&>(*provider);
 	}
 };
 

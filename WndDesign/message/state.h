@@ -41,7 +41,6 @@ private:
 	}
 	void RemoveWatcher(Watcher& watcher) const {
 		*(watcher.index) = nullptr;
-		watcher.index = {};
 	}
 public:
 	const T& Get() const {

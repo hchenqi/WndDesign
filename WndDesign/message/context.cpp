@@ -16,15 +16,18 @@ std::unordered_set<ref_ptr<WndObject>> provider_set;
 END_NAMESPACE(Anonymous)
 
 
-void RegisterContextProvider(WndObject& provider) {
+ContextProvider::ContextProvider(WndObject& provider) : provider(provider) {
+	if (provider_set.contains(&provider)) {
+		throw std::invalid_argument("ContextProvider already registered");
+	}
 	provider_set.emplace(&provider);
 }
 
-void UnregisterContextProvider(WndObject& provider) {
+ContextProvider::~ContextProvider() {
 	provider_set.erase(&provider);
 }
 
-ref_ptr<WndObject> GetNextContextProvider(WndObject& user) {
+ref_ptr<WndObject> Context::GetNextProvider(WndObject& user) {
 	auto parent = static_cast<ref_ptr<WndObjectPrivateAccess>>(&user)->Parent();
 	while (parent && !provider_set.contains(parent)) {
 		parent = parent->Parent();
