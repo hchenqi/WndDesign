@@ -267,7 +267,7 @@
     <ClInclude Include="common\function_traits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="geometry\text_range.h">
+    <ClInclude Include="geometry\index_range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="layout\DivideLayout.h">
@@ -313,6 +313,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="wrapper\DelayedUpdate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometry\text_range.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

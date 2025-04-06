@@ -112,7 +112,7 @@ std::vector<TextBlock::HitTestInfo> TextBlock::HitTestRange(TextRange range) con
 	std::vector<DWRITE_HIT_TEST_METRICS> metrics;
 	do {
 		metrics.resize(actual_size);
-		layout->HitTestTextRange((uint)range.begin, (uint)range.length, 0, 0, metrics.data(), (uint)metrics.size(), &actual_size);
+		layout->HitTestTextRange((uint)range.begin(), (uint)range.length(), 0, 0, metrics.data(), (uint)metrics.size(), &actual_size);
 	} while (actual_size > metrics.size());
 	metrics.resize(actual_size);
 	std::vector<HitTestInfo> geometry_regions(metrics.size());

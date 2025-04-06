@@ -23,17 +23,17 @@ protected:
 public:
 	const std::wstring& GetText() const { return text; }
 	std::wstring Substr(size_t pos) const { return text.substr(pos); }
-	std::wstring Substr(TextRange range) const { return text.substr(range.begin, range.length); }
+	std::wstring Substr(TextRange range) const { return text.substr(range.begin(), range.length()); }
 protected:
 	virtual void OnTextUpdate() { text_block.SetText(style, text); SizeUpdated(UpdateLayout()); Redraw(region_infinite); }
 public:
 	void Assign(std::wstring str) { text.assign(std::move(str)); OnTextUpdate(); }
 	void Insert(size_t pos, wchar ch) { text.insert(pos, 1, ch); OnTextUpdate(); }
 	void Insert(size_t pos, const std::wstring& str) { text.insert(pos, str); OnTextUpdate(); }
-	void Replace(TextRange range, wchar ch) { text.replace(range.begin, range.length, 1, ch); OnTextUpdate(); }
-	void Replace(TextRange range, const std::wstring& str) { text.replace(range.begin, range.length, str); OnTextUpdate(); }
+	void Replace(TextRange range, wchar ch) { text.replace(range.begin(), range.length(), 1, ch); OnTextUpdate(); }
+	void Replace(TextRange range, const std::wstring& str) { text.replace(range.begin(), range.length(), str); OnTextUpdate(); }
 	void Erase(size_t pos) { text.erase(pos); OnTextUpdate(); }
-	void Erase(TextRange range) { text.erase(range.begin, range.length); OnTextUpdate(); }
+	void Erase(TextRange range) { text.erase(range.begin(), range.length()); OnTextUpdate(); }
 
 	// layout
 protected:

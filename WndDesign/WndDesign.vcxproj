@@ -176,12 +176,13 @@
     <ClInclude Include="figure\shape.h" />
     <ClInclude Include="figure\text_block.h" />
     <ClInclude Include="frame\BackgroundFrame.h" />
+    <ClInclude Include="geometry\text_range.h" />
     <ClInclude Include="wrapper\DelayedUpdate.h" />
     <ClInclude Include="frame\InnerBorderFrame.h" />
     <ClInclude Include="frame\MaxFrame.h" />
     <ClInclude Include="frame\WndFrameMutable.h" />
     <ClInclude Include="geometry\scale.h" />
-    <ClInclude Include="geometry\text_range.h" />
+    <ClInclude Include="geometry\index_range.h" />
     <ClInclude Include="geometry\transform.h" />
     <ClInclude Include="frame\CenterFrame.h" />
     <ClInclude Include="frame\ClipFrame.h" />

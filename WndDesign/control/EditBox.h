@@ -106,7 +106,7 @@ protected:
 	std::vector<Rect> selection_region_list;
 	Rect selection_region_union;
 protected:
-	bool HasSelection() const { return !selection_range.IsEmpty(); }
+	bool HasSelection() const { return !selection_range.empty(); }
 	void UpdateSelection(TextRange range);
 	void ClearSelection() { UpdateSelection(text_range_empty); }
 protected:
@@ -131,7 +131,7 @@ protected:
 	TextRange ime_composition_range;
 	std::vector<Rect> ime_composition_region_list;
 protected:
-	bool HasImeComposition() { return !ime_composition_range.IsEmpty(); }
+	bool HasImeComposition() { return !ime_composition_range.empty(); }
 	void UpdateImeComposition(TextRange range);
 	void ClearImeComposition() { UpdateImeComposition(text_range_empty); }
 protected:

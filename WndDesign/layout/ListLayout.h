@@ -25,7 +25,7 @@ public:
 	}
 
 	// child
-private:
+protected:
 	struct ChildInfo {
 	public:
 		child_type child;
@@ -40,7 +40,7 @@ public:
 	size_t Length() const { return child_list.size(); }
 	WndObject& GetChild(size_t index) const { return child_list[index].child; }
 	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
-private:
+protected:
 	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
 	void UpdateIndex(size_t begin);
 public:
@@ -55,7 +55,7 @@ public:
 protected:
 	Size size;
 	float gap;
-private:
+protected:
 	void UpdateLayout(size_t index);
 protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(0.0f, child_list[index].offset), Size(size.width, child_list[index].length)); }
@@ -101,13 +101,14 @@ protected:
 		ChildInfo(child_type child) : child(std::move(child)), offset(0.0f), length(0.0f) {}
 	};
 	std::vector<ChildInfo> child_list;
-protected:
-	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
-	void UpdateIndex(size_t begin);
 public:
+	bool Empty() const { return child_list.empty(); }
 	size_t Length() const { return child_list.size(); }
 	WndObject& GetChild(size_t index) const { return child_list[index].child; }
 	size_t GetChildIndex(WndObject& child) const { return WndObject::GetChildData<size_t>(child); }
+protected:
+	void SetChildIndex(WndObject& child, size_t index) { WndObject::SetChildData<size_t>(child, index); }
+	void UpdateIndex(size_t begin);
 public:
 	void InsertChild(size_t index, child_type child);
 	void InsertChild(size_t begin, std::vector<child_type> children);
@@ -120,7 +121,7 @@ public:
 protected:
 	Size size;
 	float gap;
-private:
+protected:
 	void UpdateLayout(size_t index);
 protected:
 	Rect GetChildRegion(size_t index) const { return Rect(Point(child_list[index].offset, 0.0f), Size(child_list[index].length, size.height)); }
