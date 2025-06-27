@@ -93,7 +93,7 @@ private:
 			}
 		}
 		virtual void OnNotifyMsg(NotifyMsg msg) override {
-			if (msg == NotifyMsg::LoseFocus) {
+			if (msg == NotifyMsg::Blur) {
 				wnd->SetColor(Color(Color::Indigo, 64));
 			}
 		}
