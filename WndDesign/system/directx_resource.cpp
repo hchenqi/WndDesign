@@ -36,8 +36,8 @@ public:
 	ComPtr<IDCompositionDevice> dcomp_device;
 
 	// D2D
-	ComPtr<ID2D1Factory1> d2d_factory;
-	ComPtr<ID2D1DeviceContext> d2d_device_context;
+	ComPtr<ID2D1Factory8> d2d_factory;
+	ComPtr<ID2D1DeviceContext7> d2d_device_context;
 	ComPtr<ID2D1SolidColorBrush> d2d_solid_color_brush;
 
 	// DWrite
@@ -82,7 +82,7 @@ DirectXResource::~DirectXResource() {
 
 void DirectXResource::CreateDeviceIndependentResource() {
 	// Create D2D factory.
-	hr << D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), &d2d_factory);
+	hr << D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory8), &d2d_factory);
 
 	// Create DWrite factory.
 	hr << DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &dwrite_factory);
@@ -127,7 +127,7 @@ void DirectXResource::CreateDeviceDependentResource() {
 	hr << DCompositionCreateDevice(dxgi_device.Get(), IID_PPV_ARGS(&dcomp_device));
 
 	// Create D2D device context.
-	ComPtr<ID2D1Device> d2d_device;
+	ComPtr<ID2D1Device7> d2d_device;
 	hr << d2d_factory->CreateDevice(dxgi_device.Get(), &d2d_device);
 	hr << d2d_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2d_device_context);
 
@@ -169,8 +169,8 @@ IDXGIFactory2& GetDXGIFactory() { return *directx_resource.dxgi_factory.Get(); }
 
 IDCompositionDevice& GetDCompDevice() { return *directx_resource.dcomp_device.Get(); }
 
-ID2D1Factory1& GetD2DFactory() { return *directx_resource.d2d_factory.Get(); }
-ID2D1DeviceContext& GetD2DDeviceContext() { return *directx_resource.d2d_device_context.Get(); }
+ID2D1Factory8& GetD2DFactory() { return *directx_resource.d2d_factory.Get(); }
+ID2D1DeviceContext7& GetD2DDeviceContext() { return *directx_resource.d2d_device_context.Get(); }
 ID2D1SolidColorBrush& GetD2DSolidColorBrush() { return *directx_resource.d2d_solid_color_brush.Get(); }
 
 IDWriteFactory7& GetDWriteFactory() { return *directx_resource.dwrite_factory.Get(); }
